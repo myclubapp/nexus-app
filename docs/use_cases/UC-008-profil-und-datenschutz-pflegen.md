@@ -6,7 +6,7 @@
 **Use Case Name:** Profil und Datenschutz-Optionen pflegen
 **Primary Actor:** Mitglied
 **Goal:** Die eigenen Angaben aktuell halten und bestimmen, was andere davon sehen
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

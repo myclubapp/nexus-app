@@ -43,7 +43,7 @@ und Router in einem Aufruf.
 
 ### Was Ionic in jsdom anders macht
 
-Fünf Eigenheiten, die reihenweise Tests scheitern lassen, wenn man sie nicht
+Sechs Eigenheiten, die reihenweise Tests scheitern lassen, wenn man sie nicht
 kennt. Sie sind ausgemessen, nicht vermutet:
 
 1. **Eigenschaften kommen als DOM-Properties an, nicht als Attribute.**
@@ -101,6 +101,16 @@ kennt. Sie sind ausgemessen, nicht vermutet:
    ist `DeleteAccountContent` in `src/components/DeleteAccountModal.tsx` – erst
    diese Trennung macht die Erklärung der Kontolöschung und die Sperre für den
    einzigen Vorstand prüfbar.
+
+6. **Werte von Formularfeldern sind nicht auslesbar.** `ionProp()` erreicht
+   `disabled` an einem `ion-button` und `routerLink` an einem `ion-item`, aber
+   **nicht** `value` an einem `ion-input` oder `checked` an einem `ion-toggle`:
+   Diese Komponenten verwalten ihren Wert über Refs, die in jsdom nie greifen.
+
+   Geprüft wird deshalb, **womit das Formular speichert**, nicht was in den
+   Feldern steht: Die Hülle (`FormModal`) wird durch gewöhnliches HTML ersetzt,
+   der Bestätigen-Knopf geklickt und die Mutation geprüft. Vorbild:
+   `ProfileEditModal.test.tsx`.
 
 **Zusicherungen auf Ionic-Interna** wie `translucent` oder `collapse` sind
 verboten. Geprüft wird die eigene Struktur (`ion-content > ion-header`) und das,

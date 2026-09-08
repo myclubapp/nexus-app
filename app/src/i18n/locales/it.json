@@ -176,7 +176,15 @@
     "setPassword": "Imposta una password",
     "passwordHint": "Almeno {{min}} caratteri. Dopo potrai accedere anche senza link.",
     "passwordSaved": "Password salvata",
-    "memberSinceLabel": "Membro dal"
+    "memberSinceLabel": "Membro dal",
+    "editTitle": "Modifica il profilo",
+    "displayName": "Nome visualizzato",
+    "displayNameHint": "Così compari negli elenchi e nelle classifiche di questa società.",
+    "contact": "Contatti",
+    "contactHint": "Ciò che nascondi non viene nemmeno trasmesso agli altri membri – non è solo nascosto. Le decisioni valgono per società.",
+    "phone": "Numero di telefono",
+    "emailVisible": "E-mail visibile ai membri",
+    "phoneVisible": "Telefono visibile ai membri"
   },
   "clubSettings": {
     "title": "Impostazioni della società",

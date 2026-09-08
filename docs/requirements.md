@@ -50,9 +50,9 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-015 | Team anlegen              | Als Vorstand möchte ich Teams anlegen und benennen, damit Termine und Ranglisten pro Team geführt werden können.                                               | High     | Implemented |
 | FR-016 | Team-Zuordnung            | Als Vorstand möchte ich Mitglieder einem oder mehreren Teams zuordnen, damit sie die für sie relevanten Termine sehen.                                         | High     | Implemented |
 | FR-017 | Mitgliedsstatus pflegen   | Als Vorstand möchte ich den Status eines Mitglieds (aktiv, passiv, Ehrenmitglied, ausgetreten) pflegen, damit Auswertungen die richtige Grundgesamtheit haben. | Medium   | Implemented        |
-| FR-018 | Eigenes Profil pflegen    | Als Mitglied möchte ich Anzeigename, Avatar und Kontaktdaten selbst pflegen, damit meine Angaben aktuell bleiben.                                              | High     | In Progress |
-| FR-019 | Datenschutz-Optionen      | Als Mitglied möchte ich einzeln festlegen, ob E-Mail und Telefonnummer für andere Mitglieder sichtbar sind, damit ich meine Daten kontrolliere.                | High     | Open        |
-| FR-020 | Leaderboard-Opt-in        | Als Mitglied möchte ich entscheiden, ob ich in Ranglisten erscheine, damit die Teilnahme freiwillig bleibt.                                                    | High     | Open        |
+| FR-018 | Eigenes Profil pflegen    | Als Mitglied möchte ich Anzeigename, Avatar und Kontaktdaten selbst pflegen, damit meine Angaben aktuell bleiben.                                              | High     | Implemented |
+| FR-019 | Datenschutz-Optionen      | Als Mitglied möchte ich einzeln festlegen, ob E-Mail und Telefonnummer für andere Mitglieder sichtbar sind, damit ich meine Daten kontrolliere.                | High     | Implemented        |
+| FR-020 | Leaderboard-Opt-in        | Als Mitglied möchte ich entscheiden, ob ich in Ranglisten erscheine, damit die Teilnahme freiwillig bleibt.                                                    | High     | Implemented        |
 
 ### 1.3 Agenda
 

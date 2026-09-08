@@ -176,7 +176,15 @@
     "setPassword": "Set a password",
     "passwordHint": "At least {{min}} characters. You can then sign in without a link.",
     "passwordSaved": "Password saved",
-    "memberSinceLabel": "Member since"
+    "memberSinceLabel": "Member since",
+    "editTitle": "Edit profile",
+    "displayName": "Display name",
+    "displayNameHint": "This is how you appear in this club’s lists and leaderboards.",
+    "contact": "Contact details",
+    "contactHint": "What you hide is not delivered to other members at all – not merely hidden. These choices apply per club.",
+    "phone": "Phone number",
+    "emailVisible": "Email visible to members",
+    "phoneVisible": "Phone visible to members"
   },
   "clubSettings": {
     "title": "Club settings",

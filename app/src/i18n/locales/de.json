@@ -176,7 +176,15 @@
     "setPassword": "Passwort setzen",
     "passwordHint": "Mindestens {{min}} Zeichen. Danach kannst du dich auch ohne Anmeldelink anmelden.",
     "passwordSaved": "Passwort gespeichert",
-    "memberSinceLabel": "Mitglied seit"
+    "memberSinceLabel": "Mitglied seit",
+    "editTitle": "Profil bearbeiten",
+    "displayName": "Anzeigename",
+    "displayNameHint": "So erscheinst du in Listen und Ranglisten dieses Vereins.",
+    "contact": "Kontaktangaben",
+    "contactHint": "Was du verbirgst, wird anderen Mitgliedern gar nicht erst ausgeliefert – nicht nur ausgeblendet. Die Entscheide gelten je Verein.",
+    "phone": "Telefonnummer",
+    "emailVisible": "E-Mail für Mitglieder sichtbar",
+    "phoneVisible": "Telefonnummer für Mitglieder sichtbar"
   },
   "clubSettings": {
     "title": "Vereinseinstellungen",

@@ -11,17 +11,17 @@ import {
   IonToggle,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { useClub } from '../hooks/useClub';
 import { usePendingJoinRequests } from '../hooks/useJoinRequests';
 import { useMyPoints } from '../hooks/useGamification';
+import { useLeaderboardOptIn } from '../hooks/useProfile';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
 import { useToast } from '../hooks/useToast';
 import { FormModal } from '../components/FormModal';
 import { DeleteAccountModal } from '../components/DeleteAccountModal';
+import { ProfileEditModal } from '../components/ProfileEditModal';
 import { PASSWORD_MIN_LENGTH, authErrorKey } from '../lib/authError';
 import { SUPPORTED_LANGUAGES } from '../i18n';
 import { formatDate, formatDateTime } from '../lib/format';
@@ -32,25 +32,11 @@ export function ProfilePage() {
   const { activeMembership, activeClub, memberships, setActiveClub, isAdmin } = useClub();
   const points = useMyPoints();
   const pendingRequests = usePendingJoinRequests();
-  const queryClient = useQueryClient();
   const toast = useToast();
 
-  const optIn = useMutation({
-    mutationFn: async (value: boolean) => {
-      if (!activeMembership) return;
-      const { error } = await supabase
-        .from('club_members')
-        .update({ leaderboard_opt_in: value })
-        .eq('id', activeMembership.id);
-      if (error) throw new Error(error.message);
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['memberships'] });
-      toast.success(t('common.saved'));
-    },
-    onError: (cause: Error) => toast.failure(cause.message),
-  });
+  const optIn = useLeaderboardOptIn();
 
+  const [isProfileOpen, setProfileOpen] = useState(false);
   const [isPasswordOpen, setPasswordOpen] = useState(false);
   const [isDeleteOpen, setDeleteOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
@@ -86,7 +72,7 @@ export function ProfilePage() {
   return (
     <AppPage title={t('profile.title')}>
       <ListSection>
-        <IonItem>
+        <IonItem button detail onClick={() => setProfileOpen(true)}>
           <IonLabel className="ion-text-wrap">
             <h2>{activeMembership?.display_name ?? user?.email}</h2>
             <IonNote>
@@ -180,11 +166,18 @@ export function ProfilePage() {
           <IonLabel>{t('onboarding.createAnother')}</IonLabel>
         </IonItem>
 
+        {/* A1, BR-029: Die Anzeige in Ranglisten ist abwählbar; Punkte
+            sammelt die Person weiterhin. */}
         <IonItem>
           <IonToggle
             checked={activeMembership?.leaderboard_opt_in ?? true}
             disabled={!activeMembership || optIn.isPending}
-            onIonChange={(e) => optIn.mutate(e.detail.checked)}
+            onIonChange={(e) =>
+              optIn.mutate(e.detail.checked, {
+                onSuccess: () => toast.success(t('common.saved')),
+                onError: (cause) => toast.failure(cause.message),
+              })
+            }
           >
             {t('profile.leaderboardOptIn')}
           </IonToggle>
@@ -228,6 +221,15 @@ export function ProfilePage() {
         </IonButton>
         <IonNote>{t('profile.deleteAccountHint')}</IonNote>
       </div>
+
+      <ProfileEditModal
+        isOpen={isProfileOpen}
+        onDismiss={() => setProfileOpen(false)}
+        onSaved={() => {
+          setProfileOpen(false);
+          toast.success(t('common.saved'));
+        }}
+      />
 
       <DeleteAccountModal
         isOpen={isDeleteOpen}
