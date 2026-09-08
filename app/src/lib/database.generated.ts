@@ -1117,6 +1117,13 @@ export type Database = {
         Args: { p_club_id: string; p_team_id?: string }
         Returns: string
       }
+      rule_limit_reached: {
+        Args: {
+          p_member_id: string
+          p_rule: Database["public"]["Tables"]["point_rules"]["Row"]
+        }
+        Returns: boolean
+      }
       season_label: {
         Args: { p_at?: string; p_club_id: string }
         Returns: string
@@ -1128,6 +1135,10 @@ export type Database = {
       set_member_teams: {
         Args: { p_member_id: string; p_team_ids: string[] }
         Returns: undefined
+      }
+      set_pillar_active: {
+        Args: { p_active: boolean; p_club_id: string; p_pillar: number }
+        Returns: number
       }
       slugify: { Args: { p_value: string }; Returns: string }
       update_my_profile: {

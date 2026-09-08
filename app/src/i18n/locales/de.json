@@ -359,5 +359,46 @@
     "teamCreated": "Team angelegt",
     "lastAdminHint": "Diese Person ist der einzige Vorstand. Bestimme zuerst jemand anderen, bevor du Rolle oder Status änderst.",
     "count_one": "{{count}} Mitglied"
+  },
+  "pointRules": {
+    "title": "Punkteregeln",
+    "empty": "Noch keine Regeln vorhanden",
+    "label": "Bezeichnung",
+    "points": "Punkte",
+    "code": "Technischer Code",
+    "codeHint": "Der Code identifiziert die Regel technisch. Er ist je Verein eindeutig und lässt sich später nicht ändern.",
+    "codeTaken": "Diesen Code gibt es in eurem Verein bereits.",
+    "pillarLabel": "Säule",
+    "active": "Regel ist aktiv",
+    "inactive": "Aus",
+    "thanksOnly": "Nur Dank",
+    "thanksOnlyHint": "Punktwert null heisst «nur Dank»: Der Beitrag wird gewürdigt, aber ohne Zahl gezeigt. Eine ausgeschaltete Regel erzeugt gar nichts mehr.",
+    "forwardHint": "Änderungen gelten ab sofort für neue Buchungen. Bereits gebuchte Punkte bleiben, wie sie sind.",
+    "savedForward": "Gespeichert – gilt für neue Buchungen",
+    "limit": "Häufigkeitsgrenze",
+    "limitMax": "Höchstzahl",
+    "limitNone": "Ohne Grenze",
+    "limitPeriod": "Je Zeitraum",
+    "limitShort": "höchstens {{max}} je {{period}}",
+    "limitHint": "Ohne Angabe zählt die Regel unbegrenzt. Die Grenze wird beim Buchen auf dem Server geprüft.",
+    "addRule": "Eigene Regel",
+    "ruleCreated": "Regel angelegt",
+    "enableAll": "Alle ein",
+    "disableAll": "Alle aus",
+    "pillar": {
+      "1": "Trainingsengagement",
+      "2": "Wettkampf",
+      "3": "Freiwilliges Engagement",
+      "4": "Vereinsleben",
+      "5": "Wachstum & Treue",
+      "6": "Verlässlichkeit",
+      "7": "Marktplatz"
+    },
+    "period": {
+      "day": "Tag",
+      "week": "Woche",
+      "month": "Monat",
+      "season": "Saison"
+    }
   }
 }

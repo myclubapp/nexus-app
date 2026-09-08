@@ -359,5 +359,46 @@
     "teamCreated": "Squadra creata",
     "lastAdminHint": "Questa persona è l’unico comitato. Nomina prima qualcun altro prima di cambiarne ruolo o stato.",
     "count_one": "{{count}} membro"
+  },
+  "pointRules": {
+    "title": "Regole dei punti",
+    "empty": "Nessuna regola al momento",
+    "label": "Denominazione",
+    "points": "Punti",
+    "code": "Codice tecnico",
+    "codeHint": "Il codice identifica la regola tecnicamente. È unico per società e non è più modificabile.",
+    "codeTaken": "Questo codice esiste già nella vostra società.",
+    "pillarLabel": "Pilastro",
+    "active": "Regola attiva",
+    "inactive": "Inattiva",
+    "thanksOnly": "Solo grazie",
+    "thanksOnlyHint": "Un valore di zero significa «solo grazie»: il contributo è riconosciuto ma senza cifra. Una regola disattivata non produce più nulla.",
+    "forwardHint": "Le modifiche valgono da ora per le nuove registrazioni. I punti già assegnati restano invariati.",
+    "savedForward": "Salvato – vale per le nuove registrazioni",
+    "limit": "Limite di frequenza",
+    "limitMax": "Numero massimo",
+    "limitNone": "Senza limite",
+    "limitPeriod": "Per periodo",
+    "limitShort": "al massimo {{max}} per {{period}}",
+    "limitHint": "Senza indicazione la regola conta senza limite. Il limite è verificato sul server.",
+    "addRule": "Regola propria",
+    "ruleCreated": "Regola creata",
+    "enableAll": "Attiva tutto",
+    "disableAll": "Disattiva tutto",
+    "pillar": {
+      "1": "Impegno negli allenamenti",
+      "2": "Competizione",
+      "3": "Impegno volontario",
+      "4": "Vita sociale",
+      "5": "Crescita e fedeltà",
+      "6": "Affidabilità",
+      "7": "Mercato"
+    },
+    "period": {
+      "day": "giorno",
+      "week": "settimana",
+      "month": "mese",
+      "season": "stagione"
+    }
   }
 }

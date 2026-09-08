@@ -359,5 +359,46 @@
     "teamCreated": "Équipe créée",
     "lastAdminHint": "Cette personne est le seul comité. Désignez d’abord quelqu’un d’autre avant de changer son rôle ou son statut.",
     "count_one": "{{count}} membre"
+  },
+  "pointRules": {
+    "title": "Règles de points",
+    "empty": "Aucune règle pour le moment",
+    "label": "Désignation",
+    "points": "Points",
+    "code": "Code technique",
+    "codeHint": "Le code identifie la règle techniquement. Il est unique par société et ne peut plus être modifié ensuite.",
+    "codeTaken": "Ce code existe déjà dans votre société.",
+    "pillarLabel": "Pilier",
+    "active": "Règle active",
+    "inactive": "Inactive",
+    "thanksOnly": "Merci seul",
+    "thanksOnlyHint": "Une valeur de zéro signifie «merci seul»: le geste est reconnu, mais sans chiffre. Une règle désactivée ne produit plus rien.",
+    "forwardHint": "Les changements valent dès maintenant pour les nouvelles écritures. Les points déjà attribués restent inchangés.",
+    "savedForward": "Enregistré – vaut pour les nouvelles écritures",
+    "limit": "Limite de fréquence",
+    "limitMax": "Nombre maximal",
+    "limitNone": "Sans limite",
+    "limitPeriod": "Par période",
+    "limitShort": "au plus {{max}} par {{period}}",
+    "limitHint": "Sans indication la règle compte sans limite. La limite est vérifiée sur le serveur.",
+    "addRule": "Règle propre",
+    "ruleCreated": "Règle créée",
+    "enableAll": "Tout activer",
+    "disableAll": "Tout désactiver",
+    "pillar": {
+      "1": "Engagement à l’entraînement",
+      "2": "Compétition",
+      "3": "Engagement bénévole",
+      "4": "Vie associative",
+      "5": "Croissance et fidélité",
+      "6": "Fiabilité",
+      "7": "Marché"
+    },
+    "period": {
+      "day": "jour",
+      "week": "semaine",
+      "month": "mois",
+      "season": "saison"
+    }
   }
 }

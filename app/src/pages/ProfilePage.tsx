@@ -133,6 +133,12 @@ export function ProfilePage() {
         )}
 
         {isAdmin && (
+          <IonItem button routerLink="/tabs/profile/rules" detail>
+            <IonLabel>{t('pointRules.title')}</IonLabel>
+          </IonItem>
+        )}
+
+        {isAdmin && (
           <IonItem button routerLink="/tabs/profile/invite" detail>
             <IonLabel>{t('invite.title')}</IonLabel>
           </IonItem>

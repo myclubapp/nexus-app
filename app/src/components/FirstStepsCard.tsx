@@ -33,7 +33,7 @@ export function FirstStepsCard({ clubName }: FirstStepsCardProps) {
     {
       key: 'rules',
       icon: trophyOutline,
-      href: '/tabs/profile/club',
+      href: '/tabs/profile/rules',
     },
   ] as const;
 

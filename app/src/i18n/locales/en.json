@@ -359,5 +359,46 @@
     "teamCreated": "Team created",
     "lastAdminHint": "This person is the only board member. Appoint someone else before changing their role or status.",
     "count_one": "{{count}} member"
+  },
+  "pointRules": {
+    "title": "Point rules",
+    "empty": "No rules yet",
+    "label": "Label",
+    "points": "Points",
+    "code": "Technical code",
+    "codeHint": "The code identifies the rule technically. It is unique per club and cannot be changed later.",
+    "codeTaken": "That code already exists in your club.",
+    "pillarLabel": "Pillar",
+    "active": "Rule is active",
+    "inactive": "Off",
+    "thanksOnly": "Thanks only",
+    "thanksOnlyHint": "A value of zero means “thanks only”: the contribution is acknowledged but shown without a number. A rule that is switched off produces nothing at all.",
+    "forwardHint": "Changes apply to new entries from now on. Points already awarded stay as they are.",
+    "savedForward": "Saved – applies to new entries",
+    "limit": "Frequency limit",
+    "limitMax": "Maximum",
+    "limitNone": "No limit",
+    "limitPeriod": "Per period",
+    "limitShort": "at most {{max}} per {{period}}",
+    "limitHint": "Left empty the rule counts without limit. The limit is checked on the server.",
+    "addRule": "Own rule",
+    "ruleCreated": "Rule created",
+    "enableAll": "All on",
+    "disableAll": "All off",
+    "pillar": {
+      "1": "Training commitment",
+      "2": "Competition",
+      "3": "Volunteering",
+      "4": "Club life",
+      "5": "Growth and loyalty",
+      "6": "Reliability",
+      "7": "Marketplace"
+    },
+    "period": {
+      "day": "day",
+      "week": "week",
+      "month": "month",
+      "season": "season"
+    }
   }
 }

@@ -6,7 +6,7 @@
 **Use Case Name:** Punkteregeln konfigurieren
 **Primary Actor:** Vorstand
 **Goal:** Das Punktesystem an die Kultur des eigenen Vereins anpassen
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

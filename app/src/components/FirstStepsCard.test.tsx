@@ -33,7 +33,7 @@ describe('FirstStepsCard', () => {
     expect(targets).toEqual([
       '/tabs/agenda',
       '/tabs/profile/invite',
-      '/tabs/profile/club',
+      '/tabs/profile/rules',
     ]);
   });
 
