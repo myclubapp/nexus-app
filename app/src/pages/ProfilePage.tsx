@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  IonBadge,
   IonButton,
   IonInput,
   IonItem,
@@ -14,6 +15,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { useClub } from '../hooks/useClub';
+import { usePendingJoinRequests } from '../hooks/useJoinRequests';
 import { useMyPoints } from '../hooks/useGamification';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
@@ -28,6 +30,7 @@ export function ProfilePage() {
   const { signOut, user, setPassword } = useAuth();
   const { activeMembership, activeClub, memberships, setActiveClub, isAdmin } = useClub();
   const points = useMyPoints();
+  const pendingRequests = usePendingJoinRequests();
   const queryClient = useQueryClient();
   const toast = useToast();
 
@@ -138,6 +141,17 @@ export function ProfilePage() {
         {isAdmin && (
           <IonItem button routerLink="/tabs/profile/invite" detail>
             <IonLabel>{t('invite.title')}</IonLabel>
+          </IonItem>
+        )}
+
+        {isAdmin && (
+          <IonItem button routerLink="/tabs/profile/requests" detail>
+            <IonLabel>{t('joinRequest.title')}</IonLabel>
+            {(pendingRequests.data?.length ?? 0) > 0 && (
+              <IonBadge slot="end" color="danger">
+                {pendingRequests.data!.length}
+              </IonBadge>
+            )}
           </IonItem>
         )}
 

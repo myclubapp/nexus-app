@@ -6,7 +6,7 @@
 **Use Case Name:** Beitritts-Anfrage entscheiden
 **Primary Actor:** Vorstand
 **Goal:** Über eine offene Beitritts-Anfrage entscheiden und die Person aufnehmen oder ablehnen
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

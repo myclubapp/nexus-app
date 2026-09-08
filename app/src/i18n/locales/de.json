@@ -67,7 +67,6 @@
     },
     "clubKindHint": "Das steuert nur die Vorlagen – alles ist später änderbar.",
     "inviteCode": "Einladungscode",
-    "requestSent": "Anfrage gesendet. Du bekommst eine Nachricht, sobald sie freigegeben ist.",
     "createAndContinue": "Verein erstellen",
     "clubNameHint": "Der Name, unter dem euch alle kennen.",
     "clubNameLabel": "Vereinsname",
@@ -77,7 +76,19 @@
     "seasonStartHint": "Danach richten sich Punktestand und Ranglisten.",
     "seasonStartFootnote": "Der Vorschlag passt zu eurer Vereinsart und ist jederzeit änderbar.",
     "joinNow": "Beitreten",
-    "createAnother": "Weiteren Verein gründen"
+    "createAnother": "Weiteren Verein gründen",
+    "requestJoin": "Anfrage",
+    "clubSlug": "Kurzname des Vereins",
+    "clubSlugHint": "Den Kurznamen nennt euch der Verein. Ein Verzeichnis aller Vereine gibt es bewusst nicht.",
+    "findClub": "Verein suchen",
+    "clubFound": "Gefundener Verein",
+    "clubFoundHint": "Stimmt das? Dann kannst du deine Anfrage senden.",
+    "clubNotFound": "Zu diesem Kurznamen gibt es keinen Verein. Frag im Verein nach der genauen Schreibweise.",
+    "sendRequest": "Anfrage senden",
+    "requestPending": "Deine Anfrage läuft",
+    "requestPendingHint": "Du erhältst eine Nachricht, sobald der Vorstand entschieden hat.",
+    "requestWaiting": "Wartet auf den Entscheid des Vorstands",
+    "withdrawRequest": "Anfrage zurückziehen"
   },
   "tabs": {
     "dashboard": "Start",
@@ -276,5 +287,20 @@
     "created": "Einladung erstellt",
     "revoked": "Einladung zurückgezogen",
     "expiresRequired": "Bitte ein Ablaufdatum wählen."
+  },
+  "joinRequest": {
+    "title": "Beitritts-Anfragen",
+    "listTitle": "Offene Anfragen",
+    "listFootnote": "Eine Anfrage antippen, um zu entscheiden.",
+    "empty": "Zurzeit liegt keine Anfrage vor",
+    "decide": "Über die Anfrage entscheiden",
+    "decideHint": "Ohne abweichende Wahl wird die Person Mitglied.",
+    "requestedAt": "Angefragt am",
+    "requestedOn": "Angefragt am {{date}}",
+    "approve": "Aufnehmen",
+    "approved": "Person aufgenommen",
+    "reject": "Ablehnen",
+    "rejected": "Anfrage abgelehnt",
+    "rejectHint": "Die Person erhält eine neutrale Nachricht. Eine Begründung wird nicht gespeichert."
   }
 }

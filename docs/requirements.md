@@ -36,8 +36,8 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-006 | Zero-Config-Start            | Als Vorstand möchte ich nach der Gründung sofort Agenda, Einladung und Standard-Punkteregeln nutzen können, damit ich nichts konfigurieren muss (K7).           | High     | In Progress |
 | FR-007 | Einladung erstellen          | Als Vorstand möchte ich Einladungslinks und QR-Codes mit Geltungsbereich, Rolle und Ablaufdatum erzeugen, damit ich Mitglieder gezielt aufnehmen kann.          | High     | Implemented |
 | FR-008 | Einladung einlösen           | Als Gast möchte ich über einen Einladungslink in unter 60 Sekunden Mitglied werden, damit der Beitritt keine Hürde ist.                                         | High     | Implemented |
-| FR-009 | Beitritts-Anfrage stellen    | Als Gast möchte ich ohne Einladung eine Beitritts-Anfrage an einen Verein stellen, damit ich auch ohne Link dazustossen kann.                                   | Medium   | In Progress |
-| FR-010 | Beitritts-Anfrage entscheiden| Als Vorstand möchte ich Beitritts-Anfragen genehmigen oder ablehnen, damit nur berechtigte Personen Zugang zum Verein erhalten.                                 | High     | In Progress |
+| FR-009 | Beitritts-Anfrage stellen    | Als Gast möchte ich ohne Einladung eine Beitritts-Anfrage an einen Verein stellen, damit ich auch ohne Link dazustossen kann.                                   | Medium   | Implemented |
+| FR-010 | Beitritts-Anfrage entscheiden| Als Vorstand möchte ich Beitritts-Anfragen genehmigen oder ablehnen, damit nur berechtigte Personen Zugang zum Verein erhalten.                                 | High     | Implemented |
 | FR-011 | Mehrere Vereine              | Als Mitglied möchte ich mehreren Vereinen angehören und zwischen ihnen wechseln, damit ich nur ein Konto brauche.                                               | Medium   | Open        |
 | FR-012 | Konto löschen                | Als Mitglied möchte ich mein Konto in der App löschen, damit ich die Kontrolle über meine Daten behalte (Store-Pflicht).                                        | High     | Open        |
 

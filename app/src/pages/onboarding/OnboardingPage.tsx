@@ -4,6 +4,7 @@ import {
   IonInput,
   IonItem,
   IonLabel,
+  IonNote,
   IonRadio,
   IonRadioGroup,
   IonSegment,
@@ -14,14 +15,22 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useCreateClub, useRedeemInvite } from '../../hooks/useOnboarding';
+import {
+  useFindClub,
+  useMyJoinRequest,
+  useRequestJoin,
+  useWithdrawJoinRequest,
+  type ClubLookup,
+} from '../../hooks/useJoinRequests';
 import { AppPage } from '../../components/AppPage';
 import { ListSection } from '../../components/ListSection';
 import { InlineError } from '../../components/StateViews';
 import { Wizard, type WizardStep } from '../../components/Wizard';
 import { CLUB_KINDS, defaultSeasonStart } from '../../lib/clubKind';
+import { normaliseClubSlug } from '../../lib/joinRequest';
 import type { ClubKind } from '../../lib/database.types';
 
-type Mode = 'create' | 'join';
+type Mode = 'create' | 'join' | 'request';
 
 /**
  * Onboarding: gründen oder beitreten (UC-001, UC-002).
@@ -39,6 +48,10 @@ export function OnboardingPage() {
   const { signOut } = useAuth();
   const createClub = useCreateClub();
   const redeemInvite = useRedeemInvite();
+  const findClub = useFindClub();
+  const requestJoin = useRequestJoin();
+  const withdrawRequest = useWithdrawJoinRequest();
+  const myRequest = useMyJoinRequest();
 
   const [mode, setMode] = useState<Mode>('create');
   const [step, setStep] = useState(0);
@@ -51,6 +64,9 @@ export function OnboardingPage() {
   const [seasonStart, setSeasonStart] = useState('');
 
   const [inviteCode, setInviteCode] = useState('');
+  const [clubSlug, setClubSlug] = useState('');
+  const [foundClub, setFoundClub] = useState<ClubLookup | null>(null);
+  const [lookupFailed, setLookupFailed] = useState(false);
 
   const suggestedSeasonStart = useMemo(
     () => defaultSeasonStart(clubKind),
@@ -152,6 +168,9 @@ export function OnboardingPage() {
           <IonSegmentButton value="join">
             <IonLabel>{t('onboarding.hasInvite')}</IonLabel>
           </IonSegmentButton>
+          <IonSegmentButton value="request">
+            <IonLabel>{t('onboarding.requestJoin')}</IonLabel>
+          </IonSegmentButton>
         </IonSegment>
       </div>
 
@@ -181,6 +200,122 @@ export function OnboardingPage() {
             )
           }
         />
+      ) : mode === 'request' ? (
+        <>
+          {/* Die eigene offene Anfrage geht allem vor: Ohne sie wüsste die
+              Person nicht, dass sie wartet (A3 bietet den Rückzug an). */}
+          {myRequest.data ? (
+            <>
+              <ListSection
+                title={t('onboarding.requestPending')}
+                footnote={t('onboarding.requestPendingHint')}
+              >
+                <IonItem>
+                  <IonLabel className="ion-text-wrap">
+                    <h2>{myRequest.data.clubName}</h2>
+                    <IonNote>{t('onboarding.requestWaiting')}</IonNote>
+                  </IonLabel>
+                </IonItem>
+              </ListSection>
+
+              {withdrawRequest.error && (
+                <InlineError message={(withdrawRequest.error as Error).message} />
+              )}
+
+              <div className="app-actions">
+                <IonButton
+                  expand="block"
+                  fill="outline"
+                  color="medium"
+                  disabled={withdrawRequest.isPending}
+                  onClick={() => withdrawRequest.mutate(myRequest.data!.id)}
+                >
+                  {withdrawRequest.isPending ? (
+                    <IonSpinner name="crescent" />
+                  ) : (
+                    t('onboarding.withdrawRequest')
+                  )}
+                </IonButton>
+              </div>
+            </>
+          ) : (
+            <>
+              <ListSection footnote={t('onboarding.clubSlugHint')}>
+                <IonItem>
+                  <IonInput
+                    label={t('onboarding.clubSlug')}
+                    labelPlacement="stacked"
+                    autocapitalize="off"
+                    value={clubSlug}
+                    onIonInput={(e) => {
+                      setClubSlug(e.detail.value ?? '');
+                      setFoundClub(null);
+                      setLookupFailed(false);
+                    }}
+                  />
+                </IonItem>
+              </ListSection>
+
+              {foundClub && (
+                <ListSection title={t('onboarding.clubFound')}>
+                  <IonItem>
+                    <IonLabel className="ion-text-wrap">
+                      <h2>{foundClub.clubName}</h2>
+                      <IonNote>{t('onboarding.clubFoundHint')}</IonNote>
+                    </IonLabel>
+                  </IonItem>
+                </ListSection>
+              )}
+
+              {lookupFailed && <InlineError message={t('onboarding.clubNotFound')} />}
+              {findClub.error && (
+                <InlineError message={(findClub.error as Error).message} />
+              )}
+              {requestJoin.error && (
+                <InlineError message={(requestJoin.error as Error).message} />
+              )}
+
+              <div className="app-actions">
+                {foundClub ? (
+                  <IonButton
+                    expand="block"
+                    disabled={requestJoin.isPending}
+                    onClick={() =>
+                      requestJoin.mutate({ clubId: foundClub.clubId })
+                    }
+                  >
+                    {requestJoin.isPending ? (
+                      <IonSpinner name="crescent" />
+                    ) : (
+                      t('onboarding.sendRequest')
+                    )}
+                  </IonButton>
+                ) : (
+                  <IonButton
+                    expand="block"
+                    disabled={
+                      findClub.isPending || normaliseClubSlug(clubSlug).length < 2
+                    }
+                    onClick={() =>
+                      findClub.mutate(normaliseClubSlug(clubSlug), {
+                        onSuccess: (club) => {
+                          setFoundClub(club);
+                          setLookupFailed(club === null);
+                        },
+                      })
+                    }
+                  >
+                    {findClub.isPending ? (
+                      <IonSpinner name="crescent" />
+                    ) : (
+                      t('onboarding.findClub')
+                    )}
+                  </IonButton>
+                )}
+              </div>
+            </>
+          )}
+        </>
       ) : (
         <>
           <ListSection footnote={t('onboarding.hasInviteHint')}>

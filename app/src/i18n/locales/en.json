@@ -67,7 +67,6 @@
     },
     "clubKindHint": "This only picks the templates – everything stays changeable.",
     "inviteCode": "Invitation code",
-    "requestSent": "Request sent. You will get a message as soon as it is approved.",
     "createAndContinue": "Create club",
     "clubNameHint": "The name everyone knows you by.",
     "clubNameLabel": "Club name",
@@ -77,7 +76,19 @@
     "seasonStartHint": "Point totals and leaderboards follow this date.",
     "seasonStartFootnote": "The suggestion matches your kind of club and can be changed any time.",
     "joinNow": "Join",
-    "createAnother": "Start another club"
+    "createAnother": "Start another club",
+    "requestJoin": "Request",
+    "clubSlug": "Club short name",
+    "clubSlugHint": "The club tells you its short name. There is deliberately no directory of clubs.",
+    "findClub": "Find the club",
+    "clubFound": "Club found",
+    "clubFoundHint": "Is that the one? Then you can send your request.",
+    "clubNotFound": "No club with that short name. Ask the club for the exact spelling.",
+    "sendRequest": "Send request",
+    "requestPending": "Your request is pending",
+    "requestPendingHint": "You will get a message as soon as the board has decided.",
+    "requestWaiting": "Waiting for the board’s decision",
+    "withdrawRequest": "Withdraw request"
   },
   "tabs": {
     "dashboard": "Home",
@@ -276,5 +287,20 @@
     "created": "Invitation created",
     "revoked": "Invitation revoked",
     "expiresRequired": "Please pick an expiry date."
+  },
+  "joinRequest": {
+    "title": "Join requests",
+    "listTitle": "Open requests",
+    "listFootnote": "Tap a request to decide.",
+    "empty": "No request at the moment",
+    "decide": "Decide on the request",
+    "decideHint": "Without a different choice the person becomes a member.",
+    "requestedAt": "Requested on",
+    "requestedOn": "Requested on {{date}}",
+    "approve": "Accept",
+    "approved": "Person accepted",
+    "reject": "Decline",
+    "rejected": "Request declined",
+    "rejectHint": "The person gets a neutral message. No reason is stored."
   }
 }

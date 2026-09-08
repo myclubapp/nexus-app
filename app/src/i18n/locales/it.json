@@ -67,7 +67,6 @@
     },
     "clubKindHint": "Determina solo i modelli – tutto è modificabile in seguito.",
     "inviteCode": "Codice d'invito",
-    "requestSent": "Richiesta inviata. Riceverai un messaggio appena sarà approvata.",
     "createAndContinue": "Crea la società",
     "clubNameHint": "Il nome con cui tutti vi conoscono.",
     "clubNameLabel": "Nome della società",
@@ -77,7 +76,19 @@
     "seasonStartHint": "Punteggio e classifiche si basano su questa data.",
     "seasonStartFootnote": "La proposta corrisponde al tipo di società ed è modificabile in ogni momento.",
     "joinNow": "Aderisci",
-    "createAnother": "Fondare un’altra società"
+    "createAnother": "Fondare un’altra società",
+    "requestJoin": "Richiesta",
+    "clubSlug": "Nome breve della società",
+    "clubSlugHint": "La società ti comunica il nome breve. Un elenco di tutte le società non esiste, di proposito.",
+    "findClub": "Cerca la società",
+    "clubFound": "Società trovata",
+    "clubFoundHint": "È quella giusta? Allora puoi inviare la richiesta.",
+    "clubNotFound": "Nessuna società con questo nome breve. Chiedi la grafia esatta.",
+    "sendRequest": "Invia la richiesta",
+    "requestPending": "La tua richiesta è in corso",
+    "requestPendingHint": "Riceverai un messaggio appena il comitato avrà deciso.",
+    "requestWaiting": "In attesa della decisione del comitato",
+    "withdrawRequest": "Ritira la richiesta"
   },
   "tabs": {
     "dashboard": "Home",
@@ -276,5 +287,20 @@
     "created": "Invito creato",
     "revoked": "Invito ritirato",
     "expiresRequired": "Scegli una data di scadenza."
+  },
+  "joinRequest": {
+    "title": "Richieste di adesione",
+    "listTitle": "Richieste aperte",
+    "listFootnote": "Tocca una richiesta per decidere.",
+    "empty": "Al momento non c’è nessuna richiesta",
+    "decide": "Decidere sulla richiesta",
+    "decideHint": "Senza una scelta diversa la persona diventa membro.",
+    "requestedAt": "Richiesto il",
+    "requestedOn": "Richiesto il {{date}}",
+    "approve": "Accetta",
+    "approved": "Persona accettata",
+    "reject": "Rifiuta",
+    "rejected": "Richiesta rifiutata",
+    "rejectHint": "La persona riceve un messaggio neutro. Nessuna motivazione viene salvata."
   }
 }

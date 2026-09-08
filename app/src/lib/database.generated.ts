@@ -443,6 +443,7 @@ export type Database = {
       notifications: {
         Row: {
           body: string | null
+          category: string
           club_id: string | null
           created_at: string
           id: string
@@ -453,6 +454,7 @@ export type Database = {
         }
         Insert: {
           body?: string | null
+          category?: string
           club_id?: string | null
           created_at?: string
           id?: string
@@ -463,6 +465,7 @@ export type Database = {
         }
         Update: {
           body?: string | null
+          category?: string
           club_id?: string | null
           created_at?: string
           id?: string
@@ -907,10 +910,37 @@ export type Database = {
         Returns: string
       }
       current_member_id: { Args: { p_club_id: string }; Returns: string }
+      decide_join_request: {
+        Args: {
+          p_approve: boolean
+          p_request_id: string
+          p_role?: string
+          p_team_id?: string
+        }
+        Returns: string
+      }
       default_event_labels: { Args: { p_club_kind: string }; Returns: Json }
       default_season_start: { Args: { p_club_kind: string }; Returns: string }
+      find_club_by_slug: {
+        Args: { p_slug: string }
+        Returns: {
+          club_id: string
+          club_name: string
+        }[]
+      }
       is_club_admin: { Args: { p_club_id: string }; Returns: boolean }
       is_club_member: { Args: { p_club_id: string }; Returns: boolean }
+      notify: {
+        Args: {
+          p_body?: string
+          p_category: string
+          p_club_id?: string
+          p_link?: string
+          p_title: string
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       preview_invite: {
         Args: { p_code: string }
         Returns: {
@@ -926,6 +956,10 @@ export type Database = {
         Args: { p_code: string; p_display_name?: string }
         Returns: string
       }
+      request_join: {
+        Args: { p_club_id: string; p_team_id?: string }
+        Returns: string
+      }
       season_label: {
         Args: { p_at?: string; p_club_id: string }
         Returns: string
@@ -935,6 +969,10 @@ export type Database = {
         Returns: undefined
       }
       slugify: { Args: { p_value: string }; Returns: string }
+      withdraw_join_request: {
+        Args: { p_request_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
