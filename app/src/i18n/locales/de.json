@@ -400,5 +400,37 @@
       "month": "Monat",
       "season": "Saison"
     }
+  },
+  "eventForm": {
+    "title": "Termin erstellen",
+    "create": "Erstellen",
+    "created": "Termin erstellt",
+    "type": "Termintyp",
+    "eventTitle": "Titel",
+    "startsAt": "Beginn",
+    "endsAt": "Ende",
+    "location": "Ort",
+    "endBeforeStart": "Das Ende muss nach dem Beginn liegen.",
+    "why": "Wozu dient das? Wem hilft es?",
+    "whyHint": "Ein Aufruf trägt seinen Sinnzusammenhang. Ohne ihn lässt er sich nicht publizieren.",
+    "wholeClub": "Ganzer Verein",
+    "scopeHint": "Ein Team-Termin erscheint nur in der Agenda dieses Teams.",
+    "rule": "Punkteregel",
+    "noRule": "Keine Punkte",
+    "ruleHint": "Der Punktwert einer Teilnahme ergibt sich aus dieser Regel, nicht aus einer Eingabe beim Check-in.",
+    "repeats": "Wiederholt sich",
+    "rhythm": "Rhythmus",
+    "until": "Bis",
+    "rhythmValue": {
+      "weekly": "Wöchentlich",
+      "biweekly": "Alle zwei Wochen",
+      "monthly": "Monatlich"
+    },
+    "seriesHint": "Eine Serie legt alle Termine auf einmal an und verknüpft sie miteinander.",
+    "previewTitle_other": "Vorschau: {{count}} Termine",
+    "previewMore_other": "und {{count}} weitere",
+    "previewCapped": "Mehr als {{max}} Termine legt eine Serie nicht an. Wähle ein früheres Enddatum.",
+    "previewTitle_one": "Vorschau: {{count}} Termin",
+    "previewMore_one": "und {{count}} weiterer"
   }
 }

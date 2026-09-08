@@ -400,5 +400,37 @@
       "month": "month",
       "season": "season"
     }
+  },
+  "eventForm": {
+    "title": "Create event",
+    "create": "Create",
+    "created": "Event created",
+    "type": "Event type",
+    "eventTitle": "Title",
+    "startsAt": "Starts",
+    "endsAt": "Ends",
+    "location": "Location",
+    "endBeforeStart": "The end must be after the start.",
+    "why": "What is it for? Who does it help?",
+    "whyHint": "A call to action carries its purpose. Without it, it cannot be published.",
+    "wholeClub": "Whole club",
+    "scopeHint": "A team event appears only in that team’s agenda.",
+    "rule": "Point rule",
+    "noRule": "No points",
+    "ruleHint": "The value of attending follows from this rule, not from an entry at check-in.",
+    "repeats": "Repeats",
+    "rhythm": "Rhythm",
+    "until": "Until",
+    "rhythmValue": {
+      "weekly": "Weekly",
+      "biweekly": "Every two weeks",
+      "monthly": "Monthly"
+    },
+    "seriesHint": "A series creates all events at once and links them together.",
+    "previewTitle_other": "Preview: {{count}} events",
+    "previewMore_other": "and {{count}} more",
+    "previewCapped": "A series creates at most {{max}} events. Choose an earlier end date.",
+    "previewTitle_one": "Preview: {{count}} event",
+    "previewMore_one": "and {{count}} more"
   }
 }

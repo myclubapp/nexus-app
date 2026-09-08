@@ -3,6 +3,7 @@ import {
   IonBadge,
   IonButton,
   IonButtons,
+  IonIcon,
   IonItem,
   IonLabel,
   IonList,
@@ -10,6 +11,7 @@ import {
   IonSegment,
   IonSegmentButton,
 } from '@ionic/react';
+import { addOutline } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { useAgenda, useRespondToEvent } from '../hooks/useAgenda';
 import { useClub } from '../hooks/useClub';
@@ -19,16 +21,18 @@ import { SkeletonList } from '../components/Skeletons';
 import { useToast } from '../hooks/useToast';
 import { formatDateTime } from '../lib/format';
 import { CheckInModal } from '../components/CheckInModal';
+import { EventFormModal } from '../components/EventFormModal';
 
 type Range = 'upcoming' | 'past';
 
 export function AgendaPage() {
   const { t } = useTranslation();
-  const { activeMembership, eventLabel } = useClub();
+  const { activeMembership, eventLabel, isTrainer } = useClub();
+  const toast = useToast();
   const [range, setRange] = useState<Range>('upcoming');
   const [checkInEventId, setCheckInEventId] = useState<string | null>(null);
+  const [isFormOpen, setFormOpen] = useState(false);
 
-  const toast = useToast();
   const agenda = useAgenda(range);
   const respond = useRespondToEvent();
   const events = agenda.data ?? [];
@@ -36,6 +40,20 @@ export function AgendaPage() {
   return (
     <AppPage
       title={t('agenda.title')}
+      toolbarEnd={
+        // BR-033: Termine erfassen Trainer:innen und der Vorstand.
+        isTrainer ? (
+          <IonButtons slot="end">
+            <IonButton onClick={() => setFormOpen(true)}>
+              <IonIcon
+                slot="icon-only"
+                icon={addOutline}
+                aria-label={t('eventForm.title')}
+              />
+            </IonButton>
+          </IonButtons>
+        ) : undefined
+      }
       subToolbar={
         <IonSegment
           value={range}
@@ -137,6 +155,15 @@ export function AgendaPage() {
       <CheckInModal
         eventId={checkInEventId}
         onDismiss={() => setCheckInEventId(null)}
+      />
+
+      <EventFormModal
+        isOpen={isFormOpen}
+        onDismiss={() => setFormOpen(false)}
+        onDone={() => {
+          setFormOpen(false);
+          toast.success(t('eventForm.created'));
+        }}
       />
     </AppPage>
   );

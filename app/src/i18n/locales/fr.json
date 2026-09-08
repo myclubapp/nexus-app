@@ -400,5 +400,37 @@
       "month": "mois",
       "season": "saison"
     }
+  },
+  "eventForm": {
+    "title": "Créer un rendez-vous",
+    "create": "Créer",
+    "created": "Rendez-vous créé",
+    "type": "Type",
+    "eventTitle": "Titre",
+    "startsAt": "Début",
+    "endsAt": "Fin",
+    "location": "Lieu",
+    "endBeforeStart": "La fin doit se situer après le début.",
+    "why": "À quoi cela sert-il? À qui cela aide-t-il?",
+    "whyHint": "Un appel porte son sens. Sans lui, il ne peut pas être publié.",
+    "wholeClub": "Toute la société",
+    "scopeHint": "Un rendez-vous d’équipe n’apparaît que dans l’agenda de cette équipe.",
+    "rule": "Règle de points",
+    "noRule": "Aucun point",
+    "ruleHint": "La valeur d’une participation découle de cette règle, pas d’une saisie lors du check-in.",
+    "repeats": "Se répète",
+    "rhythm": "Rythme",
+    "until": "Jusqu’au",
+    "rhythmValue": {
+      "weekly": "Hebdomadaire",
+      "biweekly": "Toutes les deux semaines",
+      "monthly": "Mensuel"
+    },
+    "seriesHint": "Une série crée tous les rendez-vous d’un coup et les relie entre eux.",
+    "previewTitle_other": "Aperçu: {{count}} rendez-vous",
+    "previewMore_other": "et {{count}} autres",
+    "previewCapped": "Une série ne crée pas plus de {{max}} rendez-vous. Choisissez une date de fin plus proche.",
+    "previewTitle_one": "Aperçu: {{count}} rendez-vous",
+    "previewMore_one": "et {{count}} autre"
   }
 }

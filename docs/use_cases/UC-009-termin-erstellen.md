@@ -6,7 +6,7 @@
 **Use Case Name:** Termin erstellen
 **Primary Actor:** Trainer:in
 **Goal:** Einen einzelnen Termin oder eine Terminserie erfassen, damit das Team Bescheid weiss
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

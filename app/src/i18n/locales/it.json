@@ -400,5 +400,37 @@
       "month": "mese",
       "season": "stagione"
     }
+  },
+  "eventForm": {
+    "title": "Crea un appuntamento",
+    "create": "Crea",
+    "created": "Appuntamento creato",
+    "type": "Tipo",
+    "eventTitle": "Titolo",
+    "startsAt": "Inizio",
+    "endsAt": "Fine",
+    "location": "Luogo",
+    "endBeforeStart": "La fine deve essere dopo l’inizio.",
+    "why": "A cosa serve? A chi aiuta?",
+    "whyHint": "Un appello porta il suo senso. Senza, non può essere pubblicato.",
+    "wholeClub": "Tutta la società",
+    "scopeHint": "Un appuntamento di squadra appare solo nell’agenda di quella squadra.",
+    "rule": "Regola dei punti",
+    "noRule": "Nessun punto",
+    "ruleHint": "Il valore di una partecipazione deriva da questa regola, non da un’immissione al check-in.",
+    "repeats": "Si ripete",
+    "rhythm": "Ritmo",
+    "until": "Fino al",
+    "rhythmValue": {
+      "weekly": "Settimanale",
+      "biweekly": "Ogni due settimane",
+      "monthly": "Mensile"
+    },
+    "seriesHint": "Una serie crea tutti gli appuntamenti in una volta e li collega tra loro.",
+    "previewTitle_other": "Anteprima: {{count}} appuntamenti",
+    "previewMore_other": "e altri {{count}}",
+    "previewCapped": "Una serie non crea più di {{max}} appuntamenti. Scegli una data di fine più vicina.",
+    "previewTitle_one": "Anteprima: {{count}} appuntamento",
+    "previewMore_one": "e altro {{count}}"
   }
 }

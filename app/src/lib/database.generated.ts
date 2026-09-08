@@ -184,6 +184,45 @@ export type Database = {
         }
         Relationships: []
       }
+      event_series: {
+        Row: {
+          club_id: string
+          created_at: string
+          id: string
+          rule: Json
+          team_id: string | null
+        }
+        Insert: {
+          club_id: string
+          created_at?: string
+          id?: string
+          rule?: Json
+          team_id?: string | null
+        }
+        Update: {
+          club_id?: string
+          created_at?: string
+          id?: string
+          rule?: Json
+          team_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_series_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_series_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_shifts: {
         Row: {
           ends_at: string | null
@@ -224,43 +263,67 @@ export type Database = {
       }
       events: {
         Row: {
+          audience_role_ids: Json | null
+          cancelled_at: string | null
+          cancelled_reason: string | null
+          capacity_needed: number | null
           club_id: string
           created_at: string
+          created_by: string | null
           ends_at: string | null
           id: string
+          is_sample: boolean
           location: string | null
           point_rule_code: string | null
           qr_token: string
+          series_id: string | null
           starts_at: string
           team_id: string | null
           title: string
           type: string
+          why: string | null
         }
         Insert: {
+          audience_role_ids?: Json | null
+          cancelled_at?: string | null
+          cancelled_reason?: string | null
+          capacity_needed?: number | null
           club_id: string
           created_at?: string
+          created_by?: string | null
           ends_at?: string | null
           id?: string
+          is_sample?: boolean
           location?: string | null
           point_rule_code?: string | null
           qr_token?: string
+          series_id?: string | null
           starts_at: string
           team_id?: string | null
           title: string
           type: string
+          why?: string | null
         }
         Update: {
+          audience_role_ids?: Json | null
+          cancelled_at?: string | null
+          cancelled_reason?: string | null
+          capacity_needed?: number | null
           club_id?: string
           created_at?: string
+          created_by?: string | null
           ends_at?: string | null
           id?: string
+          is_sample?: boolean
           location?: string | null
           point_rule_code?: string | null
           qr_token?: string
+          series_id?: string | null
           starts_at?: string
           team_id?: string | null
           title?: string
           type?: string
+          why?: string | null
         }
         Relationships: [
           {
@@ -268,6 +331,34 @@ export type Database = {
             columns: ["club_id"]
             isOneToOne: false
             referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "events_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "event_series"
             referencedColumns: ["id"]
           },
           {
@@ -1012,6 +1103,7 @@ export type Database = {
       }
     }
     Functions: {
+      announce_event: { Args: { p_event_id: string }; Returns: number }
       award_points: {
         Args: {
           p_member_id: string
@@ -1021,6 +1113,10 @@ export type Database = {
           p_source_type: string
         }
         Returns: number
+      }
+      cancel_event: {
+        Args: { p_event_id: string; p_reason: string }
+        Returns: undefined
       }
       check_in: {
         Args: { p_event_id: string; p_qr_token: string }
@@ -1080,6 +1176,7 @@ export type Database = {
       }
       is_club_admin: { Args: { p_club_id: string }; Returns: boolean }
       is_club_member: { Args: { p_club_id: string }; Returns: boolean }
+      is_club_trainer: { Args: { p_club_id: string }; Returns: boolean }
       my_clubs_left_without_admin: {
         Args: never
         Returns: {
