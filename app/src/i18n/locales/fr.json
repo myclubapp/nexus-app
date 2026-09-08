@@ -302,5 +302,28 @@
     "reject": "Refuser",
     "rejected": "Demande refusée",
     "rejectHint": "La personne reçoit un message neutre. Aucun motif n’est enregistré."
+  },
+  "deleteAccount": {
+    "title": "Supprimer le compte",
+    "intro": "Si vous supprimez votre compte, vos données personnelles disparaissent de toutes les sociétés dont vous faites partie. L’opération est irréversible.",
+    "removedTitle": "Ce qui est supprimé",
+    "removed": {
+      "profile": "Votre nom affiché et votre photo de profil",
+      "contact": "Vos coordonnées et votre compte de connexion",
+      "notifications": "Vos notifications et enregistrements push",
+      "private": "Vos notes privées et réponses de check-in"
+    },
+    "keptTitle": "Ce qui subsiste",
+    "kept": {
+      "points": "Vos écritures de points – sans lien avec vous"
+    },
+    "keptFootnote": "Elles comptent encore dans les statistiques de la société, mais ne portent plus de nom. Aucun classement passé n’est ainsi faussé.",
+    "blockedTitle": "Pas encore possible",
+    "blockedHint": "Dans ces sociétés, vous êtes la seule personne avec les droits du comité. Désignez d’abord quelqu’un d’autre – ou supprimez la société.",
+    "confirmWord": "SUPPRIMER",
+    "confirmLabel": "Tapez {{word}} pour confirmer",
+    "confirmHint": "Nous demandons explicitement: tapez {{word}} dans le champ, car l’opération est irréversible.",
+    "confirmAction": "Supprimer définitivement le compte",
+    "irreversible": "Vous serez ensuite déconnecté·e."
   }
 }

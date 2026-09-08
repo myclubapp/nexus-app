@@ -43,7 +43,7 @@ und Router in einem Aufruf.
 
 ### Was Ionic in jsdom anders macht
 
-Vier Eigenheiten, die reihenweise Tests scheitern lassen, wenn man sie nicht
+Fünf Eigenheiten, die reihenweise Tests scheitern lassen, wenn man sie nicht
 kennt. Sie sind ausgemessen, nicht vermutet:
 
 1. **Eigenschaften kommen als DOM-Properties an, nicht als Attribute.**
@@ -91,6 +91,16 @@ kennt. Sie sind ausgemessen, nicht vermutet:
    Ein Komponententest prüft deshalb **was in einem Zustand zu sehen ist**,
    nicht was ein Klick auslöst. Echte Bedienung braucht einen Browser; das ist
    bewusst zurückgestellt (§4).
+
+5. **`IonModal` rendert seinen Inhalt gar nicht.** In jsdom bleibt das Blatt
+   leer – auch mit `isOpen`. Ein Test gegen den Inhalt eines Blattes findet
+   nichts.
+
+   Auch daraus folgt eine Entwurfsregel: **Der Inhalt eines Blattes gehört in
+   eine eigene, exportierte Komponente**, die der Test direkt rendert. Vorbild
+   ist `DeleteAccountContent` in `src/components/DeleteAccountModal.tsx` – erst
+   diese Trennung macht die Erklärung der Kontolöschung und die Sperre für den
+   einzigen Vorstand prüfbar.
 
 **Zusicherungen auf Ionic-Interna** wie `translucent` oder `collapse` sind
 verboten. Geprüft wird die eigene Struktur (`ion-content > ion-header`) und das,

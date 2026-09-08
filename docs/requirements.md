@@ -39,7 +39,7 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-009 | Beitritts-Anfrage stellen    | Als Gast möchte ich ohne Einladung eine Beitritts-Anfrage an einen Verein stellen, damit ich auch ohne Link dazustossen kann.                                   | Medium   | Implemented |
 | FR-010 | Beitritts-Anfrage entscheiden| Als Vorstand möchte ich Beitritts-Anfragen genehmigen oder ablehnen, damit nur berechtigte Personen Zugang zum Verein erhalten.                                 | High     | Implemented |
 | FR-011 | Mehrere Vereine              | Als Mitglied möchte ich mehreren Vereinen angehören und zwischen ihnen wechseln, damit ich nur ein Konto brauche.                                               | Medium   | Open        |
-| FR-012 | Konto löschen                | Als Mitglied möchte ich mein Konto in der App löschen, damit ich die Kontrolle über meine Daten behalte (Store-Pflicht).                                        | High     | Open        |
+| FR-012 | Konto löschen                | Als Mitglied möchte ich mein Konto in der App löschen, damit ich die Kontrolle über meine Daten behalte (Store-Pflicht).                                        | High     | Implemented        |
 
 ### 1.2 Mitglieder & Teams
 
@@ -307,7 +307,7 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | C-020 | Datenschutz-Folgenabschätzung  | Für das Gesundheits-Profiling liegt vor dem Launch eine Datenschutz-Folgenabschätzung vor; ein KI-Register wird ab Tag eins geführt (V6).                | Regulatory  | High     | Open        |
 | C-021 | Zweckbindung Health            | Gesundheitsdaten bezahlter Funktionär:innen dürfen nicht für Anstellungsentscheide verwendet werden; automatische Konsequenzen sind ausgeschlossen (V6). | Regulatory  | High     | Open        |
 | C-022 | Jugendschutz                   | Für Mitglieder unter 16 Jahren ist die Einwilligung der Erziehungsberechtigten erforderlich; öffentliche Profile existieren nicht.                       | Regulatory  | High     | Open        |
-| C-023 | Kontolöschung                  | Die Kontolöschung ist in der App erreichbar (Auflage von App Store und Play Store); die Punktehistorie bleibt anonymisiert erhalten.                     | Regulatory  | High     | Open        |
+| C-023 | Kontolöschung                  | Die Kontolöschung ist in der App erreichbar (Auflage von App Store und Play Store); die Punktehistorie bleibt anonymisiert erhalten.                     | Regulatory  | High     | Implemented        |
 | C-024 | Lizenz                         | Der Quellcode steht unter der EUPL v1.2.                                                                                                                | Regulatory  | Medium   | Open        |
 | C-025 | Hosting                        | Betrieb startet auf Managed Supabase in der Region Zürich; der Wechsel auf Schweizer Self-Hosting bleibt jederzeit möglich.                              | Operational | High     | Open        |
 | C-026 | Anti-Überwachung by Design     | Signale entstehen nur aus Teilnahmedaten; Export individueller Gesundheitsdaten, Sortierung nach Gesundheit und Volltextsuche über fremde Memos fehlen.  | Operational | High     | Open        |

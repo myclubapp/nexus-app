@@ -302,5 +302,28 @@
     "reject": "Decline",
     "rejected": "Request declined",
     "rejectHint": "The person gets a neutral message. No reason is stored."
+  },
+  "deleteAccount": {
+    "title": "Delete account",
+    "intro": "If you delete your account, your personal details disappear from every club you belong to. This cannot be undone.",
+    "removedTitle": "What gets deleted",
+    "removed": {
+      "profile": "Your display name and profile picture",
+      "contact": "Your contact details and sign-in account",
+      "notifications": "Your notifications and push registrations",
+      "private": "Your private notes and check-in answers"
+    },
+    "keptTitle": "What stays",
+    "kept": {
+      "points": "Your point entries – with no link to you"
+    },
+    "keptFootnote": "They still count towards club statistics but carry no name. That way no past season’s leaderboard changes.",
+    "blockedTitle": "Not possible yet",
+    "blockedHint": "In these clubs you are the only person with board rights. Appoint someone else first – or delete the club.",
+    "confirmWord": "DELETE",
+    "confirmLabel": "Type {{word}} to confirm",
+    "confirmHint": "We ask explicitly: type {{word}} in the field, because this cannot be undone.",
+    "confirmAction": "Delete account permanently",
+    "irreversible": "You will be signed out afterwards."
   }
 }

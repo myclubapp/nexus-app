@@ -21,6 +21,7 @@ import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
 import { useToast } from '../hooks/useToast';
 import { FormModal } from '../components/FormModal';
+import { DeleteAccountModal } from '../components/DeleteAccountModal';
 import { PASSWORD_MIN_LENGTH, authErrorKey } from '../lib/authError';
 import { SUPPORTED_LANGUAGES } from '../i18n';
 import { formatDate, formatDateTime } from '../lib/format';
@@ -51,6 +52,7 @@ export function ProfilePage() {
   });
 
   const [isPasswordOpen, setPasswordOpen] = useState(false);
+  const [isDeleteOpen, setDeleteOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isSavingPassword, setSavingPassword] = useState(false);
@@ -207,8 +209,24 @@ export function ProfilePage() {
         <IonButton expand="block" fill="outline" onClick={() => void signOut()}>
           {t('auth.logout')}
         </IonButton>
+
+        {/* C-023: Die Löschung muss aus der App heraus erreichbar sein –
+            eine Auflage beider App-Stores. */}
+        <IonButton
+          expand="block"
+          fill="clear"
+          color="danger"
+          onClick={() => setDeleteOpen(true)}
+        >
+          {t('deleteAccount.title')}
+        </IonButton>
         <IonNote>{t('profile.deleteAccountHint')}</IonNote>
       </div>
+
+      <DeleteAccountModal
+        isOpen={isDeleteOpen}
+        onDismiss={() => setDeleteOpen(false)}
+      />
 
       <FormModal
         isOpen={isPasswordOpen}

@@ -6,7 +6,7 @@
 **Use Case Name:** Konto löschen
 **Primary Actor:** Mitglied
 **Goal:** Das eigene Konto und die personenbezogenen Daten dauerhaft entfernen
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

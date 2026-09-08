@@ -892,6 +892,13 @@ export type Database = {
         }[]
       }
       claim_task: { Args: { p_task_id: string }; Returns: string }
+      clubs_left_without_admin: {
+        Args: { p_user_id: string }
+        Returns: {
+          club_id: string
+          club_name: string
+        }[]
+      }
       confirm_shift: {
         Args: { p_event_id: string; p_member_id: string }
         Returns: number
@@ -921,6 +928,7 @@ export type Database = {
       }
       default_event_labels: { Args: { p_club_kind: string }; Returns: Json }
       default_season_start: { Args: { p_club_kind: string }; Returns: string }
+      delete_my_account: { Args: never; Returns: undefined }
       find_club_by_slug: {
         Args: { p_slug: string }
         Returns: {
@@ -930,6 +938,13 @@ export type Database = {
       }
       is_club_admin: { Args: { p_club_id: string }; Returns: boolean }
       is_club_member: { Args: { p_club_id: string }; Returns: boolean }
+      my_clubs_left_without_admin: {
+        Args: never
+        Returns: {
+          club_id: string
+          club_name: string
+        }[]
+      }
       notify: {
         Args: {
           p_body?: string

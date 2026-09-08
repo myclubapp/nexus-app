@@ -302,5 +302,28 @@
     "reject": "Ablehnen",
     "rejected": "Anfrage abgelehnt",
     "rejectHint": "Die Person erhält eine neutrale Nachricht. Eine Begründung wird nicht gespeichert."
+  },
+  "deleteAccount": {
+    "title": "Konto löschen",
+    "intro": "Wenn du dein Konto löschst, verschwinden deine persönlichen Angaben aus allen Vereinen, denen du angehörst. Der Vorgang lässt sich nicht rückgängig machen.",
+    "removedTitle": "Das wird gelöscht",
+    "removed": {
+      "profile": "Dein Anzeigename und dein Profilbild",
+      "contact": "Deine Kontaktangaben und dein Anmeldekonto",
+      "notifications": "Deine Benachrichtigungen und Push-Registrierungen",
+      "private": "Deine privaten Notizen und Check-in-Antworten"
+    },
+    "keptTitle": "Das bleibt bestehen",
+    "kept": {
+      "points": "Deine Punktebuchungen – ohne Bezug zu dir"
+    },
+    "keptFootnote": "Sie zählen weiter zur Vereinsstatistik, tragen aber keinen Namen mehr. So kippt keine Rangliste einer vergangenen Saison.",
+    "blockedTitle": "Das geht so noch nicht",
+    "blockedHint": "In diesen Vereinen bist du die einzige Person mit Vorstandsrechten. Bestimme zuerst jemand anderen zum Vorstand – oder lösche den Verein.",
+    "confirmWord": "LÖSCHEN",
+    "confirmLabel": "Tippe {{word}}, um zu bestätigen",
+    "confirmHint": "Wir fragen ausdrücklich nach: Tippe {{word}} in das Feld, weil sich das nicht rückgängig machen lässt.",
+    "confirmAction": "Konto endgültig löschen",
+    "irreversible": "Danach wirst du abgemeldet."
   }
 }

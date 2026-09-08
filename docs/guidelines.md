@@ -374,6 +374,11 @@ genau eine englische Entsprechung im Code:
 
 ---
 
+**Der Inhalt eines Blattes gehört in eine eigene Komponente.** `IonModal`
+rendert seinen Inhalt im Test nicht (docs/TESTING.md); ein Blatt, dessen Inhalt
+direkt im Modal steht, ist damit ungeprüft. Vorbild: `DeleteAccountContent`
+neben `DeleteAccountModal`.
+
 **Die Entscheidung eines Formulars gehört in eine reine Funktion.**
 Ionic-Eingaben lassen sich im Test nicht bedienen – in jsdom feuert kein
 einziges `ionInput`/`ionChange` (docs/TESTING.md). Ein Ereignis-Handler, der

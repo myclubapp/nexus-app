@@ -302,5 +302,28 @@
     "reject": "Rifiuta",
     "rejected": "Richiesta rifiutata",
     "rejectHint": "La persona riceve un messaggio neutro. Nessuna motivazione viene salvata."
+  },
+  "deleteAccount": {
+    "title": "Elimina l’account",
+    "intro": "Se elimini il tuo account, i tuoi dati personali spariscono da tutte le società a cui appartieni. L’operazione non è reversibile.",
+    "removedTitle": "Cosa viene eliminato",
+    "removed": {
+      "profile": "Il tuo nome visualizzato e la tua immagine",
+      "contact": "I tuoi contatti e il tuo account di accesso",
+      "notifications": "Le tue notifiche e registrazioni push",
+      "private": "Le tue note private e risposte di check-in"
+    },
+    "keptTitle": "Cosa rimane",
+    "kept": {
+      "points": "Le tue registrazioni di punti – senza riferimento a te"
+    },
+    "keptFootnote": "Contano ancora nelle statistiche della società, ma non portano più un nome. Così nessuna classifica passata cambia.",
+    "blockedTitle": "Così non è ancora possibile",
+    "blockedHint": "In queste società sei l’unica persona con i diritti del comitato. Nomina prima qualcun altro – oppure elimina la società.",
+    "confirmWord": "ELIMINA",
+    "confirmLabel": "Digita {{word}} per confermare",
+    "confirmHint": "Chiediamo esplicitamente: digita {{word}} nel campo, perché l’operazione non è reversibile.",
+    "confirmAction": "Elimina definitivamente l’account",
+    "irreversible": "Dopo verrai disconnesso."
   }
 }
