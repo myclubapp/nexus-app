@@ -43,7 +43,7 @@ und Router in einem Aufruf.
 
 ### Was Ionic in jsdom anders macht
 
-Drei Eigenheiten, die reihenweise Tests scheitern lassen, wenn man sie nicht
+Vier Eigenheiten, die reihenweise Tests scheitern lassen, wenn man sie nicht
 kennt. Sie sind ausgemessen, nicht vermutet:
 
 1. **Eigenschaften kommen als DOM-Properties an, nicht als Attribute.**
@@ -73,6 +73,24 @@ kennt. Sie sind ausgemessen, nicht vermutet:
    expect(container.querySelector('ion-list-header')).toHaveTextContent('…'); // richtig
    expect(screen.getByText('…')).toBeInTheDocument();                          // findet nichts
    ```
+
+4. **Ionic-Ereignisse feuern gar nicht.** `onIonInput`, `onIonChange` und ihre
+   Geschwister erreichen in jsdom keinen Handler – weder über `userEvent` noch
+   über ein von Hand ausgelöstes `CustomEvent`. `ion-input` hat dort auch kein
+   inneres `<input>`, in das man tippen könnte. **Eine Ionic-Eingabe lässt sich
+   in jsdom nicht bedienen.**
+
+   Daraus folgt eine Entwurfsregel, nicht nur eine Testregel: **Die
+   Entscheidung hinter einem Formular gehört in eine reine Funktion in
+   `src/lib/`, nicht in den Ereignis-Handler der Seite.** Dann prüft der Test
+   die Verzweigung vollständig, und die Seite bleibt eine Darstellung.
+   Vorbild ist `resolveSignInAction()` in `src/lib/authError.ts`: Sie
+   entscheidet zwischen «Adresse ungültig», «Link senden» und «mit Passwort
+   anmelden», und `LoginPage` führt nur noch aus.
+
+   Ein Komponententest prüft deshalb **was in einem Zustand zu sehen ist**,
+   nicht was ein Klick auslöst. Echte Bedienung braucht einen Browser; das ist
+   bewusst zurückgestellt (§4).
 
 **Zusicherungen auf Ionic-Interna** wie `translucent` oder `collapse` sind
 verboten. Geprüft wird die eigene Struktur (`ion-content > ion-header`) und das,
@@ -140,7 +158,18 @@ Zu prüfen sind mindestens:
 
 ## 4. Bewusst nicht automatisiert
 
-Playwright-E2E ist vorbereitet (`/ai-playwright-test`), aber im MVP nicht
-gesetzt: Die Abläufe brauchen fast alle eine echte Sitzung, eine Kamera oder
-eine Push-Erlaubnis. Bis eine Testdatenbank mit Beispielverein steht, tragen die
-manuellen Testpläne diese Last.
+**Bedienung von Ionic-Oberflächen.** Wie oben gemessen, feuert in jsdom kein
+einziges Ionic-Ereignis. Ein Test, der einen Wert eintippt und den Knopf
+drückt, braucht einen echten Browser – über Vitest im Browser-Modus oder über
+Playwright. Beides ist im MVP nicht gesetzt, weil die Abläufe fast alle eine
+echte Sitzung, eine Kamera oder eine Push-Erlaubnis brauchen.
+
+Die Lücke wird zweifach geschlossen, statt sie offen zu lassen:
+
+1. Jede Entscheidung, die ein Formular trifft, liegt als reine Funktion in
+   `src/lib/` und ist dort vollständig geprüft.
+2. Jeder Ablauf hat einen manuellen Testplan unter `docs/test-plans/`, der die
+   Bedienung auf echten Geräten abdeckt.
+
+Playwright-E2E ist damit vorbereitet (`/ai-playwright-test`), aber erst
+sinnvoll, wenn eine Testdatenbank mit Beispielverein steht.

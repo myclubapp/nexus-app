@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import {
   IonButton,
+  IonInput,
   IonItem,
   IonLabel,
   IonNote,
@@ -16,12 +18,14 @@ import { useMyPoints } from '../hooks/useGamification';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
 import { useToast } from '../hooks/useToast';
+import { FormModal } from '../components/FormModal';
+import { PASSWORD_MIN_LENGTH, authErrorKey } from '../lib/authError';
 import { SUPPORTED_LANGUAGES } from '../i18n';
 import { formatDate, formatDateTime } from '../lib/format';
 
 export function ProfilePage() {
   const { t, i18n } = useTranslation();
-  const { signOut, user } = useAuth();
+  const { signOut, user, setPassword } = useAuth();
   const { activeMembership, activeClub, memberships, setActiveClub, isAdmin } = useClub();
   const points = useMyPoints();
   const queryClient = useQueryClient();
@@ -42,6 +46,35 @@ export function ProfilePage() {
     },
     onError: (cause: Error) => toast.failure(cause.message),
   });
+
+  const [isPasswordOpen, setPasswordOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [isSavingPassword, setSavingPassword] = useState(false);
+
+  // UC-005 A2 setzt ein Passwort voraus, sagt aber nicht, wo es entsteht. Ein
+  // Konto, das nur über Anmeldelinks existiert, hat keines – hier bekommt es
+  // eines.
+  async function savePassword() {
+    setPasswordError(null);
+    if (newPassword.length < PASSWORD_MIN_LENGTH) {
+      setPasswordError(t('auth.error.passwordTooShort'));
+      return;
+    }
+    setSavingPassword(true);
+    try {
+      await setPassword(newPassword);
+      setPasswordOpen(false);
+      setNewPassword('');
+      toast.success(t('profile.passwordSaved'));
+    } catch (cause) {
+      setPasswordError(
+        t(authErrorKey(cause instanceof Error ? cause.message : undefined)),
+      );
+    } finally {
+      setSavingPassword(false);
+    }
+  }
 
   const currentLanguage = (i18n.resolvedLanguage ?? 'de').split('-')[0];
 
@@ -108,6 +141,18 @@ export function ProfilePage() {
           </IonItem>
         )}
 
+        <IonItem
+          button
+          detail
+          onClick={() => {
+            setNewPassword('');
+            setPasswordError(null);
+            setPasswordOpen(true);
+          }}
+        >
+          <IonLabel>{t('profile.setPassword')}</IonLabel>
+        </IonItem>
+
         {/* UC-001 A3: Ein weiterer Verein neben den bestehenden. */}
         <IonItem button routerLink="/onboarding?another=1" detail>
           <IonLabel>{t('onboarding.createAnother')}</IonLabel>
@@ -150,6 +195,29 @@ export function ProfilePage() {
         </IonButton>
         <IonNote>{t('profile.deleteAccountHint')}</IonNote>
       </div>
+
+      <FormModal
+        isOpen={isPasswordOpen}
+        title={t('profile.setPassword')}
+        canSubmit={newPassword.length >= PASSWORD_MIN_LENGTH}
+        isSubmitting={isSavingPassword}
+        error={passwordError}
+        onDismiss={() => setPasswordOpen(false)}
+        onSubmit={() => void savePassword()}
+      >
+        <ListSection footnote={t('profile.passwordHint', { min: PASSWORD_MIN_LENGTH })}>
+          <IonItem>
+            <IonInput
+              label={t('auth.password')}
+              labelPlacement="stacked"
+              type="password"
+              autocomplete="new-password"
+              value={newPassword}
+              onIonInput={(e) => setNewPassword(e.detail.value ?? '')}
+            />
+          </IonItem>
+        </ListSection>
+      </FormModal>
     </AppPage>
   );
 }

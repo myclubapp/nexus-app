@@ -6,7 +6,7 @@
 **Use Case Name:** Anmelden
 **Primary Actor:** Mitglied
 **Goal:** Zugang zur App erhalten, ohne ein Passwort verwalten zu müssen
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

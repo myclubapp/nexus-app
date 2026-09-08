@@ -28,8 +28,23 @@
     "checkInbox": "Abbiamo inviato un link di accesso a {{email}}. Aprilo su questo dispositivo.",
     "invalidEmail": "Inserisci un indirizzo e-mail valido.",
     "signingIn": "Accesso in corso …",
-    "signInFailed": "L'accesso non è riuscito. Richiedi un nuovo link.",
-    "logout": "Esci"
+    "logout": "Esci",
+    "methodLink": "Link di accesso",
+    "methodPassword": "Password",
+    "password": "Password",
+    "signIn": "Accedi",
+    "passwordSubtitle": "Accedi con e-mail e password se non hai a portata di mano la casella di posta.",
+    "passwordRequired": "Inserisci la tua password.",
+    "noPasswordHint": "Non hai ancora una password? Accedi con un link e impostala nel profilo.",
+    "sendAgain": "Invia un nuovo link",
+    "error": {
+      "generic": "L’accesso non ha funzionato. Riprova.",
+      "linkExpired": "Questo link di accesso è scaduto o è già stato usato. Richiedine uno nuovo.",
+      "wrongPassword": "Indirizzo e-mail o password non corrispondono.",
+      "rateLimited": "Troppi tentativi. Attendi un momento.",
+      "emailNotConfirmed": "Questo indirizzo non è ancora confermato. Apri prima il link nella tua casella di posta.",
+      "passwordTooShort": "La password è troppo corta."
+    }
   },
   "onboarding": {
     "welcome": "Che bello averti qui",
@@ -146,7 +161,10 @@
     "leaderboardOptIn": "Comparire nelle classifiche",
     "invoices": "Le mie fatture",
     "deleteAccount": "Elimina account",
-    "deleteAccountHint": "Elimina definitivamente il tuo account e i tuoi dati personali."
+    "deleteAccountHint": "Elimina definitivamente il tuo account e i tuoi dati personali.",
+    "setPassword": "Imposta una password",
+    "passwordHint": "Almeno {{min}} caratteri. Dopo potrai accedere anche senza link.",
+    "passwordSaved": "Password salvata"
   },
   "clubSettings": {
     "title": "Impostazioni della società",

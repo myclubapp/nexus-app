@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { IonButton, IonInput, IonItem, IonLabel, IonNote, IonSpinner } from '@ionic/react';
+import { IonButton, IonInput, IonItem, IonLabel, IonSpinner } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
@@ -8,7 +8,7 @@ import { applyClubTheme } from '../lib/theme';
 import { seasonLabel } from '../lib/season';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
-import { EmptyState } from '../components/StateViews';
+import { EmptyState, InlineError, InlineSuccess } from '../components/StateViews';
 import type { ClubSettings, EventType } from '../lib/database.types';
 
 /** Reihenfolge wie in `events.type` (0003_agenda.sql). */
@@ -222,15 +222,9 @@ export function ClubSettingsPage() {
               {save.isPending ? <IonSpinner name="crescent" /> : t('common.save')}
             </IonButton>
 
-            {save.error && (
-              <IonNote color="danger" role="alert">
-                {(save.error as Error).message}
-              </IonNote>
-            )}
+            {save.error && <InlineError message={(save.error as Error).message} />}
             {saved && !save.isPending && !save.error && (
-              <IonNote color="success" role="status">
-                {t('clubSettings.saved')}
-              </IonNote>
+              <InlineSuccess message={t('clubSettings.saved')} />
             )}
           </div>
         </>

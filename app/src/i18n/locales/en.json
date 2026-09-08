@@ -28,8 +28,23 @@
     "checkInbox": "We sent a sign-in link to {{email}}. Open it on this device.",
     "invalidEmail": "Please enter a valid email address.",
     "signingIn": "Signing in …",
-    "signInFailed": "Sign-in failed. Please request a new link.",
-    "logout": "Sign out"
+    "logout": "Sign out",
+    "methodLink": "Sign-in link",
+    "methodPassword": "Password",
+    "password": "Password",
+    "signIn": "Sign in",
+    "passwordSubtitle": "Sign in with email and password when your inbox is out of reach.",
+    "passwordRequired": "Please enter your password.",
+    "noPasswordHint": "No password yet? Sign in with a link and set one in your profile.",
+    "sendAgain": "Send a new link",
+    "error": {
+      "generic": "Signing in did not work. Please try again.",
+      "linkExpired": "This sign-in link has expired or was already used. Request a new one.",
+      "wrongPassword": "Email address or password does not match.",
+      "rateLimited": "Too many attempts. Please wait a moment.",
+      "emailNotConfirmed": "This address is not confirmed yet. Open the link in your inbox first.",
+      "passwordTooShort": "The password is too short."
+    }
   },
   "onboarding": {
     "welcome": "Good to have you here",
@@ -146,7 +161,10 @@
     "leaderboardOptIn": "Appear in rankings",
     "invoices": "My invoices",
     "deleteAccount": "Delete account",
-    "deleteAccountHint": "Permanently deletes your account and personal data."
+    "deleteAccountHint": "Permanently deletes your account and personal data.",
+    "setPassword": "Set a password",
+    "passwordHint": "At least {{min}} characters. You can then sign in without a link.",
+    "passwordSaved": "Password saved"
   },
   "clubSettings": {
     "title": "Club settings",

@@ -28,8 +28,23 @@
     "checkInbox": "Wir haben dir einen Anmeldelink an {{email}} geschickt. Öffne ihn auf diesem Gerät.",
     "invalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein.",
     "signingIn": "Anmeldung läuft …",
-    "signInFailed": "Die Anmeldung hat nicht geklappt. Bitte fordere einen neuen Link an.",
-    "logout": "Abmelden"
+    "logout": "Abmelden",
+    "methodLink": "Anmeldelink",
+    "methodPassword": "Passwort",
+    "password": "Passwort",
+    "signIn": "Anmelden",
+    "passwordSubtitle": "Melde dich mit E-Mail und Passwort an, wenn du gerade kein Postfach zur Hand hast.",
+    "passwordRequired": "Bitte gib dein Passwort ein.",
+    "noPasswordHint": "Noch kein Passwort? Melde dich mit einem Anmeldelink an und setze es im Profil.",
+    "sendAgain": "Neuen Link senden",
+    "error": {
+      "generic": "Die Anmeldung hat nicht geklappt. Bitte nochmals versuchen.",
+      "linkExpired": "Dieser Anmeldelink ist abgelaufen oder wurde bereits verwendet. Fordere einen neuen an.",
+      "wrongPassword": "E-Mail-Adresse oder Passwort stimmen nicht.",
+      "rateLimited": "Zu viele Versuche. Bitte warte einen Moment.",
+      "emailNotConfirmed": "Diese Adresse ist noch nicht bestätigt. Öffne zuerst den Link in deinem Postfach.",
+      "passwordTooShort": "Das Passwort ist zu kurz."
+    }
   },
   "onboarding": {
     "welcome": "Schön, bist du da",
@@ -146,7 +161,10 @@
     "leaderboardOptIn": "In Ranglisten erscheinen",
     "invoices": "Meine Rechnungen",
     "deleteAccount": "Konto löschen",
-    "deleteAccountHint": "Löscht dein Konto und deine persönlichen Daten unwiderruflich."
+    "deleteAccountHint": "Löscht dein Konto und deine persönlichen Daten unwiderruflich.",
+    "setPassword": "Passwort setzen",
+    "passwordHint": "Mindestens {{min}} Zeichen. Danach kannst du dich auch ohne Anmeldelink anmelden.",
+    "passwordSaved": "Passwort gespeichert"
   },
   "clubSettings": {
     "title": "Vereinseinstellungen",

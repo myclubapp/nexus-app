@@ -71,6 +71,19 @@ export function InlineError({ message }: { message: string }) {
   );
 }
 
+/**
+ * Bestätigung im Fluss einer Seite. Wie {@link InlineError} trägt das
+ * gewöhnliche `div` die Rolle – `role="status"` auf einem `IonNote` käme nicht
+ * an. `status` statt `alert`, weil eine Bestätigung nicht unterbrechen soll.
+ */
+export function InlineSuccess({ message }: { message: string }) {
+  return (
+    <div className="app-hint" role="status">
+      <IonNote color="success">{message}</IonNote>
+    </div>
+  );
+}
+
 /** Shown when the Supabase environment variables are still missing. */
 export function NotConfiguredState() {
   const { t } = useTranslation();

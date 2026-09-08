@@ -374,6 +374,13 @@ genau eine englische Entsprechung im Code:
 
 ---
 
+**Die Entscheidung eines Formulars gehört in eine reine Funktion.**
+Ionic-Eingaben lassen sich im Test nicht bedienen – in jsdom feuert kein
+einziges `ionInput`/`ionChange` (docs/TESTING.md). Ein Ereignis-Handler, der
+validiert und verzweigt, bleibt damit ungeprüft. Was geschehen soll, gehört
+deshalb als reine Funktion nach `src/lib/`; die Seite ruft sie auf und stellt
+das Ergebnis dar. Vorbild: `resolveSignInAction()` in `src/lib/authError.ts`.
+
 ## 10. Ausdrücklich verboten
 
 1. **Inline-Styles**, ausser den zwei benannten Ausnahmen in §1.

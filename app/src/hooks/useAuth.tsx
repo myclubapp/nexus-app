@@ -12,13 +12,24 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { authRedirectUrl, supabase, isConfigured } from '../lib/supabase';
 import { inviteCodeFromUrl, setPendingInvite } from '../lib/invite';
+import { authErrorFromUrl } from '../lib/authError';
 
 interface AuthContextValue {
   session: Session | null;
   user: User | null;
   /** True until the persisted session has been read once. */
   initialising: boolean;
+  /**
+   * Meldung des zuletzt abgelehnten Anmeldelinks (UC-005 A1). Sie entsteht
+   * ausserhalb jeder Seite – beim Rücksprung – und muss den Anmeldebildschirm
+   * überleben, der danach erst gerendert wird.
+   */
+  authError: string | null;
+  clearAuthError: () => void;
   signInWithMagicLink: (email: string) => Promise<void>;
+  signInWithPassword: (email: string, password: string) => Promise<void>;
+  /** Setzt oder ändert das Passwort des angemeldeten Kontos (UC-008). */
+  setPassword: (password: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -28,34 +39,44 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
  * Turns the magic-link deep link into a session. The link arrives as
  * `<scheme>://auth/callback?code=…` on device and as a normal URL on the web;
  * both carry a PKCE code that has to be exchanged exactly once.
+ *
+ * Gibt die Fehlermeldung zurück, statt sie zu verschlucken: Ein abgelaufener
+ * Link führte sonst wortlos zurück auf den Anmeldebildschirm (A1).
  */
-async function exchangeCodeFromUrl(url: string): Promise<void> {
+async function exchangeCodeFromUrl(url: string): Promise<string | null> {
+  const rejected = authErrorFromUrl(url);
+  if (rejected) return rejected;
+
   let parsed: URL;
   try {
     parsed = new URL(url);
   } catch {
-    return;
-  }
-
-  // Supabase may answer with an error instead of a code (expired link).
-  const error = parsed.searchParams.get('error_description');
-  if (error) {
-    console.warn('[auth] Magic link rejected:', error);
-    return;
+    return null;
   }
 
   const code = parsed.searchParams.get('code');
-  if (!code) return;
+  if (!code) return null;
 
-  const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-  if (exchangeError) {
-    console.warn('[auth] Code exchange failed:', exchangeError.message);
-  }
+  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  return error ? error.message : null;
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [initialising, setInitialising] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  // Im Browser tauscht supabase-js den Code selbst; der abgelehnte Link
+  // hinterlässt seine Begründung nur in der Adresse. Sie wird einmal beim
+  // Start gelesen und danach aus der Adresszeile entfernt, damit ein Neuladen
+  // nicht dieselbe Meldung wiederholt.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const rejected = authErrorFromUrl(window.location.href);
+    if (!rejected) return;
+    setAuthError(rejected);
+    window.history.replaceState({}, '', window.location.pathname);
+  }, []);
 
   useEffect(() => {
     if (!isConfigured) {
@@ -95,7 +116,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setPendingInvite(inviteCode);
         return;
       }
-      void exchangeCodeFromUrl(url);
+      void exchangeCodeFromUrl(url).then(setAuthError);
     });
 
     return () => {
@@ -104,6 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithMagicLink = useCallback(async (email: string) => {
+    setAuthError(null);
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: { emailRedirectTo: authRedirectUrl() },
@@ -111,9 +133,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
   }, []);
 
+  // A2: Der zweite Weg für alle, die kein Postfach zur Hand haben. Ein Konto
+  // ohne gesetztes Passwort scheitert hier mit derselben Meldung wie ein
+  // falsches Passwort – der Bildschirm soll nicht verraten, welche Adressen
+  // ein Konto haben.
+  const signInWithPassword = useCallback(async (email: string, password: string) => {
+    setAuthError(null);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+  }, []);
+
+  const setPassword = useCallback(async (password: string) => {
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) throw error;
+  }, []);
+
+  const clearAuthError = useCallback(() => setAuthError(null), []);
+
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
     setSession(null);
+    setAuthError(null);
   }, []);
 
   const value = useMemo<AuthContextValue>(
@@ -121,10 +161,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       user: session?.user ?? null,
       initialising,
+      authError,
+      clearAuthError,
       signInWithMagicLink,
+      signInWithPassword,
+      setPassword,
       signOut,
     }),
-    [session, initialising, signInWithMagicLink, signOut],
+    [
+      session,
+      initialising,
+      authError,
+      clearAuthError,
+      signInWithMagicLink,
+      signInWithPassword,
+      setPassword,
+      signOut,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

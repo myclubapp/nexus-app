@@ -28,8 +28,8 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 
 | ID     | Titel                        | User Story                                                                                                                                                     | Priority | Status      |
 | ------ | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
-| FR-001 | Magic-Link-Anmeldung         | Als Mitglied möchte ich mich mit einem per E-Mail zugesandten Link anmelden, damit ich kein Passwort verwalten muss.                                            | High     | In Progress |
-| FR-002 | E-Mail/Passwort-Anmeldung    | Als Mitglied möchte ich mich alternativ mit E-Mail und Passwort anmelden, damit ich auch ohne E-Mail-Zugriff auf dem Gerät in die App komme.                    | Medium   | Open        |
+| FR-001 | Magic-Link-Anmeldung         | Als Mitglied möchte ich mich mit einem per E-Mail zugesandten Link anmelden, damit ich kein Passwort verwalten muss.                                            | High     | Implemented |
+| FR-002 | E-Mail/Passwort-Anmeldung    | Als Mitglied möchte ich mich alternativ mit E-Mail und Passwort anmelden, damit ich auch ohne E-Mail-Zugriff auf dem Gerät in die App komme.                    | Medium   | Implemented        |
 | FR-003 | Deep-Link-Rücksprung         | Als Mitglied möchte ich, dass mich der Anmeldelink direkt in die installierte App zurückführt, damit ich die Sitzung nicht im Browser fortsetzen muss.          | High     | In Progress |
 | FR-004 | Verein gründen               | Als Vorstand möchte ich einen Vereins-Workspace in unter drei Minuten anlegen, damit wir ohne Vorlaufzeit starten können.                                       | High     | In Progress |
 | FR-005 | Vereinsart wählen            | Als Vorstand möchte ich beim Gründen die Vereinsart (Sport, Musik, Kultur, Jugend, Quartier, Anderes) angeben, damit die App passende Vorlagen vorschlägt.      | High     | In Progress |

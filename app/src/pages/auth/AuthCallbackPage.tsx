@@ -15,6 +15,8 @@ export function AuthCallbackPage() {
 
   useEffect(() => {
     if (initialising) return;
+    // A1: Ohne Sitzung war der Link abgelaufen oder schon verwendet. Die
+    // Begründung steht im Kontext und wird auf dem Anmeldebildschirm gezeigt.
     if (!session) {
       navigate('/login', { replace: true });
       return;

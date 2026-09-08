@@ -28,8 +28,23 @@
     "checkInbox": "Nous avons envoyé un lien de connexion à {{email}}. Ouvre-le sur cet appareil.",
     "invalidEmail": "Merci d'indiquer une adresse e-mail valable.",
     "signingIn": "Connexion en cours …",
-    "signInFailed": "La connexion a échoué. Demande un nouveau lien.",
-    "logout": "Se déconnecter"
+    "logout": "Se déconnecter",
+    "methodLink": "Lien de connexion",
+    "methodPassword": "Mot de passe",
+    "password": "Mot de passe",
+    "signIn": "Se connecter",
+    "passwordSubtitle": "Connectez-vous avec e-mail et mot de passe si vous n’avez pas accès à votre boîte mail.",
+    "passwordRequired": "Veuillez saisir votre mot de passe.",
+    "noPasswordHint": "Pas encore de mot de passe? Connectez-vous avec un lien et définissez-le dans le profil.",
+    "sendAgain": "Envoyer un nouveau lien",
+    "error": {
+      "generic": "La connexion n’a pas fonctionné. Veuillez réessayer.",
+      "linkExpired": "Ce lien de connexion a expiré ou a déjà été utilisé. Demandez-en un nouveau.",
+      "wrongPassword": "L’adresse e-mail ou le mot de passe ne correspond pas.",
+      "rateLimited": "Trop de tentatives. Veuillez patienter un instant.",
+      "emailNotConfirmed": "Cette adresse n’est pas encore confirmée. Ouvrez d’abord le lien dans votre boîte mail.",
+      "passwordTooShort": "Le mot de passe est trop court."
+    }
   },
   "onboarding": {
     "welcome": "Content de te voir",
@@ -146,7 +161,10 @@
     "leaderboardOptIn": "Apparaître dans les classements",
     "invoices": "Mes factures",
     "deleteAccount": "Supprimer le compte",
-    "deleteAccountHint": "Supprime définitivement ton compte et tes données personnelles."
+    "deleteAccountHint": "Supprime définitivement ton compte et tes données personnelles.",
+    "setPassword": "Définir un mot de passe",
+    "passwordHint": "Au moins {{min}} caractères. Vous pourrez ensuite vous connecter sans lien.",
+    "passwordSaved": "Mot de passe enregistré"
   },
   "clubSettings": {
     "title": "Paramètres du club",

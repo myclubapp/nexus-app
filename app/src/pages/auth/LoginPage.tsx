@@ -3,42 +3,73 @@ import {
   IonButton,
   IonContent,
   IonInput,
-  IonNote,
+  IonLabel,
   IonPage,
+  IonSegment,
+  IonSegmentButton,
   IonSpinner,
   IonText,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { isConfigured } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
-import { NotConfiguredState } from '../../components/StateViews';
+import { InlineError, NotConfiguredState } from '../../components/StateViews';
 import { LanguageSwitcher } from '../../components/LanguageSwitcher';
+import {
+  authErrorKey,
+  resolveSignInAction,
+  type SignInMethod,
+} from '../../lib/authError';
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
+/**
+ * Anmeldung (UC-005).
+ *
+ * Der Link ist der Standardweg (BR-017: kein Drittanbieter-Login). Das
+ * Passwort ist der zweite Weg für alle, die gerade kein Postfach zur Hand
+ * haben (A2). Diese Seite verwendet bewusst kein `AppPage`: Sie hat keine
+ * Kopfzeile und keinen grossen Titel.
+ */
 export function LoginPage() {
   const { t } = useTranslation();
-  const { signInWithMagicLink } = useAuth();
+  const { signInWithMagicLink, signInWithPassword, authError, clearAuthError } =
+    useAuth();
+
+  const [method, setMethod] = useState<SignInMethod>('link');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
   const [error, setError] = useState<string | null>(null);
+
+  // A1: Der abgelehnte Link wird gemeldet, sobald diese Seite erscheint. Er
+  // steht im Kontext, weil er ausserhalb jeder Seite entstanden ist.
+  const message = error ?? (authError ? t(authErrorKey(authError)) : null);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     setError(null);
+    clearAuthError();
 
-    if (!EMAIL_PATTERN.test(email)) {
-      setError(t('auth.invalidEmail'));
+    const action = resolveSignInAction({ method, email, password });
+    if (action.kind === 'invalid') {
+      setError(t(action.messageKey));
       return;
     }
 
     setStatus('sending');
     try {
-      await signInWithMagicLink(email.trim());
-      setStatus('sent');
+      if (action.kind === 'password') {
+        await signInWithPassword(action.email, action.password);
+        // Bei Erfolg übernimmt `RedirectIfSignedIn` – diese Seite verschwindet.
+        setStatus('idle');
+      } else {
+        await signInWithMagicLink(action.email);
+        setStatus('sent');
+      }
     } catch (cause) {
       setStatus('idle');
-      setError(cause instanceof Error ? cause.message : t('common.error'));
+      setError(
+        t(authErrorKey(cause instanceof Error ? cause.message : undefined)),
+      );
     }
   }
 
@@ -61,40 +92,81 @@ export function LoginPage() {
           </IonText>
 
           {status === 'sent' ? (
-            <IonText>
-              <p>{t('auth.checkInbox', { email })}</p>
-            </IonText>
-          ) : (
-            <form onSubmit={handleSubmit} className="app-centered">
-              <IonText color="medium">
-                <p>{t('auth.subtitle')}</p>
+            <>
+              <IonText>
+                <p>{t('auth.checkInbox', { email })}</p>
               </IonText>
-
-              <IonInput
-                label={t('auth.email')}
-                labelPlacement="floating"
-                fill="outline"
-                type="email"
-                inputmode="email"
-                autocomplete="email"
-                value={email}
-                onIonInput={(e) => setEmail(e.detail.value ?? '')}
-              />
-
-              {error && (
-                <IonNote color="danger" role="alert">
-                  {error}
-                </IonNote>
-              )}
-
-              <IonButton type="submit" expand="block" disabled={status === 'sending'}>
-                {status === 'sending' ? (
-                  <IonSpinner name="crescent" />
-                ) : (
-                  t('auth.sendMagicLink')
-                )}
+              <IonButton fill="clear" onClick={() => setStatus('idle')}>
+                {t('auth.sendAgain')}
               </IonButton>
-            </form>
+            </>
+          ) : (
+            <>
+              <IonSegment
+                value={method}
+                onIonChange={(e) => {
+                  setMethod(e.detail.value as SignInMethod);
+                  setError(null);
+                  clearAuthError();
+                }}
+              >
+                <IonSegmentButton value="link">
+                  <IonLabel>{t('auth.methodLink')}</IonLabel>
+                </IonSegmentButton>
+                <IonSegmentButton value="password">
+                  <IonLabel>{t('auth.methodPassword')}</IonLabel>
+                </IonSegmentButton>
+              </IonSegment>
+
+              <form onSubmit={handleSubmit} className="app-centered">
+                <IonText color="medium">
+                  <p>
+                    {method === 'link' ? t('auth.subtitle') : t('auth.passwordSubtitle')}
+                  </p>
+                </IonText>
+
+                <IonInput
+                  label={t('auth.email')}
+                  labelPlacement="floating"
+                  fill="outline"
+                  type="email"
+                  inputmode="email"
+                  autocomplete="email"
+                  value={email}
+                  onIonInput={(e) => setEmail(e.detail.value ?? '')}
+                />
+
+                {method === 'password' && (
+                  <IonInput
+                    label={t('auth.password')}
+                    labelPlacement="floating"
+                    fill="outline"
+                    type="password"
+                    autocomplete="current-password"
+                    value={password}
+                    onIonInput={(e) => setPassword(e.detail.value ?? '')}
+                  />
+                )}
+
+                {message && <InlineError message={message} />}
+
+                <IonButton type="submit" expand="block" disabled={status === 'sending'}>
+                  {status === 'sending' ? (
+                    <IonSpinner name="crescent" />
+                  ) : method === 'link' ? (
+                    t('auth.sendMagicLink')
+                  ) : (
+                    t('auth.signIn')
+                  )}
+                </IonButton>
+
+                {method === 'password' && (
+                  <IonText color="medium">
+                    <p>{t('auth.noPasswordHint')}</p>
+                  </IonText>
+                )}
+              </form>
+            </>
           )}
 
           <LanguageSwitcher />
