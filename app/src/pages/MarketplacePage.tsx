@@ -3,12 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { useClaimTask, useTasks } from '../hooks/useGamification';
 import { useClub } from '../hooks/useClub';
 import { AppPage } from '../components/AppPage';
-import { EmptyState, ErrorState, LoadingState } from '../components/StateViews';
+import { EmptyState, ErrorState } from '../components/StateViews';
+import { SkeletonList } from '../components/Skeletons';
+import { useToast } from '../hooks/useToast';
 import { formatDate } from '../lib/format';
 
 export function MarketplacePage() {
   const { t } = useTranslation();
   const { activeMembership } = useClub();
+  const toast = useToast();
   const tasks = useTasks();
   const claim = useClaimTask();
 
@@ -17,7 +20,7 @@ export function MarketplacePage() {
   return (
     <AppPage title={t('marketplace.title')} onRefresh={() => tasks.refetch()}>
       {tasks.isLoading ? (
-        <LoadingState />
+        <SkeletonList />
       ) : tasks.error ? (
         <ErrorState error={tasks.error as Error} onRetry={() => void tasks.refetch()} />
       ) : items.length === 0 ? (
@@ -53,7 +56,12 @@ export function MarketplacePage() {
                     slot="end"
                     size="small"
                     disabled={full || claim.isPending}
-                    onClick={() => claim.mutate(task.id)}
+                    onClick={() =>
+                      claim.mutate(task.id, {
+                        onSuccess: () => toast.success(t('marketplace.claimed')),
+                        onError: (cause) => toast.failure(cause.message),
+                      })
+                    }
                   >
                     {t('marketplace.claim')}
                   </IonButton>

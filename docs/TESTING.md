@@ -6,7 +6,7 @@ beantwortet werden kann, gehört nicht auf eine höhere.
 | Ebene                   | Frage                                                  | Werkzeug            | Wo                       |
 | ----------------------- | ------------------------------------------------------ | ------------------- | ------------------------ |
 | Unit / Komponente       | Rechnet und rendert der Code richtig?                  | Vitest + Testing Library | `src/**/*.test.ts(x)` |
-| Manueller Test          | Funktioniert der Ablauf auf einem echten Gerät?        | Testplan + Person   | `docs/manual_tests/`     |
+| Manueller Test          | Funktioniert der Ablauf auf einem echten Gerät?        | Testplan + Person   | `docs/test-plans/`     |
 | Datenbank               | Hält der Server die Regeln ein, die er halten muss?    | SQL gegen `supabase start` | `supabase/tests/`   |
 
 ---
@@ -39,11 +39,53 @@ und Router in einem Aufruf.
 4. **Wiederverwendbare Bauteile** aus `src/components/`.
 
 **Wie geprüft wird:** über die Rolle und den sichtbaren Text
-(`getByRole`, `getByText`), nicht über CSS-Klassen oder Testids. Ionic-Interna
-sind in jsdom **nicht** verlässlich lesbar: Web-Component-Eigenschaften wie
-`translucent` oder `collapse` kommen dort nicht an. Zusicherungen darauf sind
-verboten – geprüft wird die eigene Struktur (`ion-content > ion-header`) und das,
+(`getByRole`, `getByText`), nicht über CSS-Klassen oder Testids.
+
+### Was Ionic in jsdom anders macht
+
+Drei Eigenheiten, die reihenweise Tests scheitern lassen, wenn man sie nicht
+kennt. Sie sind ausgemessen, nicht vermutet:
+
+1. **Eigenschaften kommen als DOM-Properties an, nicht als Attribute.**
+   `<IonButton disabled>` ergibt `element.disabled === true`, aber
+   `getAttribute('disabled') === null` und `outerHTML` zeigt
+   `<ion-button>`. Für Zusicherungen gibt es `ionProp()` aus
+   `src/test/utils.tsx`:
+
+   ```ts
+   expect(ionProp<boolean>(button, 'disabled')).toBe(true);   // richtig
+   expect(button).toBeDisabled();                             // schlägt fehl
+   ```
+
+2. **Stencil rendert nicht, also wirkt nichts.** Ein `disabled` Knopf ruft
+   seinen `onClick` trotzdem auf, ein `IonModal` mit `isOpen={false}` hat
+   seinen Inhalt trotzdem im DOM. Geprüft wird deshalb die **übergebene
+   Eigenschaft**, nie das Verhalten von Ionic. Ionic selbst zu testen ist
+   ohnehin nicht unsere Aufgabe.
+
+3. **Ein blosser Textknoten direkt in einer Ionic-Komponente ist für
+   `getByText` unsichtbar.** `<IonLabel>{title}</IonLabel>` steht im
+   `textContent`, aber nicht in den `childNodes`, die Testing Library
+   durchsucht. Text in gewöhnlichem HTML darin – `<IonLabel><h2>…</h2></IonLabel>`
+   – wird dagegen gefunden.
+
+   ```ts
+   expect(container.querySelector('ion-list-header')).toHaveTextContent('…'); // richtig
+   expect(screen.getByText('…')).toBeInTheDocument();                          // findet nichts
+   ```
+
+**Zusicherungen auf Ionic-Interna** wie `translucent` oder `collapse` sind
+verboten. Geprüft wird die eigene Struktur (`ion-content > ion-header`) und das,
 was eine Person sieht.
+
+**ARIA gehört auf gewöhnliche Elemente.** `role="alert"` auf einem `IonNote`
+kommt in jsdom gar nicht und im Browser nur über ARIA-Reflexion an. Deshalb
+trägt die Komponente `InlineError` die Rolle auf einem `div` – und ist damit
+auch die einzige Stelle, an der Fehlertexte im Seitenfluss entstehen.
+
+**Die Sprache steht vor dem Render fest.** `src/test/setup.ts` setzt Deutsch,
+weil der Spracherkenner sonst `navigator.language` folgt – in jsdom Englisch.
+Für eine andere Sprache `await setLanguage('fr')` vor dem Render.
 
 Nicht getestet werden: Supabase selbst, Ionic selbst, reine Weiterreichung von
 Eigenschaften ohne Logik.
@@ -52,7 +94,7 @@ Eigenschaften ohne Logik.
 
 ## 2. Manuelle Tests
 
-Je Use Case ein Plan unter `docs/manual_tests/UC-NNN-*.md`, erzeugt mit
+Je Use Case ein Plan unter `docs/test-plans/uc-NNN-*.md`, erzeugt mit
 `/ai-manual-test`. Er deckt den Hauptablauf und jeden alternativen Ablauf der
 Spezifikation mit je einem Testfall ab.
 

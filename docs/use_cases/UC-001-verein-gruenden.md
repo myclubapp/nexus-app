@@ -23,7 +23,8 @@
 6. System fragt nach dem Saisonbeginn und schlägt einen zur Vereinsart passenden Monat vor.
 7. Vorstand bestätigt oder ändert den Saisonbeginn.
 8. System legt den Verein an, erzeugt einen eindeutigen Kurznamen aus dem Vereinsnamen, macht die gründende Person zum Vorstand und legt den zur Vereinsart passenden Satz Standard-Punkteregeln sowie die Standard-Terminlabels an.
-9. System zeigt den Startbildschirm mit genau drei Handlungsangeboten: ersten Termin erfassen, Mitglieder einladen, Punkteregeln ansehen.
+9. System legt zur Vereinsart passende, als Beispiel gekennzeichnete Inhalte an, damit kein Bildschirm leer bleibt (UC-037).
+10. System zeigt den Startbildschirm mit genau drei Handlungsangeboten: ersten Termin erfassen, Mitglieder einladen, Punkteregeln ansehen.
 
 ## Alternative Flows
 
@@ -60,6 +61,7 @@
 - Die gründende Person ist Mitglied dieses Vereins mit der Rolle admin.
 - Ein vollständiger, aktiver Satz Punkteregeln liegt vor.
 - Die Terminlabels des Vereins sind gesetzt und änderbar.
+- Agenda, Marktplatz und News-Feed zeigen gekennzeichnete Beispielinhalte; kein Tab ist leer.
 
 ### Failure Postconditions
 
@@ -74,7 +76,7 @@ Die Vereinsart bestimmt ausschliesslich Punkteregel-Vorlagen und Standardbegriff
 
 ### BR-002: Zero-Config-Start
 
-Nach der Gründung ist kein Konfigurationsschritt nötig. Agenda, Einladung und Punkte funktionieren mit Standardwerten (K7).
+Nach der Gründung ist kein Konfigurationsschritt nötig. Agenda, Einladung und Punkte funktionieren mit Standardwerten (K7), und kein Bildschirm steht leer da (UC-037).
 
 ### BR-003: Gründer wird Vorstand
 

@@ -21,6 +21,7 @@ import { LeaderboardPage } from './LeaderboardPage';
 import { AgendaPage } from './AgendaPage';
 import { ProfilePage } from './ProfilePage';
 import { ClubSettingsPage } from './ClubSettingsPage';
+import { InvitePage } from './club/InvitePage';
 
 /**
  * Fünf Tabs nach dem myclub-Vorbild (Architektur §8). Die Kindrouten sind
@@ -39,6 +40,7 @@ export function TabsPage() {
         <Route path="agenda" element={<AgendaPage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="profile/club" element={<ClubSettingsPage />} />
+        <Route path="profile/invite" element={<InvitePage />} />
         <Route path="" element={<Navigate to="dashboard" replace />} />
       </IonRouterOutlet>
 

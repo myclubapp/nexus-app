@@ -231,6 +231,7 @@ Ein Termin des Vereins: Training, Wettkampf, Anlass, Helfer-Event, Sitzung oder 
 | audience_role_ids| Ämter, an die eine Sitzungseinladung geht              | JSON      | -                | Optional                                                                |
 | cancelled_at     | Zeitpunkt der Absage                                   | DateTime  | -                | Optional                                                                |
 | cancelled_reason | Begründung der Absage                                  | String    | 500              | Optional                                                                |
+| is_sample        | Kennzeichen als Beispielinhalt der Erstbefüllung        | Boolean   | 1                | Not Null                                                                |
 | created_by       | Erfassende Person                                      | UUID      | 36               | Not Null, Foreign Key (CLUB_MEMBER.id)                                  |
 
 **Constraints:** `ends_at` liegt nach `starts_at`. Für die Typen helper, gv und social ist `why` nicht leer. Eine Absage verlangt `cancelled_at` und `cancelled_reason`.
@@ -323,6 +324,7 @@ Eine ausgeschriebene Vereinsaufgabe, die Mitglieder freiwillig übernehmen.
 | due_at        | Frist der Erledigung                            | DateTime  | -                | Optional                                             |
 | max_assignees | Höchstzahl übernehmender Personen               | Integer   | 10               | Not Null, Min: 1                                     |
 | status        | Bearbeitungsstand                               | String    | 20               | Not Null, Values: draft, open, claimed, submitted, done, expired |
+| is_sample     | Kennzeichen als Beispielinhalt der Erstbefüllung | Boolean   | 1                | Not Null                                             |
 | created_by    | Ausschreibende Person                           | UUID      | 36               | Not Null, Foreign Key (CLUB_MEMBER.id)               |
 
 **Constraints:** Eine Aufgabe mit anderem Status als draft trägt ein nicht leeres `why`. Der Punktwert steht an der Aufgabe selbst und nicht an einer Regel.
@@ -405,6 +407,7 @@ Ein Beitrag des Vereins oder eines Teams im Feed.
 | body         | Text des Beitrags                            | String    | 5000             | Optional                                |
 | image_url    | Verweis auf ein Bild                         | String    | 500              | Optional                                |
 | published_at | Zeitpunkt der Publikation                    | DateTime  | -                | Not Null                                |
+| is_sample    | Kennzeichen als Einführungs- oder Beispielbeitrag | Boolean | 1              | Not Null                                |
 | created_by   | Verfassende Person                           | UUID      | 36               | Optional, Foreign Key (CLUB_MEMBER.id)  |
 
 **Constraints:** Es wird nicht erfasst, wer einen Beitrag gelesen hat.
@@ -584,6 +587,20 @@ Die Verbindung eines Vereins zu einem Verband über dessen API-Schlüssel.
 | last_error     | Fehlermeldung des letzten Abgleichs            | String    | 500              | Optional                                  |
 
 **Constraints:** Primärschlüssel ist die Kombination aus `club_id` und `federation`. Der Schlüssel wird nie an den Client ausgeliefert. Der Abgleich liest ausschliesslich; es werden keine Daten an den Verband zurückgeschrieben.
+
+---
+
+## Beispielinhalte der Erstbefüllung
+
+Die Entitäten EVENT, EVENT_SHIFT, TASK und NEWS tragen mit `is_sample` ein Kennzeichen für die
+Inhalte, die bei der Vereinsgründung angelegt werden, damit kein Bildschirm leer bleibt.
+
+**Constraints:** Zu einem Datensatz mit `is_sample = true` entsteht nie eine POINT_TRANSACTION, nie
+ein HEALTH_SIGNAL, nie eine NOTIFICATION und nie ein Eintrag in CLUB_MESSAGE_LOG. Beispielinhalte
+werden entfernt, sobald der Verein einen eigenen Datensatz derselben Entität besitzt, die Frist seit
+der Gründung abgelaufen ist oder der Vorstand sie in einer Aktion löscht. Wird ein Beispiel vom
+Verein übernommen, wechselt `is_sample` auf falsch und der Datensatz wird damit vollwertig. Der
+Demo-Verein ist ein eigener CLUB und teilt keine Daten mit produktiven Vereinen.
 
 ---
 

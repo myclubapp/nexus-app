@@ -54,6 +54,23 @@ export function ErrorState({ error, onRetry }: { error: Error; onRetry?: () => v
   );
 }
 
+/**
+ * Fehlertext im Fluss einer Seite – etwa unter einem Formular.
+ *
+ * Das `role="alert"` sitzt bewusst auf dem `div` und nicht auf dem `IonNote`:
+ * Ionic-Komponenten nehmen Eigenschaften als DOM-Properties entgegen, nicht als
+ * Attribute. Auf einer Web-Komponente käme die Rolle in jsdom gar nicht und im
+ * Browser nur über ARIA-Reflexion an – auf einem gewöhnlichen Element kommt sie
+ * überall an.
+ */
+export function InlineError({ message }: { message: string }) {
+  return (
+    <div className="app-hint" role="alert">
+      <IonNote color="danger">{message}</IonNote>
+    </div>
+  );
+}
+
 /** Shown when the Supabase environment variables are still missing. */
 export function NotConfiguredState() {
   const { t } = useTranslation();

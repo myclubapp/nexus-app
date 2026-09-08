@@ -13,7 +13,11 @@
     "points": "Points",
     "points_one": "{{count}} point",
     "points_other": "{{count}} points",
-    "notConfigured": "L'application n'est pas encore reliée à un projet Supabase. Complète les valeurs dans .env.local."
+    "notConfigured": "L'application n'est pas encore reliée à un projet Supabase. Complète les valeurs dans .env.local.",
+    "confirm": "Confirmer",
+    "stepOf": "Étape {{current}} sur {{total}}",
+    "saveFailed": "Cela n’a pas fonctionné. Veuillez réessayer.",
+    "saved": "Enregistré"
   },
   "auth": {
     "title": "Bienvenue",
@@ -36,7 +40,7 @@
     "joinClubHint": "Envoie une demande – le comité la valide",
     "createClub": "Créer une société",
     "createClubHint": "Prêt en trois minutes",
-    "clubName": "Quel est le nom de votre société ?",
+    "clubName": "Comment s’appelle votre société?",
     "clubKindQuestion": "Quel type de société êtes-vous ?",
     "clubKind": {
       "sport": "Sport",
@@ -49,7 +53,16 @@
     "clubKindHint": "Cela ne détermine que les modèles – tout reste modifiable.",
     "inviteCode": "Code d'invitation",
     "requestSent": "Demande envoyée. Tu recevras un message dès qu'elle sera validée.",
-    "createAndContinue": "Créer la société"
+    "createAndContinue": "Créer la société",
+    "clubNameHint": "Le nom sous lequel tout le monde vous connaît.",
+    "clubNameLabel": "Nom de la société",
+    "clubKindOther": "Votre désignation",
+    "clubKindOtherHint": "Par exemple «coopérative» ou «fan-club».",
+    "seasonStartQuestion": "Quand commence votre année associative?",
+    "seasonStartHint": "Le total de points et les classements s’y réfèrent.",
+    "seasonStartFootnote": "La proposition correspond à votre type de société et reste modifiable.",
+    "joinNow": "Rejoindre",
+    "createAnother": "Fonder une autre société"
   },
   "tabs": {
     "dashboard": "Accueil",
@@ -174,5 +187,76 @@
     "fr": "Français",
     "it": "Italien",
     "en": "Anglais"
+  },
+  "firstSteps": {
+    "title": "Premiers pas pour {{club}}",
+    "footnote": "Rien de plus – tout le reste se règle plus tard.",
+    "event": {
+      "title": "Créer le premier rendez-vous",
+      "hint": "Pour que chacun sache quand ça se passe"
+    },
+    "invite": {
+      "title": "Inviter des membres",
+      "hint": "Partager un lien ou un code QR"
+    },
+    "rules": {
+      "title": "Voir les règles de points",
+      "hint": "Elles sont déjà en place"
+    }
+  },
+  "invite": {
+    "title": "Invitations",
+    "listTitle": "Invitations créées",
+    "listFootnote": "Glissez vers la gauche pour retirer une invitation.",
+    "empty": "Aucune invitation créée",
+    "create": "Créer une invitation",
+    "createAction": "Créer",
+    "scope": "Portée",
+    "scopeClub": "Toute la société",
+    "scopeHint": "Une invitation d’équipe affecte directement la personne à l’équipe.",
+    "roleLabel": "Rôle",
+    "role": {
+      "member": "Membre",
+      "trainer": "Entraîneur·e",
+      "admin": "Comité"
+    },
+    "adminConfirm": "Oui, accorder tous les droits",
+    "adminConfirmed": "Confirmé",
+    "adminWarning": "Les personnes invitées reçoivent tous les droits et peuvent tout modifier.",
+    "expiresLabel": "Valable jusqu’au",
+    "expiresOn": "Jusqu’au {{date}}",
+    "maxUsesLabel": "Nombre maximal d’utilisations",
+    "maxUsesUnlimited": "Illimité",
+    "limitsHint": "Sans indication, l’invitation est utilisable sans limite.",
+    "uses": "{{used}} sur {{max}} utilisées",
+    "usesUnlimited": "{{used}} utilisées",
+    "active": "Valable",
+    "inactive": "Expirée",
+    "revoke": "Retirer",
+    "shareTitle": "Partager l’invitation",
+    "shareHint": "Qui ouvre le lien devient membre sans autre validation.",
+    "share": "Partager",
+    "copy": "Copier le lien",
+    "copied": "Lien copié",
+    "linkLabel": "Lien d’invitation",
+    "qrLabel": "Code QR de l’invitation",
+    "qrFailed": "Le code QR n’a pas pu être généré.",
+    "joinTitle": "Invitation",
+    "youAreInvited": "Vous êtes invité·e",
+    "displayName": "Votre nom affiché",
+    "displayNameHint": "C’est ainsi que vous apparaissez dans les listes et classements.",
+    "joinNow": "Rejoindre",
+    "alreadyMember": "Vous faites déjà partie de cette société. Votre rôle reste inchangé.",
+    "invalidHint": "Demandez une nouvelle invitation ou faites une demande d’adhésion.",
+    "invalid": {
+      "unknown": "Cette invitation n’existe pas.",
+      "expired": "Cette invitation a expiré.",
+      "exhausted": "Cette invitation a déjà été entièrement utilisée.",
+      "revoked": "Cette invitation a été retirée."
+    },
+    "requestInstead": "Faire une demande d’adhésion",
+    "created": "Invitation créée",
+    "revoked": "Invitation retirée",
+    "expiresRequired": "Veuillez choisir une date d’expiration."
   }
 }

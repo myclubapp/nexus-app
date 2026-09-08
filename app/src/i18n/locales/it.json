@@ -13,7 +13,11 @@
     "points": "Punti",
     "points_one": "{{count}} punto",
     "points_other": "{{count}} punti",
-    "notConfigured": "L'app non è ancora collegata a un progetto Supabase. Inserisci i valori in .env.local."
+    "notConfigured": "L'app non è ancora collegata a un progetto Supabase. Inserisci i valori in .env.local.",
+    "confirm": "Conferma",
+    "stepOf": "Passo {{current}} di {{total}}",
+    "saveFailed": "Non ha funzionato. Riprova.",
+    "saved": "Salvato"
   },
   "auth": {
     "title": "Benvenuto",
@@ -49,7 +53,16 @@
     "clubKindHint": "Determina solo i modelli – tutto è modificabile in seguito.",
     "inviteCode": "Codice d'invito",
     "requestSent": "Richiesta inviata. Riceverai un messaggio appena sarà approvata.",
-    "createAndContinue": "Crea la società"
+    "createAndContinue": "Crea la società",
+    "clubNameHint": "Il nome con cui tutti vi conoscono.",
+    "clubNameLabel": "Nome della società",
+    "clubKindOther": "La vostra definizione",
+    "clubKindOtherHint": "Per esempio «cooperativa» o «fan club».",
+    "seasonStartQuestion": "Quando inizia il vostro anno sociale?",
+    "seasonStartHint": "Punteggio e classifiche si basano su questa data.",
+    "seasonStartFootnote": "La proposta corrisponde al tipo di società ed è modificabile in ogni momento.",
+    "joinNow": "Aderisci",
+    "createAnother": "Fondare un’altra società"
   },
   "tabs": {
     "dashboard": "Home",
@@ -174,5 +187,76 @@
     "fr": "Francese",
     "it": "Italiano",
     "en": "Inglese"
+  },
+  "firstSteps": {
+    "title": "Primi passi per {{club}}",
+    "footnote": "Non serve altro – il resto si imposta più tardi.",
+    "event": {
+      "title": "Creare il primo appuntamento",
+      "hint": "Così tutti sanno quando si fa"
+    },
+    "invite": {
+      "title": "Invitare membri",
+      "hint": "Condividere link o codice QR"
+    },
+    "rules": {
+      "title": "Vedere le regole dei punti",
+      "hint": "Sono già pronte"
+    }
+  },
+  "invite": {
+    "title": "Inviti",
+    "listTitle": "Inviti creati",
+    "listFootnote": "Scorri a sinistra per ritirare un invito.",
+    "empty": "Nessun invito creato",
+    "create": "Creare un invito",
+    "createAction": "Crea",
+    "scope": "Ambito",
+    "scopeClub": "Tutta la società",
+    "scopeHint": "Un invito di squadra assegna subito la persona alla squadra.",
+    "roleLabel": "Ruolo",
+    "role": {
+      "member": "Membro",
+      "trainer": "Allenatore/trice",
+      "admin": "Comitato"
+    },
+    "adminConfirm": "Sì, concedere tutti i diritti",
+    "adminConfirmed": "Confermato",
+    "adminWarning": "Le persone invitate ricevono tutti i diritti e possono modificare tutto.",
+    "expiresLabel": "Valido fino al",
+    "expiresOn": "Fino al {{date}}",
+    "maxUsesLabel": "Numero massimo di utilizzi",
+    "maxUsesUnlimited": "Illimitato",
+    "limitsHint": "Senza indicazione l’invito è utilizzabile senza limite.",
+    "uses": "{{used}} di {{max}} utilizzati",
+    "usesUnlimited": "{{used}} utilizzati",
+    "active": "Valido",
+    "inactive": "Scaduto",
+    "revoke": "Ritira",
+    "shareTitle": "Condividere l’invito",
+    "shareHint": "Chi apre il link diventa membro senza ulteriore approvazione.",
+    "share": "Condividi",
+    "copy": "Copia link",
+    "copied": "Link copiato",
+    "linkLabel": "Link d’invito",
+    "qrLabel": "Codice QR dell’invito",
+    "qrFailed": "Non è stato possibile generare il codice QR.",
+    "joinTitle": "Invito",
+    "youAreInvited": "Sei invitato/a",
+    "displayName": "Il tuo nome visualizzato",
+    "displayNameHint": "Così compari negli elenchi e nelle classifiche.",
+    "joinNow": "Aderisci",
+    "alreadyMember": "Fai già parte di questa società. Il tuo ruolo resta invariato.",
+    "invalidHint": "Chiedi un nuovo invito o presenta una richiesta di adesione.",
+    "invalid": {
+      "unknown": "Questo invito non esiste.",
+      "expired": "Questo invito è scaduto.",
+      "exhausted": "Questo invito è già stato utilizzato completamente.",
+      "revoked": "Questo invito è stato ritirato."
+    },
+    "requestInstead": "Presentare una richiesta di adesione",
+    "created": "Invito creato",
+    "revoked": "Invito ritirato",
+    "expiresRequired": "Scegli una data di scadenza."
   }
 }

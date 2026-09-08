@@ -14,16 +14,20 @@ import { useClub } from '../hooks/useClub';
 import { useMyPoints, usePointRules } from '../hooks/useGamification';
 import { useAgenda } from '../hooks/useAgenda';
 import { useNews } from '../hooks/useNews';
+import { useIsNewClub } from '../hooks/useOnboarding';
 import { AppPage } from '../components/AppPage';
+import { FirstStepsCard } from '../components/FirstStepsCard';
 import { ListSection } from '../components/ListSection';
 import { StatCard } from '../components/StatCard';
-import { EmptyState, ErrorState, LoadingState } from '../components/StateViews';
+import { EmptyState, ErrorState } from '../components/StateViews';
+import { SkeletonCard, SkeletonStats } from '../components/Skeletons';
 import { formatDateTime } from '../lib/format';
 
 export function DashboardPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { activeMembership, eventLabel } = useClub();
+  const { activeClub, activeMembership, eventLabel } = useClub();
+  const isNewClub = useIsNewClub();
   const points = useMyPoints();
   const rules = usePointRules();
   const agenda = useAgenda('upcoming');
@@ -42,8 +46,10 @@ export function DashboardPage() {
         Promise.all([points.refetch(), agenda.refetch(), news.refetch()])
       }
     >
+      {isNewClub.data && activeClub && <FirstStepsCard clubName={activeClub.name} />}
+
       {points.isLoading ? (
-        <LoadingState />
+        <SkeletonStats />
       ) : points.error ? (
         <ErrorState error={points.error as Error} onRetry={() => void points.refetch()} />
       ) : (
@@ -88,7 +94,9 @@ export function DashboardPage() {
       </ListSection>
 
       <ListSection title={t('dashboard.latestNews')} inset={false}>
-        {(news.data ?? []).length === 0 ? (
+        {news.isLoading ? (
+          <SkeletonCard />
+        ) : (news.data ?? []).length === 0 ? (
           <EmptyState message={t('dashboard.noNews')} />
         ) : (
           (news.data ?? []).map((entry) => (

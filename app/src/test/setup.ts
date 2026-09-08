@@ -9,9 +9,15 @@ import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { setupIonicReact } from '@ionic/react';
 import { afterEach, vi } from 'vitest';
+import i18n from '../i18n';
 
 // Derselbe Modus wie in App.tsx: die Tests sollen sehen, was die App zeigt.
 setupIonicReact({ mode: 'ios' });
+
+// Ohne diesen Schritt entscheidet der Spracherkenner anhand von
+// `navigator.language` – in jsdom Englisch. Die Tests prüfen deutsche Texte,
+// und `changeLanguage()` erst im Render käme einen Durchlauf zu spät.
+await i18n.changeLanguage('de');
 
 afterEach(() => {
   cleanup();

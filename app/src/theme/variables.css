@@ -163,3 +163,28 @@
 .app-scanner {
   width: 100%;
 }
+
+/* --- Schrittführung (Gründungs-Wizard) ------------------------------------ */
+.app-wizard {
+  padding: var(--app-space-4) var(--app-space-4) 0;
+}
+
+.app-wizard__title {
+  margin: var(--app-space-1) 0 var(--app-space-2);
+}
+
+/* --- QR-Code -------------------------------------------------------------- */
+.app-qr {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 240px;
+  padding: var(--app-space-4);
+}
+
+/* Der Code braucht hellen Grund, sonst liest ihn keine Kamera im Dunkelmodus. */
+.app-qr img {
+  background: #ffffff;
+  padding: var(--app-space-2);
+  border-radius: var(--app-space-2);
+}

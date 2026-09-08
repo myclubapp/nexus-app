@@ -12,7 +12,8 @@ import { useTranslation } from 'react-i18next';
 import { useLeaderboard } from '../hooks/useGamification';
 import { useClub } from '../hooks/useClub';
 import { AppPage } from '../components/AppPage';
-import { EmptyState, ErrorState, LoadingState } from '../components/StateViews';
+import { EmptyState, ErrorState } from '../components/StateViews';
+import { SkeletonList } from '../components/Skeletons';
 
 type Scope = 'club' | 'team';
 
@@ -46,7 +47,7 @@ export function LeaderboardPage() {
       )}
 
       {leaderboard.isLoading ? (
-        <LoadingState />
+        <SkeletonList rows={6} />
       ) : leaderboard.error ? (
         <ErrorState
           error={leaderboard.error as Error}

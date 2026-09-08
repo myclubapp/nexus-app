@@ -13,7 +13,11 @@
     "points": "Punkte",
     "points_one": "{{count}} Punkt",
     "points_other": "{{count}} Punkte",
-    "notConfigured": "Die App ist noch nicht mit einem Supabase-Projekt verbunden. Trage die Werte in .env.local ein."
+    "notConfigured": "Die App ist noch nicht mit einem Supabase-Projekt verbunden. Trage die Werte in .env.local ein.",
+    "confirm": "Bestätigen",
+    "stepOf": "Schritt {{current}} von {{total}}",
+    "saveFailed": "Das hat nicht geklappt. Bitte nochmals versuchen.",
+    "saved": "Gespeichert"
   },
   "auth": {
     "title": "Willkommen",
@@ -49,7 +53,16 @@
     "clubKindHint": "Das steuert nur die Vorlagen – alles ist später änderbar.",
     "inviteCode": "Einladungscode",
     "requestSent": "Anfrage gesendet. Du bekommst eine Nachricht, sobald sie freigegeben ist.",
-    "createAndContinue": "Verein erstellen"
+    "createAndContinue": "Verein erstellen",
+    "clubNameHint": "Der Name, unter dem euch alle kennen.",
+    "clubNameLabel": "Vereinsname",
+    "clubKindOther": "Eure Bezeichnung",
+    "clubKindOtherHint": "Zum Beispiel «Genossenschaft» oder «Fanclub».",
+    "seasonStartQuestion": "Wann beginnt euer Vereinsjahr?",
+    "seasonStartHint": "Danach richten sich Punktestand und Ranglisten.",
+    "seasonStartFootnote": "Der Vorschlag passt zu eurer Vereinsart und ist jederzeit änderbar.",
+    "joinNow": "Beitreten",
+    "createAnother": "Weiteren Verein gründen"
   },
   "tabs": {
     "dashboard": "Start",
@@ -174,5 +187,76 @@
     "fr": "Französisch",
     "it": "Italienisch",
     "en": "Englisch"
+  },
+  "firstSteps": {
+    "title": "Erste Schritte für {{club}}",
+    "footnote": "Mehr braucht es nicht – alles Weitere könnt ihr später einstellen.",
+    "event": {
+      "title": "Ersten Termin erfassen",
+      "hint": "Damit alle wissen, wann etwas läuft"
+    },
+    "invite": {
+      "title": "Mitglieder einladen",
+      "hint": "Link oder QR-Code teilen"
+    },
+    "rules": {
+      "title": "Punkteregeln ansehen",
+      "hint": "Sie sind schon eingerichtet"
+    }
+  },
+  "invite": {
+    "title": "Einladungen",
+    "listTitle": "Erstellte Einladungen",
+    "listFootnote": "Nach links wischen, um eine Einladung zurückzuziehen.",
+    "empty": "Noch keine Einladung erstellt",
+    "create": "Einladung erstellen",
+    "createAction": "Erstellen",
+    "scope": "Geltungsbereich",
+    "scopeClub": "Ganzer Verein",
+    "scopeHint": "Eine Team-Einladung ordnet die Person gleich dem Team zu.",
+    "roleLabel": "Rolle",
+    "role": {
+      "member": "Mitglied",
+      "trainer": "Trainer:in",
+      "admin": "Vorstand"
+    },
+    "adminConfirm": "Ja, volle Vereinsrechte vergeben",
+    "adminConfirmed": "Bestätigt",
+    "adminWarning": "Eingeladene Personen erhalten volle Vereinsrechte und können alles ändern.",
+    "expiresLabel": "Gültig bis",
+    "expiresOn": "Bis {{date}}",
+    "maxUsesLabel": "Höchstzahl Einlösungen",
+    "maxUsesUnlimited": "Unbegrenzt",
+    "limitsHint": "Ohne Angabe ist die Einladung unbegrenzt einlösbar.",
+    "uses": "{{used}} von {{max}} eingelöst",
+    "usesUnlimited": "{{used}} eingelöst",
+    "active": "Gültig",
+    "inactive": "Abgelaufen",
+    "revoke": "Zurückziehen",
+    "shareTitle": "Einladung teilen",
+    "shareHint": "Wer den Link öffnet, wird ohne weitere Freigabe Mitglied.",
+    "share": "Teilen",
+    "copy": "Link kopieren",
+    "copied": "Link kopiert",
+    "linkLabel": "Einladungslink",
+    "qrLabel": "QR-Code der Einladung",
+    "qrFailed": "Der QR-Code konnte nicht erzeugt werden.",
+    "joinTitle": "Einladung",
+    "youAreInvited": "Du bist eingeladen",
+    "displayName": "Dein Anzeigename",
+    "displayNameHint": "So erscheinst du in Listen und Ranglisten.",
+    "joinNow": "Beitreten",
+    "alreadyMember": "Du gehörst diesem Verein bereits an. Deine Rolle bleibt unverändert.",
+    "invalidHint": "Bitte den Verein um eine neue Einladung oder stelle eine Beitritts-Anfrage.",
+    "invalid": {
+      "unknown": "Diese Einladung gibt es nicht.",
+      "expired": "Diese Einladung ist abgelaufen.",
+      "exhausted": "Diese Einladung wurde bereits vollständig genutzt.",
+      "revoked": "Diese Einladung wurde zurückgezogen."
+    },
+    "requestInstead": "Beitritts-Anfrage stellen",
+    "created": "Einladung erstellt",
+    "revoked": "Einladung zurückgezogen",
+    "expiresRequired": "Bitte ein Ablaufdatum wählen."
   }
 }

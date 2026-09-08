@@ -26,6 +26,7 @@ import { ClubProvider } from './hooks/useClub';
 import { LoginPage } from './pages/auth/LoginPage';
 import { AuthCallbackPage } from './pages/auth/AuthCallbackPage';
 import { OnboardingPage } from './pages/onboarding/OnboardingPage';
+import { JoinByInvitePage } from './pages/onboarding/JoinByInvitePage';
 import { TabsPage } from './pages/TabsPage';
 import {
   RedirectIfClubMember,
@@ -58,6 +59,10 @@ export default function App() {
                 }
               />
               <Route path="/auth/callback" element={<AuthCallbackPage />} />
+              {/* Ohne Anmeldeschranke: Der Einladungslink erreicht Gäste, die
+                  noch kein Konto haben (UC-002). Die Seite selbst führt bei
+                  Bedarf durch die Anmeldung. */}
+              <Route path="/invite/:code" element={<JoinByInvitePage />} />
               <Route
                 path="/onboarding"
                 element={

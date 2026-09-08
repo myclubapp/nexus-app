@@ -14,7 +14,9 @@ import { useTranslation } from 'react-i18next';
 import { useAgenda, useRespondToEvent } from '../hooks/useAgenda';
 import { useClub } from '../hooks/useClub';
 import { AppPage } from '../components/AppPage';
-import { EmptyState, ErrorState, LoadingState } from '../components/StateViews';
+import { EmptyState, ErrorState } from '../components/StateViews';
+import { SkeletonList } from '../components/Skeletons';
+import { useToast } from '../hooks/useToast';
 import { formatDateTime } from '../lib/format';
 import { CheckInModal } from '../components/CheckInModal';
 
@@ -26,6 +28,7 @@ export function AgendaPage() {
   const [range, setRange] = useState<Range>('upcoming');
   const [checkInEventId, setCheckInEventId] = useState<string | null>(null);
 
+  const toast = useToast();
   const agenda = useAgenda(range);
   const respond = useRespondToEvent();
   const events = agenda.data ?? [];
@@ -49,7 +52,7 @@ export function AgendaPage() {
       onRefresh={() => agenda.refetch()}
     >
       {agenda.isLoading ? (
-        <LoadingState />
+        <SkeletonList />
       ) : agenda.error ? (
         <ErrorState error={agenda.error as Error} onRetry={() => void agenda.refetch()} />
       ) : events.length === 0 ? (
@@ -91,7 +94,10 @@ export function AgendaPage() {
                         fill={mine?.status === 'registered' ? 'solid' : 'outline'}
                         disabled={respond.isPending}
                         onClick={() =>
-                          respond.mutate({ eventId: event.id, status: 'registered' })
+                          respond.mutate(
+                            { eventId: event.id, status: 'registered' },
+                            { onError: (cause) => toast.failure(cause.message) },
+                          )
                         }
                       >
                         {t('agenda.attend')}
@@ -102,7 +108,10 @@ export function AgendaPage() {
                         fill={mine?.status === 'excused' ? 'solid' : 'outline'}
                         disabled={respond.isPending}
                         onClick={() =>
-                          respond.mutate({ eventId: event.id, status: 'excused' })
+                          respond.mutate(
+                            { eventId: event.id, status: 'excused' },
+                            { onError: (cause) => toast.failure(cause.message) },
+                          )
                         }
                       >
                         {t('agenda.decline')}

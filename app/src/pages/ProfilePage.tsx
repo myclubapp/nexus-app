@@ -15,6 +15,7 @@ import { useClub } from '../hooks/useClub';
 import { useMyPoints } from '../hooks/useGamification';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
+import { useToast } from '../hooks/useToast';
 import { SUPPORTED_LANGUAGES } from '../i18n';
 import { formatDate, formatDateTime } from '../lib/format';
 
@@ -24,6 +25,7 @@ export function ProfilePage() {
   const { activeMembership, activeClub, memberships, setActiveClub, isAdmin } = useClub();
   const points = useMyPoints();
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const optIn = useMutation({
     mutationFn: async (value: boolean) => {
@@ -36,7 +38,9 @@ export function ProfilePage() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['memberships'] });
+      toast.success(t('common.saved'));
     },
+    onError: (cause: Error) => toast.failure(cause.message),
   });
 
   const currentLanguage = (i18n.resolvedLanguage ?? 'de').split('-')[0];
@@ -97,6 +101,17 @@ export function ProfilePage() {
             </IonLabel>
           </IonItem>
         )}
+
+        {isAdmin && (
+          <IonItem button routerLink="/tabs/profile/invite" detail>
+            <IonLabel>{t('invite.title')}</IonLabel>
+          </IonItem>
+        )}
+
+        {/* UC-001 A3: Ein weiterer Verein neben den bestehenden. */}
+        <IonItem button routerLink="/onboarding?another=1" detail>
+          <IonLabel>{t('onboarding.createAnother')}</IonLabel>
+        </IonItem>
 
         <IonItem>
           <IonToggle

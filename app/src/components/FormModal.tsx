@@ -5,12 +5,12 @@ import {
   IonContent,
   IonHeader,
   IonModal,
-  IonNote,
   IonSpinner,
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
+import { InlineError } from './StateViews';
 
 interface FormModalProps {
   isOpen: boolean;
@@ -73,11 +73,7 @@ export function FormModal({
       </IonHeader>
 
       <IonContent>
-        {error && (
-          <IonNote color="danger" className="app-form-error" role="alert">
-            {error}
-          </IonNote>
-        )}
+        {error && <InlineError message={error} />}
         {children}
       </IonContent>
     </IonModal>

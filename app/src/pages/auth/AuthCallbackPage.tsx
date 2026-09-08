@@ -3,6 +3,7 @@ import { IonContent, IonPage } from '@ionic/react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { LoadingState } from '../../components/StateViews';
+import { peekPendingInvite } from '../../lib/invite';
 
 /**
  * Landing page for the magic link on web. supabase-js exchanges the PKCE code
@@ -14,7 +15,15 @@ export function AuthCallbackPage() {
 
   useEffect(() => {
     if (initialising) return;
-    navigate(session ? '/tabs/dashboard' : '/login', { replace: true });
+    if (!session) {
+      navigate('/login', { replace: true });
+      return;
+    }
+    // UC-005 A4: Wer aus einem Einladungsfluss kam, kehrt dorthin zurück.
+    const pendingInvite = peekPendingInvite();
+    navigate(pendingInvite ? `/invite/${pendingInvite}` : '/tabs/dashboard', {
+      replace: true,
+    });
   }, [session, initialising, navigate]);
 
   return (

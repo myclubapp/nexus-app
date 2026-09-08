@@ -152,7 +152,7 @@ Alle Werte sind pro Verein konfigurierbar; Säulen lassen sich vollständig deak
 
 | Baustein | Umfang |
 |---|---|
-| **Auth & Onboarding** | Magic Link, Invite-first mit Scope/Rolle/Ablauf, Vereinsgründung in 3 Minuten, Beitritts-Anfrage, Kontolöschung |
+| **Auth & Onboarding** | Magic Link, Invite-first mit Scope/Rolle/Ablauf, Vereinsgründung in 3 Minuten, Beitritts-Anfrage, Kontolöschung, Start mit Beispielinhalten statt leerer App |
 | **Mitglieder & Teams** | Mitglieder, Rollen, Teams, Profil mit Datenschutz-Optionen |
 | **Agenda** | Termine einzeln und als Serie, Vereins-Events, Helfer-Events mit Schichten, Zu-/Absagen mit Grund, Erinnerung an Unentschlossene, QR-Check-in |
 | **Gamification** | Punkte-Ledger über 7 konfigurierbare Säulen, Dashboard mit «Nächste Punkte», Team- und Vereins-Leaderboard, Aufgaben-Marktplatz, Spider-Selbstsicht |

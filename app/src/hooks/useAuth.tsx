@@ -11,6 +11,7 @@ import type { Session, User } from '@supabase/supabase-js';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { authRedirectUrl, supabase, isConfigured } from '../lib/supabase';
+import { inviteCodeFromUrl, setPendingInvite } from '../lib/invite';
 
 interface AuthContextValue {
   session: Session | null;
@@ -87,6 +88,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!Capacitor.isNativePlatform()) return;
 
     const handle = CapacitorApp.addListener('appUrlOpen', ({ url }) => {
+      // Ein Einladungslink trägt keinen Anmeldecode: Er wird nicht getauscht,
+      // sondern gemerkt, damit die App nach der Anmeldung dorthin führt.
+      const inviteCode = inviteCodeFromUrl(url);
+      if (inviteCode) {
+        setPendingInvite(inviteCode);
+        return;
+      }
       void exchangeCodeFromUrl(url);
     });
 

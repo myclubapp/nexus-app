@@ -13,7 +13,11 @@
     "points": "Points",
     "points_one": "{{count}} point",
     "points_other": "{{count}} points",
-    "notConfigured": "The app is not connected to a Supabase project yet. Fill in the values in .env.local."
+    "notConfigured": "The app is not connected to a Supabase project yet. Fill in the values in .env.local.",
+    "confirm": "Confirm",
+    "stepOf": "Step {{current}} of {{total}}",
+    "saveFailed": "That did not work. Please try again.",
+    "saved": "Saved"
   },
   "auth": {
     "title": "Welcome",
@@ -49,7 +53,16 @@
     "clubKindHint": "This only picks the templates – everything stays changeable.",
     "inviteCode": "Invitation code",
     "requestSent": "Request sent. You will get a message as soon as it is approved.",
-    "createAndContinue": "Create club"
+    "createAndContinue": "Create club",
+    "clubNameHint": "The name everyone knows you by.",
+    "clubNameLabel": "Club name",
+    "clubKindOther": "Your own term",
+    "clubKindOtherHint": "For example “cooperative” or “fan club”.",
+    "seasonStartQuestion": "When does your club year start?",
+    "seasonStartHint": "Point totals and leaderboards follow this date.",
+    "seasonStartFootnote": "The suggestion matches your kind of club and can be changed any time.",
+    "joinNow": "Join",
+    "createAnother": "Start another club"
   },
   "tabs": {
     "dashboard": "Home",
@@ -174,5 +187,76 @@
     "fr": "French",
     "it": "Italian",
     "en": "English"
+  },
+  "firstSteps": {
+    "title": "First steps for {{club}}",
+    "footnote": "That is all it takes – everything else can wait.",
+    "event": {
+      "title": "Create the first event",
+      "hint": "So everyone knows when things happen"
+    },
+    "invite": {
+      "title": "Invite members",
+      "hint": "Share a link or QR code"
+    },
+    "rules": {
+      "title": "Review the point rules",
+      "hint": "They are already set up"
+    }
+  },
+  "invite": {
+    "title": "Invitations",
+    "listTitle": "Created invitations",
+    "listFootnote": "Swipe left to revoke an invitation.",
+    "empty": "No invitation created yet",
+    "create": "Create invitation",
+    "createAction": "Create",
+    "scope": "Scope",
+    "scopeClub": "Whole club",
+    "scopeHint": "A team invitation assigns the person to that team right away.",
+    "roleLabel": "Role",
+    "role": {
+      "member": "Member",
+      "trainer": "Coach",
+      "admin": "Board"
+    },
+    "adminConfirm": "Yes, grant full club rights",
+    "adminConfirmed": "Confirmed",
+    "adminWarning": "Invited people receive full club rights and can change anything.",
+    "expiresLabel": "Valid until",
+    "expiresOn": "Until {{date}}",
+    "maxUsesLabel": "Maximum redemptions",
+    "maxUsesUnlimited": "Unlimited",
+    "limitsHint": "Left empty, the invitation can be redeemed without limit.",
+    "uses": "{{used}} of {{max}} redeemed",
+    "usesUnlimited": "{{used}} redeemed",
+    "active": "Valid",
+    "inactive": "Expired",
+    "revoke": "Revoke",
+    "shareTitle": "Share invitation",
+    "shareHint": "Anyone who opens the link becomes a member without further approval.",
+    "share": "Share",
+    "copy": "Copy link",
+    "copied": "Link copied",
+    "linkLabel": "Invitation link",
+    "qrLabel": "QR code of the invitation",
+    "qrFailed": "The QR code could not be generated.",
+    "joinTitle": "Invitation",
+    "youAreInvited": "You are invited",
+    "displayName": "Your display name",
+    "displayNameHint": "This is how you appear in lists and leaderboards.",
+    "joinNow": "Join",
+    "alreadyMember": "You already belong to this club. Your role stays unchanged.",
+    "invalidHint": "Ask the club for a new invitation or send a join request.",
+    "invalid": {
+      "unknown": "This invitation does not exist.",
+      "expired": "This invitation has expired.",
+      "exhausted": "This invitation has already been fully used.",
+      "revoked": "This invitation was revoked."
+    },
+    "requestInstead": "Send a join request",
+    "created": "Invitation created",
+    "revoked": "Invitation revoked",
+    "expiresRequired": "Please pick an expiry date."
   }
 }

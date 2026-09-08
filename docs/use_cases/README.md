@@ -17,7 +17,7 @@ synchron gehalten werden können.
 
 | UC | Titel | Primärakteur | Requirements | Status |
 |---|---|---|---|---|
-| [UC-001](UC-001-verein-gruenden.md) | Verein gründen | Vorstand | FR-004, FR-005, FR-006, FR-035, FR-113 | Draft |
+| [UC-001](UC-001-verein-gruenden.md) | Verein gründen | Vorstand | FR-004, FR-005, FR-006, FR-035, FR-113, FR-134 | Draft |
 | [UC-002](UC-002-per-einladung-beitreten.md) | Per Einladung beitreten | Gast | FR-008, FR-011 | Draft |
 | [UC-003](UC-003-einladung-erstellen.md) | Einladung erstellen | Vorstand | FR-007 | Draft |
 | [UC-004](UC-004-beitritts-anfrage-entscheiden.md) | Beitritts-Anfrage entscheiden | Vorstand | FR-009, FR-010 | Draft |
@@ -88,6 +88,7 @@ synchron gehalten werden können.
 | [UC-034](UC-034-vereinsidentitaet-konfigurieren.md) | Vereinsidentität, Begriffe und Module konfigurieren | Vorstand | FR-111, FR-112, FR-113, FR-114, FR-115 | Draft |
 | [UC-035](UC-035-verband-verbinden.md) | Verband verbinden | Vorstand | FR-120, FR-121 | Draft |
 | [UC-036](UC-036-rechnungen-einsehen.md) | Rechnungen einsehen und Punkte bei pünktlicher Zahlung | Mitglied | FR-116, FR-117, FR-118, FR-119 | Draft |
+| [UC-037](UC-037-beispielinhalte-verwalten.md) | Beispielinhalte verwalten | Vorstand | FR-134 bis FR-145 | Draft |
 
 ---
 
@@ -95,7 +96,7 @@ synchron gehalten werden können.
 
 | Inkrement | Use Cases |
 |---|---|
-| **M1 – Fundament** | UC-001 bis UC-008, UC-034 |
+| **M1 – Fundament** | UC-001 bis UC-008, UC-034, UC-037 |
 | **M2 – Agenda-Loop** | UC-009 bis UC-016, UC-020 |
 | **M3 – Gemeinschaft** | UC-017 bis UC-019, UC-021 bis UC-033 |
 | **M4 – Anschlüsse** | UC-035, UC-036 |
@@ -123,12 +124,12 @@ Ebenfalls ohne eigene Spezifikation, weil vollständig systemseitig: FR-060, FR-
 
 ## Geschäftsregeln
 
-Die Regeln BR-001 bis BR-159 sind fortlaufend und über alle Use Cases hinweg eindeutig vergeben.
+Die Regeln BR-001 bis BR-166 sind fortlaufend und über alle Use Cases hinweg eindeutig vergeben.
 Die vier nicht verhandelbaren Regeln des Projekts sind über mehrere Use Cases verteilt:
 
 | Prinzip | Regeln |
 |---|---|
-| **Punkte schreibt nur der Server** | BR-050, BR-051, BR-052, BR-065, BR-085, BR-087 |
+| **Punkte schreibt nur der Server** | BR-050, BR-051, BR-052, BR-065, BR-085, BR-087, BR-161 |
 | **Rollenprüfung serverseitig** | BR-009, BR-027, BR-033, BR-053, BR-056, BR-096 |
 | **Anti-Überwachung by Design** | BR-094 bis BR-099, BR-102, BR-105 bis BR-108, BR-122 bis BR-126, BR-136 bis BR-141 |
 | **Verbindung vor Aufruf** | BR-043, BR-044, BR-069, BR-111, BR-113 bis BR-116 |

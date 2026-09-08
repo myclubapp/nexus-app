@@ -44,6 +44,7 @@ flowchart LR
     guest([🚪 Gast])
     member([👤 Mitglied])
     board([🏛️ Vorstand])
+    system2([🖥️ System])
 
     subgraph "myclub nexus – Auth & Onboarding"
         UC001[UC-001\nVerein gründen]
@@ -52,8 +53,11 @@ flowchart LR
         UC004[UC-004\nBeitritts-Anfrage entscheiden]
         UC005[UC-005\nAnmelden]
         UC006[UC-006\nKonto löschen]
+        UC037[UC-037\nBeispielinhalte verwalten]
     end
 
+    board --> UC037
+    system2 --> UC037
     board --> UC001
     board --> UC003
     board --> UC004

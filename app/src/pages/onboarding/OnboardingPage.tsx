@@ -1,178 +1,230 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   IonButton,
-  IonContent,
-  IonHeader,
   IonInput,
   IonItem,
   IonLabel,
-  IonList,
-  IonNote,
-  IonPage,
+  IonRadio,
+  IonRadioGroup,
   IonSegment,
   IonSegmentButton,
   IonSpinner,
-  IonTitle,
-  IonToolbar,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
-import { useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { useClub } from '../../hooks/useClub';
+import { useCreateClub, useRedeemInvite } from '../../hooks/useOnboarding';
+import { AppPage } from '../../components/AppPage';
+import { ListSection } from '../../components/ListSection';
+import { InlineError } from '../../components/StateViews';
+import { Wizard, type WizardStep } from '../../components/Wizard';
+import { CLUB_KINDS, defaultSeasonStart } from '../../lib/clubKind';
 import type { ClubKind } from '../../lib/database.types';
 
-const CLUB_KINDS: ClubKind[] = [
-  'sport',
-  'music',
-  'culture',
-  'youth',
-  'neighborhood',
-  'other',
-];
+type Mode = 'create' | 'join';
 
 /**
- * Onboarding ohne Sport-Fokus (MVP-Scope §6). Die Vereinsart steuert nur die
- * Vorlagen für Punkteregeln und Begriffe, nichts davon ist endgültig.
+ * Onboarding: gründen oder beitreten (UC-001, UC-002).
+ *
+ * Die Gründung läuft in drei Schritten – Name, Vereinsart, Saisonbeginn –, denn
+ * mehr als drei Eingabeschritte sprengen die drei Minuten aus BR-004/NFR-024.
+ * Die Vereinsart steuert dabei nur Vorlagen und schränkt nichts ein (BR-001).
+ *
+ * Der Formularzustand liegt hier und nicht im Wizard: Nach einem Fehlschlag
+ * bleiben die Eingaben stehen, statt dass die Person sie neu tippt.
  */
 export function OnboardingPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { signOut } = useAuth();
-  const { setActiveClub } = useClub();
-  const queryClient = useQueryClient();
+  const createClub = useCreateClub();
+  const redeemInvite = useRedeemInvite();
 
-  const [mode, setMode] = useState<'create' | 'join'>('create');
+  const [mode, setMode] = useState<Mode>('create');
+  const [step, setStep] = useState(0);
+
   const [clubName, setClubName] = useState('');
   const [clubKind, setClubKind] = useState<ClubKind>('sport');
+  const [kindLabel, setKindLabel] = useState('');
+  // Leer heisst «noch nicht angefasst»: Der Vorschlag folgt dann der
+  // Vereinsart, statt bei einem Wechsel auf einem alten Wert stehen zu bleiben.
+  const [seasonStart, setSeasonStart] = useState('');
+
   const [inviteCode, setInviteCode] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [info, setInfo] = useState<string | null>(null);
 
-  async function createClub() {
-    setBusy(true);
-    setError(null);
-    const { data: clubId, error: rpcError } = await supabase.rpc('create_club', {
-      p_name: clubName.trim(),
-      p_club_kind: clubKind,
-    });
-    if (rpcError) {
-      setBusy(false);
-      setError(rpcError.message);
-      return;
-    }
-    // Der frisch gegründete Verein wird der aktive – sonst entscheidet die
-    // Reihenfolge der Mitgliedschaften, welchen die App anzeigt.
-    if (clubId) setActiveClub(clubId);
-    // busy bleibt gesetzt, bis die Mitgliedschaften neu geladen sind: sonst
-    // ist der Knopf während des Nachladens wieder aktiv und ein zweiter
-    // Klick gründet denselben Verein ein zweites Mal.
-    await queryClient.invalidateQueries({ queryKey: ['memberships'] });
-  }
+  const suggestedSeasonStart = useMemo(
+    () => defaultSeasonStart(clubKind),
+    [clubKind],
+  );
+  const effectiveSeasonStart = seasonStart || suggestedSeasonStart;
 
-  async function redeemInvite() {
-    setBusy(true);
-    setError(null);
-    const { error: rpcError } = await supabase.rpc('redeem_invite', {
-      p_code: inviteCode.trim(),
-    });
-    if (rpcError) {
-      setBusy(false);
-      setError(rpcError.message);
-      return;
-    }
-    setInfo(t('onboarding.requestSent'));
-    await queryClient.invalidateQueries({ queryKey: ['memberships'] });
-  }
+  const steps: WizardStep[] = [
+    {
+      id: 'name',
+      title: t('onboarding.clubName'),
+      hint: t('onboarding.clubNameHint'),
+      isComplete: clubName.trim().length >= 2,
+      content: (
+        <ListSection>
+          <IonItem>
+            <IonInput
+              label={t('onboarding.clubNameLabel')}
+              labelPlacement="stacked"
+              autocapitalize="words"
+              value={clubName}
+              onIonInput={(e) => setClubName(e.detail.value ?? '')}
+            />
+          </IonItem>
+        </ListSection>
+      ),
+    },
+    {
+      id: 'kind',
+      title: t('onboarding.clubKindQuestion'),
+      hint: t('onboarding.clubKindHint'),
+      isComplete: clubKind !== 'other' || kindLabel.trim().length >= 2,
+      content: (
+        <>
+          <ListSection>
+            <IonRadioGroup
+              value={clubKind}
+              onIonChange={(e) => setClubKind(e.detail.value as ClubKind)}
+            >
+              {CLUB_KINDS.map((kind) => (
+                <IonItem key={kind}>
+                  <IonRadio value={kind} justify="start" labelPlacement="end">
+                    {t(`onboarding.clubKind.${kind}`)}
+                  </IonRadio>
+                </IonItem>
+              ))}
+            </IonRadioGroup>
+          </ListSection>
+
+          {clubKind === 'other' && (
+            <ListSection footnote={t('onboarding.clubKindOtherHint')}>
+              <IonItem>
+                <IonInput
+                  label={t('onboarding.clubKindOther')}
+                  labelPlacement="stacked"
+                  value={kindLabel}
+                  onIonInput={(e) => setKindLabel(e.detail.value ?? '')}
+                />
+              </IonItem>
+            </ListSection>
+          )}
+        </>
+      ),
+    },
+    {
+      id: 'season',
+      title: t('onboarding.seasonStartQuestion'),
+      hint: t('onboarding.seasonStartHint'),
+      isComplete: Boolean(effectiveSeasonStart),
+      content: (
+        <ListSection footnote={t('onboarding.seasonStartFootnote')}>
+          <IonItem>
+            <IonInput
+              type="date"
+              label={t('clubSettings.seasonStart')}
+              labelPlacement="stacked"
+              value={effectiveSeasonStart}
+              onIonInput={(e) => setSeasonStart(e.detail.value ?? '')}
+            />
+          </IonItem>
+        </ListSection>
+      ),
+    },
+  ];
 
   return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>{t('onboarding.welcome')}</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+    <AppPage title={t('onboarding.welcome')} largeTitle={false}>
+      <div className="app-centered">
+        <IonSegment
+          value={mode}
+          onIonChange={(e) => {
+            setMode(e.detail.value as Mode);
+            setStep(0);
+          }}
+        >
+          <IonSegmentButton value="create">
+            <IonLabel>{t('onboarding.createClub')}</IonLabel>
+          </IonSegmentButton>
+          <IonSegmentButton value="join">
+            <IonLabel>{t('onboarding.hasInvite')}</IonLabel>
+          </IonSegmentButton>
+        </IonSegment>
+      </div>
 
-      <IonContent className="ion-padding">
-        <div className="app-centered">
-          <IonSegment
-            value={mode}
-            onIonChange={(e) => setMode(e.detail.value as 'create' | 'join')}
-          >
-            <IonSegmentButton value="create">
-              <IonLabel>{t('onboarding.createClub')}</IonLabel>
-            </IonSegmentButton>
-            <IonSegmentButton value="join">
-              <IonLabel>{t('onboarding.hasInvite')}</IonLabel>
-            </IonSegmentButton>
-          </IonSegment>
-
-          {mode === 'create' ? (
-            <>
-              <IonInput
-                label={t('onboarding.clubName')}
-                labelPlacement="stacked"
-                fill="outline"
-                value={clubName}
-                onIonInput={(e) => setClubName(e.detail.value ?? '')}
-              />
-
-              <div>
-                <IonLabel>
-                  <h2>{t('onboarding.clubKindQuestion')}</h2>
-                </IonLabel>
-                <IonList inset>
-                  {CLUB_KINDS.map((kind) => (
-                    <IonItem
-                      key={kind}
-                      button
-                      detail={false}
-                      color={clubKind === kind ? 'light' : undefined}
-                      onClick={() => setClubKind(kind)}
-                    >
-                      <IonLabel>{t(`onboarding.clubKind.${kind}`)}</IonLabel>
-                    </IonItem>
-                  ))}
-                </IonList>
-                <IonNote>{t('onboarding.clubKindHint')}</IonNote>
-              </div>
-
-              <IonButton
-                expand="block"
-                disabled={busy || clubName.trim().length < 2}
-                onClick={() => void createClub()}
-              >
-                {busy ? <IonSpinner name="crescent" /> : t('onboarding.createAndContinue')}
-              </IonButton>
-            </>
-          ) : (
-            <>
+      {mode === 'create' ? (
+        <Wizard
+          steps={steps}
+          current={step}
+          onCurrentChange={setStep}
+          finishLabel={t('onboarding.createAndContinue')}
+          isSubmitting={createClub.isPending}
+          error={createClub.error ? (createClub.error as Error).message : null}
+          onFinish={() =>
+            createClub.mutate(
+              {
+                name: clubName,
+                kind: clubKind,
+                seasonStart: effectiveSeasonStart,
+                kindLabel: clubKind === 'other' ? kindLabel : undefined,
+              },
+              {
+                // Beim ersten Verein übernimmt das `RedirectIfClubMember`.
+                // Bei einem weiteren (A3) ist die Weiche mit `?another=1`
+                // ausgeschaltet – ohne diesen Sprung bliebe der Wizard stehen
+                // und die nächste Eingabe gründete einen dritten Verein.
+                onSuccess: () => navigate('/tabs/dashboard', { replace: true }),
+              },
+            )
+          }
+        />
+      ) : (
+        <>
+          <ListSection footnote={t('onboarding.hasInviteHint')}>
+            <IonItem>
               <IonInput
                 label={t('onboarding.inviteCode')}
                 labelPlacement="stacked"
-                fill="outline"
+                autocapitalize="off"
                 value={inviteCode}
                 onIonInput={(e) => setInviteCode(e.detail.value ?? '')}
               />
-              <IonNote>{t('onboarding.hasInviteHint')}</IonNote>
-              <IonButton
-                expand="block"
-                disabled={busy || inviteCode.trim().length < 4}
-                onClick={() => void redeemInvite()}
-              >
-                {busy ? <IonSpinner name="crescent" /> : t('common.next')}
-              </IonButton>
-            </>
+            </IonItem>
+          </ListSection>
+
+          {redeemInvite.error && (
+            <InlineError message={(redeemInvite.error as Error).message} />
           )}
 
-          {error && <IonNote color="danger">{error}</IonNote>}
-          {info && <IonNote color="success">{info}</IonNote>}
+          <div className="app-actions">
+            <IonButton
+              expand="block"
+              disabled={redeemInvite.isPending || inviteCode.trim().length < 4}
+              onClick={() =>
+                redeemInvite.mutate(
+                  { code: inviteCode },
+                  { onSuccess: () => navigate('/tabs/dashboard', { replace: true }) },
+                )
+              }
+            >
+              {redeemInvite.isPending ? (
+                <IonSpinner name="crescent" />
+              ) : (
+                t('onboarding.joinNow')
+              )}
+            </IonButton>
+          </div>
+        </>
+      )}
 
-          <IonButton fill="clear" size="small" onClick={() => void signOut()}>
-            {t('auth.logout')}
-          </IonButton>
-        </div>
-      </IonContent>
-    </IonPage>
+      <div className="app-actions">
+        <IonButton fill="clear" size="small" onClick={() => void signOut()}>
+          {t('auth.logout')}
+        </IonButton>
+      </div>
+    </AppPage>
   );
 }

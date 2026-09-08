@@ -32,8 +32,15 @@ export interface RenderWithProvidersOptions extends Omit<RenderOptions, 'wrapper
   /** Startroute des MemoryRouter, z.B. `/tabs/agenda`. */
   route?: string;
   queryClient?: QueryClient;
-  /** Sprache, in der die Texte erwartet werden. Standard ist Deutsch. */
-  language?: 'de' | 'fr' | 'it' | 'en';
+}
+
+/**
+ * Sprache umstellen. `await`en, bevor gerendert wird – ein Wechsel während des
+ * Renders käme einen Durchlauf zu spät. Standard ist Deutsch; das setzt
+ * `src/test/setup.ts`.
+ */
+export async function setLanguage(language: 'de' | 'fr' | 'it' | 'en') {
+  await i18n.changeLanguage(language);
 }
 
 export interface RenderWithProvidersResult extends RenderResult {
@@ -44,16 +51,8 @@ export function renderWithProviders(
   ui: ReactElement,
   options: RenderWithProvidersOptions = {},
 ): RenderWithProvidersResult {
-  const {
-    route = '/',
-    queryClient = createTestQueryClient(),
-    language = 'de',
-    ...renderOptions
-  } = options;
-
-  if (i18n.resolvedLanguage !== language) {
-    void i18n.changeLanguage(language);
-  }
+  const { route = '/', queryClient = createTestQueryClient(), ...renderOptions } =
+    options;
 
   function Wrapper({ children }: { children: ReactNode }) {
     return (
@@ -71,4 +70,17 @@ export function renderWithProviders(
     ...render(ui, { wrapper: Wrapper, ...renderOptions }),
     queryClient,
   };
+}
+
+/**
+ * Eigenschaften einer Ionic-Komponente auslesen.
+ *
+ * React setzt Eigenschaften auf Web-Komponenten als DOM-Properties, nicht als
+ * Attribute – `getAttribute('disabled')` liefert deshalb immer `null`. Und weil
+ * Stencil in jsdom nicht rendert, hat `disabled` dort auch keine Wirkung: Ein
+ * Klick erreicht den Handler trotzdem. Geprüft wird darum die übergebene
+ * Eigenschaft, nicht das Verhalten von Ionic.
+ */
+export function ionProp<T = unknown>(element: Element, name: string): T {
+  return (element as unknown as Record<string, T>)[name];
 }
