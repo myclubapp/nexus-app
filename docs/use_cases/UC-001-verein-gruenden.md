@@ -6,7 +6,7 @@
 **Use Case Name:** Verein gründen
 **Primary Actor:** Vorstand
 **Goal:** Einen Vereins-Workspace anlegen, der sofort ohne weitere Konfiguration nutzbar ist
-**Status:** Draft
+**Status:** In Progress
 
 ## Preconditions
 

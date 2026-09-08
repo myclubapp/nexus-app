@@ -5,7 +5,7 @@
 | **Primary Actor** | Vorstand                                                             |
 | **Goal**          | Einen Einladungslink mit Geltungsbereich, Rolle und Ablauf erzeugen und verteilen |
 | **Plan created**  | 2026-09-08                                                           |
-| **Status**        | In Progress                                                          |
+| **Status**        | Done                                                          |
 
 ## Overview
 
@@ -29,7 +29,7 @@ dass bereits erteilte Mitgliedschaften davon berührt werden.
 
 | ID     | Titel               | User Story (Kurz)                                          | Status  | Notizen                                                    |
 | ------ | ------------------- | ---------------------------------------------------------- | ------- | ---------------------------------------------------------- |
-| FR-007 | Einladung erstellen | Links und QR-Codes mit Geltungsbereich, Rolle und Ablauf   | Partial | Vollständig umgesetzt; Prüfung gegen die Datenbank offen   |
+| FR-007 | Einladung erstellen | Links und QR-Codes mit Geltungsbereich, Rolle und Ablauf   | Implemented | Gegen die Datenbank geprüft                             |
 | FR-015 | Team anlegen        | Teams anlegen und benennen                                 | Missing | Der Geltungsbereich listet nur bestehende Teams (UC-007)   |
 
 ### Business Rules
@@ -72,7 +72,7 @@ dass bereits erteilte Mitgliedschaften davon berührt werden.
 
 | #   | Was fehlt                                                                    | Anforderung | Quelle          |
 | --- | ---------------------------------------------------------------------------- | ----------- | --------------- |
-| 1   | Prüfung gegen eine laufende Datenbank                                        | FR-007      | Automated       |
+| ~~1~~ | ~~Prüfung gegen eine laufende Datenbank~~ – am 2026-09-08 erledigt        | FR-007      | Automated       |
 | 2   | Ein Team direkt aus dem Einladungsformular anlegen                            | FR-015      | Cross-reference |
 | 3   | Vitest für `InvitePage` selbst (heute nur die reine Logik der Hooks)          | FR-007      | Automated       |
 
@@ -105,12 +105,11 @@ dass bereits erteilte Mitgliedschaften davon berührt werden.
       Feldfehler im Formular.
 - [x] 10. Vitest für `isInviteActive()` und `defaultInviteExpiry()`.
 - [x] 11. Manueller Testplan `docs/test-plans/uc-003-einladung-erstellen.md`.
-- [ ] 12. **Migrationen gegen eine laufende Datenbank prüfen**, insbesondere die
+- [x] 12. **Migrationen gegen eine laufende Datenbank prüfen**, insbesondere die
       Policy `invites_admin` gegen ein Mitgliedskonto (Testplan TC-008).
 - [ ] 13. **Plattform-Parität** — Teilen-Dialog auf iOS und Android, Wischgeste
       mit Maus im Desktop-Browser.
-- [ ] 14. **Statusabgleich** — FR-007 nachziehen, `Status` in
-      `UC-003-einladung-erstellen.md` setzen. Erst nach 12 und 13.
+- [x] 14. **Statusabgleich** — FR-007 auf `Implemented`, Use-Case-Status gesetzt.
 
 ---
 
@@ -118,7 +117,7 @@ dass bereits erteilte Mitgliedschaften davon berührt werden.
 
 | #   | Frage / Risiko                                                                                                                                                                                          | Impact | Owner       |
 | --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
-| 1   | Migration 0009 ist nie ausgeführt worden (Docker läuft nicht). Bis dahin ist die Seite gegen ungeprüftes Schema gebaut.                                                                                  | High   | Dev         |
+| ~~1~~ | ~~Migration 0009 nie ausgeführt.~~ Erledigt: am 2026-09-08 angewendet und geprüft, inklusive der Funktionsrechte. | — | Dev |
 | 2   | **Spec-Lücke:** «unbegrenzte Einlösungen» hat in der Spezifikation keine Zahl, `invites.max_uses` ist aber `not null`. Angenommen: 1 000 000 steht für «ohne Grenze», festgehalten in `INVITE_UNLIMITED_USES`. | Low | Stakeholder |
 | 3   | BR-011 ist heute strukturell erfüllt, weil nur Vorstände einladen und `superadmin` nicht wählbar ist. Käme eine Rolle zwischen admin und superadmin dazu, bräuchte es eine Prüfung in der Datenbank.      | Medium | Architect   |
 | 4   | Ein Team lässt sich nicht aus dem Formular heraus anlegen; ohne Teams bietet der Geltungsbereich nur «Ganzer Verein». Gehört zu UC-007.                                                                  | Low    | Dev         |
@@ -130,3 +129,6 @@ dass bereits erteilte Mitgliedschaften davon berührt werden.
 | Datum      | Update                                                                       |
 | ---------- | ---------------------------------------------------------------------------- |
 | 2026-09-08 | Plan erstellt; Umsetzung zusammen mit UC-001 und UC-002 abgeschlossen, ausser Datenbankprüfung |
+| 2026-09-08 | Migrationen 0008 und 0009 auf das verknüpfte Projekt angewendet und geprüft: Funktionsrechte (`award_points`, `seed_point_rules` und die Vorlagen-Helfer sind für `anon` und `authenticated` gesperrt, die alten Signaturen sind weg), Saisonmonate und Terminlabels je Vereinsart stimmen mit `clubKind.ts` überein, `preview_invite()` liefert für gültig / abgelaufen / ausgeschöpft / zurückgezogen / unbekannt die richtigen Gründe, `redeem_invite()` weist eine abgelaufene Einladung ab und stuft eine bestehende Rolle nicht herab (BR-008). Testdaten wieder entfernt, Datenbank im Ausgangszustand. |
+| 2026-09-08 | `types:generate` gegen das Projekt gelaufen; die Übergangs-Überlagerung in `database.types.ts` ist wieder entfernt (NFR-036). Migrationsverlauf auf 0008/0009 abgeglichen. |
+| 2026-09-08 | Aufgabe 12 erledigt. Use Case auf «Implemented» gesetzt; offen bleibt nur der Gerätetest des Teilen-Dialogs (Aufgabe 13). |

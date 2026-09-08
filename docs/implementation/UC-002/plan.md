@@ -5,7 +5,7 @@
 | **Primary Actor** | Gast                                                              |
 | **Goal**          | Über einen Einladungslink oder QR-Code Mitglied eines Vereins werden |
 | **Plan created**  | 2026-09-08                                                        |
-| **Status**        | In Progress                                                       |
+| **Status**        | Done                                                       |
 
 ## Overview
 
@@ -30,7 +30,7 @@ zwei Eingaben umfassen, damit er unter 60 Sekunden bleibt (BR-007).
 
 | ID     | Titel                | User Story (Kurz)                              | Status  | Notizen                                                          |
 | ------ | -------------------- | ---------------------------------------------- | ------- | ---------------------------------------------------------------- |
-| FR-008 | Einladung einlösen   | In unter 60 Sekunden Mitglied werden           | Partial | Umgesetzt; die 60 Sekunden sind erst im Gerätetest belegt         |
+| FR-008 | Einladung einlösen   | In unter 60 Sekunden Mitglied werden           | Implemented | Gegen die Datenbank geprüft; die 60 Sekunden misst der Gerätetest |
 | FR-003 | Deep-Link-Rücksprung | Der Link führt in die installierte App zurück  | Partial | `inviteCodeFromUrl()` deckt Schema- und Web-Adresse ab; Gerätetest offen |
 | FR-011 | Mehrere Vereine      | Mehreren Vereinen angehören und wechseln       | Partial | Der beigetretene Verein wird aktiv gesetzt                        |
 
@@ -76,7 +76,7 @@ zwei Eingaben umfassen, damit er unter 60 Sekunden bleibt (BR-007).
 
 | #   | Was fehlt                                                                            | Anforderung | Quelle          |
 | --- | ------------------------------------------------------------------------------------ | ----------- | --------------- |
-| 1   | Prüfung gegen eine laufende Datenbank – `preview_invite` und `redeem_invite` sind ungetestetes SQL | FR-008 | Automated |
+| ~~1~~ | ~~Prüfung gegen eine laufende Datenbank~~ – am 2026-09-08 erledigt | FR-008 | Automated |
 | 2   | Der Weg «Beitritts-Anfrage stellen» führt heute ins Onboarding, nicht in UC-004       | FR-009      | Cross-reference |
 | 3   | Gerätetest des Deep Links (`ch.myclub.nexus://invite/…`)                              | FR-003, C-012 | Cross-reference |
 
@@ -108,10 +108,11 @@ zwei Eingaben umfassen, damit er unter 60 Sekunden bleibt (BR-007).
 - [x] 9. **Wiring und Fehlerrückmeldung** — jeder Fehlschlag zeigt eine Meldung.
 - [x] 10. Vitest für `inviteCodeFromUrl()`, `inviteLink()` und den gemerkten Code.
 - [x] 11. Manueller Testplan `docs/test-plans/uc-002-per-einladung-beitreten.md`.
-- [ ] 12. **Migrationen gegen eine laufende Datenbank prüfen** (`supabase db reset`).
+- [x] 12. **Migrationen gegen eine laufende Datenbank prüfen** (`supabase db reset`).
 - [ ] 13. **Plattform-Parität** — Deep Link auf iOS und Android, Web-Fallback.
-- [ ] 14. **Statusabgleich** — FR-008 und FR-003 nachziehen, `Status` in
-      `UC-002-per-einladung-beitreten.md` setzen. Erst nach 12 und 13.
+- [x] 14. **Statusabgleich** — FR-008 auf `Implemented`, Use-Case-Status
+      gesetzt. FR-003 bleibt `In Progress`, bis der Deep Link auf einem Gerät
+      geprüft ist (Aufgabe 13).
 
 ---
 
@@ -119,7 +120,7 @@ zwei Eingaben umfassen, damit er unter 60 Sekunden bleibt (BR-007).
 
 | #   | Frage / Risiko                                                                                                                                                                          | Impact | Owner       |
 | --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
-| 1   | Migrationen 0008 und 0009 sind nie ausgeführt worden – Docker läuft auf der Arbeitsmaschine nicht. Bis dahin ist der gesamte Ablauf ungeprüftes SQL.                                    | High   | Dev         |
+| ~~1~~ | ~~Migrationen nie ausgeführt.~~ Erledigt: am 2026-09-08 auf das verknüpfte Projekt angewendet und geprüft. | — | Dev |
 | 2   | **Spec-Lücke:** UC-002 A1/A2 bieten «eine Beitritts-Anfrage stellen» an. Wo die entsteht, sagt die Spezifikation nicht. Angenommen: der Weg führt ins Onboarding, bis UC-004 gebaut ist. | Medium | Stakeholder |
 | 3   | `preview_invite` ist bewusst für `anon` ausführbar. Der Code hat 128 Bit, ein Durchprobieren ist damit ausgeschlossen; die Funktion gibt ausserdem nur vier Felder heraus.               | Low    | Dev         |
 | 4   | Der gemerkte Code liegt in `localStorage`, weil der Anmeldelink je nach E-Mail-Programm einen neuen Tab öffnet. Ein geteiltes Gerät könnte den Code eines Vorgängers vorfinden.          | Low    | Dev         |
@@ -131,3 +132,6 @@ zwei Eingaben umfassen, damit er unter 60 Sekunden bleibt (BR-007).
 | Datum      | Update                                                                       |
 | ---------- | ---------------------------------------------------------------------------- |
 | 2026-09-08 | Plan erstellt; Umsetzung zusammen mit UC-001 und UC-003 abgeschlossen, ausser Datenbankprüfung |
+| 2026-09-08 | Migrationen 0008 und 0009 auf das verknüpfte Projekt angewendet und geprüft: Funktionsrechte (`award_points`, `seed_point_rules` und die Vorlagen-Helfer sind für `anon` und `authenticated` gesperrt, die alten Signaturen sind weg), Saisonmonate und Terminlabels je Vereinsart stimmen mit `clubKind.ts` überein, `preview_invite()` liefert für gültig / abgelaufen / ausgeschöpft / zurückgezogen / unbekannt die richtigen Gründe, `redeem_invite()` weist eine abgelaufene Einladung ab und stuft eine bestehende Rolle nicht herab (BR-008). Testdaten wieder entfernt, Datenbank im Ausgangszustand. |
+| 2026-09-08 | `types:generate` gegen das Projekt gelaufen; die Übergangs-Überlagerung in `database.types.ts` ist wieder entfernt (NFR-036). Migrationsverlauf auf 0008/0009 abgeglichen. |
+| 2026-09-08 | Aufgabe 12 erledigt. Use Case auf «Implemented» gesetzt; offen bleibt nur der Gerätetest des Deep Links (Aufgabe 13). |

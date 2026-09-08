@@ -153,7 +153,7 @@ Aus `docs/guidelines.md`, verbindlich:
       im Browser (Testplan TC-009).
 - [ ] 15. **Beispielinhalte** — Schritt 9 der Spezifikation verlangt
       gekennzeichnete Beispielinhalte. Das ist UC-037 und wird dort gebaut.
-- [ ] 16. **Migrationen gegen eine laufende Datenbank prüfen**
+- [x] 16. **Migrationen gegen eine laufende Datenbank prüfen**
       (`supabase db reset`).
 - [ ] 17. **Statusabgleich** — FR-004, FR-005, FR-006, FR-112, FR-113 nachziehen
       und `Status` in `UC-001-verein-gruenden.md` setzen. Erst nach 13, 15, 16.
@@ -166,7 +166,7 @@ Aus `docs/guidelines.md`, verbindlich:
 | --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ----------- |
 | 1   | **Spec-Lücke:** Welcher Saisonbeginn passt zu welcher Vereinsart? Die Spezifikation sagt nur «schlägt einen passenden Monat vor». Annahme: Sport 1. Juli, Musik 1. September, Kultur 1. September, Jugend 1. August, Quartier 1. Januar, Anderes 1. Januar. Festgehalten durch einen Test auf `defaultSeasonStart()`. Klärung nötig. | Medium | Stakeholder |
 | 2   | **Spec-Lücke:** Wann gilt ein Verein als «neu» und zeigt die drei Handlungsangebote? Annahme: solange kein Termin existiert und der Verein höchstens ein Mitglied hat. Durch Test festgehalten. | Low | Stakeholder |
-| 3   | Migrationen werden nur ins Repository geschrieben, nicht auf das verknüpfte Supabase-Projekt ausgerollt. Das Ausrollen ist ein Schritt nach aussen und braucht eine ausdrückliche Freigabe. | Medium | Dev |
+| ~~3~~ | ~~Migrationen nur im Repository.~~ Erledigt: am 2026-09-08 nach ausdrücklicher Freigabe auf das verknüpfte Projekt angewendet und geprüft. | — | Dev |
 | 4   | BR-003 verlangt, dass ein Verein nie ohne Vorstand bleibt. Die Gründung erfüllt das; die Absicherung gegen Herabstufung und Kontolöschung gehört zu UC-007 und UC-006. | Medium | Dev |
 | 5   | `docs/use_cases.md` und `docs/entity_model.md` sind während der Umsetzung entstanden; die Beziehungen im Plan stammen noch aus den Spezifikationen selbst. | Low | Architect |
 | 6   | Schritt 9 der Spezifikation (gekennzeichnete Beispielinhalte) ist nach der Planerstellung dazugekommen und gehört zu UC-037. UC-001 ist bis dahin nicht vollständig. | Medium | Dev |
@@ -181,3 +181,6 @@ Aus `docs/guidelines.md`, verbindlich:
 | 2026-09-08 | Umsetzung: Migration 0008, Wizard, `clubKind.ts`, `FirstStepsCard`, weiterer Verein. 53 Vitest-Tests grün, Typen/Lint/i18n sauber. |
 | 2026-09-08 | Code-Review: vier Blocker und vier «Should fix» gefunden und behoben (fehlende Toast-Schlüssel, Weiterleitung beim zweiten Verein, Pflichtfeld Ablaufdatum, doppelter Sentinel, fehlende Fehlerrückmeldung, Teilen-Blatt als Formular). |
 | 2026-09-08 | Offen: Schritt 9 (Beispielinhalte, UC-037), Datenbankprüfung, Gerätetest. UC-001 bleibt deshalb «In Progress».                   |
+| 2026-09-08 | Migrationen 0008 und 0009 auf das verknüpfte Projekt angewendet und geprüft: Funktionsrechte (`award_points`, `seed_point_rules` und die Vorlagen-Helfer sind für `anon` und `authenticated` gesperrt, die alten Signaturen sind weg), Saisonmonate und Terminlabels je Vereinsart stimmen mit `clubKind.ts` überein, `preview_invite()` liefert für gültig / abgelaufen / ausgeschöpft / zurückgezogen / unbekannt die richtigen Gründe, `redeem_invite()` weist eine abgelaufene Einladung ab und stuft eine bestehende Rolle nicht herab (BR-008). Testdaten wieder entfernt, Datenbank im Ausgangszustand. |
+| 2026-09-08 | `types:generate` gegen das Projekt gelaufen; die Übergangs-Überlagerung in `database.types.ts` ist wieder entfernt (NFR-036). Migrationsverlauf auf 0008/0009 abgeglichen. |
+| 2026-09-08 | Offen bleiben Schritt 9 (Beispielinhalte, UC-037) und der Gerätetest. Status deshalb weiterhin «In Progress». |

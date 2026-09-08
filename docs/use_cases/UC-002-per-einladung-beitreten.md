@@ -6,7 +6,7 @@
 **Use Case Name:** Per Einladung beitreten
 **Primary Actor:** Gast
 **Goal:** Über einen Einladungslink oder QR-Code Mitglied eines Vereins werden
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

@@ -6,7 +6,7 @@
 **Use Case Name:** Einladung erstellen
 **Primary Actor:** Vorstand
 **Goal:** Einen Einladungslink mit Geltungsbereich, Rolle und Ablauf erzeugen und verteilen
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

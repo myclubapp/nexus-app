@@ -29,8 +29,11 @@ export function useCreateClub() {
       const { data, error } = await supabase.rpc('create_club', {
         p_name: input.name.trim(),
         p_club_kind: input.kind,
-        p_season_start: input.seasonStart || null,
-        p_kind_label: input.kindLabel?.trim() || null,
+        // `undefined` lässt supabase-js den Parameter weglassen; Postgres
+        // setzt dann den Vorgabewert. `null` wäre laut den generierten Typen
+        // kein zulässiger Wert.
+        p_season_start: input.seasonStart || undefined,
+        p_kind_label: input.kindLabel?.trim() || undefined,
       });
       if (error) throw new Error(error.message);
       if (!data) throw new Error('Der Verein wurde nicht angelegt.');
@@ -62,7 +65,7 @@ export function useRedeemInvite() {
     }): Promise<string> => {
       const { data, error } = await supabase.rpc('redeem_invite', {
         p_code: input.code.trim(),
-        p_display_name: input.displayName?.trim() || null,
+        p_display_name: input.displayName?.trim() || undefined,
       });
       if (error) throw new Error(error.message);
       if (!data) throw new Error('Die Einladung konnte nicht eingelöst werden.');

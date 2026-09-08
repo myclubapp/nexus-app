@@ -268,6 +268,7 @@ export type Database = {
           expires_at: string
           id: string
           max_uses: number
+          revoked_at: string | null
           role: string
           team_id: string | null
           uses: number
@@ -280,6 +281,7 @@ export type Database = {
           expires_at?: string
           id?: string
           max_uses?: number
+          revoked_at?: string | null
           role?: string
           team_id?: string | null
           uses?: number
@@ -292,6 +294,7 @@ export type Database = {
           expires_at?: string
           id?: string
           max_uses?: number
+          revoked_at?: string | null
           role?: string
           team_id?: string | null
           uses?: number
@@ -895,13 +898,34 @@ export type Database = {
         Returns: number
       }
       create_club: {
-        Args: { p_club_kind?: string; p_name: string }
+        Args: {
+          p_club_kind?: string
+          p_kind_label?: string
+          p_name: string
+          p_season_start?: string
+        }
         Returns: string
       }
       current_member_id: { Args: { p_club_id: string }; Returns: string }
+      default_event_labels: { Args: { p_club_kind: string }; Returns: Json }
+      default_season_start: { Args: { p_club_kind: string }; Returns: string }
       is_club_admin: { Args: { p_club_id: string }; Returns: boolean }
       is_club_member: { Args: { p_club_id: string }; Returns: boolean }
-      redeem_invite: { Args: { p_code: string }; Returns: string }
+      preview_invite: {
+        Args: { p_code: string }
+        Returns: {
+          club_id: string
+          club_name: string
+          is_valid: boolean
+          reason: string
+          role: string
+          team_name: string
+        }[]
+      }
+      redeem_invite: {
+        Args: { p_code: string; p_display_name?: string }
+        Returns: string
+      }
       season_label: {
         Args: { p_at?: string; p_club_id: string }
         Returns: string
