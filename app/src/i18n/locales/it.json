@@ -1,0 +1,178 @@
+{
+  "common": {
+    "appName": "myclub",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "close": "Chiudi",
+    "back": "Indietro",
+    "next": "Avanti",
+    "loading": "Caricamento …",
+    "retry": "Riprova",
+    "error": "Qualcosa è andato storto",
+    "empty": "Ancora niente",
+    "points": "Punti",
+    "points_one": "{{count}} punto",
+    "points_other": "{{count}} punti",
+    "notConfigured": "L'app non è ancora collegata a un progetto Supabase. Inserisci i valori in .env.local."
+  },
+  "auth": {
+    "title": "Benvenuto",
+    "subtitle": "Accedi con il tuo indirizzo e-mail. Ti inviamo un link di accesso – nessuna password necessaria.",
+    "email": "Indirizzo e-mail",
+    "sendMagicLink": "Invia il link",
+    "linkSent": "Link inviato",
+    "checkInbox": "Abbiamo inviato un link di accesso a {{email}}. Aprilo su questo dispositivo.",
+    "invalidEmail": "Inserisci un indirizzo e-mail valido.",
+    "signingIn": "Accesso in corso …",
+    "signInFailed": "L'accesso non è riuscito. Richiedi un nuovo link.",
+    "logout": "Esci"
+  },
+  "onboarding": {
+    "welcome": "Che bello averti qui",
+    "choosePath": "Come vuoi iniziare?",
+    "hasInvite": "Ho un invito",
+    "hasInviteHint": "Link d'invito o codice QR della tua società",
+    "joinClub": "Unirsi a una società",
+    "joinClubHint": "Invia una richiesta – il comitato la approva",
+    "createClub": "Fondare una società",
+    "createClubHint": "Pronti in tre minuti",
+    "clubName": "Come si chiama la vostra società?",
+    "clubKindQuestion": "Che tipo di società siete?",
+    "clubKind": {
+      "sport": "Sport",
+      "music": "Musica",
+      "culture": "Cultura",
+      "youth": "Giovani",
+      "neighborhood": "Quartiere",
+      "other": "Altro"
+    },
+    "clubKindHint": "Determina solo i modelli – tutto è modificabile in seguito.",
+    "inviteCode": "Codice d'invito",
+    "requestSent": "Richiesta inviata. Riceverai un messaggio appena sarà approvata.",
+    "createAndContinue": "Crea la società"
+  },
+  "tabs": {
+    "dashboard": "Home",
+    "marketplace": "Compiti",
+    "leaderboard": "Classifiche",
+    "agenda": "Agenda",
+    "profile": "Profilo"
+  },
+  "dashboard": {
+    "title": "Home",
+    "greeting": "Ciao {{name}}",
+    "seasonPoints": "Punti in questa stagione",
+    "streak": "Serie",
+    "streakDays": "{{count}} di fila",
+    "nextPoints": "Prossimi punti",
+    "nextPointsHint": "Ecco come guadagnare i prossimi punti",
+    "openTasks": "Compiti aperti",
+    "upcoming": "Prossimamente",
+    "latestNews": "Novità",
+    "noNews": "Al momento nessuna novità"
+  },
+  "marketplace": {
+    "title": "Compiti",
+    "subtitle": "I compiti per cui la vostra società cerca aiuto",
+    "claim": "Prendi in carico",
+    "claimed": "Preso in carico",
+    "submit": "Segnala come svolto",
+    "awaitingConfirmation": "In attesa di conferma",
+    "filterAll": "Tutti",
+    "filterTeam": "La mia squadra",
+    "dueOn": "Entro il {{date}}",
+    "empty": "Al momento nessun compito aperto"
+  },
+  "leaderboard": {
+    "title": "Classifiche",
+    "club": "Società",
+    "team": "Squadra",
+    "season": "Stagione",
+    "rank": "Posizione",
+    "optOutNotice": "Non compari in classifica. Puoi cambiarlo nel profilo.",
+    "empty": "Ancora nessun punto in questa stagione"
+  },
+  "agenda": {
+    "title": "Agenda",
+    "today": "Oggi",
+    "upcoming": "Prossimi",
+    "past": "Passati",
+    "attend": "Partecipo",
+    "decline": "Non posso",
+    "declineReason": "Motivo (facoltativo)",
+    "attending": "Iscritto",
+    "declined": "Rifiutato",
+    "undecided": "Ancora aperto",
+    "checkIn": "Registrati",
+    "scanQr": "Scansiona il codice QR",
+    "checkedIn": "Registrato",
+    "shifts": "Turni",
+    "shiftNeeded": "{{filled}} di {{needed}} occupati",
+    "signUpShift": "Iscriviti al turno",
+    "empty": "Nessun appuntamento",
+    "type": {
+      "training": "Allenamento",
+      "match": "Partita",
+      "cup": "Coppa",
+      "tournament": "Torneo",
+      "gv": "Assemblea",
+      "social": "Evento",
+      "helper": "Impegno"
+    }
+  },
+  "profile": {
+    "title": "Profilo",
+    "memberSince": "Membro dal {{date}}",
+    "pointHistory": "Storico punti",
+    "myProfile": "I miei punti di forza",
+    "spiderHint": "Il tuo sguardo su di te – solo tu vedi questa analisi.",
+    "settings": "Impostazioni",
+    "language": "Lingua",
+    "notifications": "Notifiche",
+    "privacy": "Protezione dei dati",
+    "leaderboardOptIn": "Comparire nelle classifiche",
+    "invoices": "Le mie fatture",
+    "deleteAccount": "Elimina account",
+    "deleteAccountHint": "Elimina definitivamente il tuo account e i tuoi dati personali."
+  },
+  "clubSettings": {
+    "title": "Impostazioni della società",
+    "open": "Gestire la società",
+    "adminOnly": "Solo il comitato può modificare la società.",
+    "general": "Generale",
+    "name": "Nome della società",
+    "seasonStart": "Inizio della stagione",
+    "seasonStartHint": "Determina in quale stagione contano i punti. Attualmente: {{season}}. Senza indicazione vale l'anno civile.",
+    "theme": "Colori della società",
+    "themeHint": "Ha effetto subito, senza una nuova versione dell'app. Se azzerato vale di nuovo il colore standard.",
+    "color": {
+      "primary": "Colore principale",
+      "secondary": "Colore secondario",
+      "tertiary": "Colore d'accento"
+    },
+    "reset": "Azzerare",
+    "labels": "Termini",
+    "labelsHint": "Come chiamate i vostri appuntamenti? Vuoto significa: termine standard.",
+    "saved": "Salvato."
+  },
+  "health": {
+    "title": "Salute della società",
+    "club": "Società",
+    "team": "Squadra",
+    "member": "Membro",
+    "severity": {
+      "info": "Informazione",
+      "attention": "Attenzione",
+      "urgent": "Urgente"
+    },
+    "markInContact": "Contatto stabilito",
+    "resolve": "Risolto",
+    "empty": "Al momento nessun segnale"
+  },
+  "language": {
+    "de": "Tedesco",
+    "fr": "Francese",
+    "it": "Italiano",
+    "en": "Inglese"
+  }
+}

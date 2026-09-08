@@ -1,0 +1,165 @@
+/**
+ * Zentrales Stylesheet.
+ *
+ * Zwei Teile, und nur diese Datei enthält sie:
+ *   1. Farb-Tokens. Die Vereinsfarben überschreiben sie zur Laufzeit aus
+ *      clubs.settings.theme (siehe src/lib/theme.ts) – kein Build pro Verein.
+ *   2. Eine Handvoll `app-*`-Klassen für Abstände und Schriftgrössen, die
+ *      Ionic nicht mitbringt. Alles andere kommt aus den Ionic-Komponenten
+ *      selbst; Inline-Styles in Seiten sind nicht vorgesehen.
+ */
+:root {
+  --ion-color-primary: #1d4ed8;
+  --ion-color-primary-rgb: 29, 78, 216;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #1a45be;
+  --ion-color-primary-tint: #3460dc;
+
+  --ion-color-secondary: #0f766e;
+  --ion-color-secondary-rgb: 15, 118, 110;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #0d6861;
+  --ion-color-secondary-tint: #27847d;
+
+  --ion-color-tertiary: #b45309;
+  --ion-color-tertiary-rgb: 180, 83, 9;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #9e4908;
+  --ion-color-tertiary-tint: #bc6422;
+
+  --ion-color-success: #15803d;
+  --ion-color-success-rgb: 21, 128, 61;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #127136;
+  --ion-color-success-tint: #2c8d50;
+
+  --ion-color-warning: #b45309;
+  --ion-color-warning-rgb: 180, 83, 9;
+  --ion-color-warning-contrast: #ffffff;
+  --ion-color-warning-contrast-rgb: 255, 255, 255;
+  --ion-color-warning-shade: #9e4908;
+  --ion-color-warning-tint: #bc6422;
+
+  --ion-color-danger: #b91c1c;
+  --ion-color-danger-rgb: 185, 28, 28;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #a31919;
+  --ion-color-danger-tint: #c03333;
+
+  /* Ampel der Vereins-Gesundheit (Architektur §14) */
+  --app-health-info: var(--ion-color-success);
+  --app-health-attention: var(--ion-color-warning);
+  --app-health-urgent: var(--ion-color-danger);
+
+  /* Abstandsraster. Alle app-*-Klassen unten rechnen damit. */
+  --app-space-1: 4px;
+  --app-space-2: 8px;
+  --app-space-3: 12px;
+  --app-space-4: 16px;
+  --app-space-6: 24px;
+}
+
+/* Gruppierte Listen wirken auf getöntem Grund wie in den iOS-Einstellungen. */
+.ios ion-content {
+  --background: var(--ion-color-light, #f4f5f8);
+}
+
+/* --- Fussnote unter einem Listenabschnitt --------------------------------- */
+.app-footnote {
+  display: block;
+  margin: calc(-1 * var(--app-space-2)) var(--app-space-4) var(--app-space-4);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+/* --- Punkte-Kachel -------------------------------------------------------- */
+.app-stat-row {
+  display: flex;
+  gap: var(--app-space-2);
+  padding: 0 var(--app-space-2);
+}
+
+.app-stat {
+  flex: 1;
+  margin: var(--app-space-2);
+}
+
+.app-stat__value {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.app-stat__label {
+  display: block;
+  margin-top: var(--app-space-1);
+  font-size: 0.8125rem;
+  color: var(--ion-color-medium);
+}
+
+/* --- Zustandsansichten (lädt, leer, Fehler) ------------------------------- */
+.app-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--app-space-3);
+  padding: 48px var(--app-space-6);
+  text-align: center;
+}
+
+.app-state__icon {
+  font-size: 40px;
+}
+
+/* --- Formulare ------------------------------------------------------------ */
+.app-form-error {
+  display: block;
+  padding: var(--app-space-4) var(--app-space-4) 0;
+}
+
+/* Knopfleiste am Fuss einer Seite oder eines Formulars. */
+.app-actions {
+  display: grid;
+  gap: var(--app-space-2);
+  padding: var(--app-space-4);
+}
+
+/* Frei stehender Hinweistext, z.B. über einer Liste. */
+.app-hint {
+  display: block;
+  padding: var(--app-space-3) var(--app-space-4);
+}
+
+/* --- Zentrierte Formularseite (Anmeldung, Onboarding) --------------------- */
+.app-centered {
+  max-width: 480px;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--app-space-4);
+}
+
+.app-centered--login {
+  max-width: 420px;
+  padding-top: 48px;
+}
+
+/* Natives Farbfeld in den Vereinseinstellungen – Ionic hat keinen Farbwähler. */
+.app-color-swatch {
+  width: 44px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+/* Kamerabild des QR-Scanners füllt die Breite des Blattes. */
+.app-scanner {
+  width: 100%;
+}

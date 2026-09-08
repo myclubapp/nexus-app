@@ -1,0 +1,178 @@
+{
+  "common": {
+    "appName": "myclub",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "loading": "Loading …",
+    "retry": "Try again",
+    "error": "Something went wrong",
+    "empty": "Nothing here yet",
+    "points": "Points",
+    "points_one": "{{count}} point",
+    "points_other": "{{count}} points",
+    "notConfigured": "The app is not connected to a Supabase project yet. Fill in the values in .env.local."
+  },
+  "auth": {
+    "title": "Welcome",
+    "subtitle": "Sign in with your email address. We send you a sign-in link – no password needed.",
+    "email": "Email address",
+    "sendMagicLink": "Send sign-in link",
+    "linkSent": "Link sent",
+    "checkInbox": "We sent a sign-in link to {{email}}. Open it on this device.",
+    "invalidEmail": "Please enter a valid email address.",
+    "signingIn": "Signing in …",
+    "signInFailed": "Sign-in failed. Please request a new link.",
+    "logout": "Sign out"
+  },
+  "onboarding": {
+    "welcome": "Good to have you here",
+    "choosePath": "How would you like to start?",
+    "hasInvite": "I have an invitation",
+    "hasInviteHint": "Invitation link or QR code from your club",
+    "joinClub": "Join a club",
+    "joinClubHint": "Send a request – the board approves it",
+    "createClub": "Start a club",
+    "createClubHint": "Ready in three minutes",
+    "clubName": "What is your club called?",
+    "clubKindQuestion": "What kind of club are you?",
+    "clubKind": {
+      "sport": "Sports",
+      "music": "Music",
+      "culture": "Culture",
+      "youth": "Youth",
+      "neighborhood": "Neighbourhood",
+      "other": "Other"
+    },
+    "clubKindHint": "This only picks the templates – everything stays changeable.",
+    "inviteCode": "Invitation code",
+    "requestSent": "Request sent. You will get a message as soon as it is approved.",
+    "createAndContinue": "Create club"
+  },
+  "tabs": {
+    "dashboard": "Home",
+    "marketplace": "Tasks",
+    "leaderboard": "Rankings",
+    "agenda": "Agenda",
+    "profile": "Profile"
+  },
+  "dashboard": {
+    "title": "Home",
+    "greeting": "Hello {{name}}",
+    "seasonPoints": "Points this season",
+    "streak": "Streak",
+    "streakDays": "{{count}} in a row",
+    "nextPoints": "Next points",
+    "nextPointsHint": "Here is how you earn your next points",
+    "openTasks": "Open tasks",
+    "upcoming": "Coming up",
+    "latestNews": "News",
+    "noNews": "No news at the moment"
+  },
+  "marketplace": {
+    "title": "Tasks",
+    "subtitle": "Tasks your club needs help with",
+    "claim": "Take it on",
+    "claimed": "Taken on",
+    "submit": "Report as done",
+    "awaitingConfirmation": "Waiting for confirmation",
+    "filterAll": "All",
+    "filterTeam": "My team",
+    "dueOn": "Due {{date}}",
+    "empty": "No open tasks right now"
+  },
+  "leaderboard": {
+    "title": "Rankings",
+    "club": "Club",
+    "team": "Team",
+    "season": "Season",
+    "rank": "Rank",
+    "optOutNotice": "You do not appear in the ranking. You can change this in your profile.",
+    "empty": "No points in this season yet"
+  },
+  "agenda": {
+    "title": "Agenda",
+    "today": "Today",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "attend": "Attend",
+    "decline": "Decline",
+    "declineReason": "Reason (optional)",
+    "attending": "Attending",
+    "declined": "Declined",
+    "undecided": "Undecided",
+    "checkIn": "Check in",
+    "scanQr": "Scan QR code",
+    "checkedIn": "Checked in",
+    "shifts": "Shifts",
+    "shiftNeeded": "{{filled}} of {{needed}} filled",
+    "signUpShift": "Sign up for shift",
+    "empty": "No dates scheduled",
+    "type": {
+      "training": "Training",
+      "match": "Match",
+      "cup": "Cup",
+      "tournament": "Tournament",
+      "gv": "Assembly",
+      "social": "Event",
+      "helper": "Volunteer duty"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "memberSince": "Member since {{date}}",
+    "pointHistory": "Point history",
+    "myProfile": "My strengths",
+    "spiderHint": "Your view of yourself – only you see this analysis.",
+    "settings": "Settings",
+    "language": "Language",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "leaderboardOptIn": "Appear in rankings",
+    "invoices": "My invoices",
+    "deleteAccount": "Delete account",
+    "deleteAccountHint": "Permanently deletes your account and personal data."
+  },
+  "clubSettings": {
+    "title": "Club settings",
+    "open": "Manage club",
+    "adminOnly": "Only the committee can edit the club.",
+    "general": "General",
+    "name": "Club name",
+    "seasonStart": "Season start",
+    "seasonStartHint": "Decides which season the points count towards. Currently: {{season}}. Without a date the calendar year applies.",
+    "theme": "Club colours",
+    "themeHint": "Takes effect immediately, without a new app version. Reset falls back to the standard colour.",
+    "color": {
+      "primary": "Primary colour",
+      "secondary": "Secondary colour",
+      "tertiary": "Accent colour"
+    },
+    "reset": "Reset",
+    "labels": "Wording",
+    "labelsHint": "What do you call your events? Empty means: standard wording.",
+    "saved": "Saved."
+  },
+  "health": {
+    "title": "Club health",
+    "club": "Club",
+    "team": "Team",
+    "member": "Member",
+    "severity": {
+      "info": "Info",
+      "attention": "Attention",
+      "urgent": "Urgent"
+    },
+    "markInContact": "In contact",
+    "resolve": "Resolved",
+    "empty": "No signals at the moment"
+  },
+  "language": {
+    "de": "German",
+    "fr": "French",
+    "it": "Italian",
+    "en": "English"
+  }
+}

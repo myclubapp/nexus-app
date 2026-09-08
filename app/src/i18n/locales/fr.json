@@ -1,0 +1,178 @@
+{
+  "common": {
+    "appName": "myclub",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "loading": "Chargement …",
+    "retry": "Réessayer",
+    "error": "Une erreur est survenue",
+    "empty": "Rien pour l'instant",
+    "points": "Points",
+    "points_one": "{{count}} point",
+    "points_other": "{{count}} points",
+    "notConfigured": "L'application n'est pas encore reliée à un projet Supabase. Complète les valeurs dans .env.local."
+  },
+  "auth": {
+    "title": "Bienvenue",
+    "subtitle": "Connecte-toi avec ton adresse e-mail. Nous t'envoyons un lien de connexion – aucun mot de passe requis.",
+    "email": "Adresse e-mail",
+    "sendMagicLink": "Envoyer le lien",
+    "linkSent": "Lien envoyé",
+    "checkInbox": "Nous avons envoyé un lien de connexion à {{email}}. Ouvre-le sur cet appareil.",
+    "invalidEmail": "Merci d'indiquer une adresse e-mail valable.",
+    "signingIn": "Connexion en cours …",
+    "signInFailed": "La connexion a échoué. Demande un nouveau lien.",
+    "logout": "Se déconnecter"
+  },
+  "onboarding": {
+    "welcome": "Content de te voir",
+    "choosePath": "Comment veux-tu commencer ?",
+    "hasInvite": "J'ai une invitation",
+    "hasInviteHint": "Lien d'invitation ou code QR de ta société",
+    "joinClub": "Rejoindre une société",
+    "joinClubHint": "Envoie une demande – le comité la valide",
+    "createClub": "Créer une société",
+    "createClubHint": "Prêt en trois minutes",
+    "clubName": "Quel est le nom de votre société ?",
+    "clubKindQuestion": "Quel type de société êtes-vous ?",
+    "clubKind": {
+      "sport": "Sport",
+      "music": "Musique",
+      "culture": "Culture",
+      "youth": "Jeunesse",
+      "neighborhood": "Quartier",
+      "other": "Autre"
+    },
+    "clubKindHint": "Cela ne détermine que les modèles – tout reste modifiable.",
+    "inviteCode": "Code d'invitation",
+    "requestSent": "Demande envoyée. Tu recevras un message dès qu'elle sera validée.",
+    "createAndContinue": "Créer la société"
+  },
+  "tabs": {
+    "dashboard": "Accueil",
+    "marketplace": "Missions",
+    "leaderboard": "Classements",
+    "agenda": "Agenda",
+    "profile": "Profil"
+  },
+  "dashboard": {
+    "title": "Accueil",
+    "greeting": "Bonjour {{name}}",
+    "seasonPoints": "Points cette saison",
+    "streak": "Série",
+    "streakDays": "{{count}} d'affilée",
+    "nextPoints": "Prochains points",
+    "nextPointsHint": "Voilà comment gagner tes prochains points",
+    "openTasks": "Missions ouvertes",
+    "upcoming": "À venir",
+    "latestNews": "Actualités",
+    "noNews": "Aucune actualité pour l'instant"
+  },
+  "marketplace": {
+    "title": "Missions",
+    "subtitle": "Les tâches pour lesquelles votre société cherche de l'aide",
+    "claim": "Prendre en charge",
+    "claimed": "Prise en charge",
+    "submit": "Signaler comme terminée",
+    "awaitingConfirmation": "En attente de confirmation",
+    "filterAll": "Toutes",
+    "filterTeam": "Mon équipe",
+    "dueOn": "Jusqu'au {{date}}",
+    "empty": "Aucune mission ouverte actuellement"
+  },
+  "leaderboard": {
+    "title": "Classements",
+    "club": "Société",
+    "team": "Équipe",
+    "season": "Saison",
+    "rank": "Rang",
+    "optOutNotice": "Tu n'apparais pas dans le classement. Tu peux le changer dans ton profil.",
+    "empty": "Aucun point pour cette saison"
+  },
+  "agenda": {
+    "title": "Agenda",
+    "today": "Aujourd'hui",
+    "upcoming": "À venir",
+    "past": "Passé",
+    "attend": "Je participe",
+    "decline": "Je ne peux pas",
+    "declineReason": "Motif (facultatif)",
+    "attending": "Inscrit",
+    "declined": "Décliné",
+    "undecided": "Sans réponse",
+    "checkIn": "S'enregistrer",
+    "scanQr": "Scanner le code QR",
+    "checkedIn": "Enregistré",
+    "shifts": "Créneaux",
+    "shiftNeeded": "{{filled}} sur {{needed}} occupés",
+    "signUpShift": "S'inscrire au créneau",
+    "empty": "Aucune date prévue",
+    "type": {
+      "training": "Entraînement",
+      "match": "Match",
+      "cup": "Coupe",
+      "tournament": "Tournoi",
+      "gv": "Assemblée",
+      "social": "Événement",
+      "helper": "Engagement"
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "memberSince": "Membre depuis le {{date}}",
+    "pointHistory": "Historique des points",
+    "myProfile": "Mes forces",
+    "spiderHint": "Ton regard sur toi – toi seul vois cette analyse.",
+    "settings": "Réglages",
+    "language": "Langue",
+    "notifications": "Notifications",
+    "privacy": "Protection des données",
+    "leaderboardOptIn": "Apparaître dans les classements",
+    "invoices": "Mes factures",
+    "deleteAccount": "Supprimer le compte",
+    "deleteAccountHint": "Supprime définitivement ton compte et tes données personnelles."
+  },
+  "clubSettings": {
+    "title": "Paramètres du club",
+    "open": "Gérer le club",
+    "adminOnly": "Seul le comité peut modifier le club.",
+    "general": "Général",
+    "name": "Nom du club",
+    "seasonStart": "Début de saison",
+    "seasonStartHint": "Détermine la saison à laquelle comptent les points. Actuellement : {{season}}. Sans indication, l'année civile s'applique.",
+    "theme": "Couleurs du club",
+    "themeHint": "Effet immédiat, sans nouvelle version de l'app. Réinitialisé, la couleur standard s'applique.",
+    "color": {
+      "primary": "Couleur principale",
+      "secondary": "Couleur secondaire",
+      "tertiary": "Couleur d'accent"
+    },
+    "reset": "Réinitialiser",
+    "labels": "Termes",
+    "labelsHint": "Comment appelez-vous vos rendez-vous ? Vide signifie : terme standard.",
+    "saved": "Enregistré."
+  },
+  "health": {
+    "title": "Santé de la société",
+    "club": "Société",
+    "team": "Équipe",
+    "member": "Membre",
+    "severity": {
+      "info": "Information",
+      "attention": "Attention",
+      "urgent": "Urgent"
+    },
+    "markInContact": "Contact pris",
+    "resolve": "Réglé",
+    "empty": "Aucun signal pour l'instant"
+  },
+  "language": {
+    "de": "Allemand",
+    "fr": "Français",
+    "it": "Italien",
+    "en": "Anglais"
+  }
+}

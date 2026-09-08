@@ -1,0 +1,95 @@
+# Use Case: Verband verbinden
+
+## Overview
+
+**Use Case ID:** UC-035
+**Use Case Name:** Verband verbinden
+**Primary Actor:** Vorstand
+**Goal:** Spielpläne, Resultate und Verbandsnews automatisch in die App holen
+**Status:** Draft
+
+## Preconditions
+
+- Der Verein existiert.
+- Die Person hat im Verein die Rolle admin.
+- Der Verein besitzt einen gültigen API-Schlüssel seines Verbands.
+
+## Main Success Scenario
+
+1. Vorstand öffnet in den Vereinseinstellungen «Verband verbinden».
+2. System zeigt die unterstützten Verbände und je Verband eine Anleitung, wo der Schlüssel zu beziehen ist.
+3. Vorstand wählt seinen Verband.
+4. Vorstand fügt den API-Schlüssel ein.
+5. System führt einen Testaufruf gegen die Verbandsschnittstelle durch.
+6. System speichert den Schlüssel verschlüsselt, setzt die Verbindung auf aktiv und startet den ersten Abgleich.
+7. System zeigt die synchronisierten Spiele in der Agenda und die Verbandsnews im Feed.
+
+## Alternative Flows
+
+### A1: Schlüssel ungültig
+
+**Trigger:** Der Testaufruf schlägt fehl (Schritt 5)
+**Flow:**
+
+1. System speichert nichts und zeigt die Fehlermeldung der Verbandsschnittstelle.
+2. Use case continues at step 4.
+
+### A2: Verband ohne Schlüsselpflicht
+
+**Trigger:** Der gewählte Verband verlangt keinen Schlüssel (Schritt 4)
+**Flow:**
+
+1. System lässt das Feld leer und führt den Testaufruf ohne Schlüssel durch.
+2. Use case continues at step 5.
+
+### A3: Verbindung schlägt später fehl
+
+**Trigger:** Ein turnusgemässer Abgleich scheitert wiederholt
+**Flow:**
+
+1. System setzt die Verbindung auf Fehler und benachrichtigt den Vorstand.
+2. Die App bleibt vollständig nutzbar; nur die Verbandsdaten veralten.
+3. Use case ends.
+
+### A4: Verbindung trennen
+
+**Trigger:** Vorstand wählt «Verbindung trennen»
+**Flow:**
+
+1. System löscht den Schlüssel und beendet den Abgleich.
+2. Bereits importierte Termine bleiben bestehen.
+3. Use case ends.
+
+## Postconditions
+
+### Success Postconditions
+
+- Die Verbindung besteht mit dem Status aktiv und einem verschlüsselt abgelegten Schlüssel.
+- Spiele und Verbandsnews erscheinen in Agenda und Feed.
+
+### Failure Postconditions
+
+- Es besteht keine Verbindung.
+- Es ist kein Schlüssel gespeichert.
+
+## Business Rules
+
+### BR-151: Der Schlüssel ist die Verifikation
+
+Wer den Schlüssel des Vereins besitzt, ist berechtigt. Es gibt kein Vereinsverzeichnis und keinen Zuordnungsprozess über Kontaktadressen.
+
+### BR-152: Nur verbundene Vereine werden abgeglichen
+
+Es findet kein globaler Vorabgleich aller Verbandsvereine statt.
+
+### BR-153: Schlüssel liegen im Tresor
+
+API-Schlüssel werden verschlüsselt abgelegt und nie an den Client ausgeliefert.
+
+### BR-154: Kein Schreibzugriff auf Verbandssysteme
+
+Der Abgleich liest ausschliesslich. Es werden keine Daten an den Verband zurückgeschrieben.
+
+### BR-155: Verbandsausfall stört die App nicht
+
+Fällt die Verbandsschnittstelle aus, bleiben alle Kernfunktionen unverändert nutzbar.

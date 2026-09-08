@@ -1,0 +1,178 @@
+{
+  "common": {
+    "appName": "myclub",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "close": "Schliessen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "loading": "Wird geladen …",
+    "retry": "Nochmals versuchen",
+    "error": "Etwas ist schiefgelaufen",
+    "empty": "Noch nichts vorhanden",
+    "points": "Punkte",
+    "points_one": "{{count}} Punkt",
+    "points_other": "{{count}} Punkte",
+    "notConfigured": "Die App ist noch nicht mit einem Supabase-Projekt verbunden. Trage die Werte in .env.local ein."
+  },
+  "auth": {
+    "title": "Willkommen",
+    "subtitle": "Melde dich mit deiner E-Mail-Adresse an. Wir schicken dir einen Anmeldelink – kein Passwort nötig.",
+    "email": "E-Mail-Adresse",
+    "sendMagicLink": "Anmeldelink senden",
+    "linkSent": "Link gesendet",
+    "checkInbox": "Wir haben dir einen Anmeldelink an {{email}} geschickt. Öffne ihn auf diesem Gerät.",
+    "invalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein.",
+    "signingIn": "Anmeldung läuft …",
+    "signInFailed": "Die Anmeldung hat nicht geklappt. Bitte fordere einen neuen Link an.",
+    "logout": "Abmelden"
+  },
+  "onboarding": {
+    "welcome": "Schön, bist du da",
+    "choosePath": "Wie möchtest du starten?",
+    "hasInvite": "Ich habe eine Einladung",
+    "hasInviteHint": "Einladungslink oder QR-Code von deinem Verein",
+    "joinClub": "Einem Verein beitreten",
+    "joinClubHint": "Anfrage stellen – der Vorstand gibt sie frei",
+    "createClub": "Verein gründen",
+    "createClubHint": "In drei Minuten startklar",
+    "clubName": "Wie heisst euer Verein?",
+    "clubKindQuestion": "Was für ein Verein seid ihr?",
+    "clubKind": {
+      "sport": "Sport",
+      "music": "Musik",
+      "culture": "Kultur",
+      "youth": "Jugend",
+      "neighborhood": "Quartier",
+      "other": "Anderes"
+    },
+    "clubKindHint": "Das steuert nur die Vorlagen – alles ist später änderbar.",
+    "inviteCode": "Einladungscode",
+    "requestSent": "Anfrage gesendet. Du bekommst eine Nachricht, sobald sie freigegeben ist.",
+    "createAndContinue": "Verein erstellen"
+  },
+  "tabs": {
+    "dashboard": "Start",
+    "marketplace": "Marktplatz",
+    "leaderboard": "Ranglisten",
+    "agenda": "Agenda",
+    "profile": "Profil"
+  },
+  "dashboard": {
+    "title": "Start",
+    "greeting": "Hallo {{name}}",
+    "seasonPoints": "Punkte diese Saison",
+    "streak": "Serie",
+    "streakDays": "{{count}} in Folge",
+    "nextPoints": "Nächste Punkte",
+    "nextPointsHint": "So sammelst du als Nächstes Punkte",
+    "openTasks": "Offene Aufgaben",
+    "upcoming": "Als Nächstes",
+    "latestNews": "Neuigkeiten",
+    "noNews": "Zurzeit keine Neuigkeiten"
+  },
+  "marketplace": {
+    "title": "Marktplatz",
+    "subtitle": "Aufgaben, für die euer Verein Hilfe sucht",
+    "claim": "Übernehmen",
+    "claimed": "Übernommen",
+    "submit": "Als erledigt melden",
+    "awaitingConfirmation": "Wartet auf Bestätigung",
+    "filterAll": "Alle",
+    "filterTeam": "Mein Team",
+    "dueOn": "Bis {{date}}",
+    "empty": "Aktuell sind keine Aufgaben offen"
+  },
+  "leaderboard": {
+    "title": "Ranglisten",
+    "club": "Verein",
+    "team": "Team",
+    "season": "Saison",
+    "rank": "Rang",
+    "optOutNotice": "Du erscheinst nicht in der Rangliste. Du kannst das im Profil ändern.",
+    "empty": "Noch keine Punkte in dieser Saison"
+  },
+  "agenda": {
+    "title": "Agenda",
+    "today": "Heute",
+    "upcoming": "Kommend",
+    "past": "Vergangen",
+    "attend": "Zusagen",
+    "decline": "Absagen",
+    "declineReason": "Grund (freiwillig)",
+    "attending": "Zugesagt",
+    "declined": "Abgesagt",
+    "undecided": "Noch offen",
+    "checkIn": "Einchecken",
+    "scanQr": "QR-Code scannen",
+    "checkedIn": "Eingecheckt",
+    "shifts": "Schichten",
+    "shiftNeeded": "{{filled}} von {{needed}} besetzt",
+    "signUpShift": "Für Schicht eintragen",
+    "empty": "Keine Termine vorhanden",
+    "type": {
+      "training": "Training",
+      "match": "Spiel",
+      "cup": "Cup",
+      "tournament": "Turnier",
+      "gv": "Versammlung",
+      "social": "Anlass",
+      "helper": "Einsatz"
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "memberSince": "Mitglied seit {{date}}",
+    "pointHistory": "Punkteverlauf",
+    "myProfile": "Meine Stärken",
+    "spiderHint": "Deine Sicht auf dich – nur du siehst diese Auswertung.",
+    "settings": "Einstellungen",
+    "language": "Sprache",
+    "notifications": "Benachrichtigungen",
+    "privacy": "Datenschutz",
+    "leaderboardOptIn": "In Ranglisten erscheinen",
+    "invoices": "Meine Rechnungen",
+    "deleteAccount": "Konto löschen",
+    "deleteAccountHint": "Löscht dein Konto und deine persönlichen Daten unwiderruflich."
+  },
+  "clubSettings": {
+    "title": "Vereinseinstellungen",
+    "open": "Verein verwalten",
+    "adminOnly": "Nur der Vorstand kann den Verein bearbeiten.",
+    "general": "Allgemein",
+    "name": "Vereinsname",
+    "seasonStart": "Saisonstart",
+    "seasonStartHint": "Bestimmt, welche Saison die Punkte zählen. Aktuell: {{season}}. Ohne Angabe gilt das Kalenderjahr.",
+    "theme": "Vereinsfarben",
+    "themeHint": "Wirkt sofort, ohne neue App-Version. Zurückgesetzt gilt wieder die Standardfarbe.",
+    "color": {
+      "primary": "Primärfarbe",
+      "secondary": "Zweitfarbe",
+      "tertiary": "Akzentfarbe"
+    },
+    "reset": "Zurücksetzen",
+    "labels": "Begriffe",
+    "labelsHint": "Wie nennt ihr eure Termine? Leer heisst: Standardbegriff.",
+    "saved": "Gespeichert."
+  },
+  "health": {
+    "title": "Vereins-Gesundheit",
+    "club": "Verein",
+    "team": "Team",
+    "member": "Mitglied",
+    "severity": {
+      "info": "Hinweis",
+      "attention": "Aufmerksamkeit",
+      "urgent": "Dringend"
+    },
+    "markInContact": "Kontakt aufgenommen",
+    "resolve": "Erledigt",
+    "empty": "Zurzeit keine Hinweise"
+  },
+  "language": {
+    "de": "Deutsch",
+    "fr": "Französisch",
+    "it": "Italienisch",
+    "en": "Englisch"
+  }
+}
