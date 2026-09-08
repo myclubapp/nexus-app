@@ -175,7 +175,8 @@
     "deleteAccountHint": "Permanently deletes your account and personal data.",
     "setPassword": "Set a password",
     "passwordHint": "At least {{min}} characters. You can then sign in without a link.",
-    "passwordSaved": "Password saved"
+    "passwordSaved": "Password saved",
+    "memberSinceLabel": "Member since"
   },
   "clubSettings": {
     "title": "Club settings",
@@ -325,5 +326,30 @@
     "confirmHint": "We ask explicitly: type {{word}} in the field, because this cannot be undone.",
     "confirmAction": "Delete account permanently",
     "irreversible": "You will be signed out afterwards."
+  },
+  "members": {
+    "title": "Members",
+    "search": "Search by name",
+    "filter": "Filter",
+    "filterAll": "All",
+    "count_other": "{{count}} members",
+    "listFootnote": "Tap a member to change role, status and teams.",
+    "empty": "No member matches the filter",
+    "status": "Status",
+    "statusValue": {
+      "active": "Active",
+      "passive": "Passive",
+      "honorary": "Honorary member",
+      "left": "Left"
+    },
+    "teams": "Teams",
+    "teamsHint": "A member can belong to several teams at once.",
+    "noTeams": "The club has no teams yet",
+    "addTeam": "Create a team",
+    "addTeamHint": "Teams structure events and leaderboards.",
+    "teamName": "Team name",
+    "teamCreated": "Team created",
+    "lastAdminHint": "This person is the only board member. Appoint someone else before changing their role or status.",
+    "count_one": "{{count}} member"
   }
 }

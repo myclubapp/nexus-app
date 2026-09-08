@@ -175,7 +175,8 @@
     "deleteAccountHint": "Löscht dein Konto und deine persönlichen Daten unwiderruflich.",
     "setPassword": "Passwort setzen",
     "passwordHint": "Mindestens {{min}} Zeichen. Danach kannst du dich auch ohne Anmeldelink anmelden.",
-    "passwordSaved": "Passwort gespeichert"
+    "passwordSaved": "Passwort gespeichert",
+    "memberSinceLabel": "Mitglied seit"
   },
   "clubSettings": {
     "title": "Vereinseinstellungen",
@@ -325,5 +326,30 @@
     "confirmHint": "Wir fragen ausdrücklich nach: Tippe {{word}} in das Feld, weil sich das nicht rückgängig machen lässt.",
     "confirmAction": "Konto endgültig löschen",
     "irreversible": "Danach wirst du abgemeldet."
+  },
+  "members": {
+    "title": "Mitglieder",
+    "search": "Nach Name suchen",
+    "filter": "Filter",
+    "filterAll": "Alle",
+    "count_other": "{{count}} Mitglieder",
+    "listFootnote": "Ein Mitglied antippen, um Rolle, Status und Teams zu ändern.",
+    "empty": "Kein Mitglied entspricht dem Filter",
+    "status": "Status",
+    "statusValue": {
+      "active": "Aktiv",
+      "passive": "Passiv",
+      "honorary": "Ehrenmitglied",
+      "left": "Ausgetreten"
+    },
+    "teams": "Teams",
+    "teamsHint": "Ein Mitglied kann mehreren Teams gleichzeitig angehören.",
+    "noTeams": "Der Verein hat noch keine Teams",
+    "addTeam": "Team anlegen",
+    "addTeamHint": "Teams gliedern Termine und Ranglisten.",
+    "teamName": "Name des Teams",
+    "teamCreated": "Team angelegt",
+    "lastAdminHint": "Diese Person ist der einzige Vorstand. Bestimme zuerst jemand anderen, bevor du Rolle oder Status änderst.",
+    "count_one": "{{count}} Mitglied"
   }
 }

@@ -907,6 +907,10 @@ export type Database = {
         Args: { p_assignment_id: string; p_kudos?: string }
         Returns: number
       }
+      count_club_admins: {
+        Args: { p_club_id: string; p_except?: string }
+        Returns: number
+      }
       create_club: {
         Args: {
           p_club_kind?: string
@@ -981,6 +985,10 @@ export type Database = {
       }
       seed_point_rules: {
         Args: { p_club_id: string; p_club_kind: string }
+        Returns: undefined
+      }
+      set_member_teams: {
+        Args: { p_member_id: string; p_team_ids: string[] }
         Returns: undefined
       }
       slugify: { Args: { p_value: string }; Returns: string }

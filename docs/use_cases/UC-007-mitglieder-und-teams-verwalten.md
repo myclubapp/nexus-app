@@ -6,7 +6,7 @@
 **Use Case Name:** Mitglieder, Rollen und Teams verwalten
 **Primary Actor:** Vorstand
 **Goal:** Die Vereinsstruktur abbilden, indem Mitglieder Rollen und Teams zugeordnet werden
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

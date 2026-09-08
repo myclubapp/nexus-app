@@ -175,7 +175,8 @@
     "deleteAccountHint": "Supprime définitivement ton compte et tes données personnelles.",
     "setPassword": "Définir un mot de passe",
     "passwordHint": "Au moins {{min}} caractères. Vous pourrez ensuite vous connecter sans lien.",
-    "passwordSaved": "Mot de passe enregistré"
+    "passwordSaved": "Mot de passe enregistré",
+    "memberSinceLabel": "Membre depuis"
   },
   "clubSettings": {
     "title": "Paramètres du club",
@@ -325,5 +326,30 @@
     "confirmHint": "Nous demandons explicitement: tapez {{word}} dans le champ, car l’opération est irréversible.",
     "confirmAction": "Supprimer définitivement le compte",
     "irreversible": "Vous serez ensuite déconnecté·e."
+  },
+  "members": {
+    "title": "Membres",
+    "search": "Chercher par nom",
+    "filter": "Filtre",
+    "filterAll": "Tous",
+    "count_other": "{{count}} membres",
+    "listFootnote": "Touchez un membre pour changer rôle, statut et équipes.",
+    "empty": "Aucun membre ne correspond au filtre",
+    "status": "Statut",
+    "statusValue": {
+      "active": "Actif",
+      "passive": "Passif",
+      "honorary": "Membre d’honneur",
+      "left": "Sorti"
+    },
+    "teams": "Équipes",
+    "teamsHint": "Un membre peut appartenir à plusieurs équipes à la fois.",
+    "noTeams": "La société n’a pas encore d’équipes",
+    "addTeam": "Créer une équipe",
+    "addTeamHint": "Les équipes structurent les rendez-vous et les classements.",
+    "teamName": "Nom de l’équipe",
+    "teamCreated": "Équipe créée",
+    "lastAdminHint": "Cette personne est le seul comité. Désignez d’abord quelqu’un d’autre avant de changer son rôle ou son statut.",
+    "count_one": "{{count}} membre"
   }
 }
