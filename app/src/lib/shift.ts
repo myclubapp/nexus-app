@@ -80,22 +80,3 @@ export function shiftCoverage(
     isFull: filled >= shift.needed,
   };
 }
-
-/**
- * Überschneiden sich zwei Schichten zeitlich (UC-012 A4)?
- *
- * Berührung zählt nicht als Überschneidung: Wer um 12:00 aufhört und um 12:00
- * anfängt, hat zwei anschliessende Schichten, kein Problem.
- */
-export function shiftsOverlap(
-  a: Pick<EventShift, 'starts_at' | 'ends_at'>,
-  b: Pick<EventShift, 'starts_at' | 'ends_at'>,
-): boolean {
-  const aStart = new Date(a.starts_at).getTime();
-  const aEnd = new Date(a.ends_at).getTime();
-  const bStart = new Date(b.starts_at).getTime();
-  const bEnd = new Date(b.ends_at).getTime();
-
-  if ([aStart, aEnd, bStart, bEnd].some(Number.isNaN)) return false;
-  return aStart < bEnd && bStart < aEnd;
-}

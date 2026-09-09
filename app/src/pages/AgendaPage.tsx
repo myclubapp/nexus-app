@@ -26,6 +26,7 @@ import { CheckInModal } from '../components/CheckInModal';
 import { EventFormModal } from '../components/EventFormModal';
 import { DeclineModal } from '../components/DeclineModal';
 import { HelperEventModal } from '../components/HelperEventModal';
+import { ShiftListModal } from '../components/ShiftListModal';
 import { canRespond, tallyAttendance } from '../lib/attendance';
 import { shiftCoverage } from '../lib/shift';
 
@@ -39,6 +40,8 @@ export function AgendaPage() {
   const [checkInEventId, setCheckInEventId] = useState<string | null>(null);
   const [isFormOpen, setFormOpen] = useState(false);
   const [isHelperOpen, setHelperOpen] = useState(false);
+  // UC-012 Schritt 1: Der Aufruf öffnet sich aus der Agenda heraus.
+  const [shiftEventId, setShiftEventId] = useState<string | null>(null);
   const [decliningEvent, setDecliningEvent] = useState<{
     id: string;
     startsAt: string;
@@ -50,6 +53,7 @@ export function AgendaPage() {
   const respond = useRespondToEvent();
   const publish = usePublishEvent();
   const events = agenda.data ?? [];
+  const shiftEvent = events.find((entry) => entry.id === shiftEventId);
 
   return (
     <AppPage
@@ -103,8 +107,13 @@ export function AgendaPage() {
       ) : (
         <IonList inset>
           {events.map((event) => {
+            // Seit 0025 trägt `attendance` je Schicht eine eigene Zeile. Die
+            // Antwort auf den **Termin** ist die ohne Schicht – ohne diesen
+            // Filter behauptete die App eine Zusage, sobald jemand eine
+            // Schicht übernommen hat.
             const mine = event.attendance?.find(
-              (entry) => entry.member_id === activeMembership?.id,
+              (entry) =>
+                entry.member_id === activeMembership?.id && entry.shift_id === null,
             );
             const isCancelled = event.cancelled_at !== null;
             // A2: Ein Entwurf ist nur für Trainer:innen und den Vorstand
@@ -123,7 +132,13 @@ export function AgendaPage() {
             const affectedCount = event.team_id
               ? activeMembers.filter((m) => m.teamIds.includes(event.team_id!)).length
               : activeMembers.length;
-            const tally = tallyAttendance(event.attendance ?? [], affectedCount);
+            // Aus demselben Grund zählt der Teilnehmerstand nur Antworten auf
+            // den Termin. Zwei Personen mit je zwei Schichten ergäben sonst
+            // vier Zusagen – und UC-015 erbte den Fehler.
+            const eventAnswers = (event.attendance ?? []).filter(
+              (entry) => entry.shift_id === null,
+            );
+            const tally = tallyAttendance(eventAnswers, affectedCount);
             // BR-041: die Unterdeckung, und zwar richtig gezählt. Eine Absage
             // belegt keinen Platz – wer nur `shift_id` zählt, hält eine
             // Schicht für besetzt, aus der sich längst jemand abgemeldet hat.
@@ -151,6 +166,20 @@ export function AgendaPage() {
                         })}
                       </IonBadge>
                     </p>
+                  )}
+
+                  {/* UC-012 Schritt 1: der Weg zu den Schichten. Ein Entwurf
+                      hat noch keinen, in ihn trägt sich niemand ein. */}
+                  {shiftsNeeded > 0 && !isDraft && !isCancelled && (
+                    <IonButtons>
+                      <IonButton
+                        size="small"
+                        fill="outline"
+                        onClick={() => setShiftEventId(event.id)}
+                      >
+                        {t('shifts.open')}
+                      </IonButton>
+                    </IonButtons>
                   )}
 
                   {/* Schritt 2: der Teilnehmerstand */}
@@ -258,6 +287,15 @@ export function AgendaPage() {
       <CheckInModal
         eventId={checkInEventId}
         onDismiss={() => setCheckInEventId(null)}
+      />
+
+      <ShiftListModal
+        isOpen={shiftEventId !== null}
+        why={shiftEvent?.why ?? null}
+        shifts={shiftEvent?.shifts ?? []}
+        attendance={shiftEvent?.attendance ?? []}
+        memberId={activeMembership?.id ?? null}
+        onDismiss={() => setShiftEventId(null)}
       />
 
       <DeclineModal

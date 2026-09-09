@@ -501,5 +501,20 @@
     "disconnect": "Verbindung trennen",
     "disconnected": "Verbindung getrennt. Die übernommenen Beiträge bleiben.",
     "scheduleHint": "Der Abgleich läuft danach jede Nacht von selbst. Übernommene Beiträge bleiben auch nach dem Trennen im Feed."
+  },
+  "shifts": {
+    "title": "Schichten",
+    "open": "Schichten ansehen",
+    "take": "Ich übernehme das",
+    "release": "Doch nicht",
+    "full": "Voll",
+    "taken": "Eingetragen – die Punkte kommen nach der Bestätigung durch die Organisation.",
+    "released": "Ausgetragen. Der Platz ist wieder frei.",
+    "releasedWarned": "Ausgetragen. Die Organisation ist informiert, weil die Schicht kurzfristig unterbesetzt ist.",
+    "pointsHint": "Der Punktwert steht bei jeder Schicht. Gutgeschrieben wird er, wenn die Organisation den Einsatz bestätigt.",
+    "overlapTitle": "Das überschneidet sich",
+    "overlapMessage": "Du bist zur selben Zeit schon für eine andere Schicht eingetragen. Trotzdem übernehmen?",
+    "overlapConfirm": "Trotzdem übernehmen",
+    "over": "Vorbei"
   }
 }

@@ -501,5 +501,20 @@
     "disconnect": "Disconnect website",
     "disconnected": "Website disconnected. Imported posts stay.",
     "scheduleHint": "The sync then runs automatically every night. Imported posts stay in the feed even after disconnecting."
+  },
+  "shifts": {
+    "title": "Shifts",
+    "open": "View shifts",
+    "take": "I'll take this",
+    "release": "Actually, no",
+    "full": "Full",
+    "taken": "You are signed up – points follow once the organisers confirm the shift.",
+    "released": "Signed off. The spot is free again.",
+    "releasedWarned": "Signed off. The organisers were told, because the shift is now short-staffed at short notice.",
+    "pointsHint": "Each shift carries its own point value. It is credited once the organisers confirm the shift.",
+    "overlapTitle": "That overlaps",
+    "overlapMessage": "You are already signed up for another shift at the same time. Take it anyway?",
+    "overlapConfirm": "Take it anyway",
+    "over": "Over"
   }
 }

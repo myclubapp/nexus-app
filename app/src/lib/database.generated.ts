@@ -20,6 +20,7 @@ export type Database = {
           confirmed_by: string | null
           decline_reason: string | null
           event_id: string
+          id: string
           member_id: string
           responded_at: string | null
           shift_id: string | null
@@ -30,6 +31,7 @@ export type Database = {
           confirmed_by?: string | null
           decline_reason?: string | null
           event_id: string
+          id?: string
           member_id: string
           responded_at?: string | null
           shift_id?: string | null
@@ -40,6 +42,7 @@ export type Database = {
           confirmed_by?: string | null
           decline_reason?: string | null
           event_id?: string
+          id?: string
           member_id?: string
           responded_at?: string | null
           shift_id?: string | null
@@ -1362,6 +1365,14 @@ export type Database = {
         Args: { p_code: string; p_display_name?: string }
         Returns: string
       }
+      release_shift: {
+        Args: { p_shift_id: string }
+        Returns: {
+          filled: number
+          needed: number
+          warned: boolean
+        }[]
+      }
       request_join: {
         Args: { p_club_id: string; p_team_id?: string }
         Returns: string
@@ -1398,6 +1409,13 @@ export type Database = {
       }
       slugify: { Args: { p_value: string }; Returns: string }
       sync_news_sources: { Args: never; Returns: number }
+      take_shift: {
+        Args: { p_accept_overlap?: boolean; p_shift_id: string }
+        Returns: {
+          filled: number
+          needed: number
+        }[]
+      }
       update_my_profile: {
         Args: {
           p_display_name?: string

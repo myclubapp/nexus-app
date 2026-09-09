@@ -501,5 +501,20 @@
     "disconnect": "Scollega il sito",
     "disconnected": "Sito scollegato. Gli articoli ripresi restano.",
     "scheduleHint": "La sincronizzazione avviene poi automaticamente ogni notte. Gli articoli ripresi restano nel feed anche dopo lo scollegamento."
+  },
+  "shifts": {
+    "title": "Turni",
+    "open": "Vedi i turni",
+    "take": "Me ne occupo io",
+    "release": "Alla fine no",
+    "full": "Completo",
+    "taken": "Iscrizione registrata – i punti arrivano dopo la conferma dell'organizzazione.",
+    "released": "Disiscrizione effettuata. Il posto è di nuovo libero.",
+    "releasedWarned": "Disiscrizione effettuata. L'organizzazione è informata, perché al turno manca personale a breve termine.",
+    "pointsHint": "Il valore in punti è indicato per ogni turno. Viene accreditato quando l'organizzazione conferma l'impegno.",
+    "overlapTitle": "C'è una sovrapposizione",
+    "overlapMessage": "Sei già iscritto a un altro turno nello stesso orario. Prenderlo lo stesso?",
+    "overlapConfirm": "Prendilo lo stesso",
+    "over": "Concluso"
   }
 }

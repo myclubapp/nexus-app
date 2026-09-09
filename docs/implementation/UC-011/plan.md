@@ -44,7 +44,7 @@ Aufruf-Push, bis wieder eine Verbindungs-Nachricht ausging (BR-044, K1).
 | ID     | Regel                                | Status      | Notizen                                                                 |
 | ------ | ------------------------------------ | ----------- | ----------------------------------------------------------------------- |
 | BR-041 | Jede Schicht trägt ihren Personalbedarf | Implemented | `needed >= 1` als Constraint; `shiftCoverage()` zeigt die Unterdeckung – seit dem Review auch **angeschlossen** |
-| BR-042 | Punktwert je Schicht                  | Partial     | Der Wert wird erfasst und gespeichert, aber **nicht gebucht**: `confirm_shift()` nimmt weiter den Regelwert. Fällig in UC-013, siehe Risiko 7 |
+| BR-042 | Punktwert je Schicht                  | Implemented | Seit `0026_shift_signup_hardening.sql` bucht `confirm_shift()` den Wert **der Schicht** mit `source_id = shift_id`. Nachgemessen: 50 und 100 als zwei getrennte Buchungen |
 | BR-043 | Warum ist Publikationsvoraussetzung   | Implemented | Zweifach: Constraint am publizierten Event, Prüfung in `publish_event()` |
 | BR-044 | Verbindung vor Aufruf                 | Partial     | Die Mechanik steht und ist nachgemessen; `kind = 'connection'` schreibt aber erst UC-027, und der Schalter fehlt (Lücke 3) |
 
@@ -149,7 +149,7 @@ Aufruf-Push, bis wieder eine Verbindungs-Nachricht ausging (BR-044, K1).
 | 2   | **Spec-Lücke:** Das Entitätsmodell kennt für EVENT keinen Entwurfszustand, A2 verlangt ihn. Angenommen: `published_at is null` heisst Entwurf. Der Zeitstempel beantwortet zugleich, *wann* ausgeschrieben wurde – das braucht die Verbindungs-Quote. | Medium | Stakeholder |
 | 3   | **Spec-Lücke:** Schritt 5 nennt «eine Punkteregel passend zur Dauer», aber keine Stufen. Angenommen: bis 2 h 25 Punkte, bis 5 h 50, darüber 100. Bewusst grob – es ist ein Vorschlag, den der Vorstand überschreibt. Durch Test festgehalten. | Medium | Stakeholder |
 | 4   | **Spec-Lücke:** BR-044 nennt «kürzlich versendeter Vereins-Puls» ohne Frist. Angenommen: vier Wochen, passend zu A3. Ein Verein, der **noch nie** eine Verbindungs-Nachricht versendet hat, wird **nicht** gebremst – sonst käme ein neuer Verein nie zu seinem ersten Helferaufruf. | Medium | Stakeholder |
-| 7   | `confirm_shift()` aus 0003 bucht noch den **Regelwert** statt `event_shifts.points`. Damit zählt jede Schicht gleich viel, entgegen BR-042. Der Code-Review hat eine zweite Ebene gefunden: Der Ledger dedupliziert über `(member_id, rule_code, source_id)` mit `source_id = event_id`, und `attendance` hat den Primärschlüssel `(event_id, member_id)` – zwei Schichten desselben Events wären also **gar nicht getrennt buchbar**. Der Umbau braucht `source_id = shift_id` und den erweiterten Schlüssel aus UC-012. **Fällig in UC-013.** | High | Dev |
+| 7   | ~~`confirm_shift()` bucht den Regelwert statt `event_shifts.points`.~~ **Erledigt in 0026** (UC-012). Der Umbau brauchte beides: `source_id = shift_id`, damit der Dedupe-Index zwei Schichten desselben Anlasses auseinanderhält, und den erweiterten Schlüssel aus UC-012. Nachgemessen: Halbtag 50, Ganztag 100, zwei Buchungen. | — | Dev |
 | 8   | `event_shifts.point_rule_code` ist jetzt `not null`; bestehende Zeilen wurden auf `shift_done` gesetzt. Ein Verein, der diese Regel gelöscht hat, hat damit Schichten mit einem Code ohne Regel – `award_points()` bucht dann still nichts. | Low | Dev |
 
 ---
@@ -171,7 +171,7 @@ eingeordnet, zwei als Statuskorrektur an diesem Dokument selbst.
 | S11 | `mutateAsync` ohne `catch` → offene Rejection. Schwerer: Scheiterte der Schicht-Insert nach dem Event-Insert, blieb ein Entwurf ohne Schichten zurück, den niemand mehr erreicht. | Niedrig | `create_helper_event()` – eine Funktion, eine Transaktion |
 | S12 | Ausschreiben stand Trainer:innen offen, obwohl die Precondition admin nennt und ein Helferaufruf **den ganzen Verein** erreicht. | Niedrig | 0021 + `AgendaPage.tsx`      |
 | S13 | Die `attendance`-Policies kannten den Entwurf nicht – wer seine UUID kannte, konnte sich eintragen. | Niedrig | 0021, nachgemessen           |
-| S1  | BR-042 wirkt nicht: `confirm_shift()` bucht den Regelwert. Zusätzlich dedupliziert der Ledger über `source_id = event_id`, weshalb zwei Schichten desselben Events gar nicht getrennt buchbar wären. | Hoch | **Offen** – UC-013, Risiko 7 |
+| S1  | BR-042 wirkt nicht: `confirm_shift()` bucht den Regelwert. Zusätzlich dedupliziert der Ledger über `source_id = event_id`, weshalb zwei Schichten desselben Events gar nicht getrennt buchbar wären. | Hoch | **Erledigt** – 0026, siehe UC-012 |
 | S5  | A4 (bestehenden Termin umwandeln) fehlt; ein Entwurf lässt sich weder bearbeiten noch löschen. | Mittel | **Offen** – Lücke 2 und 4    |
 | S7  | BR-044 ist unerreichbar, weil `kind = 'connection'` niemand schreibt, und nicht konfigurierbar. | Mittel | **Offen** – Lücke 3, UC-027  |
 

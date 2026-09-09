@@ -501,5 +501,20 @@
     "disconnect": "Déconnecter le site",
     "disconnected": "Site déconnecté. Les articles repris restent.",
     "scheduleHint": "La synchronisation se fait ensuite automatiquement chaque nuit. Les articles repris restent dans le fil même après la déconnexion."
+  },
+  "shifts": {
+    "title": "Tranches",
+    "open": "Voir les tranches",
+    "take": "Je m'en charge",
+    "release": "Finalement non",
+    "full": "Complet",
+    "taken": "Inscription enregistrée – les points arrivent après la confirmation par l'organisation.",
+    "released": "Désinscription effectuée. La place est de nouveau libre.",
+    "releasedWarned": "Désinscription effectuée. L'organisation est informée, car la tranche manque de monde à court terme.",
+    "pointsHint": "La valeur en points figure sur chaque tranche. Elle est créditée lorsque l'organisation confirme l'engagement.",
+    "overlapTitle": "Il y a un chevauchement",
+    "overlapMessage": "Tu es déjà inscrit·e pour une autre tranche au même moment. Prendre quand même ?",
+    "overlapConfirm": "Prendre quand même",
+    "over": "Terminé"
   }
 }

@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
   shiftCoverage,
-  shiftsOverlap,
   suggestedShiftPoints,
   validateShift,
   type ShiftDraft,
@@ -121,50 +120,5 @@ describe('shiftCoverage', () => {
 
   it('meldet eine leere Schicht vollständig offen', () => {
     expect(shiftCoverage(shift, [])).toMatchObject({ filled: 0, open: 3, isFull: false });
-  });
-});
-
-describe('shiftsOverlap', () => {
-  const morning = { starts_at: '2026-09-12T08:00:00', ends_at: '2026-09-12T12:00:00' };
-
-  it('erkennt eine Überschneidung (UC-012 A4)', () => {
-    expect(
-      shiftsOverlap(morning, {
-        starts_at: '2026-09-12T11:00:00',
-        ends_at: '2026-09-12T15:00:00',
-      }),
-    ).toBe(true);
-  });
-
-  it('erkennt eine vollständig enthaltene Schicht', () => {
-    expect(
-      shiftsOverlap(morning, {
-        starts_at: '2026-09-12T09:00:00',
-        ends_at: '2026-09-12T10:00:00',
-      }),
-    ).toBe(true);
-  });
-
-  it('lässt anschliessende Schichten zu', () => {
-    // Wer um 12:00 aufhört und um 12:00 anfängt, hat zwei Schichten hintereinander.
-    expect(
-      shiftsOverlap(morning, {
-        starts_at: '2026-09-12T12:00:00',
-        ends_at: '2026-09-12T16:00:00',
-      }),
-    ).toBe(false);
-  });
-
-  it('erkennt getrennte Schichten', () => {
-    expect(
-      shiftsOverlap(morning, {
-        starts_at: '2026-09-12T14:00:00',
-        ends_at: '2026-09-12T18:00:00',
-      }),
-    ).toBe(false);
-  });
-
-  it('behandelt unlesbare Zeiten als überschneidungsfrei', () => {
-    expect(shiftsOverlap(morning, { starts_at: 'kaputt', ends_at: 'kaputt' })).toBe(false);
   });
 });

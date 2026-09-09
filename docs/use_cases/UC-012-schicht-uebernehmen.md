@@ -6,7 +6,7 @@
 **Use Case Name:** Helfer-Schicht übernehmen
 **Primary Actor:** Mitglied
 **Goal:** Sich für eine konkrete Schicht eines Helfer-Events verbindlich eintragen
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 
