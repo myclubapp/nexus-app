@@ -49,11 +49,37 @@ vi.mock('../hooks/useClub', () => ({
 const emptyQuery = { data: [], isLoading: false, error: null, refetch: async () => {} };
 
 vi.mock('../hooks/useGamification', () => ({
-  useMyPoints: () => ({ total: 0, isLoading: false, error: null, refetch: async () => {} }),
+  useMyPoints: () => ({
+    transactions: [],
+    isLoading: false,
+    error: null,
+    refetch: async () => {},
+  }),
+  useMyPointsSummary: () => ({
+    data: { season: '2026/27', seasonPoints: 0, careerPoints: 0, bookingCount: 0 },
+    isLoading: false,
+    isSuccess: true,
+    error: null,
+    refetch: async () => {},
+  }),
+  useNextContributions: () => emptyQuery,
   usePointRules: () => emptyQuery,
+  useRuleLabels: () => emptyQuery,
   useLeaderboard: () => emptyQuery,
+  useAllPoints: () => emptyQuery,
+}));
+// Seit UC-017 liegen die Aufgaben-Hooks in einem eigenen Modul.
+vi.mock('../hooks/useTasks', () => ({
   useTasks: () => emptyQuery,
-  useClaimTask: () => ({ mutate: () => {}, isPending: false }),
+  useMyTaskCount: () => ({ data: 0, isLoading: false, error: null }),
+  useMyKudos: () => emptyQuery,
+  useClaimTask: () => ({ mutate: () => {}, isPending: false, error: null }),
+  usePublishTask: () => ({ mutate: () => {}, isPending: false, error: null }),
+  useSubmitTask: () => ({ mutate: () => {}, isPending: false, error: null }),
+  useReleaseTask: () => ({ mutate: () => {}, isPending: false, error: null }),
+  useConfirmTask: () => ({ mutate: () => {}, isPending: false, error: null }),
+  useRejectTask: () => ({ mutate: () => {}, isPending: false, error: null }),
+  useTaskRoster: () => emptyQuery,
 }));
 vi.mock('../hooks/useAgenda', () => ({
   useAgenda: () => emptyQuery,

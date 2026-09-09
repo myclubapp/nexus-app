@@ -110,11 +110,22 @@
     "streak": "Série",
     "streakDays": "{{count}} d'affilée",
     "nextPoints": "Prochains points",
-    "nextPointsHint": "Voilà comment gagner tes prochains points",
+    "nextPointsHint": "Des contributions concrètes actuellement ouvertes – et qui te correspondent.",
     "openTasks": "Missions ouvertes",
     "upcoming": "À venir",
     "latestNews": "Actualités",
-    "noNews": "Aucune actualité pour l'instant"
+    "noNews": "Aucune actualité pour l'instant",
+    "careerPoints": "Total depuis l’entrée",
+    "nothingOpen": "Rien à faire pour l’instant. C’est bien aussi.",
+    "welcome": "Bienvenue au club",
+    "welcomeHint": "Aucune écriture encore. La première contribution est juste en dessous.",
+    "recentBookings": "Derniers crédits",
+    "allBookings": "Tout afficher",
+    "kind": {
+      "event": "Rendez-vous",
+      "shift": "Créneau",
+      "task": "Tâche"
+    }
   },
   "marketplace": {
     "title": "Missions",
@@ -709,5 +720,16 @@
     "sendBack": "Renvoyer à la personne",
     "sentBack": "Renvoyé. La personne sait ce qui manque.",
     "notYourOwn": "Ta propre reprise est confirmée par quelqu’un d’autre."
+  },
+  "pointHistory": {
+    "title": "Historique des points",
+    "filter": "Filtre",
+    "pillar": "Pilier",
+    "allPillars": "Tous les piliers",
+    "allSeasons": "Toutes",
+    "bookings_one": "{{count}} écriture",
+    "bookings_other": "{{count}} écritures",
+    "sum": "Somme de la sélection : {{points}}",
+    "empty": "Aucune écriture pour cette sélection"
   }
 }

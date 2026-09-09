@@ -6,7 +6,7 @@
 **Use Case Name:** Punktestand und «Nächste Punkte» einsehen
 **Primary Actor:** Mitglied
 **Goal:** Den eigenen Beitrag einordnen und erkennen, wo man als Nächstes gebraucht wird
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

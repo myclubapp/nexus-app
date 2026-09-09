@@ -1413,7 +1413,28 @@ export type Database = {
           club_name: string
         }[]
       }
+      my_points_summary: {
+        Args: { p_club_id: string }
+        Returns: {
+          booking_count: number
+          career_points: number
+          first_booking: string
+          season: string
+          season_points: number
+        }[]
+      }
       my_season_task_count: { Args: { p_club_id: string }; Returns: number }
+      next_contributions: {
+        Args: { p_club_id: string; p_limit?: number }
+        Returns: {
+          detail: string
+          kind: string
+          points: number
+          ref_id: string
+          title: string
+          when_at: string
+        }[]
+      }
       notify: {
         Args: {
           p_body?: string

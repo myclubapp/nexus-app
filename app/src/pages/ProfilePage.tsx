@@ -12,7 +12,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { useClub } from '../hooks/useClub';
-import { useMyPoints } from '../hooks/useGamification';
+import { useMyPoints, useRuleLabels } from '../hooks/useGamification';
+import { bookingLabel } from '../lib/points';
 import { useMyKudos } from '../hooks/useTasks';
 import { useLeaderboardOptIn } from '../hooks/useProfile';
 import { AppPage } from '../components/AppPage';
@@ -31,6 +32,7 @@ export function ProfilePage() {
   const { signOut, user, setPassword } = useAuth();
   const { activeMembership, memberships, setActiveClub } = useClub();
   const points = useMyPoints();
+  const rules = useRuleLabels();
   const kudos = useMyKudos();
   const toast = useToast();
 
@@ -179,7 +181,14 @@ export function ProfilePage() {
         </ListSection>
       )}
 
-      <ListSection title={t('profile.pointHistory')}>
+      <ListSection
+        title={t('profile.pointHistory')}
+        action={
+          <IonButton fill="clear" size="small" routerLink="/tabs/profile/points">
+            {t('dashboard.allBookings')}
+          </IonButton>
+        }
+      >
         {points.transactions.length === 0 ? (
           <IonItem>
             <IonNote>{t('common.empty')}</IonNote>
@@ -188,7 +197,7 @@ export function ProfilePage() {
           points.transactions.slice(0, 20).map((entry) => (
             <IonItem key={entry.id}>
               <IonLabel className="ion-text-wrap">
-                <h2>{entry.rule_code ?? entry.source_type}</h2>
+                <h2>{bookingLabel(entry, rules.data ?? [])}</h2>
                 <IonNote>{formatDateTime(entry.created_at)}</IonNote>
               </IonLabel>
               <IonNote slot="end" color={entry.points >= 0 ? 'primary' : 'danger'}>

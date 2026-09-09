@@ -110,11 +110,22 @@
     "streak": "Serie",
     "streakDays": "{{count}} di fila",
     "nextPoints": "Prossimi punti",
-    "nextPointsHint": "Ecco come guadagnare i prossimi punti",
+    "nextPointsHint": "Contributi concreti attualmente aperti – e adatti a te.",
     "openTasks": "Compiti aperti",
     "upcoming": "Prossimamente",
     "latestNews": "Novità",
-    "noNews": "Al momento nessuna novità"
+    "noNews": "Al momento nessuna novità",
+    "careerPoints": "Totale dall’entrata",
+    "nothingOpen": "Al momento non c’è nulla. Va bene anche così.",
+    "welcome": "Benvenuta, benvenuto nella società",
+    "welcomeHint": "Ancora nessuna registrazione. Il primo contributo è qui sotto.",
+    "recentBookings": "Ultimi accrediti",
+    "allBookings": "Mostra tutto",
+    "kind": {
+      "event": "Appuntamento",
+      "shift": "Turno",
+      "task": "Compito"
+    }
   },
   "marketplace": {
     "title": "Compiti",
@@ -709,5 +720,16 @@
     "sendBack": "Rimandare alla persona",
     "sentBack": "Rimandato. La persona sa che cosa manca.",
     "notYourOwn": "La tua assunzione la conferma qualcun altro."
+  },
+  "pointHistory": {
+    "title": "Storico dei punti",
+    "filter": "Filtro",
+    "pillar": "Pilastro",
+    "allPillars": "Tutti i pilastri",
+    "allSeasons": "Tutte",
+    "bookings_one": "{{count}} registrazione",
+    "bookings_other": "{{count}} registrazioni",
+    "sum": "Somma della selezione: {{points}}",
+    "empty": "Nessuna registrazione per questa selezione"
   }
 }

@@ -1,4 +1,5 @@
 import {
+  IonButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
@@ -11,17 +12,24 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useClub } from '../hooks/useClub';
-import { useMyPoints, usePointRules } from '../hooks/useGamification';
+import {
+  useMyPoints,
+  useMyPointsSummary,
+  useNextContributions,
+  useRuleLabels,
+} from '../hooks/useGamification';
 import { useAgenda } from '../hooks/useAgenda';
 import { useNews } from '../hooks/useNews';
+import { useNewsSource } from '../hooks/useNewsSources';
 import { useIsNewClub } from '../hooks/useOnboarding';
 import { AppPage } from '../components/AppPage';
 import { FirstStepsCard } from '../components/FirstStepsCard';
 import { ListSection } from '../components/ListSection';
 import { StatCard } from '../components/StatCard';
 import { EmptyState, ErrorState } from '../components/StateViews';
-import { SkeletonCard, SkeletonStats } from '../components/Skeletons';
-import { formatDateTime } from '../lib/format';
+import { SkeletonCard, SkeletonList, SkeletonStats } from '../components/Skeletons';
+import { formatDate, formatDateTime } from '../lib/format';
+import { bookingLabel } from '../lib/points';
 
 export function DashboardPage() {
   const { t } = useTranslation();
@@ -29,12 +37,27 @@ export function DashboardPage() {
   const { activeClub, activeMembership, eventLabel } = useClub();
   const isNewClub = useIsNewClub();
   const points = useMyPoints();
-  const rules = usePointRules();
+  const summary = useMyPointsSummary();
+  const suggestions = useNextContributions(5);
+  const rules = useRuleLabels();
   const agenda = useAgenda('upcoming');
   const news = useNews(5);
+  const newsSource = useNewsSource();
 
-  const nextRules = (rules.data ?? []).slice(0, 3);
   const nextEvents = (agenda.data ?? []).slice(0, 3);
+  const recent = points.transactions.slice(0, 3);
+  // A1: Wer noch keine Buchung hat, bekommt keinen leeren Stand, sondern eine
+  // Begrüssung – und darunter den nächsten erreichbaren Beitrag.
+  const isNewcomer = summary.isSuccess && summary.data.bookingCount === 0;
+
+  /** Schritt 6: Der Vorschlag führt dorthin, wo er eingelöst wird. */
+  function openSuggestion(kind: string, refId: string) {
+    navigate(
+      kind === 'task'
+        ? `/tabs/marketplace?task=${refId}`
+        : `/tabs/agenda?event=${refId}`,
+    );
+  }
 
   return (
     <AppPage
@@ -43,38 +66,119 @@ export function DashboardPage() {
         name: activeMembership?.display_name ?? '',
       })}
       onRefresh={() =>
-        Promise.all([points.refetch(), agenda.refetch(), news.refetch()])
+        Promise.all([
+          summary.refetch(),
+          points.refetch(),
+          suggestions.refetch(),
+          agenda.refetch(),
+          news.refetch(),
+        ])
       }
     >
-      {isNewClub.data && activeClub && <FirstStepsCard clubName={activeClub.name} />}
+      {isNewClub.data && activeClub && (
+        <FirstStepsCard
+          clubName={activeClub.name}
+          /* Erst wenn feststeht, dass keine Website verbunden ist – sonst
+             blitzt die Zeile auf und verschwindet wieder. */
+          offerNewsImport={newsSource.isSuccess && !newsSource.data}
+        />
+      )}
 
-      {points.isLoading ? (
+      {/* BR-081: Saison und Gesamt getrennt. BR-084: keine Vergleichszahl –
+          hier steht der eigene Beitrag, der Rang gehört in die Rangliste. */}
+      {summary.isLoading ? (
         <SkeletonStats />
-      ) : points.error ? (
-        <ErrorState error={points.error as Error} onRetry={() => void points.refetch()} />
+      ) : summary.error ? (
+        <ErrorState
+          error={summary.error as Error}
+          onRetry={() => void summary.refetch()}
+        />
       ) : (
         <div className="app-stat-row">
-          <StatCard value={points.total} label={t('dashboard.seasonPoints')} />
+          <StatCard
+            value={summary.data?.seasonPoints ?? 0}
+            label={t('dashboard.seasonPoints')}
+          />
+          <StatCard
+            value={summary.data?.careerPoints ?? 0}
+            label={t('dashboard.careerPoints')}
+            accent="tertiary"
+          />
         </div>
       )}
 
-      <ListSection title={t('dashboard.nextPoints')}>
-        {nextRules.length === 0 ? (
-          <EmptyState message={t('common.empty')} />
+      {isNewcomer && (
+        <ListSection footnote={t('dashboard.welcomeHint')}>
+          <IonItem lines="none">
+            <IonLabel className="ion-text-wrap">
+              <h2>{t('dashboard.welcome')}</h2>
+            </IonLabel>
+          </IonItem>
+        </ListSection>
+      )}
+
+      {/* Schritt 4: konkrete Beiträge statt Regeln. */}
+      <ListSection title={t('dashboard.nextPoints')} footnote={t('dashboard.nextPointsHint')}>
+        {suggestions.isLoading ? (
+          <SkeletonList />
+        ) : suggestions.error ? (
+          <ErrorState
+            error={suggestions.error as Error}
+            onRetry={() => void suggestions.refetch()}
+          />
+        ) : (suggestions.data ?? []).length === 0 ? (
+          /* A4: sagen, dass gerade nichts ansteht – statt eines leeren Feldes. */
+          <EmptyState message={t('dashboard.nothingOpen')} />
         ) : (
-          nextRules.map((rule) => (
-            <IonItem key={rule.id}>
+          (suggestions.data ?? []).map((entry) => (
+            <IonItem
+              key={`${entry.kind}-${entry.refId}`}
+              button
+              detail
+              onClick={() => openSuggestion(entry.kind, entry.refId)}
+            >
               <IonLabel className="ion-text-wrap">
-                <h2>{rule.label}</h2>
-                <IonNote>{t('dashboard.nextPointsHint')}</IonNote>
+                <h2>{entry.title}</h2>
+                <IonNote>
+                  {t(`dashboard.kind.${entry.kind}`)}
+                  {entry.whenAt ? ` · ${formatDate(entry.whenAt)}` : ''}
+                </IonNote>
               </IonLabel>
-              <IonNote slot="end" color="primary">
-                +{rule.points}
-              </IonNote>
+              {/* Ohne hinterlegte Regel steht hier keine Zahl – eine Null wäre
+                  eine Behauptung über den Wert des Beitrags. */}
+              {entry.points !== null && entry.points > 0 && (
+                <IonNote slot="end" color="primary">
+                  +{entry.points}
+                </IonNote>
+              )}
             </IonItem>
           ))
         )}
       </ListSection>
+
+      {/* Schritt 3: die letzten Buchungen mit Datum, Anlass und Wert. */}
+      {recent.length > 0 && (
+        <ListSection
+          title={t('dashboard.recentBookings')}
+          action={
+            <IonButton fill="clear" size="small" routerLink="/tabs/profile/points">
+              {t('dashboard.allBookings')}
+            </IonButton>
+          }
+        >
+          {recent.map((entry) => (
+            <IonItem key={entry.id}>
+              <IonLabel className="ion-text-wrap">
+                <h2>{bookingLabel(entry, rules.data ?? [])}</h2>
+                <IonNote>{formatDateTime(entry.created_at)}</IonNote>
+              </IonLabel>
+              <IonNote slot="end" color={entry.points >= 0 ? 'primary' : 'danger'}>
+                {entry.points >= 0 ? `+${entry.points}` : entry.points}
+              </IonNote>
+            </IonItem>
+          ))}
+        </ListSection>
+      )}
 
       <ListSection title={t('dashboard.upcoming')}>
         {nextEvents.length === 0 ? (

@@ -110,11 +110,22 @@
     "streak": "Serie",
     "streakDays": "{{count}} in Folge",
     "nextPoints": "Nächste Punkte",
-    "nextPointsHint": "So sammelst du als Nächstes Punkte",
+    "nextPointsHint": "Konkrete Beiträge, die gerade offen sind – und zu dir passen.",
     "openTasks": "Offene Aufgaben",
     "upcoming": "Als Nächstes",
     "latestNews": "Neuigkeiten",
-    "noNews": "Zurzeit keine Neuigkeiten"
+    "noNews": "Zurzeit keine Neuigkeiten",
+    "careerPoints": "Gesamt seit Eintritt",
+    "nothingOpen": "Gerade steht nichts an. Das ist auch mal gut so.",
+    "welcome": "Willkommen im Verein",
+    "welcomeHint": "Noch keine Buchung. Der erste Beitrag steht gleich darunter.",
+    "recentBookings": "Zuletzt gutgeschrieben",
+    "allBookings": "Alle anzeigen",
+    "kind": {
+      "event": "Termin",
+      "shift": "Schicht",
+      "task": "Aufgabe"
+    }
   },
   "marketplace": {
     "title": "Marktplatz",
@@ -709,5 +720,16 @@
     "sendBack": "Zurück an die Person",
     "sentBack": "Zurückgegeben. Die Person weiss, was noch fehlt.",
     "notYourOwn": "Deine eigene Übernahme bestätigt jemand anderes."
+  },
+  "pointHistory": {
+    "title": "Punktehistorie",
+    "filter": "Filter",
+    "pillar": "Säule",
+    "allPillars": "Alle Säulen",
+    "allSeasons": "Alle",
+    "bookings_one": "{{count}} Buchung",
+    "bookings_other": "{{count}} Buchungen",
+    "sum": "Summe der Auswahl: {{points}}",
+    "empty": "Zu dieser Auswahl gibt es keine Buchung"
   }
 }

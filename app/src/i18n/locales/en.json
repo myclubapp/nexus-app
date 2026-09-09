@@ -110,11 +110,22 @@
     "streak": "Streak",
     "streakDays": "{{count}} in a row",
     "nextPoints": "Next points",
-    "nextPointsHint": "Here is how you earn your next points",
+    "nextPointsHint": "Concrete contributions open right now – and a fit for you.",
     "openTasks": "Open tasks",
     "upcoming": "Coming up",
     "latestNews": "News",
-    "noNews": "No news at the moment"
+    "noNews": "No news at the moment",
+    "careerPoints": "Total since joining",
+    "nothingOpen": "Nothing is open right now. That is fine too.",
+    "welcome": "Welcome to the club",
+    "welcomeHint": "No bookings yet. The first contribution is right below.",
+    "recentBookings": "Recently credited",
+    "allBookings": "Show all",
+    "kind": {
+      "event": "Event",
+      "shift": "Shift",
+      "task": "Task"
+    }
   },
   "marketplace": {
     "title": "Tasks",
@@ -709,5 +720,16 @@
     "sendBack": "Send back to the person",
     "sentBack": "Sent back. The person knows what is missing.",
     "notYourOwn": "Someone else confirms your own contribution."
+  },
+  "pointHistory": {
+    "title": "Points history",
+    "filter": "Filter",
+    "pillar": "Pillar",
+    "allPillars": "All pillars",
+    "allSeasons": "All",
+    "bookings_one": "{{count}} booking",
+    "bookings_other": "{{count}} bookings",
+    "sum": "Sum of the selection: {{points}}",
+    "empty": "No booking for this selection"
   }
 }
