@@ -45,7 +45,8 @@ export const APP_CONTENT_ID = 'main';
 export function AppMenu() {
   const { t } = useTranslation();
   const { signOut, user } = useAuth();
-  const { activeClub, activeMembership, memberships, setActiveClub, isAdmin } = useClub();
+  const { activeClub, activeMembership, memberships, setActiveClub, isAdmin, isTrainer } =
+    useClub();
 
   if (!activeClub) return null;
 
@@ -94,7 +95,11 @@ export function AppMenu() {
           </ListSection>
         )}
 
-        {isAdmin && (
+        {/* Seit UC-023 auch für Trainer:innen: Die Vereins-Gesundheit gehört
+            ihnen für ihr Team (BR-096). Was darin steht, entscheidet
+            `ClubAdminLinks` – hier steht nur, ob der Abschnitt überhaupt
+            erscheint. */}
+        {(isAdmin || isTrainer) && (
           <IonMenuToggle autoHide={false}>
             <ListSection title={t('menu.administration')}>
               <ClubAdminLinks />

@@ -267,7 +267,6 @@
   "health": {
     "title": "Club health",
     "club": "Club",
-    "team": "Team",
     "member": "Member",
     "severity": {
       "info": "Info",
@@ -276,7 +275,60 @@
     },
     "markInContact": "In contact",
     "resolve": "Resolved",
-    "empty": "No signals at the moment"
+    "empty": "No signals at the moment",
+    "openSignals_one": "{{count}} open signal",
+    "openSignals_other": "{{count}} open signals",
+    "listHint": "A signal is a reason to talk, not an assessment. Resolved ones disappear without a trace.",
+    "prompts": "Conversation starters",
+    "promptsHint": "Adapt them and say it in your own words – these are suggestions, not scripts.",
+    "actionQuestion": "What can we change?",
+    "actionHint": "The signal is about the club, not about a person.",
+    "ownedBy": "{{name}} is taking care of it",
+    "alreadyTaken": "Someone else is already taking care of it.",
+    "tookOver": "Noted – the other people responsible can see it.",
+    "resolved": "Done. The signal is gone, without a trace.",
+    "resolveHint": "Resolved signals are deleted. No record is kept.",
+    "signal": {
+      "no_response": {
+        "title": "No reply yet",
+        "body": "No response to the last {{detail}} events. Maybe the timing does not fit right now.",
+        "prompt1": "Ask openly how things are going – without mentioning the events.",
+        "prompt2": "Say you would be glad to see them again.",
+        "prompt3": "Ask whether the times still work at all."
+      },
+      "silent_churn": {
+        "title": "Has not been around for a while",
+        "body": "No participation for about {{detail}} days. A call says more than a message.",
+        "prompt1": "Call instead of writing – and ask how they are.",
+        "prompt2": "Tell them what is going on in the team.",
+        "prompt3": "Ask what would have to change for it to work again."
+      },
+      "attendance_drop": {
+        "title": "Around less often than before",
+        "body": "Recently {{detail}} events attended – noticeably more before that.",
+        "prompt1": "Ask whether something has changed in daily life.",
+        "prompt2": "Ask whether the time or the place still works.",
+        "prompt3": "Say that the team misses them."
+      },
+      "comms_pause": {
+        "title": "No connecting message for {{detail}} days",
+        "body": "The club last told a story without asking for anything {{detail}} days ago.",
+        "prompt1": "What went well in recent weeks that nobody knows about?",
+        "prompt2": "Who contributed something worth thanking publicly?",
+        "prompt3": "What is coming up that the club can look forward to?"
+      },
+      "connection_ratio": {
+        "title": "More asking than telling",
+        "body": "Over the last eight weeks {{detail}} – connecting messages to calls.",
+        "prompt1": "What can we tell before we ask for help again?",
+        "prompt2": "Which recent contribution deserves a thank you?",
+        "prompt3": "Would a club pulse be due now?"
+      },
+      "unknown": {
+        "title": "A signal",
+        "body": "There is no description for this signal yet."
+      }
+    }
   },
   "language": {
     "de": "German",

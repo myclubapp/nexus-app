@@ -267,7 +267,6 @@
   "health": {
     "title": "Vereins-Gesundheit",
     "club": "Verein",
-    "team": "Team",
     "member": "Mitglied",
     "severity": {
       "info": "Hinweis",
@@ -276,7 +275,60 @@
     },
     "markInContact": "Kontakt aufgenommen",
     "resolve": "Erledigt",
-    "empty": "Zurzeit keine Hinweise"
+    "empty": "Zurzeit keine Hinweise",
+    "openSignals_one": "{{count}} offener Hinweis",
+    "openSignals_other": "{{count}} offene Hinweise",
+    "listHint": "Hinweise sind ein Anlass für ein Gespräch, keine Bewertung. Gelöste verschwinden ohne Spur.",
+    "prompts": "Gesprächsimpulse",
+    "promptsHint": "Anpassen und in eigenen Worten sagen – das sind Vorschläge, keine Vorlagen.",
+    "actionQuestion": "Was können wir ändern?",
+    "actionHint": "Das Signal betrifft den Verein, nicht eine Person.",
+    "ownedBy": "{{name}} kümmert sich",
+    "alreadyTaken": "Jemand anderes kümmert sich bereits darum.",
+    "tookOver": "Notiert – die anderen Zuständigen sehen es.",
+    "resolved": "Erledigt. Der Hinweis ist weg, ohne Spur.",
+    "resolveHint": "Erledigte Hinweise werden gelöscht. Es entsteht keine Akte.",
+    "signal": {
+      "no_response": {
+        "title": "Bisher keine Antwort",
+        "body": "Auf die letzten {{detail}} Termine kam noch keine Rückmeldung. Vielleicht passt die Zeit gerade nicht.",
+        "prompt1": "Frag offen, wie es gerade läuft – ohne die Termine zu erwähnen.",
+        "prompt2": "Sag, dass ihr euch freut, wenn er oder sie wieder dabei ist.",
+        "prompt3": "Frag, ob die Termine zeitlich überhaupt passen."
+      },
+      "silent_churn": {
+        "title": "Länger nicht dabei gewesen",
+        "body": "Seit rund {{detail}} Tagen keine Teilnahme. Ein kurzer Anruf sagt mehr als eine Nachricht.",
+        "prompt1": "Ruf an, statt zu schreiben – und frag, wie es geht.",
+        "prompt2": "Erzähl, was im Team gerade läuft.",
+        "prompt3": "Frag, ob sich etwas ändern müsste, damit es wieder passt."
+      },
+      "attendance_drop": {
+        "title": "Weniger oft dabei als früher",
+        "body": "Zuletzt {{detail}} Termine wahrgenommen – vorher deutlich mehr.",
+        "prompt1": "Frag, ob sich im Alltag etwas geändert hat.",
+        "prompt2": "Frag, ob Zeit oder Ort noch passen.",
+        "prompt3": "Sag, dass er oder sie im Team fehlt."
+      },
+      "comms_pause": {
+        "title": "Seit {{detail}} Tagen keine Verbindungs-Nachricht",
+        "body": "Der Verein hat zuletzt vor {{detail}} Tagen etwas erzählt, das keine Bitte war.",
+        "prompt1": "Was ist in den letzten Wochen gut gelaufen, das noch niemand weiss?",
+        "prompt2": "Wer hat etwas beigetragen, dem wir öffentlich danken könnten?",
+        "prompt3": "Was steht an, worauf sich der Verein freuen kann?"
+      },
+      "connection_ratio": {
+        "title": "Mehr Aufrufe als Erzähltes",
+        "body": "In den letzten acht Wochen {{detail}} – Verbindungs-Nachrichten zu Aufrufen.",
+        "prompt1": "Was können wir erzählen, bevor wir das nächste Mal um Hilfe bitten?",
+        "prompt2": "Welcher Beitrag der letzten Wochen verdient ein Dankeswort?",
+        "prompt3": "Wäre jetzt ein Vereins-Puls dran?"
+      },
+      "unknown": {
+        "title": "Ein Hinweis",
+        "body": "Zu diesem Hinweis liegt noch keine Beschreibung vor."
+      }
+    }
   },
   "language": {
     "de": "Deutsch",

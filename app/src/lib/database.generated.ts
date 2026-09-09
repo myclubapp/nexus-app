@@ -423,6 +423,91 @@ export type Database = {
           },
         ]
       }
+      health_signals: {
+        Row: {
+          club_id: string
+          detail: string
+          detected_at: string
+          expires_at: string
+          id: string
+          member_id: string | null
+          owned_by: string | null
+          severity: string
+          signal_type: string
+          status: string
+          team_id: string | null
+        }
+        Insert: {
+          club_id: string
+          detail: string
+          detected_at?: string
+          expires_at?: string
+          id?: string
+          member_id?: string | null
+          owned_by?: string | null
+          severity: string
+          signal_type: string
+          status?: string
+          team_id?: string | null
+        }
+        Update: {
+          club_id?: string
+          detail?: string
+          detected_at?: string
+          expires_at?: string
+          id?: string
+          member_id?: string | null
+          owned_by?: string | null
+          severity?: string
+          signal_type?: string
+          status?: string
+          team_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "health_signals_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "health_signals_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "health_signals_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "health_signals_owned_by_fkey"
+            columns: ["owned_by"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "health_signals_owned_by_fkey"
+            columns: ["owned_by"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "health_signals_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invites: {
         Row: {
           club_id: string
@@ -1272,6 +1357,7 @@ export type Database = {
       default_event_labels: { Args: { p_club_kind: string }; Returns: Json }
       default_season_start: { Args: { p_club_kind: string }; Returns: string }
       delete_my_account: { Args: never; Returns: undefined }
+      detect_health_signals: { Args: { p_club_id?: string }; Returns: number }
       event_roster: {
         Args: { p_event_id: string }
         Returns: {
@@ -1280,6 +1366,7 @@ export type Database = {
           status: string
         }[]
       }
+      expire_health_signals: { Args: never; Returns: number }
       expire_tasks: { Args: { p_limit?: number }; Returns: number }
       find_club_by_slug: {
         Args: { p_slug: string }
@@ -1287,6 +1374,14 @@ export type Database = {
           club_id: string
           club_name: string
         }[]
+      }
+      health_signal_in_reach: {
+        Args: { p_signal_id: string }
+        Returns: boolean
+      }
+      health_threshold: {
+        Args: { p_club_id: string; p_default: number; p_key: string }
+        Returns: number
       }
       is_club_admin: { Args: { p_club_id: string }; Returns: boolean }
       is_club_member: { Args: { p_club_id: string }; Returns: boolean }
@@ -1455,6 +1550,10 @@ export type Database = {
       set_shift_absence: {
         Args: { p_member_id: string; p_shift_id: string; p_status: string }
         Returns: undefined
+      }
+      set_signal_status: {
+        Args: { p_signal_id: string; p_status: string }
+        Returns: string
       }
       shift_candidates: {
         Args: { p_shift_id: string }

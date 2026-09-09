@@ -267,7 +267,6 @@
   "health": {
     "title": "Santé de la société",
     "club": "Société",
-    "team": "Équipe",
     "member": "Membre",
     "severity": {
       "info": "Information",
@@ -276,7 +275,60 @@
     },
     "markInContact": "Contact pris",
     "resolve": "Réglé",
-    "empty": "Aucun signal pour l'instant"
+    "empty": "Aucun signal pour l'instant",
+    "openSignals_one": "{{count}} signalement ouvert",
+    "openSignals_other": "{{count}} signalements ouverts",
+    "listHint": "Un signalement est une occasion de parler, pas une évaluation. Ceux qui sont réglés disparaissent sans trace.",
+    "prompts": "Amorces de conversation",
+    "actionQuestion": "Que pouvons-nous changer ?",
+    "actionHint": "Le signal concerne le club, pas une personne.",
+    "promptsHint": "À adapter et à dire avec tes mots – ce sont des propositions, pas des modèles.",
+    "ownedBy": "{{name}} s’en occupe",
+    "alreadyTaken": "Quelqu’un d’autre s’en occupe déjà.",
+    "tookOver": "Noté – les autres responsables le voient.",
+    "resolved": "Réglé. Le signalement a disparu, sans trace.",
+    "resolveHint": "Les signalements réglés sont supprimés. Aucun dossier n’est constitué.",
+    "signal": {
+      "no_response": {
+        "title": "Pas encore de réponse",
+        "body": "Aucune réponse aux {{detail}} derniers rendez-vous. Le moment ne convient peut-être pas.",
+        "prompt1": "Demande simplement comment ça va – sans parler des rendez-vous.",
+        "prompt2": "Dis que vous seriez contents de le ou la revoir.",
+        "prompt3": "Demande si les horaires conviennent encore."
+      },
+      "silent_churn": {
+        "title": "Absent depuis un moment",
+        "body": "Aucune participation depuis environ {{detail}} jours. Un appel dit plus qu’un message.",
+        "prompt1": "Appelle plutôt que d’écrire – et demande comment ça va.",
+        "prompt2": "Raconte ce qui se passe dans l’équipe.",
+        "prompt3": "Demande ce qui devrait changer pour que ça reparte."
+      },
+      "attendance_drop": {
+        "title": "Moins souvent présent qu’avant",
+        "body": "Dernièrement {{detail}} rendez-vous suivis – nettement plus auparavant.",
+        "prompt1": "Demande si quelque chose a changé au quotidien.",
+        "prompt2": "Demande si l’horaire ou le lieu conviennent encore.",
+        "prompt3": "Dis qu’il ou elle manque à l’équipe."
+      },
+      "comms_pause": {
+        "title": "Aucun message de lien depuis {{detail}} jours",
+        "body": "Le club a raconté quelque chose sans rien demander il y a {{detail}} jours.",
+        "prompt1": "Qu’est-ce qui a bien marché ces dernières semaines et que personne ne sait ?",
+        "prompt2": "Qui a contribué et mériterait un merci public ?",
+        "prompt3": "Qu’est-ce qui arrive et réjouit le club ?"
+      },
+      "connection_ratio": {
+        "title": "Plus d’appels que de récits",
+        "body": "Ces huit dernières semaines {{detail}} – messages de lien contre appels.",
+        "prompt1": "Que pouvons-nous raconter avant de redemander de l’aide ?",
+        "prompt2": "Quelle contribution récente mérite un remerciement ?",
+        "prompt3": "Serait-ce le moment d’un pouls du club ?"
+      },
+      "unknown": {
+        "title": "Un signalement",
+        "body": "Aucune description n’est encore disponible pour ce signalement."
+      }
+    }
   },
   "language": {
     "de": "Allemand",

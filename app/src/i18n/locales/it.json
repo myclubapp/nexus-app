@@ -267,7 +267,6 @@
   "health": {
     "title": "Salute della società",
     "club": "Società",
-    "team": "Squadra",
     "member": "Membro",
     "severity": {
       "info": "Informazione",
@@ -276,7 +275,60 @@
     },
     "markInContact": "Contatto stabilito",
     "resolve": "Risolto",
-    "empty": "Al momento nessun segnale"
+    "empty": "Al momento nessun segnale",
+    "openSignals_one": "{{count}} segnalazione aperta",
+    "openSignals_other": "{{count}} segnalazioni aperte",
+    "listHint": "Una segnalazione è un’occasione per parlare, non una valutazione. Quelle risolte spariscono senza traccia.",
+    "prompts": "Spunti per la conversazione",
+    "promptsHint": "Da adattare e da dire con parole tue – sono proposte, non modelli.",
+    "actionQuestion": "Che cosa possiamo cambiare?",
+    "actionHint": "Il segnale riguarda la società, non una persona.",
+    "ownedBy": "Se ne occupa {{name}}",
+    "alreadyTaken": "Se ne sta già occupando qualcun altro.",
+    "tookOver": "Annotato – gli altri responsabili lo vedono.",
+    "resolved": "Risolto. La segnalazione è sparita, senza traccia.",
+    "resolveHint": "Le segnalazioni risolte vengono cancellate. Non nasce alcun fascicolo.",
+    "signal": {
+      "no_response": {
+        "title": "Ancora nessuna risposta",
+        "body": "Nessun riscontro agli ultimi {{detail}} appuntamenti. Forse il momento non va bene.",
+        "prompt1": "Chiedi apertamente come va – senza nominare gli appuntamenti.",
+        "prompt2": "Di’ che sareste contenti di rivederlo o rivederla.",
+        "prompt3": "Chiedi se gli orari vanno ancora bene."
+      },
+      "silent_churn": {
+        "title": "Da un po’ non c’è",
+        "body": "Nessuna partecipazione da circa {{detail}} giorni. Una telefonata dice più di un messaggio.",
+        "prompt1": "Telefona invece di scrivere – e chiedi come va.",
+        "prompt2": "Racconta che cosa sta succedendo nella squadra.",
+        "prompt3": "Chiedi che cosa dovrebbe cambiare perché torni a funzionare."
+      },
+      "attendance_drop": {
+        "title": "Presente meno spesso di prima",
+        "body": "Ultimamente {{detail}} appuntamenti seguiti – prima molti di più.",
+        "prompt1": "Chiedi se è cambiato qualcosa nella quotidianità.",
+        "prompt2": "Chiedi se orario e luogo vanno ancora bene.",
+        "prompt3": "Di’ che alla squadra manca."
+      },
+      "comms_pause": {
+        "title": "Da {{detail}} giorni nessun messaggio di legame",
+        "body": "La società ha raccontato qualcosa senza chiedere nulla {{detail}} giorni fa.",
+        "prompt1": "Che cosa è andato bene nelle ultime settimane e nessuno lo sa?",
+        "prompt2": "Chi ha contribuito e meriterebbe un grazie pubblico?",
+        "prompt3": "Che cosa sta arrivando di bello per la società?"
+      },
+      "connection_ratio": {
+        "title": "Più richieste che racconti",
+        "body": "Nelle ultime otto settimane {{detail}} – messaggi di legame contro richieste.",
+        "prompt1": "Che cosa possiamo raccontare prima di chiedere di nuovo aiuto?",
+        "prompt2": "Quale contributo recente merita un ringraziamento?",
+        "prompt3": "Sarebbe il momento di un polso della società?"
+      },
+      "unknown": {
+        "title": "Una segnalazione",
+        "body": "Per questa segnalazione non c’è ancora una descrizione."
+      }
+    }
   },
   "language": {
     "de": "Tedesco",

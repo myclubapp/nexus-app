@@ -9,6 +9,7 @@ interface ClubStub {
   activeClub: { id: string; name: string } | null;
   memberships: { club_id: string; club: { name: string } }[];
   isAdmin: boolean;
+  isTrainer: boolean;
 }
 
 let club: ClubStub;
@@ -55,6 +56,7 @@ describe('AppMenu', () => {
       activeClub: { id: 'c1', name: 'TV Musterhausen' },
       memberships: [{ club_id: 'c1', club: { name: 'TV Musterhausen' } }],
       isAdmin: false,
+      isTrainer: false,
     };
   });
 
@@ -98,11 +100,27 @@ describe('AppMenu', () => {
     const asAdmin = renderWithProviders(<AppMenu />);
     expect(routerLinks(asAdmin.container)).toEqual([
       '/tabs/profile',
+      // Seit UC-023 zuoberst: die Vereins-Gesundheit.
+      '/tabs/profile/health',
       '/tabs/profile/club',
       '/tabs/profile/members',
       '/tabs/profile/rules',
+      '/tabs/profile/news',
       '/tabs/profile/invite',
       '/tabs/profile/requests',
+    ]);
+  });
+
+  it('zeigt Trainer:innen die Vereins-Gesundheit, aber nichts vom Vorstand', () => {
+    // BR-096: Trainer:innen sehen die Hinweise ihres Teams. Die
+    // Vereinsverwaltung bleibt dem Vorstand.
+    club.isAdmin = false;
+    club.isTrainer = true;
+    const { container } = renderWithProviders(<AppMenu />);
+
+    expect(routerLinks(container)).toEqual([
+      '/tabs/profile',
+      '/tabs/profile/health',
     ]);
   });
 
