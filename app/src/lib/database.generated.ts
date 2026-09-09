@@ -99,6 +99,13 @@ export type Database = {
             referencedColumns: ["member_id"]
           },
           {
+            foreignKeyName: "attendance_shift_event_fkey"
+            columns: ["shift_id", "event_id"]
+            isOneToOne: false
+            referencedRelation: "event_shifts"
+            referencedColumns: ["id", "event_id"]
+          },
+          {
             foreignKeyName: "attendance_shift_id_fkey"
             columns: ["shift_id"]
             isOneToOne: false
@@ -1265,8 +1272,11 @@ export type Database = {
         }[]
       }
       confirm_shift: {
-        Args: { p_event_id: string; p_member_id: string }
-        Returns: number
+        Args: { p_member_id: string; p_shift_id: string }
+        Returns: {
+          booked: boolean
+          points: number
+        }[]
       }
       confirm_task: {
         Args: { p_assignment_id: string; p_kudos?: string }
@@ -1406,6 +1416,26 @@ export type Database = {
       set_pillar_active: {
         Args: { p_active: boolean; p_club_id: string; p_pillar: number }
         Returns: number
+      }
+      set_shift_absence: {
+        Args: { p_member_id: string; p_shift_id: string; p_status: string }
+        Returns: undefined
+      }
+      shift_candidates: {
+        Args: { p_shift_id: string }
+        Returns: {
+          display_name: string
+          member_id: string
+        }[]
+      }
+      shift_roster: {
+        Args: { p_shift_id: string }
+        Returns: {
+          confirmed: boolean
+          display_name: string
+          member_id: string
+          status: string
+        }[]
       }
       slugify: { Args: { p_value: string }; Returns: string }
       sync_news_sources: { Args: never; Returns: number }

@@ -516,5 +516,32 @@
     "overlapMessage": "You are already signed up for another shift at the same time. Take it anyway?",
     "overlapConfirm": "Take it anyway",
     "over": "Over"
+  },
+  "roster": {
+    "title": "Confirm shifts",
+    "open": "Confirm shifts",
+    "confirm": "Confirm",
+    "absent": "Did not come",
+    "confirmed": "Confirmed",
+    "empty": "Nobody is signed up for this shift",
+    "registered_one": "{{count}} signed up",
+    "registered_other": "{{count}} signed up",
+    "hint": "Confirm the people who actually turned up. The shift's points are credited as you do.",
+    "awarded": "{{name}} confirmed – {{points}} points credited",
+    "alreadyAwarded": "Already confirmed; nothing is credited a second time.",
+    "markedAbsent": "Noted as absent – no points.",
+    "summary": "{{points}} points credited in this session",
+    "status": {
+      "registered": "Signed up",
+      "present": "Present",
+      "excused": "Excused",
+      "absent": "Absent",
+      "substitute": "Stand-in"
+    },
+    "notThere": "Not on duty",
+    "absenceTitle": "How should this be recorded?",
+    "add": "Add a person",
+    "addHint": "For stand-ins: signed up and confirmed in one step.",
+    "confirmedNoPoints": "{{name}} confirmed – this shift awards no points."
   }
 }

@@ -27,6 +27,7 @@ import { EventFormModal } from '../components/EventFormModal';
 import { DeclineModal } from '../components/DeclineModal';
 import { HelperEventModal } from '../components/HelperEventModal';
 import { ShiftListModal } from '../components/ShiftListModal';
+import { ShiftRosterModal } from '../components/ShiftRosterModal';
 import { canRespond, tallyAttendance } from '../lib/attendance';
 import { shiftCoverage } from '../lib/shift';
 
@@ -42,6 +43,8 @@ export function AgendaPage() {
   const [isHelperOpen, setHelperOpen] = useState(false);
   // UC-012 Schritt 1: Der Aufruf öffnet sich aus der Agenda heraus.
   const [shiftEventId, setShiftEventId] = useState<string | null>(null);
+  // UC-013 Schritt 1: der vergangene Aufruf, dessen Einsätze zu bestätigen sind.
+  const [rosterEventId, setRosterEventId] = useState<string | null>(null);
   const [decliningEvent, setDecliningEvent] = useState<{
     id: string;
     startsAt: string;
@@ -54,6 +57,7 @@ export function AgendaPage() {
   const publish = usePublishEvent();
   const events = agenda.data ?? [];
   const shiftEvent = events.find((entry) => entry.id === shiftEventId);
+  const rosterEvent = events.find((entry) => entry.id === rosterEventId);
 
   return (
     <AppPage
@@ -179,6 +183,18 @@ export function AgendaPage() {
                       >
                         {t('shifts.open')}
                       </IonButton>
+
+                      {/* UC-013 Schritt 1: bestätigt wird, was stattgefunden
+                          hat – deshalb erst im vergangenen Bereich. */}
+                      {isAdmin && range === 'past' && (
+                        <IonButton
+                          size="small"
+                          fill="outline"
+                          onClick={() => setRosterEventId(event.id)}
+                        >
+                          {t('roster.open')}
+                        </IonButton>
+                      )}
                     </IonButtons>
                   )}
 
@@ -287,6 +303,12 @@ export function AgendaPage() {
       <CheckInModal
         eventId={checkInEventId}
         onDismiss={() => setCheckInEventId(null)}
+      />
+
+      <ShiftRosterModal
+        isOpen={rosterEventId !== null}
+        shifts={rosterEvent?.shifts ?? []}
+        onDismiss={() => setRosterEventId(null)}
       />
 
       <ShiftListModal

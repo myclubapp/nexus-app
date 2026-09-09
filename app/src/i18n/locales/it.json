@@ -516,5 +516,32 @@
     "overlapMessage": "Sei già iscritto a un altro turno nello stesso orario. Prenderlo lo stesso?",
     "overlapConfirm": "Prendilo lo stesso",
     "over": "Concluso"
+  },
+  "roster": {
+    "title": "Conferma gli impegni",
+    "open": "Conferma gli impegni",
+    "confirm": "Conferma",
+    "absent": "Assente",
+    "confirmed": "Confermato",
+    "empty": "Per questo turno non è iscritto nessuno",
+    "registered_one": "{{count}} iscritto",
+    "registered_other": "{{count}} iscritti",
+    "hint": "Si conferma chi era davvero presente. I punti del turno vengono accreditati.",
+    "awarded": "{{name}} confermato – {{points}} punti accreditati",
+    "alreadyAwarded": "Già confermato; non viene accreditato una seconda volta.",
+    "markedAbsent": "Annotato come assente – senza punti.",
+    "summary": "{{points}} punti accreditati in questa sessione",
+    "status": {
+      "registered": "Iscritto",
+      "present": "Presente",
+      "excused": "Giustificato",
+      "absent": "Assente",
+      "substitute": "Sostituto"
+    },
+    "notThere": "Non in servizio",
+    "absenceTitle": "Come va annotato?",
+    "add": "Aggiungi una persona",
+    "addHint": "Per i sostituti: iscrizione e conferma in un solo passaggio.",
+    "confirmedNoPoints": "{{name}} confermato – questo turno non assegna punti."
   }
 }

@@ -516,5 +516,32 @@
     "overlapMessage": "Du bist zur selben Zeit schon für eine andere Schicht eingetragen. Trotzdem übernehmen?",
     "overlapConfirm": "Trotzdem übernehmen",
     "over": "Vorbei"
+  },
+  "roster": {
+    "title": "Einsätze bestätigen",
+    "open": "Einsätze bestätigen",
+    "confirm": "Bestätigen",
+    "absent": "War nicht da",
+    "confirmed": "Bestätigt",
+    "empty": "Für diese Schicht ist niemand eingetragen",
+    "registered_one": "{{count}} eingetragen",
+    "registered_other": "{{count}} eingetragen",
+    "hint": "Bestätigt wird, wer tatsächlich im Einsatz war. Die Punkte der Schicht werden dabei gutgeschrieben.",
+    "awarded": "{{name}} bestätigt – {{points}} Punkte gutgeschrieben",
+    "alreadyAwarded": "Bereits bestätigt; es wird kein zweites Mal gebucht.",
+    "markedAbsent": "Als nicht anwesend vermerkt – ohne Punkte.",
+    "summary": "{{points}} Punkte in dieser Sitzung gebucht",
+    "status": {
+      "registered": "Eingetragen",
+      "present": "Anwesend",
+      "excused": "Entschuldigt",
+      "absent": "Nicht da",
+      "substitute": "Eingesprungen"
+    },
+    "notThere": "Nicht im Einsatz",
+    "absenceTitle": "Wie soll das vermerkt werden?",
+    "add": "Person hinzufügen",
+    "addHint": "Für Eingesprungene: wird eingetragen und im selben Schritt bestätigt.",
+    "confirmedNoPoints": "{{name}} bestätigt – diese Schicht vergibt keine Punkte."
   }
 }

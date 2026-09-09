@@ -516,5 +516,32 @@
     "overlapMessage": "Tu es déjà inscrit·e pour une autre tranche au même moment. Prendre quand même ?",
     "overlapConfirm": "Prendre quand même",
     "over": "Terminé"
+  },
+  "roster": {
+    "title": "Confirmer les engagements",
+    "open": "Confirmer les engagements",
+    "confirm": "Confirmer",
+    "absent": "Absent·e",
+    "confirmed": "Confirmé",
+    "empty": "Personne n'est inscrit pour cette tranche",
+    "registered_one": "{{count}} inscrit·e",
+    "registered_other": "{{count}} inscrit·e·s",
+    "hint": "On confirme celles et ceux qui étaient réellement là. Les points de la tranche sont alors crédités.",
+    "awarded": "{{name}} confirmé·e – {{points}} points crédités",
+    "alreadyAwarded": "Déjà confirmé ; rien n'est crédité une seconde fois.",
+    "markedAbsent": "Noté comme absent·e – sans points.",
+    "summary": "{{points}} points crédités lors de cette session",
+    "status": {
+      "registered": "Inscrit·e",
+      "present": "Présent·e",
+      "excused": "Excusé·e",
+      "absent": "Absent·e",
+      "substitute": "Remplaçant·e"
+    },
+    "notThere": "Pas en service",
+    "absenceTitle": "Comment le noter ?",
+    "add": "Ajouter une personne",
+    "addHint": "Pour les remplaçant·e·s : inscription et confirmation en une fois.",
+    "confirmedNoPoints": "{{name}} confirmé·e – cette tranche ne donne pas de points."
   }
 }

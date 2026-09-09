@@ -6,7 +6,7 @@
 **Use Case Name:** Helfer-Schicht bestätigen
 **Primary Actor:** Vorstand
 **Goal:** Den tatsächlich geleisteten Einsatz bestätigen und damit die Punkte auslösen
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 
