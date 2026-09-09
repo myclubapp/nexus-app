@@ -4,6 +4,7 @@ import {
   TASK_CATEGORIES,
   groupTasks,
   isProofUsable,
+  needsKudosReminder,
   suggestedTaskPoints,
   taskAction,
   taskCapacity,
@@ -343,5 +344,17 @@ describe('isProofUsable', () => {
     expect(isProofUsable('beleg.example')).toBe(false);
     expect(isProofUsable('foto vom handy')).toBe(false);
     expect(isProofUsable('javascript:alert(1)')).toBe(false);
+  });
+});
+
+describe('needsKudosReminder', () => {
+  it('erinnert, solange nichts dasteht (A2 aus UC-019)', () => {
+    expect(needsKudosReminder('')).toBe(true);
+    expect(needsKudosReminder('   \n ')).toBe(true);
+  });
+
+  it('verschwindet, sobald jemand zu schreiben beginnt', () => {
+    expect(needsKudosReminder('D')).toBe(false);
+    expect(needsKudosReminder('Danke dir!')).toBe(false);
   });
 });

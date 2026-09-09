@@ -218,7 +218,9 @@
     "contactHint": "Was du verbirgst, wird anderen Mitgliedern gar nicht erst ausgeliefert – nicht nur ausgeblendet. Die Entscheide gelten je Verein.",
     "phone": "Telefonnummer",
     "emailVisible": "E-Mail für Mitglieder sichtbar",
-    "phoneVisible": "Telefonnummer für Mitglieder sichtbar"
+    "phoneVisible": "Telefonnummer für Mitglieder sichtbar",
+    "kudos": "Dank",
+    "kudosHint": "Was der Vorstand zu deinen Beiträgen geschrieben hat."
   },
   "clubSettings": {
     "title": "Vereinseinstellungen",
@@ -681,5 +683,31 @@
     "releaseHint": "Ohne Punkteabzug und ohne Vermerk. Die Aufgabe steht danach wieder offen.",
     "released": "Zurückgegeben. Die Aufgabe steht wieder offen.",
     "releasedWarned": "Zurückgegeben. Der Vorstand ist informiert, weil die Frist bald abläuft."
+  },
+  "taskConfirm": {
+    "waiting": "Wartet auf deine Bestätigung",
+    "waitingHint": "Wer eine Aufgabe erledigt hat, wartet auf ein Wort – nicht auf eine Zahl.",
+    "submissions_one": "{{count}} offene Meldung",
+    "submissions_other": "{{count}} offene Meldungen",
+    "hint": "Der Nachweis steht als Text da. Öffne ihn nur, wenn du der Quelle traust.",
+    "nobody": "Diese Aufgabe hat noch niemand übernommen",
+    "submittedOn": "Gemeldet am {{date}}",
+    "confirmedOn": "Bestätigt am {{date}}",
+    "notYet": "Noch nicht gemeldet",
+    "done": "Bestätigt",
+    "thanksFor": "Dein Wort an {{name}}",
+    "thanksHint": "Ein Satz genügt. Er zählt mehr als die Punktzahl.",
+    "kudos": "Dankeswort",
+    "kudosReminder": "Ein Dankeswort wirkt mehr als die Zahl. Bestätigen kannst du auch ohne.",
+    "confirm": "Bestätigen",
+    "confirmed": "Bestätigt. Dein Dank ist unterwegs.",
+    "confirmedWithPoints_one": "Bestätigt. Dein Dank ist unterwegs, dazu {{count}} Punkt.",
+    "confirmedWithPoints_other": "Bestätigt. Dein Dank ist unterwegs, dazu {{count}} Punkte.",
+    "reject": "Nachbessern",
+    "note": "Was fehlt noch?",
+    "noteRequired": "Zur Nachbesserung gehört ein Hinweis, was fehlt.",
+    "sendBack": "Zurück an die Person",
+    "sentBack": "Zurückgegeben. Die Person weiss, was noch fehlt.",
+    "notYourOwn": "Deine eigene Übernahme bestätigt jemand anderes."
   }
 }

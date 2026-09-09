@@ -218,7 +218,9 @@
     "contactHint": "Ciò che nascondi non viene nemmeno trasmesso agli altri membri – non è solo nascosto. Le decisioni valgono per società.",
     "phone": "Numero di telefono",
     "emailVisible": "E-mail visibile ai membri",
-    "phoneVisible": "Telefono visibile ai membri"
+    "phoneVisible": "Telefono visibile ai membri",
+    "kudos": "Ringraziamenti",
+    "kudosHint": "Che cosa ha scritto il comitato sui tuoi contributi."
   },
   "clubSettings": {
     "title": "Impostazioni della società",
@@ -681,5 +683,31 @@
     "releaseHint": "Senza detrazione di punti e senza annotazione. Il compito torna aperto.",
     "released": "Restituito. Il compito è di nuovo aperto.",
     "releasedWarned": "Restituito. Il comitato è informato, perché la scadenza è vicina."
+  },
+  "taskConfirm": {
+    "waiting": "In attesa della tua conferma",
+    "waitingHint": "Chi ha svolto un compito aspetta una parola – non un numero.",
+    "submissions_one": "{{count}} segnalazione aperta",
+    "submissions_other": "{{count}} segnalazioni aperte",
+    "hint": "La prova è indicata come testo. Aprila solo se ti fidi della fonte.",
+    "nobody": "Questo compito non l’ha ancora assunto nessuno",
+    "submittedOn": "Segnalato il {{date}}",
+    "confirmedOn": "Confermato il {{date}}",
+    "notYet": "Non ancora segnalato",
+    "done": "Confermato",
+    "thanksFor": "La tua parola a {{name}}",
+    "thanksHint": "Basta una frase. Conta più dei punti.",
+    "kudos": "Parola di ringraziamento",
+    "kudosReminder": "Una parola di grazie vale più del numero. Puoi confermare anche senza.",
+    "confirm": "Confermare",
+    "confirmed": "Confermato. Il tuo grazie è in viaggio.",
+    "confirmedWithPoints_one": "Confermato. Il tuo grazie è in viaggio, più {{count}} punto.",
+    "confirmedWithPoints_other": "Confermato. Il tuo grazie è in viaggio, più {{count}} punti.",
+    "reject": "Da completare",
+    "note": "Che cosa manca?",
+    "noteRequired": "A una richiesta di completamento serve un’indicazione di che cosa manca.",
+    "sendBack": "Rimandare alla persona",
+    "sentBack": "Rimandato. La persona sa che cosa manca.",
+    "notYourOwn": "La tua assunzione la conferma qualcun altro."
   }
 }

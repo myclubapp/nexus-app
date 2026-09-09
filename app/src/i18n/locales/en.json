@@ -218,7 +218,9 @@
     "contactHint": "What you hide is not delivered to other members at all – not merely hidden. These choices apply per club.",
     "phone": "Phone number",
     "emailVisible": "Email visible to members",
-    "phoneVisible": "Phone visible to members"
+    "phoneVisible": "Phone visible to members",
+    "kudos": "Thanks",
+    "kudosHint": "What the committee wrote about your contributions."
   },
   "clubSettings": {
     "title": "Club settings",
@@ -681,5 +683,31 @@
     "releaseHint": "No point deduction and no record. The task goes back on offer.",
     "released": "Handed back. The task is open again.",
     "releasedWarned": "Handed back. The committee knows, because the deadline is close."
+  },
+  "taskConfirm": {
+    "waiting": "Waiting for your confirmation",
+    "waitingHint": "Whoever did a task is waiting for a word – not a number.",
+    "submissions_one": "{{count}} open report",
+    "submissions_other": "{{count}} open reports",
+    "hint": "The proof is shown as text. Only open it if you trust the source.",
+    "nobody": "Nobody has taken this task on yet",
+    "submittedOn": "Reported on {{date}}",
+    "confirmedOn": "Confirmed on {{date}}",
+    "notYet": "Not reported yet",
+    "done": "Confirmed",
+    "thanksFor": "Your word to {{name}}",
+    "thanksHint": "One sentence is enough. It counts for more than the points.",
+    "kudos": "Word of thanks",
+    "kudosReminder": "A word of thanks does more than the number. You can confirm without one.",
+    "confirm": "Confirm",
+    "confirmed": "Confirmed. Your thanks is on its way.",
+    "confirmedWithPoints_one": "Confirmed. Your thanks is on its way, plus {{count}} point.",
+    "confirmedWithPoints_other": "Confirmed. Your thanks is on its way, plus {{count}} points.",
+    "reject": "Needs more",
+    "note": "What is still missing?",
+    "noteRequired": "Sending something back goes with a note on what is missing.",
+    "sendBack": "Send back to the person",
+    "sentBack": "Sent back. The person knows what is missing.",
+    "notYourOwn": "Someone else confirms your own contribution."
   }
 }

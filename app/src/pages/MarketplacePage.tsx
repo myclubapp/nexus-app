@@ -15,6 +15,7 @@ import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
 import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
+import { TaskConfirmModal } from '../components/TaskConfirmModal';
 import { TaskDetailModal } from '../components/TaskDetailModal';
 import { TaskFormModal } from '../components/TaskFormModal';
 import { StatCard } from '../components/StatCard';
@@ -46,6 +47,7 @@ export function MarketplacePage() {
 
   const [formOpen, setFormOpen] = useState(false);
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
+  const [confirmTaskId, setConfirmTaskId] = useState<string | null>(null);
 
   // Der Vorschlag verlinkt `/tabs/marketplace?task=<id>` und soll die Aufgabe
   // zeigen, nicht bloss den Marktplatz (BR-070).
@@ -55,12 +57,36 @@ export function MarketplacePage() {
 
   const items = tasks.data ?? [];
   const groups = groupTasks(items, activeMembership?.id ?? null);
+
+  // Die geöffnete Aufgabe wird aus der Liste gelesen und nicht kopiert:
+  // Nach dem Übernehmen soll das Blatt den neuen Stand zeigen, nicht den von
+  // vorhin.
+  const openTask = items.find((entry) => entry.id === openTaskId) ?? null;
+  const confirmTask = items.find((entry) => entry.id === confirmTaskId) ?? null;
+
+  // UC-019 Schritt 2: Was liegt zur Bestätigung bereit? Eine Aufgabe zählt
+  // dazu, sobald **eine** Übernahme gemeldet und noch nicht bestätigt ist –
+  // auf die übrigen zu warten hiesse, den Dank zu verzögern.
+  // BR-080: Die eigene Übernahme bestätigt jemand anderes – eine Aufgabe, an
+  // der nur die eigene Meldung offen ist, gehört nicht in diese Liste.
+  const toConfirm = isTrainer
+    ? items.filter((entry) =>
+        entry.assignments.some(
+          (a) =>
+            a.submitted_at !== null &&
+            a.confirmed_at === null &&
+            a.member_id !== activeMembership?.id,
+        ),
+      )
+    : [];
+
   const isEmpty =
     groups.mine.length === 0 &&
     groups.urgent.length === 0 &&
     groups.open.length === 0 &&
     groups.drafts.length === 0 &&
-    groups.expired.length === 0;
+    groups.expired.length === 0 &&
+    toConfirm.length === 0;
 
   useEffect(() => {
     if (!highlightId) return;
@@ -72,12 +98,10 @@ export function MarketplacePage() {
     return () => window.clearTimeout(timer);
   }, [highlightId, items.length]);
 
-  // Die geöffnete Aufgabe wird aus der Liste gelesen und nicht kopiert:
-  // Nach dem Übernehmen soll das Blatt den neuen Stand zeigen, nicht den von
-  // vorhin.
-  const openTask = items.find((entry) => entry.id === openTaskId) ?? null;
-
-  function renderTask(task: TaskWithAssignments, action: 'open' | 'publish' | 'none') {
+  function renderTask(
+    task: TaskWithAssignments,
+    action: 'open' | 'publish' | 'confirm' | 'none',
+  ) {
     const capacity = taskCapacity(task);
     const urgency = taskUrgency(task.due_at);
     const isHighlighted = task.id === highlightId;
@@ -87,9 +111,15 @@ export function MarketplacePage() {
         key={task.id}
         ref={isHighlighted ? highlightRef : undefined}
         color={isHighlighted ? 'light' : undefined}
-        button={action !== 'publish'}
-        detail={action !== 'publish'}
-        onClick={action === 'publish' ? undefined : () => setOpenTaskId(task.id)}
+        button={action === 'open' || action === 'confirm'}
+        detail={action === 'open' || action === 'confirm'}
+        onClick={
+          action === 'confirm'
+            ? () => setConfirmTaskId(task.id)
+            : action === 'open'
+              ? () => setOpenTaskId(task.id)
+              : undefined
+        }
       >
         <IonLabel className="ion-text-wrap">
           <h2>{task.title}</h2>
@@ -202,6 +232,17 @@ export function MarketplacePage() {
             />
           </div>
 
+          {/* UC-019 Schritt 2: Der Dank ist das Dringendste im Marktplatz –
+              er steht zuoberst und nicht hinter dem Angebot. */}
+          {toConfirm.length > 0 && (
+            <ListSection
+              title={t('taskConfirm.waiting')}
+              footnote={t('taskConfirm.waitingHint')}
+            >
+              {toConfirm.map((task) => renderTask(task, 'confirm'))}
+            </ListSection>
+          )}
+
           {groups.mine.length > 0 && (
             <ListSection title={t('marketplace.mine')}>
               {groups.mine.map((task) => renderTask(task, 'open'))}
@@ -266,6 +307,24 @@ export function MarketplacePage() {
               t(warned ? 'taskDetail.releasedWarned' : 'taskDetail.released'),
             );
           }
+        }}
+      />
+
+      <TaskConfirmModal
+        task={confirmTask}
+        onDismiss={() => setConfirmTaskId(null)}
+        onDone={(outcome, points, booked) => {
+          if (outcome === 'rejected') {
+            toast.success(t('taskConfirm.sentBack'));
+            return;
+          }
+          // BR-078: Die Rückmeldung nennt den Dank, nicht die Zahl – und wenn
+          // nichts gebucht wurde, erst recht keine Null.
+          toast.success(
+            booked && points > 0
+              ? t('taskConfirm.confirmedWithPoints', { count: points })
+              : t('taskConfirm.confirmed'),
+          );
         }}
       />
 

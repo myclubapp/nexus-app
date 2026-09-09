@@ -1319,7 +1319,10 @@ export type Database = {
       }
       confirm_task: {
         Args: { p_assignment_id: string; p_kudos?: string }
-        Returns: number
+        Returns: {
+          booked: boolean
+          points: number
+        }[]
       }
       count_club_admins: {
         Args: { p_club_id: string; p_except?: string }
@@ -1451,6 +1454,10 @@ export type Database = {
         Args: { p_code: string; p_display_name?: string }
         Returns: string
       }
+      reject_task: {
+        Args: { p_assignment_id: string; p_note: string }
+        Returns: undefined
+      }
       release_shift: {
         Args: { p_shift_id: string }
         Returns: {
@@ -1544,6 +1551,19 @@ export type Database = {
         }[]
       }
       task_in_scope: { Args: { p_task_id: string }; Returns: boolean }
+      task_roster: {
+        Args: { p_task_id: string }
+        Returns: {
+          assignment_id: string
+          claimed_at: string
+          confirmed_at: string
+          display_name: string
+          kudos: string
+          member_id: string
+          proof_url: string
+          submitted_at: string
+        }[]
+      }
       update_my_profile: {
         Args: {
           p_display_name?: string

@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { useClub } from '../hooks/useClub';
 import { useMyPoints } from '../hooks/useGamification';
+import { useMyKudos } from '../hooks/useTasks';
 import { useLeaderboardOptIn } from '../hooks/useProfile';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
@@ -30,6 +31,7 @@ export function ProfilePage() {
   const { signOut, user, setPassword } = useAuth();
   const { activeMembership, memberships, setActiveClub } = useClub();
   const points = useMyPoints();
+  const kudos = useMyKudos();
   const toast = useToast();
 
   const optIn = useLeaderboardOptIn();
@@ -158,6 +160,24 @@ export function ProfilePage() {
           </IonToggle>
         </IonItem>
       </ListSection>
+
+      {/* UC-019 Schritt 8: das Dankeswort auf dem eigenen Profil. Es steht
+          **vor** der Punktehistorie – die Anerkennung kommt vor der Zahl
+          (BR-078), und zwar auch in der Anordnung der Seite. */}
+      {(kudos.data?.length ?? 0) > 0 && (
+        <ListSection title={t('profile.kudos')} footnote={t('profile.kudosHint')}>
+          {(kudos.data ?? []).map((entry) => (
+            <IonItem key={entry.id}>
+              <IonLabel className="ion-text-wrap">
+                <h2>«{entry.kudos}»</h2>
+                <IonNote>
+                  {entry.taskTitle} · {formatDate(entry.confirmedAt)}
+                </IonNote>
+              </IonLabel>
+            </IonItem>
+          ))}
+        </ListSection>
+      )}
 
       <ListSection title={t('profile.pointHistory')}>
         {points.transactions.length === 0 ? (

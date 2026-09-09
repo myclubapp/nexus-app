@@ -6,7 +6,7 @@
 **Use Case Name:** Aufgabe bestätigen und Kudos geben
 **Primary Actor:** Vorstand
 **Goal:** Eine erledigte Aufgabe bestätigen, die Punkte auslösen und den Beitrag persönlich würdigen
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

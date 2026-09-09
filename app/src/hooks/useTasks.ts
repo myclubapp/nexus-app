@@ -205,3 +205,146 @@ export function useMyTaskCount() {
     },
   });
 }
+
+export interface TaskRosterEntry {
+  assignmentId: string;
+  memberId: string;
+  displayName: string;
+  claimedAt: string;
+  submittedAt: string | null;
+  proofUrl: string | null;
+  confirmedAt: string | null;
+  kudos: string | null;
+}
+
+/** Wer hat übernommen, wann gemeldet, mit welchem Nachweis (UC-019, Schritt 3)? */
+export function useTaskRoster(taskId: string | null) {
+  const { isTrainer } = useClub();
+
+  return useQuery({
+    queryKey: ['task-roster', taskId],
+    enabled: Boolean(taskId) && isTrainer && isConfigured,
+    queryFn: async (): Promise<TaskRosterEntry[]> => {
+      const { data, error } = await supabase.rpc('task_roster', {
+        p_task_id: taskId!,
+      });
+      if (error) throw new Error(error.message);
+      return (data ?? []).map((row) => ({
+        assignmentId: row.assignment_id,
+        memberId: row.member_id,
+        displayName: row.display_name,
+        claimedAt: row.claimed_at,
+        submittedAt: row.submitted_at,
+        proofUrl: row.proof_url,
+        confirmedAt: row.confirmed_at,
+        kudos: row.kudos,
+      }));
+    },
+  });
+}
+
+export interface ConfirmTaskResult {
+  points: number;
+  /** `false` heisst: bestätigt, aber ohne Gutschrift (A3, BR-065). */
+  booked: boolean;
+}
+
+/**
+ * Aufgabe bestätigen (Schritte 5–7).
+ *
+ * Ob überhaupt gebucht wird, entscheidet der Server: Er liest die Punkteregel,
+ * prüft die Häufigkeitsgrenze (BR-065) und weist die Bestätigung der eigenen
+ * Übernahme ab (BR-080). Der Client kennt keine dieser Regeln.
+ */
+export function useConfirmTask() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (input: {
+      assignmentId: string;
+      kudos: string;
+    }): Promise<ConfirmTaskResult> => {
+      const { data, error } = await supabase.rpc('confirm_task', {
+        p_assignment_id: input.assignmentId,
+        p_kudos: input.kudos || undefined,
+      });
+      if (error) throw new Error(error.message);
+
+      const row = data?.[0];
+      return { points: row?.points ?? 0, booked: row?.booked ?? false };
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ['tasks', activeClub?.id] });
+      void queryClient.invalidateQueries({ queryKey: ['task-roster'] });
+    },
+  });
+}
+
+/** A1: «Zurück an die Person» – mit Hinweis, was fehlt. */
+export function useRejectTask() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (input: { assignmentId: string; note: string }) => {
+      const { error } = await supabase.rpc('reject_task', {
+        p_assignment_id: input.assignmentId,
+        p_note: input.note,
+      });
+      if (error) throw new Error(error.message);
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ['tasks', activeClub?.id] });
+      void queryClient.invalidateQueries({ queryKey: ['task-roster'] });
+    },
+  });
+}
+
+export interface KudosEntry {
+  id: string;
+  kudos: string;
+  confirmedAt: string;
+  taskTitle: string;
+}
+
+/**
+ * Die erhaltenen Dankesworte (Schritt 8, FR-055).
+ *
+ * Auf dem **eigenen** Profil: Eine für andere sichtbare Dankesliste wäre eine
+ * Auswertung über Personen und damit genau das, was NFR-022 ausschliesst.
+ */
+export function useMyKudos() {
+  const { activeMembership } = useClub();
+
+  return useQuery({
+    queryKey: ['kudos', activeMembership?.id],
+    enabled: Boolean(activeMembership) && isConfigured,
+    queryFn: async (): Promise<KudosEntry[]> => {
+      const { data, error } = await supabase
+        .from('task_assignments')
+        .select('id, kudos, confirmed_at, task:tasks(title)')
+        .eq('member_id', activeMembership!.id)
+        .not('kudos', 'is', null)
+        .not('confirmed_at', 'is', null)
+        .order('confirmed_at', { ascending: false })
+        .limit(50);
+      if (error) throw new Error(error.message);
+
+      return (data ?? []).map((row) => {
+        const entry = row as unknown as {
+          id: string;
+          kudos: string;
+          confirmed_at: string;
+          task: { title: string } | null;
+        };
+        return {
+          id: entry.id,
+          kudos: entry.kudos,
+          confirmedAt: entry.confirmed_at,
+          taskTitle: entry.task?.title ?? '',
+        };
+      });
+    },
+  });
+}

@@ -203,6 +203,19 @@ export function isProofUsable(proof: string): boolean {
   return /^https?:\/\/\S+$/i.test(value);
 }
 
+/**
+ * A2 aus UC-019: der einmalige Hinweis, dass ein Dankeswort mehr wirkt als die
+ * Zahl (BR-078).
+ *
+ * «Einmalig» heisst hier: solange das Feld leer ist. Ein gespeicherter Zustand
+ * pro Person wäre eine Einstellung, die niemand je wieder findet – und der
+ * Hinweis verschwindet ohnehin in dem Moment, in dem jemand zu schreiben
+ * beginnt.
+ */
+export function needsKudosReminder(kudos: string): boolean {
+  return kudos.trim().length === 0;
+}
+
 export interface TaskGroups {
   /** Vom angemeldeten Mitglied übernommen – zuoberst, weil offen. */
   mine: TaskWithAssignments[];

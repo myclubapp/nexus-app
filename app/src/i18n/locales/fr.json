@@ -218,7 +218,9 @@
     "contactHint": "Ce que vous masquez n’est pas transmis aux autres membres – pas seulement caché. Les décisions valent par société.",
     "phone": "Numéro de téléphone",
     "emailVisible": "E-mail visible pour les membres",
-    "phoneVisible": "Téléphone visible pour les membres"
+    "phoneVisible": "Téléphone visible pour les membres",
+    "kudos": "Remerciements",
+    "kudosHint": "Ce que le comité a écrit sur tes contributions."
   },
   "clubSettings": {
     "title": "Paramètres du club",
@@ -681,5 +683,31 @@
     "releaseHint": "Sans retrait de points et sans mention. La tâche redevient ouverte.",
     "released": "Rendue. La tâche est de nouveau ouverte.",
     "releasedWarned": "Rendue. Le comité est informé, car le délai approche."
+  },
+  "taskConfirm": {
+    "waiting": "En attente de ta confirmation",
+    "waitingHint": "Qui a fait une tâche attend un mot – pas un chiffre.",
+    "submissions_one": "{{count}} annonce ouverte",
+    "submissions_other": "{{count}} annonces ouvertes",
+    "hint": "Le justificatif est affiché en texte. Ne l’ouvre que si tu fais confiance à la source.",
+    "nobody": "Personne n’a encore repris cette tâche",
+    "submittedOn": "Annoncé le {{date}}",
+    "confirmedOn": "Confirmé le {{date}}",
+    "notYet": "Pas encore annoncé",
+    "done": "Confirmé",
+    "thanksFor": "Ton mot à {{name}}",
+    "thanksHint": "Une phrase suffit. Elle compte plus que les points.",
+    "kudos": "Mot de remerciement",
+    "kudosReminder": "Un mot de remerciement vaut plus que le chiffre. Tu peux aussi confirmer sans.",
+    "confirm": "Confirmer",
+    "confirmed": "Confirmé. Ton remerciement est en route.",
+    "confirmedWithPoints_one": "Confirmé. Ton remerciement est en route, plus {{count}} point.",
+    "confirmedWithPoints_other": "Confirmé. Ton remerciement est en route, plus {{count}} points.",
+    "reject": "À compléter",
+    "note": "Que manque-t-il ?",
+    "noteRequired": "Une demande de complément va avec une indication de ce qui manque.",
+    "sendBack": "Renvoyer à la personne",
+    "sentBack": "Renvoyé. La personne sait ce qui manque.",
+    "notYourOwn": "Ta propre reprise est confirmée par quelqu’un d’autre."
   }
 }
