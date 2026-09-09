@@ -88,7 +88,8 @@
     "requestPending": "Your request is pending",
     "requestPendingHint": "You will get a message as soon as the board has decided.",
     "requestWaiting": "Waiting for the board’s decision",
-    "withdrawRequest": "Withdraw request"
+    "withdrawRequest": "Withdraw request",
+    "withdrawConfirm": "The request will be withdrawn. You can send a new one at any time."
   },
   "tabs": {
     "dashboard": "Home",
@@ -297,6 +298,7 @@
     "active": "Valid",
     "inactive": "Expired",
     "revoke": "Revoke",
+    "revokeConfirm": "The invitation can no longer be redeemed. Members who already joined stay.",
     "shareTitle": "Share invitation",
     "shareHint": "Anyone who opens the link becomes a member without further approval.",
     "share": "Share",
@@ -499,6 +501,7 @@
     "neverSynced": "No sync yet",
     "lastError": "Last sync failed",
     "disconnect": "Disconnect website",
+    "disconnectConfirm": "New posts from the website will no longer appear in the feed. Imported news stays.",
     "disconnected": "Website disconnected. Imported posts stay.",
     "scheduleHint": "The sync then runs automatically every night. Imported posts stay in the feed even after disconnecting."
   },
@@ -583,5 +586,25 @@
     "queueRejected_one": "A saved check-in could no longer be booked – the window had closed.",
     "queueRejected_other": "{{count}} saved check-ins could no longer be booked – the window had closed.",
     "unmark": "Undo"
+  },
+  "reminder": {
+    "remind": "Remind",
+    "title": "Remind those who haven't answered",
+    "confirm_one": "One person has not answered yet. They will get a reminder with a way to answer straight away.",
+    "confirm_other": "{{count}} people have not answered yet. They will get a reminder with a way to answer straight away.",
+    "send": "Send reminder",
+    "sent_one": "One person was reminded.",
+    "sent_other": "{{count}} people were reminded.",
+    "tooSoon": "A reminder for this event was already sent on {{when}}. At most once a day.",
+    "noneLeft": "Nobody is left to remind – everyone has answered."
+  },
+  "inbox": {
+    "title": "Messages",
+    "empty": "No messages",
+    "new": "New",
+    "all": "All messages",
+    "unread_one": "{{count}} unread",
+    "unread_other": "{{count}} unread",
+    "hint": "Every notification appears here, push or not. Tapping opens what it refers to and marks it as read."
   }
 }

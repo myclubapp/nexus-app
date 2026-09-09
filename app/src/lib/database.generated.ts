@@ -347,6 +347,7 @@ export type Database = {
           location: string | null
           point_rule_code: string | null
           published_at: string | null
+          reminded_at: string | null
           series_id: string | null
           starts_at: string
           team_id: string | null
@@ -368,6 +369,7 @@ export type Database = {
           location?: string | null
           point_rule_code?: string | null
           published_at?: string | null
+          reminded_at?: string | null
           series_id?: string | null
           starts_at: string
           team_id?: string | null
@@ -389,6 +391,7 @@ export type Database = {
           location?: string | null
           point_rule_code?: string | null
           published_at?: string | null
+          reminded_at?: string | null
           series_id?: string | null
           starts_at?: string
           team_id?: string | null
@@ -1306,6 +1309,7 @@ export type Database = {
         Args: { p_club_id: string; p_except?: string }
         Returns: number
       }
+      count_undecided: { Args: { p_event_id: string }; Returns: number }
       create_club: {
         Args: {
           p_club_kind?: string
@@ -1415,6 +1419,19 @@ export type Database = {
           warned: boolean
         }[]
       }
+      remind_undecided: {
+        Args: { p_event_id: string }
+        Returns: {
+          last_reminder: string
+          notified: number
+        }[]
+      }
+      remind_undecided_internal: {
+        Args: { p_event_id: string }
+        Returns: {
+          notified: number
+        }[]
+      }
       request_join: {
         Args: { p_club_id: string; p_team_id?: string }
         Returns: string
@@ -1441,6 +1458,7 @@ export type Database = {
         Args: { p_club_id: string; p_club_kind: string }
         Returns: undefined
       }
+      send_due_reminders: { Args: never; Returns: number }
       set_member_teams: {
         Args: { p_member_id: string; p_team_ids: string[] }
         Returns: undefined

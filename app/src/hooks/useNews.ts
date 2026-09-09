@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase, isConfigured } from '../lib/supabase';
 import type { News, Notification } from '../lib/database.types';
 import { useClub } from './useClub';
@@ -42,6 +42,30 @@ export function useInbox() {
         .limit(50);
       if (error) throw new Error(error.message);
       return data ?? [];
+    },
+  });
+}
+
+/**
+ * Eine Benachrichtigung als gelesen markieren (FR-078).
+ *
+ * `read_at` besteht seit 0004; gesetzt hat es bisher niemand. Ohne diesen
+ * Schritt bleibt die Inbox eine Liste, die nur wächst.
+ */
+export function useMarkNotificationRead() {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async (id: string): Promise<void> => {
+      const { error } = await supabase
+        .from('notifications')
+        .update({ read_at: new Date().toISOString() })
+        .eq('id', id);
+      if (error) throw new Error(error.message);
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ['inbox', user?.id] });
     },
   });
 }

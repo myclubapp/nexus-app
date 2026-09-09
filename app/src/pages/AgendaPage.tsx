@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
+  IonAlert,
   IonBadge,
   IonButton,
   IonButtons,
@@ -15,6 +17,7 @@ import { addOutline, peopleOutline } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { useAgenda, useRespondToEvent } from '../hooks/useAgenda';
 import { usePublishEvent } from '../hooks/useHelperEvents';
+import { useRemindUndecided } from '../hooks/useReminders';
 import { useClub } from '../hooks/useClub';
 import { useMembers } from '../hooks/useMembers';
 import { AppPage } from '../components/AppPage';
@@ -31,6 +34,7 @@ import { ShiftRosterModal } from '../components/ShiftRosterModal';
 import { EventQrModal } from '../components/EventQrModal';
 import { canRespond, tallyAttendance } from '../lib/attendance';
 import { isCheckInOpen } from '../lib/checkInWindow';
+import { canRemind, reminderMessage } from '../lib/reminder';
 import { shiftCoverage } from '../lib/shift';
 
 type Range = 'upcoming' | 'past';
@@ -54,14 +58,44 @@ export function AgendaPage() {
     startsAt: string;
   } | null>(null);
 
+  // BR-062: Die Erinnerung verlinkt `/tabs/agenda?event=<id>` und soll «direkt
+  // zur Antwortmöglichkeit» führen – nicht in eine Liste, in der die Person
+  // ihren Termin erst sucht.
+  const location = useLocation();
+  const highlightId = new URLSearchParams(location.search).get('event');
+  const highlightRef = useRef<HTMLIonItemElement | null>(null);
+
   const members = useMembers();
-  const activeMembers = (members.data ?? []).filter((m) => m.status !== 'left');
+  // Dieselbe Grundgesamtheit wie `count_undecided()` auf dem Server: wer kein
+  // Anmeldekonto hat, lässt sich nicht erreichen und zählt deshalb auch nicht
+  // als «noch offen». Sonst nennt die Rückfrage eine Zahl, die niemand erhält.
+  const activeMembers = (members.data ?? []).filter(
+    (m) => m.status !== 'left' && m.user_id !== null,
+  );
+  /** Solange die Mitglieder nicht geladen sind, ist die Zahl unbekannt. */
+  const membersKnown = members.data !== undefined && !members.error;
   const agenda = useAgenda(range);
   const respond = useRespondToEvent();
   const publish = usePublishEvent();
+  const remind = useRemindUndecided();
+  // UC-015 Schritt 4: Erst sagen, wie viele es trifft, dann fragen.
+  const [remindEvent, setRemindEvent] = useState<{
+    id: string;
+    undecided: number;
+  } | null>(null);
   const events = agenda.data ?? [];
   const shiftEvent = events.find((entry) => entry.id === shiftEventId);
   const rosterEvent = events.find((entry) => entry.id === rosterEventId);
+
+  useEffect(() => {
+    if (!highlightId) return;
+    // Erst nach dem Zeichnen: Vorher hat die Liste den Eintrag noch nicht.
+    const timer = window.setTimeout(
+      () => highlightRef.current?.scrollIntoView({ block: 'center' }),
+      120,
+    );
+    return () => window.clearTimeout(timer);
+  }, [highlightId, events.length]);
 
   return (
     <AppPage
@@ -167,8 +201,14 @@ export function AgendaPage() {
             const shiftsFilled = coverage.reduce((sum, c) => sum + c.filled, 0);
             const shiftsNeeded = coverage.reduce((sum, c) => sum + c.needed, 0);
 
+            const isHighlighted = event.id === highlightId;
+
             return (
-              <IonItem key={event.id}>
+              <IonItem
+                key={event.id}
+                ref={isHighlighted ? highlightRef : undefined}
+                color={isHighlighted ? 'light' : undefined}
+              >
                 <IonLabel className="ion-text-wrap">
                   <h2>{event.title}</h2>
                   <IonNote>
@@ -223,6 +263,30 @@ export function AgendaPage() {
                       })}
                     </IonNote>
                   </p>
+
+                  {/* UC-015: A2 blendet den Weg aus, sobald alle geantwortet
+                      haben – erinnern liesse sich dann ohnehin niemand. */}
+                  {range === 'upcoming' &&
+                    canRemind({
+                      isDraft,
+                      isCancelled,
+                      hasStarted: new Date(event.starts_at) <= new Date(),
+                      undecided: membersKnown ? tally.undecided : null,
+                      isTrainer,
+                    }) && (
+                      <IonButtons>
+                        <IonButton
+                          size="small"
+                          fill="clear"
+                          disabled={remind.isPending}
+                          onClick={() =>
+                            setRemindEvent({ id: event.id, undecided: tally.undecided })
+                          }
+                        >
+                          {t('reminder.remind')}
+                        </IonButton>
+                      </IonButtons>
+                    )}
 
                   {/* FR-034 und Schritt 4: beide nur, solange das Fenster offen
                       ist – der Code nützt sonst niemandem, und der Scan wird
@@ -338,6 +402,44 @@ export function AgendaPage() {
       <CheckInModal
         eventId={checkInEventId}
         onDismiss={() => setCheckInEventId(null)}
+      />
+
+      {/* Schritte 4 und 5: Die Zahl steht in der Frage, nicht erst in der
+          Antwort – wer bestätigt, weiss, wie viele Geräte gleich klingeln. */}
+      <IonAlert
+        isOpen={remindEvent !== null}
+        header={t('reminder.title')}
+        message={t('reminder.confirm', { count: remindEvent?.undecided ?? 0 })}
+        onDidDismiss={() => setRemindEvent(null)}
+        buttons={[
+          { text: t('common.cancel'), role: 'cancel' },
+          {
+            text: t('reminder.send'),
+            handler: () => {
+              if (!remindEvent) return;
+              remind.mutate(remindEvent.id, {
+                onSuccess: (result) => {
+                  const message = reminderMessage(result);
+                  if (message.kind === 'sent') {
+                    toast.success(t('reminder.sent', { count: message.count }));
+                  } else if (message.kind === 'tooSoon') {
+                    // A1: Die Frist läuft noch – der Zeitpunkt erklärt es.
+                    toast.success(
+                      t('reminder.tooSoon', {
+                        when: formatDateTime(message.lastReminder),
+                      }),
+                    );
+                  } else {
+                    // A2: Zwischenzeitlich haben alle geantwortet. Das ist
+                    // keine Erinnerung von gestern, sondern gar keine.
+                    toast.success(t('reminder.noneLeft'));
+                  }
+                },
+                onError: (cause) => toast.failure(cause.message),
+              });
+            },
+          },
+        ]}
       />
 
       <EventQrModal eventId={qrEventId} onDismiss={() => setQrEventId(null)} />

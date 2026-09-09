@@ -88,7 +88,8 @@
     "requestPending": "Deine Anfrage läuft",
     "requestPendingHint": "Du erhältst eine Nachricht, sobald der Vorstand entschieden hat.",
     "requestWaiting": "Wartet auf den Entscheid des Vorstands",
-    "withdrawRequest": "Anfrage zurückziehen"
+    "withdrawRequest": "Anfrage zurückziehen",
+    "withdrawConfirm": "Die Anfrage wird zurückgezogen. Du kannst jederzeit eine neue stellen."
   },
   "tabs": {
     "dashboard": "Start",
@@ -297,6 +298,7 @@
     "active": "Gültig",
     "inactive": "Abgelaufen",
     "revoke": "Zurückziehen",
+    "revokeConfirm": "Die Einladung lässt sich danach nicht mehr einlösen. Bereits beigetretene Mitglieder bleiben.",
     "shareTitle": "Einladung teilen",
     "shareHint": "Wer den Link öffnet, wird ohne weitere Freigabe Mitglied.",
     "share": "Teilen",
@@ -499,6 +501,7 @@
     "neverSynced": "Noch kein Abgleich",
     "lastError": "Letzter Abgleich fehlgeschlagen",
     "disconnect": "Verbindung trennen",
+    "disconnectConfirm": "Neue Beiträge der Website erscheinen danach nicht mehr im Feed. Bereits übernommene Meldungen bleiben.",
     "disconnected": "Verbindung getrennt. Die übernommenen Beiträge bleiben.",
     "scheduleHint": "Der Abgleich läuft danach jede Nacht von selbst. Übernommene Beiträge bleiben auch nach dem Trennen im Feed."
   },
@@ -583,5 +586,25 @@
     "queueRejected_one": "Ein gespeicherter Check-in konnte nicht mehr gebucht werden – das Zeitfenster war zu.",
     "queueRejected_other": "{{count}} gespeicherte Check-ins konnten nicht mehr gebucht werden – das Zeitfenster war zu.",
     "unmark": "Zurücknehmen"
+  },
+  "reminder": {
+    "remind": "Erinnern",
+    "title": "Unentschlossene erinnern",
+    "confirm_one": "Eine Person hat noch nicht geantwortet. Sie erhält eine Erinnerung mit einer direkten Antwortmöglichkeit.",
+    "confirm_other": "{{count}} Personen haben noch nicht geantwortet. Sie erhalten eine Erinnerung mit einer direkten Antwortmöglichkeit.",
+    "send": "Erinnerung senden",
+    "sent_one": "Eine Person wurde erinnert.",
+    "sent_other": "{{count}} Personen wurden erinnert.",
+    "tooSoon": "Für diesen Termin wurde am {{when}} bereits erinnert. Höchstens einmal pro Tag.",
+    "noneLeft": "Niemand ist mehr offen – alle haben geantwortet."
+  },
+  "inbox": {
+    "title": "Nachrichten",
+    "empty": "Keine Nachrichten",
+    "new": "Neu",
+    "all": "Alle Nachrichten",
+    "unread_one": "{{count}} ungelesen",
+    "unread_other": "{{count}} ungelesen",
+    "hint": "Jede Benachrichtigung steht hier – auch ohne Push. Antippen führt zum Anlass und markiert sie als gelesen."
   }
 }

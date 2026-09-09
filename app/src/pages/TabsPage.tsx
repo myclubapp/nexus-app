@@ -26,6 +26,7 @@ import { InvitePage } from './club/InvitePage';
 import { JoinRequestPage } from './club/JoinRequestPage';
 import { MemberPage } from './club/MemberPage';
 import { NewsSourcePage } from './club/NewsSourcePage';
+import { InboxPage } from './InboxPage';
 import { PointRulePage } from './club/PointRulePage';
 
 /**
@@ -61,6 +62,7 @@ export function TabsPage() {
         <Route path="profile/members" element={<MemberPage />} />
         <Route path="profile/rules" element={<PointRulePage />} />
         <Route path="profile/news" element={<NewsSourcePage />} />
+        <Route path="profile/inbox" element={<InboxPage />} />
         <Route path="" element={<Navigate to="dashboard" replace />} />
       </IonRouterOutlet>
 

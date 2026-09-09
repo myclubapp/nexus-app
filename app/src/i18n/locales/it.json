@@ -88,7 +88,8 @@
     "requestPending": "La tua richiesta è in corso",
     "requestPendingHint": "Riceverai un messaggio appena il comitato avrà deciso.",
     "requestWaiting": "In attesa della decisione del comitato",
-    "withdrawRequest": "Ritira la richiesta"
+    "withdrawRequest": "Ritira la richiesta",
+    "withdrawConfirm": "La richiesta viene ritirata. Puoi inviarne una nuova in qualsiasi momento."
   },
   "tabs": {
     "dashboard": "Home",
@@ -297,6 +298,7 @@
     "active": "Valido",
     "inactive": "Scaduto",
     "revoke": "Ritira",
+    "revokeConfirm": "L'invito non potrà più essere utilizzato. I membri già entrati restano.",
     "shareTitle": "Condividere l’invito",
     "shareHint": "Chi apre il link diventa membro senza ulteriore approvazione.",
     "share": "Condividi",
@@ -499,6 +501,7 @@
     "neverSynced": "Nessuna sincronizzazione finora",
     "lastError": "Ultima sincronizzazione non riuscita",
     "disconnect": "Scollega il sito",
+    "disconnectConfirm": "I nuovi articoli del sito non appariranno più nel feed. Le notizie già importate restano.",
     "disconnected": "Sito scollegato. Gli articoli ripresi restano.",
     "scheduleHint": "La sincronizzazione avviene poi automaticamente ogni notte. Gli articoli ripresi restano nel feed anche dopo lo scollegamento."
   },
@@ -583,5 +586,25 @@
     "queueRejected_one": "Una presenza salvata non ha più potuto essere registrata – la finestra era chiusa.",
     "queueRejected_other": "{{count}} presenze salvate non hanno più potuto essere registrate – la finestra era chiusa.",
     "unmark": "Ritira"
+  },
+  "reminder": {
+    "remind": "Sollecita",
+    "title": "Sollecita gli indecisi",
+    "confirm_one": "Una persona non ha ancora risposto. Riceverà un promemoria con la possibilità di rispondere subito.",
+    "confirm_other": "{{count}} persone non hanno ancora risposto. Riceveranno un promemoria con la possibilità di rispondere subito.",
+    "send": "Invia il promemoria",
+    "sent_one": "Una persona è stata sollecitata.",
+    "sent_other": "{{count}} persone sono state sollecitate.",
+    "tooSoon": "Per questo appuntamento è già stato inviato un promemoria il {{when}}. Al massimo una volta al giorno.",
+    "noneLeft": "Non c'è più nessuno in sospeso – hanno risposto tutti."
+  },
+  "inbox": {
+    "title": "Messaggi",
+    "empty": "Nessun messaggio",
+    "new": "Nuovo",
+    "all": "Tutti i messaggi",
+    "unread_one": "{{count}} non letto",
+    "unread_other": "{{count}} non letti",
+    "hint": "Ogni notifica si trova qui, anche senza push. Toccando si apre l'argomento e il messaggio viene segnato come letto."
   }
 }

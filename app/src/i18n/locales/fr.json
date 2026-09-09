@@ -88,7 +88,8 @@
     "requestPending": "Votre demande est en cours",
     "requestPendingHint": "Vous recevrez un message dès que le comité aura décidé.",
     "requestWaiting": "En attente de la décision du comité",
-    "withdrawRequest": "Retirer la demande"
+    "withdrawRequest": "Retirer la demande",
+    "withdrawConfirm": "La demande sera retirée. Tu peux en envoyer une nouvelle à tout moment."
   },
   "tabs": {
     "dashboard": "Accueil",
@@ -297,6 +298,7 @@
     "active": "Valable",
     "inactive": "Expirée",
     "revoke": "Retirer",
+    "revokeConfirm": "L'invitation ne pourra plus être utilisée. Les membres déjà arrivés restent.",
     "shareTitle": "Partager l’invitation",
     "shareHint": "Qui ouvre le lien devient membre sans autre validation.",
     "share": "Partager",
@@ -499,6 +501,7 @@
     "neverSynced": "Pas encore de synchronisation",
     "lastError": "Dernière synchronisation échouée",
     "disconnect": "Déconnecter le site",
+    "disconnectConfirm": "Les nouveaux articles du site n'apparaîtront plus dans le fil. Les actualités déjà reprises restent.",
     "disconnected": "Site déconnecté. Les articles repris restent.",
     "scheduleHint": "La synchronisation se fait ensuite automatiquement chaque nuit. Les articles repris restent dans le fil même après la déconnexion."
   },
@@ -583,5 +586,25 @@
     "queueRejected_one": "Une présence enregistrée n'a pas pu être validée – la fenêtre était fermée.",
     "queueRejected_other": "{{count}} présences enregistrées n'ont pas pu être validées – la fenêtre était fermée.",
     "unmark": "Retirer"
+  },
+  "reminder": {
+    "remind": "Relancer",
+    "title": "Relancer les indécis",
+    "confirm_one": "Une personne n'a pas encore répondu. Elle recevra un rappel avec une possibilité de répondre directement.",
+    "confirm_other": "{{count}} personnes n'ont pas encore répondu. Elles recevront un rappel avec une possibilité de répondre directement.",
+    "send": "Envoyer le rappel",
+    "sent_one": "Une personne a été relancée.",
+    "sent_other": "{{count}} personnes ont été relancées.",
+    "tooSoon": "Un rappel a déjà été envoyé le {{when}} pour ce rendez-vous. Au maximum une fois par jour.",
+    "noneLeft": "Plus personne n'est en attente – tout le monde a répondu."
+  },
+  "inbox": {
+    "title": "Messages",
+    "empty": "Aucun message",
+    "new": "Nouveau",
+    "all": "Tous les messages",
+    "unread_one": "{{count}} non lu",
+    "unread_other": "{{count}} non lus",
+    "hint": "Chaque notification figure ici, même sans push. Toucher ouvre le sujet et marque le message comme lu."
   }
 }

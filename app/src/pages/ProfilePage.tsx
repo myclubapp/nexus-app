@@ -100,6 +100,13 @@ export function ProfilePage() {
         )}
       </ListSection>
 
+      {/* NFR-009: Jede Zustellung ist auch ohne Push abholbar. */}
+      <ListSection>
+        <IonItem button detail routerLink="/tabs/profile/inbox">
+          <IonLabel>{t('inbox.title')}</IonLabel>
+        </IonItem>
+      </ListSection>
+
       <ListSection title={t('profile.settings')}>
         <IonItem>
           <IonSelect

@@ -41,7 +41,7 @@ synchron gehalten werden können.
 | [UC-012](UC-012-schicht-uebernehmen.md) | Helfer-Schicht übernehmen | Mitglied | FR-031 | Implemented |
 | [UC-013](UC-013-schicht-bestaetigen.md) | Helfer-Schicht bestätigen | Vorstand | FR-032, FR-039 | Implemented |
 | [UC-014](UC-014-qr-check-in.md) | QR-Check-in am Termin | Mitglied | FR-033, FR-034, FR-039 | Implemented |
-| [UC-015](UC-015-unentschlossene-erinnern.md) | Unentschlossene erinnern | Trainer:in | FR-027, FR-028 | Draft |
+| [UC-015](UC-015-unentschlossene-erinnern.md) | Unentschlossene erinnern | Trainer:in | FR-027, FR-028, FR-078 | Implemented |
 
 ### Gamification
 

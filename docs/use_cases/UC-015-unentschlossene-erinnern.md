@@ -6,7 +6,7 @@
 **Use Case Name:** Unentschlossene erinnern
 **Primary Actor:** Trainer:in
 **Goal:** Vor einem Termin eine belastbare Teilnehmerzahl erhalten
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

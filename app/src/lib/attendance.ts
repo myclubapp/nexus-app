@@ -73,12 +73,17 @@ export function tallyAttendance(
   const registered = count('registered');
   const excused = count('excused');
   const present = count('present');
+  // Auch wer als abwesend vermerkt wurde, ist keine offene Frage mehr – die
+  // Antwort steht, sie lautet nur nicht «ja». Ohne diese Zeile gälte die
+  // Person weiter als unentschlossen und bekäme eine Erinnerung, obwohl der
+  // Server sie als beantwortet führt (BR-059).
+  const absent = count('absent');
 
   return {
     registered,
     excused,
     present,
     // Wer anwesend ist, hat sich damit auch entschieden.
-    undecided: Math.max(0, affectedCount - registered - excused - present),
+    undecided: Math.max(0, affectedCount - registered - excused - present - absent),
   };
 }

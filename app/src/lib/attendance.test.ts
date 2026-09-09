@@ -83,6 +83,13 @@ describe('tallyAttendance', () => {
     expect(tallyAttendance([{ status: 'present' }], 1).undecided).toBe(0);
   });
 
+  it('zählt als abwesend Vermerkte als entschieden (BR-059)', () => {
+    // Die Antwort steht, sie lautet nur nicht «ja». Zählte man sie weiter als
+    // offen, bekäme die Person eine Erinnerung, obwohl der Server sie als
+    // beantwortet führt – und die Zahl in der Rückfrage stimmte nicht.
+    expect(tallyAttendance([{ status: 'absent' }], 1).undecided).toBe(0);
+  });
+
   it('wird nicht negativ, wenn mehr geantwortet haben als erwartet', () => {
     // Ein Mitglied kann den Verein verlassen haben, nachdem es zugesagt hat.
     expect(tallyAttendance(entries, 2).undecided).toBe(0);
