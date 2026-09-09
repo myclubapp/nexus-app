@@ -68,6 +68,10 @@ export type ClubSettings = {
   };
   /** Vereinseigene Begriffe je Terminart, z.B. «Probe» statt «Training». */
   labels?: Partial<Record<EventType, string>>;
+  /** UC-022 A3: Anzeige auf die vorderen Ränge begrenzen. */
+  leaderboard?: {
+    topOnly?: number;
+  };
 };
 
 // --- Zeilentypen -----------------------------------------------------------
@@ -106,5 +110,14 @@ export type PointTransaction = Row<'point_transactions'>;
 export type Task = Row<'tasks'>;
 export type TaskAssignment = Row<'task_assignments'>;
 export type News = Row<'news'>;
+
+/** `news_sources` – die verbundene Vereins-Website (UC-038). */
+export type NewsSource = Row<'news_sources'>;
+
+/** `news_sources.last_status` – Constraint aus `0022_news_sources.sql`. */
+export type NewsSyncStatus = 'ok' | 'error';
+
 export type Notification = Row<'notifications'>;
-export type LeaderboardRow = Row<'leaderboard'>;
+// Die Sicht `leaderboard` ist mit `0039` gewichen: Die Rangfolge steht nur
+// noch in `leaderboard_rows()`, damit es nicht zwei Beschreibungen derselben
+// Sache gibt. Die Zeilenform liegt in `src/lib/leaderboard.ts`.

@@ -157,7 +157,18 @@
     "season": "Season",
     "rank": "Rank",
     "optOutNotice": "You do not appear in the ranking. You can change this in your profile.",
-    "empty": "No points in this season yet"
+    "empty": "No points in this season yet",
+    "period": "Period",
+    "periodValue": {
+      "week": "Week",
+      "month": "Month",
+      "season": "Season",
+      "all": "All time"
+    },
+    "pillar": "Pillar",
+    "allPillars": "All pillars",
+    "filterHint": "Shorter periods also show who has just joined.",
+    "yourRank": "Your rank: {{rank}}"
   },
   "agenda": {
     "title": "Agenda",

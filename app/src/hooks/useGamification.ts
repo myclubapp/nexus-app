@@ -1,11 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase, isConfigured } from '../lib/supabase';
 import { seasonLabel } from '../lib/season';
-import type {
-  LeaderboardRow,
-  PointRule,
-  PointTransaction,
-} from '../lib/database.types';
+import type { PointRule, PointTransaction } from '../lib/database.types';
+import type { LeaderboardEntry, LeaderboardPeriod } from '../lib/leaderboard';
 import { useClub } from './useClub';
 
 /** Punktestand und Verlauf des angemeldeten Mitglieds in der laufenden Saison. */
@@ -57,30 +54,77 @@ export function usePointRules() {
   });
 }
 
-export function useLeaderboard(scope: 'club' | 'team', teamId?: string | null) {
+export interface LeaderboardOptions {
+  teamId?: string | null;
+  period?: LeaderboardPeriod;
+  pillar?: number | null;
+  limit?: number;
+}
+
+/**
+ * Die Rangliste (UC-022).
+ *
+ * Sie kommt aus **einer** Serverfunktion: Zeitraum, Säule, Team, der
+ * Teilnahme-Opt-out und die Regel, dass die eigene Zeile immer mitkommt
+ * (BR-090), stehen dort an einer Stelle. Eine zweite Beschreibung derselben
+ * Rangfolge im Client wäre eine zweite Rangfolge.
+ */
+export function useLeaderboard(options: LeaderboardOptions = {}) {
   const { activeClub } = useClub();
-  const season = seasonLabel(activeClub?.season_start);
+  const { teamId = null, period = 'season', pillar = null, limit = 20 } = options;
 
   return useQuery({
-    queryKey: ['leaderboard', activeClub?.id, scope, teamId, season],
-    enabled: Boolean(activeClub) && isConfigured && (scope === 'club' || Boolean(teamId)),
-    queryFn: async (): Promise<LeaderboardRow[]> => {
-      let request = supabase
-        .from('leaderboard')
-        .select('*')
-        .eq('club_id', activeClub!.id)
-        .eq('season', season)
-        .order('rank', { ascending: true })
-        .limit(100);
-
-      if (scope === 'team' && teamId) request = request.eq('team_id', teamId);
-
-      const { data, error } = await request;
+    queryKey: ['leaderboard', activeClub?.id, teamId, period, pillar, limit],
+    enabled: Boolean(activeClub) && isConfigured,
+    // BR-092: höchstens fünf Minuten alt. Gerechnet wird live, gehalten wird
+    // fünf Minuten – die Rangliste ist damit nie älter, als die Regel erlaubt.
+    staleTime: 5 * 60_000,
+    queryFn: async (): Promise<LeaderboardEntry[]> => {
+      const { data, error } = await supabase.rpc('leaderboard_rows', {
+        p_club_id: activeClub!.id,
+        p_team_id: teamId ?? undefined,
+        p_period: period,
+        p_pillar: pillar ?? undefined,
+        p_limit: limit,
+      });
       if (error) throw new Error(error.message);
-      return data ?? [];
+      return (data ?? []).map((row) => ({
+        memberId: row.member_id,
+        displayName: row.display_name,
+        avatarUrl: row.avatar_url,
+        totalPoints: row.total_points,
+        rank: row.rank,
+        isSelf: row.is_self,
+      }));
     },
   });
 }
+
+/** Die Teams, denen das angemeldete Mitglied angehört (A4). */
+export function useMyTeams() {
+  const { activeMembership } = useClub();
+
+  return useQuery({
+    queryKey: ['my-teams', activeMembership?.id],
+    enabled: Boolean(activeMembership) && isConfigured,
+    queryFn: async (): Promise<{ id: string; name: string }[]> => {
+      const { data, error } = await supabase
+        .from('team_members')
+        .select('team_id, teams(name)')
+        .eq('member_id', activeMembership!.id);
+      if (error) throw new Error(error.message);
+
+      return (data ?? []).map((row) => {
+        const entry = row as unknown as {
+          team_id: string;
+          teams: { name: string } | null;
+        };
+        return { id: entry.team_id, name: entry.teams?.name ?? '' };
+      });
+    },
+  });
+}
+
 
 /**
  * Alle Regeln des Vereins – auch abgeschaltete (FR-041).

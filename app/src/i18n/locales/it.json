@@ -157,7 +157,18 @@
     "season": "Stagione",
     "rank": "Posizione",
     "optOutNotice": "Non compari in classifica. Puoi cambiarlo nel profilo.",
-    "empty": "Ancora nessun punto in questa stagione"
+    "empty": "Ancora nessun punto in questa stagione",
+    "period": "Periodo",
+    "periodValue": {
+      "week": "Settimana",
+      "month": "Mese",
+      "season": "Stagione",
+      "all": "Totale"
+    },
+    "pillar": "Pilastro",
+    "allPillars": "Tutti i pilastri",
+    "filterHint": "Periodi più brevi mostrano anche chi è arrivato da poco.",
+    "yourRank": "Il tuo rango: {{rank}}"
   },
   "agenda": {
     "title": "Agenda",

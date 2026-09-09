@@ -66,6 +66,7 @@ vi.mock('../hooks/useGamification', () => ({
   usePointRules: () => emptyQuery,
   useRuleLabels: () => emptyQuery,
   useLeaderboard: () => emptyQuery,
+  useMyTeams: () => emptyQuery,
   useAllPoints: () => emptyQuery,
 }));
 // Seit UC-017 liegen die Aufgaben-Hooks in einem eigenen Modul.

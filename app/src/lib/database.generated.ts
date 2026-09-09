@@ -64,13 +64,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "attendance_confirmed_by_fkey"
-            columns: ["confirmed_by"]
-            isOneToOne: false
-            referencedRelation: "leaderboard"
-            referencedColumns: ["member_id"]
-          },
-          {
             foreignKeyName: "attendance_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
@@ -90,13 +83,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "club_members"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "attendance_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "leaderboard"
-            referencedColumns: ["member_id"]
           },
           {
             foreignKeyName: "attendance_shift_event_fkey"
@@ -422,13 +408,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "events_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "leaderboard"
-            referencedColumns: ["member_id"]
-          },
-          {
             foreignKeyName: "events_series_id_fkey"
             columns: ["series_id"]
             isOneToOne: false
@@ -507,13 +486,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "invites_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "leaderboard"
-            referencedColumns: ["member_id"]
-          },
-          {
             foreignKeyName: "invites_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
@@ -576,13 +548,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "join_requests_decided_by_fkey"
-            columns: ["decided_by"]
-            isOneToOne: false
-            referencedRelation: "leaderboard"
-            referencedColumns: ["member_id"]
-          },
-          {
             foreignKeyName: "join_requests_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
@@ -621,13 +586,6 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "club_members"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "member_contacts_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: true
-            referencedRelation: "leaderboard"
-            referencedColumns: ["member_id"]
           },
         ]
       }
@@ -755,13 +713,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "club_members"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "news_sources_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "leaderboard"
-            referencedColumns: ["member_id"]
           },
         ]
       }
@@ -916,13 +867,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "point_transactions_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "leaderboard"
-            referencedColumns: ["member_id"]
-          },
-          {
             foreignKeyName: "point_transactions_member_id_fkey"
             columns: ["member_id"]
             isOneToOne: false
@@ -935,13 +879,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "club_members"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "point_transactions_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "leaderboard"
-            referencedColumns: ["member_id"]
           },
         ]
       }
@@ -1019,13 +956,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "task_assignments_confirmed_by_fkey"
-            columns: ["confirmed_by"]
-            isOneToOne: false
-            referencedRelation: "leaderboard"
-            referencedColumns: ["member_id"]
-          },
-          {
             foreignKeyName: "task_assignments_member_id_fkey"
             columns: ["member_id"]
             isOneToOne: false
@@ -1038,13 +968,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "club_members"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "task_assignments_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "leaderboard"
-            referencedColumns: ["member_id"]
           },
           {
             foreignKeyName: "task_assignments_task_id_fkey"
@@ -1133,13 +1056,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "tasks_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "leaderboard"
-            referencedColumns: ["member_id"]
-          },
-          {
             foreignKeyName: "tasks_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
@@ -1178,13 +1094,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "club_members"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "team_members_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "leaderboard"
-            referencedColumns: ["member_id"]
           },
           {
             foreignKeyName: "team_members_team_id_fkey"
@@ -1241,34 +1150,6 @@ export type Database = {
             columns: ["club_id"]
             isOneToOne: false
             referencedRelation: "clubs"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      leaderboard: {
-        Row: {
-          avatar_url: string | null
-          club_id: string | null
-          display_name: string | null
-          member_id: string | null
-          rank: number | null
-          season: string | null
-          team_id: string | null
-          total_points: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "club_members_club_id_fkey"
-            columns: ["club_id"]
-            isOneToOne: false
-            referencedRelation: "clubs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "team_members_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
             referencedColumns: ["id"]
           },
         ]
@@ -1411,6 +1292,23 @@ export type Database = {
       is_club_member: { Args: { p_club_id: string }; Returns: boolean }
       is_club_trainer: { Args: { p_club_id: string }; Returns: boolean }
       last_connection_at: { Args: { p_club_id: string }; Returns: string }
+      leaderboard_rows: {
+        Args: {
+          p_club_id: string
+          p_limit?: number
+          p_period?: string
+          p_pillar?: number
+          p_team_id?: string
+        }
+        Returns: {
+          avatar_url: string
+          display_name: string
+          is_self: boolean
+          member_id: string
+          rank: number
+          total_points: number
+        }[]
+      }
       log_club_message: {
         Args: { p_club_id: string; p_kind: string; p_reference: string }
         Returns: undefined

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import {
   IonAvatar,
   IonItem,
@@ -7,36 +7,73 @@ import {
   IonNote,
   IonSegment,
   IonSegmentButton,
+  IonSelect,
+  IonSelectOption,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
-import { useLeaderboard } from '../hooks/useGamification';
+import { useLeaderboard, useMyTeams } from '../hooks/useGamification';
 import { useClub } from '../hooks/useClub';
 import { AppPage } from '../components/AppPage';
+import { ListSection } from '../components/ListSection';
 import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
+import {
+  LEADERBOARD_PERIODS,
+  hasRankGap,
+  leaderboardLimit,
+  ownRank,
+  type LeaderboardPeriod,
+} from '../lib/leaderboard';
+import { PILLARS, type Pillar } from '../lib/pointRule';
 
 type Scope = 'club' | 'team';
 
 export function LeaderboardPage() {
   const { t } = useTranslation();
-  const { activeMembership } = useClub();
+  const { activeClub, activeMembership } = useClub();
+  const myTeams = useMyTeams();
+
   const [scope, setScope] = useState<Scope>('club');
-  const leaderboard = useLeaderboard(scope);
+  const [period, setPeriod] = useState<LeaderboardPeriod>('season');
+  const [pillar, setPillar] = useState<Pillar | null>(null);
+
+  const teams = myTeams.data ?? [];
+  // A4: Wer keinem Team angehört, bekommt die Team-Ansicht gar nicht erst zur
+  // Wahl – eine Umschaltung, die immer ins Leere führt, ist keine Wahl.
+  const hasTeam = teams.length > 0;
+  const [teamId, setTeamId] = useState<string | null>(null);
+  const activeTeamId = teamId ?? teams[0]?.id ?? null;
+
+  const leaderboard = useLeaderboard({
+    teamId: scope === 'team' ? activeTeamId : null,
+    period,
+    pillar,
+    limit: leaderboardLimit(activeClub?.settings),
+  });
 
   const rows = leaderboard.data ?? [];
+  const showGap = hasRankGap(rows);
+  const myRank = ownRank(rows);
 
   return (
     <AppPage
       title={t('leaderboard.title')}
       subToolbar={
-        <IonSegment value={scope} onIonChange={(e) => setScope(e.detail.value as Scope)}>
-          <IonSegmentButton value="club">
-            <IonLabel>{t('leaderboard.club')}</IonLabel>
-          </IonSegmentButton>
-          <IonSegmentButton value="team">
-            <IonLabel>{t('leaderboard.team')}</IonLabel>
-          </IonSegmentButton>
-        </IonSegment>
+        hasTeam ? (
+          <IonSegment
+            value={scope}
+            onIonChange={(e) => setScope(e.detail.value as Scope)}
+          >
+            <IonSegmentButton value="club">
+              <IonLabel>{t('leaderboard.club')}</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="team">
+              <IonLabel>
+                {teams.length === 1 ? teams[0].name : t('leaderboard.team')}
+              </IonLabel>
+            </IonSegmentButton>
+          </IonSegment>
+        ) : undefined
       }
       onRefresh={() => leaderboard.refetch()}
     >
@@ -45,6 +82,61 @@ export function LeaderboardPage() {
           {t('leaderboard.optOutNotice')}
         </IonNote>
       )}
+
+      {/* FR-049 und FR-048: Zeitraum und Säule. Ohne den Zeitraum sieht ein
+          Neumitglied nie etwas anderes als die Jahresbesten. */}
+      <ListSection
+        footnote={
+          myRank !== null
+            ? t('leaderboard.yourRank', { rank: myRank })
+            : t('leaderboard.filterHint')
+        }
+      >
+        {/* Wer in mehreren Teams ist, wählt aus – sonst sähe er immer nur das
+            erste. */}
+        {scope === 'team' && teams.length > 1 && (
+          <IonItem>
+            <IonSelect
+              label={t('leaderboard.team')}
+              value={activeTeamId}
+              onIonChange={(e) => setTeamId(e.detail.value as string)}
+            >
+              {teams.map((team) => (
+                <IonSelectOption key={team.id} value={team.id}>
+                  {team.name}
+                </IonSelectOption>
+              ))}
+            </IonSelect>
+          </IonItem>
+        )}
+        <IonItem>
+          <IonSelect
+            label={t('leaderboard.period')}
+            value={period}
+            onIonChange={(e) => setPeriod(e.detail.value as LeaderboardPeriod)}
+          >
+            {LEADERBOARD_PERIODS.map((entry) => (
+              <IonSelectOption key={entry} value={entry}>
+                {t(`leaderboard.periodValue.${entry}`)}
+              </IonSelectOption>
+            ))}
+          </IonSelect>
+        </IonItem>
+        <IonItem>
+          <IonSelect
+            label={t('leaderboard.pillar')}
+            value={pillar}
+            onIonChange={(e) => setPillar((e.detail.value as Pillar | null) ?? null)}
+          >
+            <IonSelectOption value={null}>{t('leaderboard.allPillars')}</IonSelectOption>
+            {PILLARS.map((entry) => (
+              <IonSelectOption key={entry} value={entry}>
+                {t(`pointRules.pillar.${entry}`)}
+              </IonSelectOption>
+            ))}
+          </IonSelect>
+        </IonItem>
+      </ListSection>
 
       {leaderboard.isLoading ? (
         <SkeletonList rows={6} />
@@ -57,22 +149,29 @@ export function LeaderboardPage() {
         <EmptyState message={t('leaderboard.empty')} />
       ) : (
         <IonList inset>
-          {rows.map((row) => (
-            <IonItem
-              key={row.member_id}
-              color={row.member_id === activeMembership?.id ? 'light' : undefined}
-            >
-              <IonNote slot="start">{row.rank}</IonNote>
-              {row.avatar_url && (
-                <IonAvatar slot="start">
-                  <img src={row.avatar_url} alt="" />
-                </IonAvatar>
+          {rows.map((row, index) => (
+            <Fragment key={row.memberId}>
+              {/* A3/BR-090: Die eigene Zeile kommt auch von weiter hinten mit.
+                  Die Lücke wird gezeigt, sonst läse sich Rang 3 direkt vor
+                  Rang 27 wie eine durchgehende Liste. */}
+              {showGap && index === rows.length - 1 && (
+                <IonItem lines="none">
+                  <IonNote>…</IonNote>
+                </IonItem>
               )}
-              <IonLabel>{row.display_name}</IonLabel>
-              <IonNote slot="end" color="primary">
-                {row.total_points}
-              </IonNote>
-            </IonItem>
+              <IonItem color={row.isSelf ? 'light' : undefined}>
+                <IonNote slot="start">{row.rank}</IonNote>
+                {row.avatarUrl && (
+                  <IonAvatar slot="start">
+                    <img src={row.avatarUrl} alt="" />
+                  </IonAvatar>
+                )}
+                <IonLabel>{row.displayName}</IonLabel>
+                <IonNote slot="end" color="primary">
+                  {row.totalPoints}
+                </IonNote>
+              </IonItem>
+            </Fragment>
           ))}
         </IonList>
       )}

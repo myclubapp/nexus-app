@@ -6,7 +6,7 @@
 **Use Case Name:** Leaderboard einsehen
 **Primary Actor:** Mitglied
 **Goal:** Sehen, wie sich das Engagement im Team und im Verein verteilt
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

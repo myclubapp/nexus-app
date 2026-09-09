@@ -157,7 +157,18 @@
     "season": "Saison",
     "rank": "Rang",
     "optOutNotice": "Du erscheinst nicht in der Rangliste. Du kannst das im Profil ändern.",
-    "empty": "Noch keine Punkte in dieser Saison"
+    "empty": "Noch keine Punkte in dieser Saison",
+    "period": "Zeitraum",
+    "periodValue": {
+      "week": "Woche",
+      "month": "Monat",
+      "season": "Saison",
+      "all": "Gesamt"
+    },
+    "pillar": "Säule",
+    "allPillars": "Alle Säulen",
+    "filterHint": "Kürzere Zeiträume zeigen auch, wer neu dabei ist.",
+    "yourRank": "Dein Rang: {{rank}}"
   },
   "agenda": {
     "title": "Agenda",
