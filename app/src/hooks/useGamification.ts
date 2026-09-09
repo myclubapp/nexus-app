@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase, isConfigured } from '../lib/supabase';
 import { seasonLabel } from '../lib/season';
 import type {
@@ -212,6 +212,94 @@ export function useAllPoints() {
         .limit(500);
       if (error) throw new Error(error.message);
       return data ?? [];
+    },
+  });
+}
+
+/**
+ * Der Ledger eines Mitglieds – für den Vorstand (UC-021, Schritt 1 und A1).
+ *
+ * Seit `0037` liest den fremden Ledger nur noch der Vorstand. Er braucht ihn:
+ * Er bucht von Hand und gleicht Fehlbuchungen aus.
+ */
+export function useMemberPoints(memberId: string | null) {
+  const { isAdmin } = useClub();
+
+  return useQuery({
+    queryKey: ['member-points', memberId],
+    enabled: Boolean(memberId) && isAdmin && isConfigured,
+    queryFn: async (): Promise<PointTransaction[]> => {
+      const { data, error } = await supabase
+        .from('point_transactions')
+        .select('*')
+        .eq('member_id', memberId!)
+        .order('created_at', { ascending: false })
+        .limit(50);
+      if (error) throw new Error(error.message);
+      return data ?? [];
+    },
+  });
+}
+
+/**
+ * Punkte von Hand buchen (Schritte 5–7, A3).
+ *
+ * Rolle, Notizpflicht und Vorzeichen prüft der Server – das Formular ist
+ * bequem, nicht massgebend (C-011).
+ */
+export function useBookPoints() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (input: {
+      memberIds: string[];
+      pillar: number;
+      points: number;
+      note: string;
+    }): Promise<number> => {
+      const { data, error } = await supabase.rpc('book_points_manually', {
+        p_club_id: activeClub!.id,
+        p_member_ids: input.memberIds,
+        p_pillar: input.pillar,
+        p_points: input.points,
+        p_note: input.note,
+      });
+      if (error) throw new Error(error.message);
+      return data ?? 0;
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ['member-points'] });
+      void queryClient.invalidateQueries({ queryKey: ['points-summary'] });
+      void queryClient.invalidateQueries({ queryKey: ['points-history'] });
+      void queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
+    },
+  });
+}
+
+/**
+ * Eine Buchung ausgleichen (A1, BR-085).
+ *
+ * «Korrigieren» heisst hier nicht ändern: Die ursprüngliche Buchung bleibt
+ * stehen, daneben entsteht eine Gegenbuchung mit Verweis. Der Ledger ist
+ * unveränderlich, und das soll man ihm ansehen.
+ */
+export function useReversePoints() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { transactionId: string; note: string }) => {
+      const { error } = await supabase.rpc('reverse_points', {
+        p_transaction_id: input.transactionId,
+        p_note: input.note,
+      });
+      if (error) throw new Error(error.message);
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ['member-points'] });
+      void queryClient.invalidateQueries({ queryKey: ['points-summary'] });
+      void queryClient.invalidateQueries({ queryKey: ['points-history'] });
+      void queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
     },
   });
 }

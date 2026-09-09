@@ -6,7 +6,7 @@
 **Use Case Name:** Punkte manuell buchen oder korrigieren
 **Primary Actor:** Vorstand
 **Goal:** Einen Beitrag würdigen, den die Automatik nicht erfasst, oder eine falsche Buchung ausgleichen
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

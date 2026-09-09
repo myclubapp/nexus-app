@@ -858,6 +858,7 @@ export type Database = {
           id: string
           member_id: string
           note: string | null
+          pillar: number | null
           points: number
           rule_code: string | null
           season: string
@@ -871,6 +872,7 @@ export type Database = {
           id?: string
           member_id: string
           note?: string | null
+          pillar?: number | null
           points: number
           rule_code?: string | null
           season: string
@@ -884,6 +886,7 @@ export type Database = {
           id?: string
           member_id?: string
           note?: string | null
+          pillar?: number | null
           points?: number
           rule_code?: string | null
           season?: string
@@ -1290,6 +1293,16 @@ export type Database = {
         }
         Returns: number
       }
+      book_points_manually: {
+        Args: {
+          p_club_id: string
+          p_member_ids: string[]
+          p_note: string
+          p_pillar: number
+          p_points: number
+        }
+        Returns: number
+      }
       call_is_muted: { Args: { p_club_id: string }; Returns: boolean }
       cancel_event: {
         Args: { p_event_id: string; p_reason: string }
@@ -1512,6 +1525,10 @@ export type Database = {
           is_early: boolean
           points_awarded: number
         }[]
+      }
+      reverse_points: {
+        Args: { p_note: string; p_transaction_id: string }
+        Returns: string
       }
       rule_limit_reached: {
         Args: {

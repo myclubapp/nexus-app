@@ -22,11 +22,21 @@ export function bookingLabel(
   return entry.rule_code ?? entry.source_type;
 }
 
-/** Die Säule einer Buchung – über ihre Regel, denn der Ledger führt sie nicht. */
+/**
+ * Die Säule einer Buchung.
+ *
+ * Zwei Wege für zwei Fälle: Eine Buchung von Hand trägt die Säule selbst –
+ * sie hat keine Regel, aus der sie sich ableiten liesse (UC-021). Alle
+ * übrigen führen sie über ihren Regelcode.
+ */
 export function bookingPillar(
-  entry: Pick<PointTransaction, 'rule_code'>,
+  entry: Pick<PointTransaction, 'rule_code' | 'pillar'>,
   rules: readonly Pick<PointRule, 'code' | 'pillar'>[],
 ): Pillar | null {
+  if (entry.pillar !== null && PILLARS.includes(entry.pillar as Pillar)) {
+    return entry.pillar as Pillar;
+  }
+
   const rule = rules.find((candidate) => candidate.code === entry.rule_code);
   if (!rule) return null;
   return PILLARS.includes(rule.pillar as Pillar) ? (rule.pillar as Pillar) : null;
@@ -47,6 +57,45 @@ export function seasonsOf(
   );
 }
 
+export type BookingProblem =
+  | 'noMembers'
+  | 'noteMissing'
+  | 'pointsNotPositive'
+  | 'tooManyMembers';
+
+/** Höchstzahl je Sammelbuchung – dieselbe Grenze wie in `0038` (A3). */
+export const MAX_BOOKING_MEMBERS = 100;
+
+/**
+ * Was an einer Buchung von Hand fehlt (UC-021, A2, BR-086, BR-087).
+ *
+ * Dieselben Regeln stehen als Constraint und in der Buchungsfunktion; diese
+ * Prüfung erspart der Person die Fehlermeldung, sie ersetzt sie nicht (C-011).
+ */
+export function validateManualBooking(input: {
+  memberIds: readonly string[];
+  points: number;
+  note: string;
+}): BookingProblem[] {
+  const problems: BookingProblem[] = [];
+
+  if (input.memberIds.length === 0) problems.push('noMembers');
+  if (input.memberIds.length > MAX_BOOKING_MEMBERS) problems.push('tooManyMembers');
+  if (input.note.trim().length === 0) problems.push('noteMissing');
+  // BR-087: Ein Abzug entsteht nur als Korrektur einer Buchung, nie als
+  // negative Buchung von Hand.
+  if (!Number.isFinite(input.points) || input.points <= 0) {
+    problems.push('pointsNotPositive');
+  }
+
+  return problems;
+}
+
+/** Eine Korrektur trägt ihre Begründung, sonst ist sie nicht nachvollziehbar. */
+export function canCorrect(note: string): boolean {
+  return note.trim().length > 0;
+}
+
 export interface BookingFilter {
   /** `null` heisst «alle Saisons». */
   season: string | null;
@@ -56,7 +105,7 @@ export interface BookingFilter {
 
 /** Die Historie nach Saison und Säule einschränken (A2, FR-041). */
 export function filterBookings<
-  T extends Pick<PointTransaction, 'season' | 'rule_code'>,
+  T extends Pick<PointTransaction, 'season' | 'rule_code' | 'pillar'>,
 >(
   entries: readonly T[],
   filter: BookingFilter,

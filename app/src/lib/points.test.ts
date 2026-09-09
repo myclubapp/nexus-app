@@ -3,9 +3,11 @@ import type { PointTransaction } from './database.types';
 import {
   bookingLabel,
   bookingPillar,
+  canCorrect,
   filterBookings,
   seasonsOf,
   sumPoints,
+  validateManualBooking,
 } from './points';
 import { seasonLabel } from './season';
 
@@ -25,6 +27,7 @@ function booking(overrides: Partial<PointTransaction> = {}): PointTransaction {
     source_type: 'task',
     source_id: 's-1',
     note: null,
+    pillar: null,
     created_at: '2026-09-01T10:00:00Z',
     created_by: null,
     ...overrides,
@@ -63,6 +66,58 @@ describe('bookingPillar', () => {
 
   it('gibt null zurück, wenn die Regel nicht mehr besteht', () => {
     expect(bookingPillar(booking({ rule_code: 'geloescht' }), RULES)).toBeNull();
+  });
+
+  it('nimmt die Säule der Buchung, wenn sie eine trägt (UC-021)', () => {
+    // Eine Buchung von Hand hat keine Regel, aus der sich die Säule ableiten
+    // liesse – sie trägt sie selbst.
+    const manual = booking({ rule_code: null, pillar: 3 });
+    expect(bookingPillar(manual, RULES)).toBe(3);
+  });
+
+  it('lässt die eigene Säule der Regel vorgehen', () => {
+    expect(bookingPillar(booking({ rule_code: 'task_done', pillar: 2 }), RULES)).toBe(2);
+  });
+
+  it('ignoriert eine Säule ausserhalb der sieben', () => {
+    expect(bookingPillar(booking({ rule_code: null, pillar: 9 }), RULES)).toBeNull();
+  });
+});
+
+describe('validateManualBooking', () => {
+  const ok = { memberIds: ['m-1'], points: 10, note: 'Kuchen gebacken' };
+
+  it('lässt eine vollständige Buchung durch', () => {
+    expect(validateManualBooking(ok)).toEqual([]);
+  });
+
+  it('verlangt mindestens eine Person', () => {
+    expect(validateManualBooking({ ...ok, memberIds: [] })).toContain('noMembers');
+  });
+
+  it('verlangt eine Notiz (BR-086)', () => {
+    expect(validateManualBooking({ ...ok, note: '   ' })).toContain('noteMissing');
+  });
+
+  it('weist negative Werte und die Null ab (BR-087)', () => {
+    // Ein Abzug entsteht ausschliesslich als Korrektur einer Buchung.
+    expect(validateManualBooking({ ...ok, points: -5 })).toContain('pointsNotPositive');
+    expect(validateManualBooking({ ...ok, points: 0 })).toContain('pointsNotPositive');
+  });
+
+  it('begrenzt die Sammelbuchung wie der Server (A3)', () => {
+    const many = Array.from({ length: 101 }, (_, i) => `m-${i}`);
+    expect(validateManualBooking({ ...ok, memberIds: many })).toContain(
+      'tooManyMembers',
+    );
+  });
+});
+
+describe('canCorrect', () => {
+  it('verlangt eine Begründung (A1)', () => {
+    expect(canCorrect('')).toBe(false);
+    expect(canCorrect('  ')).toBe(false);
+    expect(canCorrect('Versehentlich zweimal gebucht')).toBe(true);
   });
 });
 

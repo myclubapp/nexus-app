@@ -52,7 +52,7 @@ synchron gehalten werden können.
 | [UC-018](UC-018-aufgabe-uebernehmen.md) | Aufgabe übernehmen und einreichen | Mitglied | FR-052, FR-053, FR-057 | Implemented |
 | [UC-019](UC-019-aufgabe-bestaetigen.md) | Aufgabe bestätigen und Kudos geben | Vorstand | FR-054, FR-055 | Implemented |
 | [UC-020](UC-020-punktestand-einsehen.md) | Punktestand und «Nächste Punkte» einsehen | Mitglied | FR-041, FR-044, FR-045 | Implemented |
-| [UC-021](UC-021-punkte-manuell-buchen.md) | Punkte manuell buchen oder korrigieren | Vorstand | FR-042, FR-043 | Draft |
+| [UC-021](UC-021-punkte-manuell-buchen.md) | Punkte manuell buchen oder korrigieren | Vorstand | FR-042, FR-043 | Implemented |
 | [UC-022](UC-022-leaderboard-einsehen.md) | Leaderboard einsehen | Mitglied | FR-046, FR-047, FR-048, FR-049 | Draft |
 
 ### Vereins-Gesundheit

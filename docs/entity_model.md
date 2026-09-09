@@ -315,11 +315,12 @@ Eine einzelne Punktebewegung. Der Ledger ist unveränderlich; Korrekturen sind G
 | season      | Saison der Buchung                                   | String    | 10               | Not Null                                                                      |
 | source_type | Art der Quelle                                       | String    | 20               | Not Null, Values: attendance, shift, task, invoice, loyalty, manual, correction, migration |
 | source_id   | Kennung des auslösenden Datensatzes                  | UUID      | 36               | Optional                                                                      |
+| pillar      | Säule einer Buchung ohne Regel                       | Integer   | 1                | Optional, 1–7; gesetzt bei manual und correction, sonst über `rule_code`       |
 | note        | Anlass, verpflichtend bei manueller Buchung          | String    | 500              | Optional                                                                      |
 | created_by  | Buchende Person; leer bedeutet System                | UUID      | 36               | Optional, Foreign Key (CLUB_MEMBER.id)                                        |
 | created_at  | Zeitpunkt der Buchung                                | DateTime  | -                | Not Null                                                                      |
 
-**Constraints:** Die Kombination aus `member_id`, `rule_code` und `source_id` ist eindeutig; eine zweite Buchung zur selben Quelle wird verworfen. Schreibzugriff besteht ausschliesslich über Datenbankfunktionen; es existiert keine insert-, update- oder delete-Berechtigung für Clients. `source_type = manual` verlangt eine gefüllte `note`. Die Saison folgt derselben Berechnung wie in der App.
+**Constraints:** Die Kombination aus `member_id`, `rule_code` und `source_id` ist eindeutig; eine zweite Buchung zur selben Quelle wird verworfen. **Achtung:** Dieser Index schützt nicht gegen zwei Gegenbuchungen zur selben Buchung, weil eine manuelle Buchung kein `rule_code` trägt und zwei NULL-Werte in einem gewöhnlichen Unique-Index verschieden sind – `reverse_points()` prüft das deshalb ausdrücklich. Schreibzugriff besteht ausschliesslich über Datenbankfunktionen; es existiert keine insert-, update- oder delete-Berechtigung für Clients, und ein `update` ohne Policy trifft still null Zeilen. `source_type = manual` und `correction` verlangen eine gefüllte `note`. Eine Gegenbuchung fällt in die Saison des Originals. Die Saison folgt derselben Berechnung wie in der App.
 
 ### TASK
 

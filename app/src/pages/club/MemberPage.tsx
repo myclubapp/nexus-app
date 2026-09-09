@@ -13,7 +13,7 @@ import {
   IonSelect,
   IonSelectOption,
 } from '@ionic/react';
-import { addOutline } from 'ionicons/icons';
+import { addOutline, sparklesOutline } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { useClub } from '../../hooks/useClub';
 import { useTeams } from '../../hooks/useInvites';
@@ -39,8 +39,14 @@ import {
   type MemberFilter,
   type MemberStatus,
 } from '../../lib/member';
-import type { MemberRole } from '../../lib/database.types';
-import { formatDate } from '../../lib/format';
+import type { MemberRole, PointTransaction } from '../../lib/database.types';
+import { formatDate, formatDateTime } from '../../lib/format';
+import { bookingLabel } from '../../lib/points';
+import { BookPointsModal } from '../../components/BookPointsModal';
+import {
+  useMemberPoints,
+  useRuleLabels,
+} from '../../hooks/useGamification';
 
 /**
  * Mitglieder, Rollen und Teams (UC-007).
@@ -59,6 +65,7 @@ export function MemberPage() {
   const updateMember = useUpdateMember();
   const setMemberTeams = useSetMemberTeams();
   const createTeam = useCreateTeam();
+  const ruleLabels = useRuleLabels();
 
   const [filter, setFilter] = useState<MemberFilter>(EMPTY_MEMBER_FILTER);
   const [open, setOpen] = useState<ClubMemberWithTeams | null>(null);
@@ -68,6 +75,12 @@ export function MemberPage() {
 
   const [isTeamFormOpen, setTeamFormOpen] = useState(false);
   const [teamName, setTeamName] = useState('');
+
+  // UC-021: Buchen und Korrigieren laufen über **dasselbe** Blatt; welcher
+  // Weg gemeint ist, entscheidet, ob eine Buchung mitgegeben wird.
+  const [bookFor, setBookFor] = useState<string[] | null>(null);
+  const [correcting, setCorrecting] = useState<PointTransaction | null>(null);
+  const ledger = useMemberPoints(open?.id ?? null);
 
   const all = useMemo(() => members.data ?? [], [members.data]);
   const visible = useMemo(() => filterMembers(all, filter), [all, filter]);
@@ -106,6 +119,16 @@ export function MemberPage() {
       backHref="/tabs/profile"
       toolbarEnd={
         <IonButtons slot="end">
+          {/* A3: für mehrere Mitglieder auf einmal. */}
+          {isAdmin && (
+            <IonButton onClick={() => setBookFor([])}>
+              <IonIcon
+                slot="icon-only"
+                icon={sparklesOutline}
+                aria-label={t('bookPoints.title')}
+              />
+            </IonButton>
+          )}
           <IonButton
             onClick={() => {
               setTeamName('');
@@ -229,6 +252,33 @@ export function MemberPage() {
         </>
       )}
 
+      {/* UC-021: Buchen und Korrigieren – dasselbe Blatt, zwei Wege. */}
+      <BookPointsModal
+        isOpen={bookFor !== null || correcting !== null}
+        members={all.map((member) => ({
+          id: member.id,
+          displayName: member.display_name,
+        }))}
+        preselected={bookFor ?? []}
+        correcting={correcting}
+        correctingLabel={
+          correcting ? bookingLabel(correcting, ruleLabels.data ?? []) : undefined
+        }
+        onDismiss={() => {
+          setBookFor(null);
+          setCorrecting(null);
+        }}
+        onDone={(count, corrected) => {
+          setBookFor(null);
+          setCorrecting(null);
+          toast.success(
+            corrected
+              ? t('bookPoints.corrected')
+              : t('bookPoints.booked', { count }),
+          );
+        }}
+      />
+
       {/* Mitgliedsdetails (Schritt 4–7) */}
       <FormModal
         isOpen={open !== null}
@@ -304,6 +354,71 @@ export function MemberPage() {
                 ))
               )}
             </ListSection>
+
+            {/* UC-021 Schritt 1 und A1: der Ledger dieses Mitglieds. Ihn sieht
+                seit `0037` nur der Vorstand – und er sieht ihn, weil er ihn
+                führt. */}
+            {isAdmin && (
+              <ListSection
+                title={t('bookPoints.ledger')}
+                footnote={t('bookPoints.ledgerHint')}
+                action={
+                  <IonButton
+                    fill="clear"
+                    size="small"
+                    onClick={() => {
+                      // Blätter werden nacheinander gezeigt, nicht ineinander:
+                      // Ein Blatt im Blatt ist auf iOS kein Muster.
+                      const id = open.id;
+                      setOpen(null);
+                      setBookFor([id]);
+                    }}
+                  >
+                    {t('bookPoints.book')}
+                  </IonButton>
+                }
+              >
+                {ledger.isLoading ? (
+                  <IonItem>
+                    <IonNote>{t('common.loading')}</IonNote>
+                  </IonItem>
+                ) : (ledger.data ?? []).length === 0 ? (
+                  <IonItem>
+                    <IonNote>{t('common.empty')}</IonNote>
+                  </IonItem>
+                ) : (
+                  (ledger.data ?? []).slice(0, 10).map((entry) => (
+                    <IonItem key={entry.id}>
+                      <IonLabel className="ion-text-wrap">
+                        <h2>{bookingLabel(entry, ruleLabels.data ?? [])}</h2>
+                        <IonNote>{formatDateTime(entry.created_at)}</IonNote>
+                      </IonLabel>
+                      <IonNote
+                        slot="end"
+                        color={entry.points >= 0 ? 'primary' : 'danger'}
+                      >
+                        {entry.points >= 0 ? `+${entry.points}` : entry.points}
+                      </IonNote>
+                      {/* Eine Gegenbuchung wird nicht ihrerseits ausgeglichen. */}
+                      {entry.source_type !== 'correction' && (
+                        <IonButton
+                          slot="end"
+                          size="small"
+                          fill="clear"
+                          color="medium"
+                          onClick={() => {
+                            setOpen(null);
+                            setCorrecting(entry);
+                          }}
+                        >
+                          {t('bookPoints.correct')}
+                        </IonButton>
+                      )}
+                    </IonItem>
+                  ))
+                )}
+              </ListSection>
+            )}
           </>
         )}
       </FormModal>

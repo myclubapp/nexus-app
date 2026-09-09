@@ -731,5 +731,36 @@
     "bookings_other": "{{count}} écritures",
     "sum": "Somme de la sélection : {{points}}",
     "empty": "Aucune écriture pour cette sélection"
+  },
+  "bookPoints": {
+    "title": "Attribuer des points",
+    "book": "Attribuer",
+    "booked_one": "{{count}} écriture créée",
+    "booked_other": "{{count}} écritures créées",
+    "who": "Pour qui",
+    "whoHint": "Plusieurs personnes reçoivent la même valeur et la même note.",
+    "members": "Membres",
+    "what": "Pour quoi",
+    "pillar": "Pilier",
+    "points": "Points",
+    "pointsHint": "Un retrait ne se fait pas ici, mais comme correction d’une écriture existante.",
+    "noteTitle": "Motif",
+    "note": "À quoi correspondent ces points ?",
+    "noteHint": "Sans motif, il restera dans un an un chiffre que plus personne ne sait expliquer.",
+    "ledger": "Écritures de points",
+    "ledgerHint": "Les écritures ne sont jamais modifiées ni supprimées. Une correction est une contre-écriture supplémentaire.",
+    "correctTitle": "Corriger l’écriture",
+    "correct": "Corriger",
+    "corrected": "Compensé. L’écriture d’origine reste en place.",
+    "original": "Écriture d’origine",
+    "counterBooking": "Contre-écriture",
+    "reason": "Justification",
+    "problem": {
+      "noMembers": "Choisis au moins une personne.",
+      "noteMissing": "Chaque écriture manuelle indique son motif.",
+      "pointsNotPositive": "La valeur est supérieure à zéro. Un retrait ne se fait que par correction.",
+      "tooManyMembers": "Au maximum 100 personnes à la fois.",
+      "reasonMissing": "Une correction va avec sa justification."
+    }
   }
 }

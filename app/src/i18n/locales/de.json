@@ -731,5 +731,36 @@
     "bookings_other": "{{count}} Buchungen",
     "sum": "Summe der Auswahl: {{points}}",
     "empty": "Zu dieser Auswahl gibt es keine Buchung"
+  },
+  "bookPoints": {
+    "title": "Punkte buchen",
+    "book": "Buchen",
+    "booked_one": "{{count}} Buchung erstellt",
+    "booked_other": "{{count}} Buchungen erstellt",
+    "who": "Für wen",
+    "whoHint": "Mehrere Personen bekommen denselben Wert und dieselbe Notiz.",
+    "members": "Mitglieder",
+    "what": "Wofür",
+    "pillar": "Säule",
+    "points": "Punkte",
+    "pointsHint": "Ein Abzug entsteht nicht hier, sondern als Korrektur einer bestehenden Buchung.",
+    "noteTitle": "Anlass",
+    "note": "Wofür sind diese Punkte?",
+    "noteHint": "Ohne Anlass steht in einem Jahr eine Zahl da, die niemand mehr erklären kann.",
+    "ledger": "Punktebuchungen",
+    "ledgerHint": "Buchungen werden nie geändert oder gelöscht. Eine Korrektur ist eine zusätzliche Gegenbuchung.",
+    "correctTitle": "Buchung korrigieren",
+    "correct": "Korrigieren",
+    "corrected": "Ausgeglichen. Die ursprüngliche Buchung bleibt stehen.",
+    "original": "Ursprüngliche Buchung",
+    "counterBooking": "Gegenbuchung",
+    "reason": "Begründung",
+    "problem": {
+      "noMembers": "Wähle mindestens eine Person aus.",
+      "noteMissing": "Jede Buchung von Hand nennt ihren Anlass.",
+      "pointsNotPositive": "Der Wert ist grösser als null. Ein Abzug entsteht nur als Korrektur.",
+      "tooManyMembers": "Höchstens 100 Personen auf einmal.",
+      "reasonMissing": "Zu einer Korrektur gehört ihre Begründung."
+    }
   }
 }

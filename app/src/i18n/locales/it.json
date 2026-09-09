@@ -731,5 +731,36 @@
     "bookings_other": "{{count}} registrazioni",
     "sum": "Somma della selezione: {{points}}",
     "empty": "Nessuna registrazione per questa selezione"
+  },
+  "bookPoints": {
+    "title": "Assegnare punti",
+    "book": "Assegnare",
+    "booked_one": "{{count}} registrazione creata",
+    "booked_other": "{{count}} registrazioni create",
+    "who": "A chi",
+    "whoHint": "Più persone ricevono lo stesso valore e la stessa nota.",
+    "members": "Membri",
+    "what": "Per che cosa",
+    "pillar": "Pilastro",
+    "points": "Punti",
+    "pointsHint": "Una detrazione non nasce qui, ma come correzione di una registrazione esistente.",
+    "noteTitle": "Motivo",
+    "note": "A che cosa servono questi punti?",
+    "noteHint": "Senza motivo tra un anno resta un numero che nessuno sa più spiegare.",
+    "ledger": "Registrazioni di punti",
+    "ledgerHint": "Le registrazioni non vengono mai modificate né cancellate. Una correzione è una contro-registrazione in più.",
+    "correctTitle": "Correggere la registrazione",
+    "correct": "Correggere",
+    "corrected": "Compensato. La registrazione originale resta.",
+    "original": "Registrazione originale",
+    "counterBooking": "Contro-registrazione",
+    "reason": "Motivazione",
+    "problem": {
+      "noMembers": "Scegli almeno una persona.",
+      "noteMissing": "Ogni registrazione manuale indica il suo motivo.",
+      "pointsNotPositive": "Il valore è maggiore di zero. Una detrazione nasce solo come correzione.",
+      "tooManyMembers": "Al massimo 100 persone alla volta.",
+      "reasonMissing": "A una correzione serve la sua motivazione."
+    }
   }
 }

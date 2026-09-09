@@ -731,5 +731,36 @@
     "bookings_other": "{{count}} bookings",
     "sum": "Sum of the selection: {{points}}",
     "empty": "No booking for this selection"
+  },
+  "bookPoints": {
+    "title": "Book points",
+    "book": "Book",
+    "booked_one": "{{count}} booking created",
+    "booked_other": "{{count}} bookings created",
+    "who": "For whom",
+    "whoHint": "Several people receive the same value and the same note.",
+    "members": "Members",
+    "what": "What for",
+    "pillar": "Pillar",
+    "points": "Points",
+    "pointsHint": "A deduction does not start here, but as a correction of an existing booking.",
+    "noteTitle": "Reason",
+    "note": "What are these points for?",
+    "noteHint": "Without a reason, a year from now there is a number nobody can explain.",
+    "ledger": "Point bookings",
+    "ledgerHint": "Bookings are never changed or deleted. A correction is an additional counter-booking.",
+    "correctTitle": "Correct booking",
+    "correct": "Correct",
+    "corrected": "Balanced out. The original booking stays.",
+    "original": "Original booking",
+    "counterBooking": "Counter-booking",
+    "reason": "Justification",
+    "problem": {
+      "noMembers": "Choose at least one person.",
+      "noteMissing": "Every manual booking states its reason.",
+      "pointsNotPositive": "The value is greater than zero. A deduction only happens as a correction.",
+      "tooManyMembers": "At most 100 people at a time.",
+      "reasonMissing": "A correction goes with its justification."
+    }
   }
 }
