@@ -1358,6 +1358,7 @@ export type Database = {
       default_season_start: { Args: { p_club_kind: string }; Returns: string }
       delete_my_account: { Args: never; Returns: undefined }
       detect_health_signals: { Args: { p_club_id?: string }; Returns: number }
+      dimension_of_pillar: { Args: { p_pillar: number }; Returns: string }
       event_roster: {
         Args: { p_event_id: string }
         Returns: {
@@ -1625,6 +1626,17 @@ export type Database = {
           p_phone_public?: boolean
         }
         Returns: undefined
+      }
+      value_dimensions: {
+        Args: { p_club_id: string; p_member_id?: string }
+        Returns: {
+          club_value: number
+          collected: boolean
+          dimension: string
+          group_size: number
+          own_value: number
+          team_value: number
+        }[]
       }
       withdraw_join_request: {
         Args: { p_request_id: string }

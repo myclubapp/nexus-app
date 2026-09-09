@@ -874,5 +874,45 @@
     "optedOut_one": "Turned off. {{count}} existing signal was deleted.",
     "optedOut_other": "Turned off. {{count}} existing signals were deleted.",
     "optedIn": "Turned back on. Nothing appears retroactively."
+  },
+  "dimensions": {
+    "title": "My strengths",
+    "leadTitle": "Strengths as a basis for talking",
+    "chartDescription": "Radar chart of the five value dimensions with comparison lines for team and club.",
+    "legend": "Area: you. Dashed: your team. Finely dotted: the club. There is no overall grade and no rank.",
+    "overview": "The five dimensions",
+    "strongest": "Your strongest side: {{name}}",
+    "tooEarly": "The picture fills up with your first contributions.",
+    "comparison": "Team {{team}} · Club {{club}}",
+    "noComparison": "The group is too small for a comparison",
+    "notCollected": "not collected",
+    "madeOf": "Where this comes from",
+    "howToGrow": "What makes it grow",
+    "engagement": {
+      "title": "Engagement",
+      "source": "From training engagement and competition.",
+      "grow": "Being there – and replying to events so the planning holds."
+    },
+    "volunteering": {
+      "title": "Volunteering",
+      "source": "From volunteer work and the marketplace.",
+      "grow": "Take a shift or a task from the marketplace."
+    },
+    "finance": {
+      "title": "Finance",
+      "source": "From payment status. This module is not in service yet.",
+      "grow": "Once invoices arrive, paying on time will count here."
+    },
+    "network": {
+      "title": "Network",
+      "source": "From club life – everything that holds the club together.",
+      "grow": "Join the occasions that are not the sport."
+    },
+    "loyalty": {
+      "title": "Loyalty",
+      "source": "From growth, loyalty and reliability.",
+      "grow": "Stay with it – and say yes to what you will keep."
+    },
+    "leadHint": "Shows the same five dimensions the member sees – no rank, no export."
   }
 }

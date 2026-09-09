@@ -874,5 +874,45 @@
     "optedOut_one": "Désactivé. {{count}} signalement existant a été supprimé.",
     "optedOut_other": "Désactivé. {{count}} signalements existants ont été supprimés.",
     "optedIn": "Réactivé. Rien ne naît rétroactivement."
+  },
+  "dimensions": {
+    "title": "Mes forces",
+    "leadTitle": "Forces comme base d’échange",
+    "chartDescription": "Diagramme en toile des cinq dimensions de valeur avec les lignes de comparaison équipe et club.",
+    "legend": "Surface : toi. Tirets : ton équipe. Pointillés fins : le club. Il n’y a ni note globale ni classement.",
+    "overview": "Les cinq dimensions",
+    "strongest": "Ton point fort : {{name}}",
+    "tooEarly": "L’image se remplit avec tes premières contributions.",
+    "comparison": "Équipe {{team}} · Club {{club}}",
+    "noComparison": "Le groupe est trop petit pour une comparaison",
+    "notCollected": "non collecté",
+    "madeOf": "D’où cela vient",
+    "howToGrow": "Ce qui le fait grandir",
+    "engagement": {
+      "title": "Engagement",
+      "source": "De l’engagement à l’entraînement et en compétition.",
+      "grow": "Être là – et répondre aux rendez-vous pour que la planification tienne."
+    },
+    "volunteering": {
+      "title": "Bénévolat",
+      "source": "De l’engagement bénévole et du marché.",
+      "grow": "Prendre un créneau ou une tâche au marché."
+    },
+    "finance": {
+      "title": "Finances",
+      "source": "De l’état des paiements. Ce module n’est pas encore en service.",
+      "grow": "Dès que les factures arriveront, le paiement à temps comptera ici."
+    },
+    "network": {
+      "title": "Réseau",
+      "source": "De la vie du club – tout ce qui le tient ensemble.",
+      "grow": "Participer aux moments qui ne sont pas du sport."
+    },
+    "loyalty": {
+      "title": "Fidélité",
+      "source": "De la croissance, de la fidélité et de la fiabilité.",
+      "grow": "Tenir dans la durée – et confirmer ce que tu tiendras."
+    },
+    "leadHint": "Montre les mêmes cinq dimensions qu’au membre lui-même – sans classement ni export."
   }
 }

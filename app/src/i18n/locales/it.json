@@ -874,5 +874,45 @@
     "optedOut_one": "Disattivato. {{count}} segnalazione esistente è stata cancellata.",
     "optedOut_other": "Disattivato. {{count}} segnalazioni esistenti sono state cancellate.",
     "optedIn": "Riattivato. Nulla nasce retroattivamente."
+  },
+  "dimensions": {
+    "title": "I miei punti forti",
+    "leadTitle": "Punti forti come base di dialogo",
+    "chartDescription": "Diagramma a rete delle cinque dimensioni di valore con le linee di confronto di squadra e società.",
+    "legend": "Area: tu. Tratteggio: la tua squadra. Punteggiato fine: la società. Non c’è né un voto complessivo né una classifica.",
+    "overview": "Le cinque dimensioni",
+    "strongest": "Il tuo lato più forte: {{name}}",
+    "tooEarly": "L’immagine si riempie con i tuoi primi contributi.",
+    "comparison": "Squadra {{team}} · Società {{club}}",
+    "noComparison": "Il gruppo è troppo piccolo per un confronto",
+    "notCollected": "non rilevato",
+    "madeOf": "Da che cosa nasce",
+    "howToGrow": "Che cosa lo fa crescere",
+    "engagement": {
+      "title": "Impegno",
+      "source": "Dall’impegno negli allenamenti e nelle gare.",
+      "grow": "Esserci – e rispondere agli appuntamenti, così la pianificazione tiene."
+    },
+    "volunteering": {
+      "title": "Volontariato",
+      "source": "Dall’impegno volontario e dal mercato.",
+      "grow": "Prendere un turno o un compito dal mercato."
+    },
+    "finance": {
+      "title": "Finanze",
+      "source": "Dallo stato dei pagamenti. Questo modulo non è ancora in funzione.",
+      "grow": "Appena arriveranno le fatture, qui conterà il pagamento puntuale."
+    },
+    "network": {
+      "title": "Rete",
+      "source": "Dalla vita sociale – tutto ciò che tiene insieme la società.",
+      "grow": "Partecipare ai momenti che non sono sport."
+    },
+    "loyalty": {
+      "title": "Fedeltà",
+      "source": "Da crescita, fedeltà e affidabilità.",
+      "grow": "Restare nel tempo – e confermare ciò che poi mantieni."
+    },
+    "leadHint": "Mostra le stesse cinque dimensioni che vede il membro – senza classifica e senza esportazione."
   }
 }

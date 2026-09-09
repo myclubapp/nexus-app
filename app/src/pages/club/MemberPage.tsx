@@ -355,6 +355,18 @@ export function MemberPage() {
               )}
             </ListSection>
 
+            {/* UC-024 A4: dieselbe Ansicht als Gesprächsgrundlage. Ohne
+                Einstieg wäre die Führungssicht gebaut und unerreichbar. */}
+            <ListSection footnote={t('dimensions.leadHint')}>
+              <IonItem
+                button
+                detail
+                routerLink={`/tabs/profile/strengths?member=${open.id}`}
+              >
+                <IonLabel>{t('dimensions.leadTitle')}</IonLabel>
+              </IonItem>
+            </ListSection>
+
             {/* UC-021 Schritt 1 und A1: der Ledger dieses Mitglieds. Ihn sieht
                 seit `0037` nur der Vorstand – und er sieht ihn, weil er ihn
                 führt. */}

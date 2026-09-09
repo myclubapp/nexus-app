@@ -6,7 +6,7 @@
 **Use Case Name:** Eigene Wertdimensionen einsehen
 **Primary Actor:** Mitglied
 **Goal:** Das eigene Beitragsprofil über fünf Dimensionen im Vergleich zu Team und Verein sehen
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

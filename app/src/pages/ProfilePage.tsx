@@ -126,6 +126,10 @@ export function ProfilePage() {
           </IonSelect>
         </IonItem>
 
+        <IonItem button routerLink="/tabs/profile/strengths" detail>
+          <IonLabel>{t('dimensions.title')}</IonLabel>
+        </IonItem>
+
         {/* UC-025: Für jedes Mitglied, nicht nur für Zuständige – es ist die
             Seite über die eigene Person. */}
         <IonItem button routerLink="/tabs/profile/transparency" detail>

@@ -874,5 +874,45 @@
     "optedOut_one": "Abbestellt. {{count}} bestehender Hinweis wurde gelöscht.",
     "optedOut_other": "Abbestellt. {{count}} bestehende Hinweise wurden gelöscht.",
     "optedIn": "Wieder eingeschaltet. Rückwirkend entsteht nichts."
+  },
+  "dimensions": {
+    "title": "Meine Stärken",
+    "leadTitle": "Stärken als Gesprächsgrundlage",
+    "chartDescription": "Netzdiagramm der fünf Wertdimensionen mit Vergleichslinien für Team und Verein.",
+    "legend": "Fläche: du. Gestrichelt: dein Team. Fein gepunktet: der Verein. Es gibt keine Gesamtnote und keinen Rang.",
+    "overview": "Die fünf Dimensionen",
+    "strongest": "Deine stärkste Seite: {{name}}",
+    "tooEarly": "Das Bild füllt sich mit deinen ersten Beiträgen.",
+    "comparison": "Team {{team}} · Verein {{club}}",
+    "noComparison": "Für einen Vergleich ist die Gruppe zu klein",
+    "notCollected": "nicht erhoben",
+    "madeOf": "Woraus das entsteht",
+    "howToGrow": "Was es wachsen lässt",
+    "engagement": {
+      "title": "Engagement",
+      "source": "Aus Trainingsengagement und Wettkampf.",
+      "grow": "Dabei sein – und auf Termine antworten, damit die Planung stimmt."
+    },
+    "volunteering": {
+      "title": "Ehrenamt",
+      "source": "Aus freiwilligem Engagement und dem Marktplatz.",
+      "grow": "Eine Schicht übernehmen oder eine Aufgabe aus dem Marktplatz."
+    },
+    "finance": {
+      "title": "Finanzen",
+      "source": "Aus dem Zahlungsstatus. Dieses Modul ist noch nicht in Betrieb.",
+      "grow": "Sobald Rechnungen dazukommen, zählt hier pünktliche Zahlung."
+    },
+    "network": {
+      "title": "Netzwerk",
+      "source": "Aus dem Vereinsleben – allem, was den Verein zusammenhält.",
+      "grow": "An Anlässen teilnehmen, die nicht der Sport sind."
+    },
+    "loyalty": {
+      "title": "Treue",
+      "source": "Aus Wachstum, Treue und Verlässlichkeit.",
+      "grow": "Dranbleiben – und zusagen, was du auch einhältst."
+    },
+    "leadHint": "Zeigt dieselben fünf Dimensionen wie dem Mitglied selbst – ohne Rang und ohne Export."
   }
 }

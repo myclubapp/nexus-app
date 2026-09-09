@@ -3,6 +3,7 @@ import { supabase, isConfigured } from '../lib/supabase';
 import { seasonLabel } from '../lib/season';
 import type { PointRule, PointTransaction } from '../lib/database.types';
 import type { LeaderboardEntry, LeaderboardPeriod } from '../lib/leaderboard';
+import type { Dimension, ValueDimension } from '../lib/dimensions';
 import { useClub } from './useClub';
 
 /** Punktestand und Verlauf des angemeldeten Mitglieds in der laufenden Saison. */
@@ -344,6 +345,38 @@ export function useReversePoints() {
       void queryClient.invalidateQueries({ queryKey: ['points-summary'] });
       void queryClient.invalidateQueries({ queryKey: ['points-history'] });
       void queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
+    },
+  });
+}
+
+/**
+ * Die fünf Wertdimensionen (UC-024).
+ *
+ * Gerechnet wird auf dem Server: Seit `0037` liest niemand mehr fremde
+ * Buchungen, ein Team-Durchschnitt liesse sich im Client gar nicht bilden.
+ * `memberId` ist die Führungssicht (A4) – wer sie sehen darf, entscheidet
+ * ebenfalls der Server.
+ */
+export function useValueDimensions(memberId?: string | null) {
+  const { activeClub, activeMembership } = useClub();
+
+  return useQuery({
+    queryKey: ['dimensions', activeClub?.id, memberId ?? activeMembership?.id],
+    enabled: Boolean(activeClub) && Boolean(activeMembership) && isConfigured,
+    queryFn: async (): Promise<ValueDimension[]> => {
+      const { data, error } = await supabase.rpc('value_dimensions', {
+        p_club_id: activeClub!.id,
+        p_member_id: memberId ?? undefined,
+      });
+      if (error) throw new Error(error.message);
+      return (data ?? []).map((row) => ({
+        dimension: row.dimension as Dimension,
+        ownValue: row.own_value,
+        teamValue: row.team_value,
+        clubValue: row.club_value,
+        collected: row.collected,
+        groupSize: row.group_size,
+      }));
     },
   });
 }
