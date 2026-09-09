@@ -97,6 +97,11 @@
     "agenda": "Agenda",
     "profile": "Profile"
   },
+  "menu": {
+    "open": "Open menu",
+    "administration": "Administration",
+    "switchClub": "Switch club"
+  },
   "dashboard": {
     "title": "Home",
     "greeting": "Hello {{name}}",
@@ -140,7 +145,7 @@
     "decline": "Decline",
     "declineReason": "Reason (optional)",
     "attending": "Attending",
-    "declined": "Declined",
+    "declined": "Decline saved",
     "undecided": "Undecided",
     "checkIn": "Check in",
     "scanQr": "Scan QR code",
@@ -157,7 +162,23 @@
       "gv": "Assembly",
       "social": "Event",
       "helper": "Volunteer duty"
-    }
+    },
+    "declineConfirm": "Send decline",
+    "declineReasonHint": "The reason helps the organisers plan. It stays with the event and is not analysed.",
+    "declineFreeText": "Your reason",
+    "declineReasons": {
+      "ill": "Ill",
+      "work": "Work",
+      "family": "Family",
+      "travel": "Away",
+      "injured": "Injured",
+      "other": "Other reason"
+    },
+    "declineEarly": "You are cancelling in good time – that counts towards your reliability.",
+    "declineLate": "The event starts soon. Declining never costs points.",
+    "declinedWithPoints": "Decline saved – {{points}} points for cancelling in good time",
+    "tally": "{{yes}} in · {{no}} out · {{open}} open",
+    "cancelledWithReason": "Cancelled: {{reason}}"
   },
   "profile": {
     "title": "Profile",

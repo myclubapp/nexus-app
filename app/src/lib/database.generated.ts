@@ -18,27 +18,30 @@ export type Database = {
         Row: {
           checked_in_at: string | null
           confirmed_by: string | null
+          decline_reason: string | null
           event_id: string
           member_id: string
-          reason: string | null
+          responded_at: string | null
           shift_id: string | null
           status: string
         }
         Insert: {
           checked_in_at?: string | null
           confirmed_by?: string | null
+          decline_reason?: string | null
           event_id: string
           member_id: string
-          reason?: string | null
+          responded_at?: string | null
           shift_id?: string | null
           status?: string
         }
         Update: {
           checked_in_at?: string | null
           confirmed_by?: string | null
+          decline_reason?: string | null
           event_id?: string
           member_id?: string
-          reason?: string | null
+          responded_at?: string | null
           shift_id?: string | null
           status?: string
         }
@@ -1164,6 +1167,7 @@ export type Database = {
         }
         Returns: string
       }
+      decline_is_early: { Args: { p_starts_at: string }; Returns: boolean }
       default_event_labels: { Args: { p_club_kind: string }; Returns: Json }
       default_season_start: { Args: { p_club_kind: string }; Returns: string }
       delete_my_account: { Args: never; Returns: undefined }
@@ -1213,6 +1217,13 @@ export type Database = {
       request_join: {
         Args: { p_club_id: string; p_team_id?: string }
         Returns: string
+      }
+      respond_to_event: {
+        Args: { p_event_id: string; p_reason?: string; p_status: string }
+        Returns: {
+          is_early: boolean
+          points_awarded: number
+        }[]
       }
       rule_limit_reached: {
         Args: {

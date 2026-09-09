@@ -97,6 +97,11 @@
     "agenda": "Agenda",
     "profile": "Profil"
   },
+  "menu": {
+    "open": "Menü öffnen",
+    "administration": "Verwaltung",
+    "switchClub": "Verein wechseln"
+  },
   "dashboard": {
     "title": "Start",
     "greeting": "Hallo {{name}}",
@@ -140,7 +145,7 @@
     "decline": "Absagen",
     "declineReason": "Grund (freiwillig)",
     "attending": "Zugesagt",
-    "declined": "Abgesagt",
+    "declined": "Absage gespeichert",
     "undecided": "Noch offen",
     "checkIn": "Einchecken",
     "scanQr": "QR-Code scannen",
@@ -157,7 +162,23 @@
       "gv": "Versammlung",
       "social": "Anlass",
       "helper": "Einsatz"
-    }
+    },
+    "declineConfirm": "Absage senden",
+    "declineReasonHint": "Der Grund hilft der Organisation zu planen. Er bleibt beim Termin und wird nicht ausgewertet.",
+    "declineFreeText": "Dein Grund",
+    "declineReasons": {
+      "ill": "Krank",
+      "work": "Arbeit",
+      "family": "Familie",
+      "travel": "Abwesend",
+      "injured": "Verletzt",
+      "other": "Anderer Grund"
+    },
+    "declineEarly": "Du meldest dich rechtzeitig ab – das zählt für deine Verlässlichkeit.",
+    "declineLate": "Der Termin beginnt bald. Eine Absage kostet nie Punkte.",
+    "declinedWithPoints": "Absage gespeichert – {{points}} Punkte für die rechtzeitige Abmeldung",
+    "tally": "{{yes}} zugesagt · {{no}} abgesagt · {{open}} offen",
+    "cancelledWithReason": "Abgesagt: {{reason}}"
   },
   "profile": {
     "title": "Profil",

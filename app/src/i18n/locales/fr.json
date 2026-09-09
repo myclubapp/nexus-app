@@ -97,6 +97,11 @@
     "agenda": "Agenda",
     "profile": "Profil"
   },
+  "menu": {
+    "open": "Ouvrir le menu",
+    "administration": "Administration",
+    "switchClub": "Changer de société"
+  },
   "dashboard": {
     "title": "Accueil",
     "greeting": "Bonjour {{name}}",
@@ -140,7 +145,7 @@
     "decline": "Je ne peux pas",
     "declineReason": "Motif (facultatif)",
     "attending": "Inscrit",
-    "declined": "Décliné",
+    "declined": "Refus enregistré",
     "undecided": "Sans réponse",
     "checkIn": "S'enregistrer",
     "scanQr": "Scanner le code QR",
@@ -157,7 +162,23 @@
       "gv": "Assemblée",
       "social": "Événement",
       "helper": "Engagement"
-    }
+    },
+    "declineConfirm": "Envoyer le refus",
+    "declineReasonHint": "Le motif aide à planifier. Il reste au rendez-vous et n’est pas analysé.",
+    "declineFreeText": "Votre motif",
+    "declineReasons": {
+      "ill": "Malade",
+      "work": "Travail",
+      "family": "Famille",
+      "travel": "Absent·e",
+      "injured": "Blessé·e",
+      "other": "Autre motif"
+    },
+    "declineEarly": "Vous vous désinscrivez à temps – cela compte pour votre fiabilité.",
+    "declineLate": "Le rendez-vous commence bientôt. Un refus ne coûte jamais de points.",
+    "declinedWithPoints": "Refus enregistré – {{points}} points pour la désinscription à temps",
+    "tally": "{{yes}} oui · {{no}} non · {{open}} sans réponse",
+    "cancelledWithReason": "Annulé: {{reason}}"
   },
   "profile": {
     "title": "Profil",

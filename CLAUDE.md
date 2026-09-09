@@ -75,8 +75,13 @@ supabase db push            # Migrationen deployen
 - **Ionic 9 verlangt React Router 6.** `<Route element={…}>` statt `component`,
   `<Navigate replace>` statt `<Redirect>`. Ältere Ionic-React-Beispiele im Netz
   zeigen die v5-Syntax und funktionieren hier nicht.
-- **Das verschachtelte Outlet in `TabsPage` braucht `ionPage`**, sonst
-  überlagern sich die Seitenübergänge.
+- **Das verschachtelte Outlet in `TabsPage` darf kein `ionPage` bekommen.**
+  `IonTabs` legt selbst einen `PageManager` um sich – das ist die Seite, die
+  das äussere Outlet einblendet. Mit `ionPage` wird zusätzlich das
+  `ion-router-outlet` zur Seite, startet mit `ion-page-invisible` und wird nie
+  eingeblendet: Die Tabs stehen, jeder Screen ist weiss. Der Fehler sieht aus
+  wie fehlende Daten, das DOM ist aber vollständig – `TabsPage.test.tsx` hält
+  ihn fest.
 - **Generierte Typen und Handarbeit sind getrennt.** `types:generate`
   überschreibt `src/lib/database.generated.ts` vollständig – dort geht jede
   Änderung von Hand verloren. Die Aufzählungen hinter den `text`-Spalten

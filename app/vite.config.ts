@@ -1,8 +1,63 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    /**
+     * Die App läuft auf drei Wegen: als iOS-App, als Android-App und im
+     * Browser. Der Browser-Weg ist keine Notlösung – auf dem Laptop des
+     * Vorstands ist er der Hauptweg (NFR-032). Er braucht deshalb ein
+     * Manifest, Symbole und einen Offline-Vorrat wie die nativen Apps.
+     */
+    VitePWA({
+      // Eine neue Fassung ersetzt die alte beim nächsten Start, ohne dass
+      // jemand eine Aktualisierungsfrage beantworten muss.
+      registerType: 'autoUpdate',
+      // Die Registrierung steht von Hand in main.tsx, weil sie nur im
+      // Browser stattfinden darf – siehe den Kommentar dort.
+      injectRegister: null,
+      includeAssets: ['favicon.svg', 'apple-touch-icon-180x180.png'],
+      manifest: {
+        id: '/',
+        name: 'myclub',
+        short_name: 'myclub',
+        description: 'Engagement-Plattform für Vereine',
+        lang: 'de',
+        start_url: '/',
+        scope: '/',
+        display: 'standalone',
+        // Kein Hochformat erzwingen: Die App soll auch auf dem Tablet im
+        // Querformat und auf dem Laptop brauchbar sein.
+        orientation: 'any',
+        background_color: '#1d4ed8',
+        // Die Vereinsfarbe kommt erst zur Laufzeit aus clubs.settings.theme
+        // (src/lib/theme.ts); das Manifest ist statisch und trägt deshalb die
+        // Grundfarbe aus theme/variables.css.
+        theme_color: '#1d4ed8',
+        icons: [
+          { src: 'pwa-64x64.png', sizes: '64x64', type: 'image/png' },
+          { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
+          {
+            src: 'maskable-icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
+          { src: 'favicon.svg', sizes: 'any', type: 'image/svg+xml' },
+        ],
+      },
+      workbox: {
+        // Nur die eigenen Bausteine. Antworten von Supabase bleiben bewusst
+        // ungecacht: Ein Punktestand aus dem Vorrat wäre falsch, und ein
+        // zwischengespeichertes Token wäre ein Sicherheitsproblem.
+        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        cleanupOutdatedCaches: true,
+      },
+    }),
+  ],
   server: {
     port: 5173,
     // Needed when testing the dev server from a phone on the same network.

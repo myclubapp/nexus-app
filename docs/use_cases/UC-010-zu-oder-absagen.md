@@ -6,7 +6,7 @@
 **Use Case Name:** Auf einen Termin zu- oder absagen
 **Primary Actor:** Mitglied
 **Goal:** Der Organisation rechtzeitig mitteilen, ob man an einem Termin teilnimmt
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

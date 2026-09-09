@@ -97,6 +97,11 @@
     "agenda": "Agenda",
     "profile": "Profilo"
   },
+  "menu": {
+    "open": "Apri il menu",
+    "administration": "Amministrazione",
+    "switchClub": "Cambia società"
+  },
   "dashboard": {
     "title": "Home",
     "greeting": "Ciao {{name}}",
@@ -140,7 +145,7 @@
     "decline": "Non posso",
     "declineReason": "Motivo (facoltativo)",
     "attending": "Iscritto",
-    "declined": "Rifiutato",
+    "declined": "Disdetta salvata",
     "undecided": "Ancora aperto",
     "checkIn": "Registrati",
     "scanQr": "Scansiona il codice QR",
@@ -157,7 +162,23 @@
       "gv": "Assemblea",
       "social": "Evento",
       "helper": "Impegno"
-    }
+    },
+    "declineConfirm": "Invia la disdetta",
+    "declineReasonHint": "Il motivo aiuta a pianificare. Resta all’appuntamento e non viene analizzato.",
+    "declineFreeText": "Il tuo motivo",
+    "declineReasons": {
+      "ill": "Malato/a",
+      "work": "Lavoro",
+      "family": "Famiglia",
+      "travel": "Assente",
+      "injured": "Infortunato/a",
+      "other": "Altro motivo"
+    },
+    "declineEarly": "Ti disdici per tempo – conta per la tua affidabilità.",
+    "declineLate": "L’appuntamento inizia presto. Una disdetta non costa mai punti.",
+    "declinedWithPoints": "Disdetta salvata – {{points}} punti per la disdetta puntuale",
+    "tally": "{{yes}} sì · {{no}} no · {{open}} senza risposta",
+    "cancelledWithReason": "Annullato: {{reason}}"
   },
   "profile": {
     "title": "Profilo",

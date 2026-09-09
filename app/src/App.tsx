@@ -1,4 +1,9 @@
-import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
+import {
+  IonApp,
+  IonRouterOutlet,
+  IonSplitPane,
+  setupIonicReact,
+} from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Navigate, Route } from 'react-router-dom';
 
@@ -28,6 +33,7 @@ import { AuthCallbackPage } from './pages/auth/AuthCallbackPage';
 import { OnboardingPage } from './pages/onboarding/OnboardingPage';
 import { JoinByInvitePage } from './pages/onboarding/JoinByInvitePage';
 import { TabsPage } from './pages/TabsPage';
+import { AppMenu, APP_CONTENT_ID } from './components/AppMenu';
 import {
   RedirectIfClubMember,
   RedirectIfSignedIn,
@@ -49,42 +55,49 @@ export default function App() {
       <AuthProvider>
         <ClubProvider>
           <IonReactRouter>
-            <IonRouterOutlet>
-              <Route
-                path="/login"
-                element={
-                  <RedirectIfSignedIn>
-                    <LoginPage />
-                  </RedirectIfSignedIn>
-                }
-              />
-              <Route path="/auth/callback" element={<AuthCallbackPage />} />
-              {/* Ohne Anmeldeschranke: Der Einladungslink erreicht Gäste, die
-                  noch kein Konto haben (UC-002). Die Seite selbst führt bei
-                  Bedarf durch die Anmeldung. */}
-              <Route path="/invite/:code" element={<JoinByInvitePage />} />
-              <Route
-                path="/onboarding"
-                element={
-                  <RequireAuth>
-                    <RedirectIfClubMember>
-                      <OnboardingPage />
-                    </RedirectIfClubMember>
-                  </RequireAuth>
-                }
-              />
-              <Route
-                path="/tabs/*"
-                element={
-                  <RequireAuth>
-                    <RequireClub>
-                      <TabsPage />
-                    </RequireClub>
-                  </RequireAuth>
-                }
-              />
-              <Route path="/" element={<Navigate to="/tabs/dashboard" replace />} />
-            </IonRouterOutlet>
+            {/* Ab lg (992 px) steht das Menü als Spalte neben dem Inhalt,
+                darunter fährt es über den IonMenuButton ein. Das Hauptfeld
+                muss ein direktes Kind mit genau dieser id sein – sonst warnt
+                Ionic und die Spalte legt sich über den Inhalt. */}
+            <IonSplitPane contentId={APP_CONTENT_ID} when="lg">
+              <AppMenu />
+              <IonRouterOutlet id={APP_CONTENT_ID}>
+                <Route
+                  path="/login"
+                  element={
+                    <RedirectIfSignedIn>
+                      <LoginPage />
+                    </RedirectIfSignedIn>
+                  }
+                />
+                <Route path="/auth/callback" element={<AuthCallbackPage />} />
+                {/* Ohne Anmeldeschranke: Der Einladungslink erreicht Gäste, die
+                    noch kein Konto haben (UC-002). Die Seite selbst führt bei
+                    Bedarf durch die Anmeldung. */}
+                <Route path="/invite/:code" element={<JoinByInvitePage />} />
+                <Route
+                  path="/onboarding"
+                  element={
+                    <RequireAuth>
+                      <RedirectIfClubMember>
+                        <OnboardingPage />
+                      </RedirectIfClubMember>
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/tabs/*"
+                  element={
+                    <RequireAuth>
+                      <RequireClub>
+                        <TabsPage />
+                      </RequireClub>
+                    </RequireAuth>
+                  }
+                />
+                <Route path="/" element={<Navigate to="/tabs/dashboard" replace />} />
+              </IonRouterOutlet>
+            </IonSplitPane>
           </IonReactRouter>
         </ClubProvider>
       </AuthProvider>

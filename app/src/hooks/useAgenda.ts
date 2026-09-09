@@ -40,26 +40,46 @@ export function useAgenda(range: Range = 'upcoming') {
   });
 }
 
-/** Zu- und Absagen. Der Grund ist freiwillig und bleibt bei der Person. */
+export interface EventResponseResult {
+  pointsAwarded: number;
+  isEarly: boolean;
+}
+
+/**
+ * Zu- oder absagen (UC-010).
+ *
+ * Läuft über `respond_to_event()` und nicht mehr als direkter Upsert: Die
+ * Frist der Abmeldeprämie (BR-040), die Sperre für abgesagte und begonnene
+ * Termine (A3, BR-038) und die Buchung gehören auf den Server. Ein Client, der
+ * die Frist selbst rechnet, kann sie auch umgehen.
+ */
 export function useRespondToEvent() {
   const queryClient = useQueryClient();
   const { activeClub, activeMembership } = useClub();
 
   return useMutation({
-    mutationFn: async (input: { eventId: string; status: AttendanceStatus }) => {
-      if (!activeMembership) throw new Error('Kein aktives Mitglied');
-      const { error } = await supabase.from('attendance').upsert(
-        {
-          event_id: input.eventId,
-          member_id: activeMembership.id,
-          status: input.status,
-        },
-        { onConflict: 'event_id,member_id' },
-      );
+    mutationFn: async (input: {
+      eventId: string;
+      status: Extract<AttendanceStatus, 'registered' | 'excused'>;
+      reason?: string | null;
+    }): Promise<EventResponseResult> => {
+      const { data, error } = await supabase.rpc('respond_to_event', {
+        p_event_id: input.eventId,
+        p_status: input.status,
+        p_reason: input.reason ?? undefined,
+      });
       if (error) throw new Error(error.message);
+
+      const row = data?.[0];
+      return {
+        pointsAwarded: row?.points_awarded ?? 0,
+        isEarly: row?.is_early ?? false,
+      };
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['agenda', activeClub?.id] });
+      // Eine rechtzeitige Absage kann Punkte gebucht haben.
+      void queryClient.invalidateQueries({ queryKey: ['points', activeMembership?.id] });
     },
   });
 }

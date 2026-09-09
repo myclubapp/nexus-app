@@ -46,7 +46,8 @@ und Router in einem Aufruf.
 Sechs Eigenheiten, die reihenweise Tests scheitern lassen, wenn man sie nicht
 kennt. Sie sind ausgemessen, nicht vermutet:
 
-1. **Eigenschaften kommen als DOM-Properties an, nicht als Attribute.**
+1. **Eigenschaften kommen als DOM-Properties an, nicht als Attribute** – und
+   längst nicht alle kommen an.
    `<IonButton disabled>` ergibt `element.disabled === true`, aber
    `getAttribute('disabled') === null` und `outerHTML` zeigt
    `<ion-button>`. Für Zusicherungen gibt es `ionProp()` aus
@@ -56,6 +57,29 @@ kennt. Sie sind ausgemessen, nicht vermutet:
    expect(ionProp<boolean>(button, 'disabled')).toBe(true);   // richtig
    expect(button).toBeDisabled();                             // schlägt fehl
    ```
+
+   **`ionProp()` ist nur so weit verlässlich, wie die Eigenschaft überhaupt
+   ankommt** – und das ist von Komponente zu Komponente verschieden.
+   Ausgemessen:
+
+   | Element             | Eigenschaft  | Ergebnis                            |
+   | ------------------- | ------------ | ----------------------------------- |
+   | `ion-item`          | `routerLink` | kommt an                            |
+   | `ion-button`        | `disabled`   | kommt an                            |
+   | `ion-menu`          | `contentId`  | `undefined`                         |
+   | `ion-select`        | `label`      | `undefined`                         |
+   | `ion-input`         | `value`      | `undefined`                         |
+   | `ion-menu-toggle`   | `autoHide`   | **`true`, obwohl `false` übergeben** |
+
+   Die letzte Zeile ist die gefährliche: Kommt eine Eigenschaft nicht an, liest
+   `ionProp()` **Stencils Vorgabe** – und die sieht aus wie ein echter Wert.
+   Ein Test darauf schlägt entweder immer fehl oder, schlimmer, hält die
+   Vorgabe für die eigene Absicht.
+
+   **Regel:** Vor einer Zusicherung auf eine Ionic-Eigenschaft einmal
+   nachmessen, ob sie ankommt. Kommt sie nicht an, wird stattdessen die
+   **Quelle** geprüft – so wie `AppMenu.test.tsx` es für `autoHide={false}`
+   und für die gemeinsame Kennung von Menü und `IonSplitPane` tut.
 
 2. **Stencil rendert nicht, also wirkt nichts.** Ein `disabled` Knopf ruft
    seinen `onClick` trotzdem auf, ein `IonModal` mit `isOpen={false}` hat

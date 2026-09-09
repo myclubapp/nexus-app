@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { ProfileEditForm } from './ProfileEditModal';
 import { renderWithProviders } from '../test/utils';
 import type { MyProfile } from '../hooks/useProfile';
@@ -51,13 +50,12 @@ describe('ProfileEditForm', () => {
     vi.clearAllMocks();
   });
 
-  it('übernimmt das geladene Profil in den Entwurf', async () => {
-    const user = userEvent.setup();
+  it('übernimmt das geladene Profil in den Entwurf', () => {
     renderWithProviders(<ProfileEditForm onDismiss={vi.fn()} onSaved={vi.fn()} />);
 
     // Die Werte selbst sind an einer Ionic-Eingabe nicht auslesbar; dass sie
     // ankommen, zeigt sich daran, womit das Formular speichert.
-    await user.click(screen.getByRole('button', { name: 'submit' }));
+    screen.getByRole('button', { name: 'submit' }).click();
 
     expect(save).toHaveBeenCalledWith(
       {
@@ -90,15 +88,14 @@ describe('ProfileEditForm', () => {
     expect(container.textContent).toContain('je Verein');
   });
 
-  it('lässt einen leeren Anzeigenamen nicht speichern (BR-031)', async () => {
+  it('lässt einen leeren Anzeigenamen nicht speichern (BR-031)', () => {
     profile = { ...profile!, displayName: '' };
-    const user = userEvent.setup();
     renderWithProviders(<ProfileEditForm onDismiss={vi.fn()} onSaved={vi.fn()} />);
 
     const submit = screen.getByRole('button', { name: 'submit' });
     expect(submit).toBeDisabled();
 
-    await user.click(submit);
+    submit.click();
     expect(save).not.toHaveBeenCalled();
   });
 
@@ -109,7 +106,7 @@ describe('ProfileEditForm', () => {
     expect(screen.getByRole('button', { name: 'submit' })).toBeDisabled();
   });
 
-  it('kommt mit einem Profil ohne Kontaktangaben zurecht', async () => {
+  it('kommt mit einem Profil ohne Kontaktangaben zurecht', () => {
     profile = {
       displayName: 'Anna Muster',
       email: null,
@@ -118,10 +115,9 @@ describe('ProfileEditForm', () => {
       phonePublic: false,
       leaderboardOptIn: true,
     };
-    const user = userEvent.setup();
     renderWithProviders(<ProfileEditForm onDismiss={vi.fn()} onSaved={vi.fn()} />);
 
-    await user.click(screen.getByRole('button', { name: 'submit' }));
+    screen.getByRole('button', { name: 'submit' }).click();
 
     // Leere Zeichenkette statt null: Sonst wechselt das Feld zwischen
     // gesteuert und ungesteuert und React verliert die Eingabe.

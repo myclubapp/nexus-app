@@ -15,6 +15,7 @@ import { addOutline } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { useAgenda, useRespondToEvent } from '../hooks/useAgenda';
 import { useClub } from '../hooks/useClub';
+import { useMembers } from '../hooks/useMembers';
 import { AppPage } from '../components/AppPage';
 import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
@@ -22,6 +23,8 @@ import { useToast } from '../hooks/useToast';
 import { formatDateTime } from '../lib/format';
 import { CheckInModal } from '../components/CheckInModal';
 import { EventFormModal } from '../components/EventFormModal';
+import { DeclineModal } from '../components/DeclineModal';
+import { canRespond, tallyAttendance } from '../lib/attendance';
 
 type Range = 'upcoming' | 'past';
 
@@ -32,7 +35,13 @@ export function AgendaPage() {
   const [range, setRange] = useState<Range>('upcoming');
   const [checkInEventId, setCheckInEventId] = useState<string | null>(null);
   const [isFormOpen, setFormOpen] = useState(false);
+  const [decliningEvent, setDecliningEvent] = useState<{
+    id: string;
+    startsAt: string;
+  } | null>(null);
 
+  const members = useMembers();
+  const activeMembers = (members.data ?? []).filter((m) => m.status !== 'left');
   const agenda = useAgenda(range);
   const respond = useRespondToEvent();
   const events = agenda.data ?? [];
@@ -81,6 +90,18 @@ export function AgendaPage() {
             const mine = event.attendance?.find(
               (entry) => entry.member_id === activeMembership?.id,
             );
+            const isCancelled = event.cancelled_at !== null;
+            const respondable = canRespond({
+              isCancelled,
+              hasStarted: new Date(event.starts_at) <= new Date(),
+            });
+            // Betroffen ist bei einem Team-Termin nur dieses Team, sonst der
+            // ganze Verein. Nähme man immer die Vereinsgrösse, stünde bei jedem
+            // Team-Termin eine zu hohe Zahl Unentschlossener.
+            const affectedCount = event.team_id
+              ? activeMembers.filter((m) => m.teamIds.includes(event.team_id!)).length
+              : activeMembers.length;
+            const tally = tallyAttendance(event.attendance ?? [], affectedCount);
             const shiftsFilled = event.attendance?.filter((a) => a.shift_id).length ?? 0;
             const shiftsNeeded =
               event.shifts?.reduce((sum, shift) => sum + shift.needed, 0) ?? 0;
@@ -105,7 +126,29 @@ export function AgendaPage() {
                     </p>
                   )}
 
-                  {range === 'upcoming' && (
+                  {/* Schritt 2: der Teilnehmerstand */}
+                  <p>
+                    <IonNote>
+                      {t('agenda.tally', {
+                        yes: tally.registered,
+                        no: tally.excused,
+                        open: tally.undecided,
+                      })}
+                    </IonNote>
+                  </p>
+
+                  {/* A3: Ein abgesagter Termin zeigt den Grund und sperrt. */}
+                  {isCancelled && (
+                    <p>
+                      <IonNote color="danger">
+                        {t('agenda.cancelledWithReason', {
+                          reason: event.cancelled_reason ?? '',
+                        })}
+                      </IonNote>
+                    </p>
+                  )}
+
+                  {range === 'upcoming' && respondable && (
                     <IonButtons>
                       <IonButton
                         size="small"
@@ -114,7 +157,10 @@ export function AgendaPage() {
                         onClick={() =>
                           respond.mutate(
                             { eventId: event.id, status: 'registered' },
-                            { onError: (cause) => toast.failure(cause.message) },
+                            {
+                              onSuccess: () => toast.success(t('agenda.attending')),
+                              onError: (cause) => toast.failure(cause.message),
+                            },
                           )
                         }
                       >
@@ -126,10 +172,7 @@ export function AgendaPage() {
                         fill={mine?.status === 'excused' ? 'solid' : 'outline'}
                         disabled={respond.isPending}
                         onClick={() =>
-                          respond.mutate(
-                            { eventId: event.id, status: 'excused' },
-                            { onError: (cause) => toast.failure(cause.message) },
-                          )
+                          setDecliningEvent({ id: event.id, startsAt: event.starts_at })
                         }
                       >
                         {t('agenda.decline')}
@@ -155,6 +198,32 @@ export function AgendaPage() {
       <CheckInModal
         eventId={checkInEventId}
         onDismiss={() => setCheckInEventId(null)}
+      />
+
+      <DeclineModal
+        isOpen={decliningEvent !== null}
+        startsAt={decliningEvent?.startsAt ?? ''}
+        isSubmitting={respond.isPending}
+        error={respond.error ? (respond.error as Error).message : null}
+        onDismiss={() => setDecliningEvent(null)}
+        onSubmit={(reason) => {
+          if (!decliningEvent) return;
+          respond.mutate(
+            { eventId: decliningEvent.id, status: 'excused', reason },
+            {
+              onSuccess: (result) => {
+                setDecliningEvent(null);
+                // A1 Schritt 4: Die Prämie wird genannt, wenn sie entstand.
+                toast.success(
+                  result.pointsAwarded > 0
+                    ? t('agenda.declinedWithPoints', { points: result.pointsAwarded })
+                    : t('agenda.declined'),
+                );
+              },
+              onError: (cause) => toast.failure(cause.message),
+            },
+          );
+        }}
       />
 
       <EventFormModal

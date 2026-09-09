@@ -28,15 +28,22 @@ import { PointRulePage } from './club/PointRulePage';
 
 /**
  * Fünf Tabs nach dem myclub-Vorbild (Architektur §8). Die Kindrouten sind
- * relativ zu /tabs; das verschachtelte Outlet braucht in Ionic 9 das
- * ionPage-Attribut, sonst überlagern sich die Seitenübergänge.
+ * relativ zu /tabs.
+ *
+ * Das verschachtelte Outlet bekommt bewusst kein `ionPage`: `IonTabs` legt
+ * selbst schon einen `PageManager` um sich – das ist die Seite, die das
+ * äussere Outlet einblendet. Mit `ionPage` würde zusätzlich das
+ * `ion-router-outlet` selbst zur Seite; sie startet mit
+ * `ion-page-invisible` und niemand blendet sie je ein. Sichtbar bliebe nur
+ * der Tab-Balken, der ausserhalb der Seite liegt – die Tabs stehen, jeder
+ * Screen ist weiss.
  */
 export function TabsPage() {
   const { t } = useTranslation();
 
   return (
     <IonTabs>
-      <IonRouterOutlet ionPage>
+      <IonRouterOutlet>
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="marketplace" element={<MarketplacePage />} />
         <Route path="leaderboard" element={<LeaderboardPage />} />

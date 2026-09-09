@@ -72,6 +72,41 @@ entworfen: Hauptaktion unten oder in der Kopfzeile rechts, Trefferflächen
 mindestens 44 × 44 px (Ionic hält das ein, solange nichts verkleinert wird),
 keine Ansicht, die Querformat oder Tablet voraussetzt.
 
+### Breite Bildschirme: eine Oberfläche, nicht zwei
+
+Mobile first heisst nicht «nur mobil». Der Vorstand arbeitet am Laptop, viele
+Mitglieder auf dem Tablet – dieselbe Oberfläche muss dort brauchbar sein
+(NFR-032). Der Unterschied ist genau **ein** Bauteil:
+
+| Breite            | Navigation                                                        |
+| ----------------- | ----------------------------------------------------------------- |
+| < 992 px (`lg`)   | Tab-Balken unten, Seitenleiste fährt über den `IonMenuButton` ein  |
+| ≥ 992 px (`lg`)   | Tab-Balken unten, Seitenleiste steht dauerhaft als Spalte daneben  |
+
+Umgesetzt ist das im `IonSplitPane` in `src/App.tsx`. Daraus folgen vier
+Regeln:
+
+- **Kein zweites Layout und keine eigene Breitenabfrage.** Weder
+  `window.innerWidth` noch eine `@media`-Regel, die Bauteile ein- und
+  ausblendet. Was sich mit der Breite ändert, ändert `IonSplitPane`
+  (`when="lg"`) oder das `autoHide` einer Ionic-Komponente.
+- **Die Seitenleiste ist nicht die Hauptnavigation.** Die fünf Bereiche bleiben
+  im Tab-Balken – auch auf dem Laptop. In die Seitenleiste (`AppMenu`) gehört,
+  was auf dem Telefon unter «Profil» begraben liegt: Konto, Vereinswechsel,
+  Verwaltung, Sprache, Abmelden.
+- **Der Menüknopf gehört in `AppPage`, nicht in die einzelne Seite.** Er steht
+  links in der Kopfzeile, sobald die Seite keinen Zurück-Knopf hat, und blendet
+  sich über `autoHide` selbst aus – ohne angemeldetes Menü (Anmeldung,
+  Onboarding) und sobald die Seitenleiste als Spalte steht.
+- **Ein Eintrag, der an zwei Stellen steht, ist eine Komponente.** Die
+  Verwaltungswege stehen in der Seitenleiste **und** auf der Profilseite; sie
+  sind deshalb `ClubAdminLinks` und werden dort eingehängt, nicht kopiert.
+
+Ein `IonMenuToggle` umschliesst immer einen **ganzen Abschnitt**, nie eine
+einzelne Zeile: Läge es um das einzelne `IonItem`, wäre jede Zeile Einzelkind
+ihres Wrappers und die Trennlinien der eingefassten Liste fielen weg. Und es
+trägt `autoHide={false}`, sonst ist die Spalte auf dem Laptop leer.
+
 ---
 
 ## 3. Komponenten-Inventar
@@ -89,6 +124,8 @@ Bestand in `src/components/`. Vor jedem neuen Bauteil hier nachsehen.
 | `StateViews`       | `EmptyState`, `ErrorState`, `NotConfiguredState`, `LoadingState`                                                                  |
 | `FirstStepsCard`   | Die drei ersten Schritte nach der Gründung (UC-001)                                                                               |
 | `RouteGuards`      | `RequireAuth`, `RequireClub`, `RedirectIfSignedIn`, `RedirectIfClubMember`                                                        |
+| `AppMenu`          | Seitenleiste im `IonSplitPane`: Konto, Vereinswechsel, Verwaltung, Sprache, Abmelden – Spalte ab `lg`, sonst Overlay              |
+| `ClubAdminLinks`   | Die Verwaltungswege des Vorstands als Listeneinträge; einmal definiert, in `AppMenu` und auf der Profilseite eingehängt            |
 | `LanguageSwitcher` | Sprachwahl über `IonSelect`                                                                                                       |
 | `CheckInModal`     | QR-Scan über `html5-qrcode`                                                                                                       |
 | `QrCode`           | QR-Code als Data-URL, ohne fremden Dienst (C-003)                                                                                 |
@@ -386,7 +423,44 @@ validiert und verzweigt, bleibt damit ungeprüft. Was geschehen soll, gehört
 deshalb als reine Funktion nach `src/lib/`; die Seite ruft sie auf und stellt
 das Ergebnis dar. Vorbild: `resolveSignInAction()` in `src/lib/authError.ts`.
 
-## 10. Ausdrücklich verboten
+## 10. Auslieferung: drei Wege, eine Codebasis
+
+Dasselbe `dist/` geht drei Wege: in die iOS-App, in die Android-App und in den
+Browser. Der Browser-Weg ist kein Abfallprodukt – auf dem Laptop des Vorstands
+ist er der Hauptweg. Er ist deshalb als **PWA** eingerichtet
+(`vite-plugin-pwa`, konfiguriert in `app/vite.config.ts`).
+
+- **Der Service Worker läuft nur im Browser.** Die Registrierung steht in
+  `src/main.tsx` hinter `Capacitor.isNativePlatform()`, das Plugin selbst auf
+  `injectRegister: null`. In den nativen Apps liefert Capacitor dieselben
+  Dateien lokal aus (`capacitor://localhost`, `https://localhost`); ein Service
+  Worker davor hielte dort eine zweite Kopie mit eigenem
+  Aktualisierungsrhythmus vor – die Fassung im Gerät käme dann nicht mehr aus
+  dem Store. Unter WKWebView registriert er sich ohnehin nicht.
+- **Nur eigene Bausteine kommen in den Vorrat.** `globPatterns` erfasst das
+  Build-Ergebnis. Antworten von Supabase bleiben ungecacht: Ein Punktestand aus
+  dem Vorrat wäre falsch, ein zwischengespeichertes Token ein
+  Sicherheitsproblem. Wer Laufzeit-Caching braucht, begründet es im
+  Umsetzungsplan.
+- **`registerType: 'autoUpdate'`.** Eine neue Fassung ersetzt die alte beim
+  nächsten Start. Es gibt keine Aktualisierungsfrage im UI – die wäre eine
+  Entscheidung, die niemand treffen will.
+- **Das Manifest trägt die Grundfarbe, nicht die Vereinsfarbe.** `theme_color`
+  und `background_color` stehen statisch im Build; die Vereinsfarben kommen
+  erst zur Laufzeit aus `clubs.settings.theme` (C-013). Wer die Grundfarbe in
+  `theme/variables.css` ändert, zieht sie im Manifest und in `index.html`
+  (`<meta name="theme-color">`) nach.
+- **Die Symbole liegen als Quelle im Repository.** `public/favicon.svg` (mit
+  abgerundeten Ecken) und `public/icon-square.svg` (randfüllend) sind die
+  Vorlagen; daraus entstehen `pwa-*.png`, `maskable-icon-512x512.png` und
+  `apple-touch-icon-180x180.png`. Ein neues Symbol wird aus der Vorlage
+  gerendert, nicht von Hand nachgezeichnet. Das randfüllende Quadrat ist
+  Pflicht für `purpose: 'maskable'`: Android beschneidet das Symbol auf einen
+  Kreis, abgerundete Ecken ergäben dort einen sichtbaren Rand.
+
+---
+
+## 11. Ausdrücklich verboten
 
 1. **Inline-Styles**, ausser den zwei benannten Ausnahmen in §1.
 2. **Eine `.css`-Datei je Komponente.** Es gibt ein Stylesheet (§6).
@@ -399,10 +473,15 @@ das Ergebnis dar. Vorbild: `resolveSignInAction()` in `src/lib/authError.ts`.
    umhüllen.
 7. **Ein Literal als Benutzertext** im JSX, auch als vermeintlicher Platzhalter
    (§8).
+8. **Eine eigene Breitenabfrage** – `window.innerWidth`, ein `@media`-Umbruch
+   oder ein zweites Layout – für den Wechsel zwischen Telefon und Laptop. Den
+   Wechsel besorgt `IonSplitPane` (§2).
+9. **Einen Service Worker ohne Plattformprüfung registrieren.** Er gehört in
+   den Browser, nicht in die nativen Apps (§10).
 
 ---
 
-## 11. Struktur
+## 12. Struktur
 
 ```
 src/
@@ -426,7 +505,7 @@ Neue Typen: Aufzählungen und verengte Zeilentypen in `src/lib/database.types.ts
 
 ---
 
-## 12. Prüfung vor dem Abschluss
+## 13. Prüfung vor dem Abschluss
 
 `npm run verify` (Typen, Lint, i18n-Parität, Tests) muss durchlaufen. Zusätzlich
 je Use Case:

@@ -1,0 +1,127 @@
+import { readFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+import {
+  DECLINE_REASONS,
+  EARLY_DECLINE_HOURS,
+  canRespond,
+  isEarlyDecline,
+  tallyAttendance,
+} from './attendance';
+
+const now = new Date('2026-09-09T12:00:00');
+
+/**
+ * Gegenstück zu `decline_is_early()` in `0017_attendance_response.sql`.
+ * Laufen die beiden auseinander, verspricht die App Punkte, die der Server
+ * nicht bucht (BR-040).
+ */
+describe('isEarlyDecline', () => {
+  it('erkennt eine Absage deutlich vor der Frist', () => {
+    expect(isEarlyDecline('2026-09-11T12:00:00', now)).toBe(true);
+  });
+
+  it('erkennt eine Absage kurz vor dem Termin', () => {
+    expect(isEarlyDecline('2026-09-09T15:00:00', now)).toBe(false);
+  });
+
+  it('liegt genau auf der Frist noch nicht rechtzeitig', () => {
+    // Die Regel sagt «mehr als 24 Stunden» – genau 24 reicht nicht.
+    expect(isEarlyDecline('2026-09-10T12:00:00', now)).toBe(false);
+  });
+
+  it('ist eine Minute darüber rechtzeitig', () => {
+    expect(isEarlyDecline('2026-09-10T12:01:00', now)).toBe(true);
+  });
+
+  it('behandelt einen vergangenen Termin als nicht rechtzeitig', () => {
+    expect(isEarlyDecline('2026-09-08T12:00:00', now)).toBe(false);
+  });
+
+  it('behandelt ein unlesbares Datum als nicht rechtzeitig', () => {
+    expect(isEarlyDecline('kein-datum', now)).toBe(false);
+  });
+
+  it('nimmt ein Date genauso entgegen wie eine Zeichenkette', () => {
+    expect(isEarlyDecline(new Date('2026-09-11T12:00:00'), now)).toBe(true);
+  });
+});
+
+describe('canRespond', () => {
+  it('lässt eine Antwort auf einen künftigen, gültigen Termin zu', () => {
+    expect(canRespond({ isCancelled: false, hasStarted: false })).toBe(true);
+  });
+
+  it('sperrt einen abgesagten Termin (A3)', () => {
+    expect(canRespond({ isCancelled: true, hasStarted: false })).toBe(false);
+  });
+
+  it('sperrt einen begonnenen Termin (BR-038)', () => {
+    expect(canRespond({ isCancelled: false, hasStarted: true })).toBe(false);
+  });
+});
+
+describe('tallyAttendance', () => {
+  const entries = [
+    { status: 'registered' },
+    { status: 'registered' },
+    { status: 'excused' },
+    { status: 'present' },
+  ];
+
+  it('zählt die Antworten je Art (Schritt 2)', () => {
+    const tally = tallyAttendance(entries, 10);
+    expect(tally).toMatchObject({ registered: 2, excused: 1, present: 1 });
+  });
+
+  it('rechnet die Unentschlossenen aus der Differenz', () => {
+    expect(tallyAttendance(entries, 10).undecided).toBe(6);
+  });
+
+  it('zählt Anwesende als entschieden', () => {
+    // Wer da ist, hat sich damit auch entschieden – sonst wäre die Person
+    // gleichzeitig anwesend und unentschlossen.
+    expect(tallyAttendance([{ status: 'present' }], 1).undecided).toBe(0);
+  });
+
+  it('wird nicht negativ, wenn mehr geantwortet haben als erwartet', () => {
+    // Ein Mitglied kann den Verein verlassen haben, nachdem es zugesagt hat.
+    expect(tallyAttendance(entries, 2).undecided).toBe(0);
+  });
+
+  it('kommt ohne Antworten zurecht', () => {
+    expect(tallyAttendance([], 5)).toEqual({
+      registered: 0,
+      excused: 0,
+      present: 0,
+      undecided: 5,
+    });
+  });
+});
+
+describe('Absagegründe', () => {
+  it('bietet einen Freitext-Ausweg an (A1 Schritt 1)', () => {
+    // Ohne «anderer Grund» müsste jede Absage in eine Schublade passen.
+    expect(DECLINE_REASONS).toContain('other');
+  });
+
+  it('bietet vorformulierte Gründe an', () => {
+    expect(DECLINE_REASONS.length).toBeGreaterThan(3);
+  });
+});
+
+/** Architekturprüfung: Die Frist muss in App und SQL dieselbe sein. */
+describe('Gleichlauf mit decline_is_early() in SQL', () => {
+  const migration = readFileSync(
+    '../supabase/migrations/0017_attendance_response.sql',
+    'utf8',
+  );
+
+  it('verwendet dieselbe Frist wie die Datenbank', () => {
+    expect(migration).toContain(`interval '${EARLY_DECLINE_HOURS} hours'`);
+  });
+
+  it('vergleicht in SQL ebenfalls strikt grösser', () => {
+    // `>` und nicht `>=`: genau 24 Stunden reichen nicht.
+    expect(migration).toMatch(/p_starts_at - now\(\) > interval/);
+  });
+});

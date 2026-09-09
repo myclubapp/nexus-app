@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  IonBadge,
   IonButton,
   IonInput,
   IonItem,
@@ -13,7 +12,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { useClub } from '../hooks/useClub';
-import { usePendingJoinRequests } from '../hooks/useJoinRequests';
 import { useMyPoints } from '../hooks/useGamification';
 import { useLeaderboardOptIn } from '../hooks/useProfile';
 import { AppPage } from '../components/AppPage';
@@ -22,6 +20,7 @@ import { useToast } from '../hooks/useToast';
 import { FormModal } from '../components/FormModal';
 import { DeleteAccountModal } from '../components/DeleteAccountModal';
 import { ProfileEditModal } from '../components/ProfileEditModal';
+import { ClubAdminLinks } from '../components/ClubAdminLinks';
 import { PASSWORD_MIN_LENGTH, authErrorKey } from '../lib/authError';
 import { SUPPORTED_LANGUAGES } from '../i18n';
 import { formatDate, formatDateTime } from '../lib/format';
@@ -29,9 +28,8 @@ import { formatDate, formatDateTime } from '../lib/format';
 export function ProfilePage() {
   const { t, i18n } = useTranslation();
   const { signOut, user, setPassword } = useAuth();
-  const { activeMembership, activeClub, memberships, setActiveClub, isAdmin } = useClub();
+  const { activeMembership, memberships, setActiveClub } = useClub();
   const points = useMyPoints();
-  const pendingRequests = usePendingJoinRequests();
   const toast = useToast();
 
   const optIn = useLeaderboardOptIn();
@@ -117,43 +115,7 @@ export function ProfilePage() {
           </IonSelect>
         </IonItem>
 
-        {isAdmin && (
-          <IonItem button routerLink="/tabs/profile/club" detail>
-            <IonLabel>
-              <h2>{t('clubSettings.open')}</h2>
-              <IonNote>{activeClub?.name}</IonNote>
-            </IonLabel>
-          </IonItem>
-        )}
-
-        {isAdmin && (
-          <IonItem button routerLink="/tabs/profile/members" detail>
-            <IonLabel>{t('members.title')}</IonLabel>
-          </IonItem>
-        )}
-
-        {isAdmin && (
-          <IonItem button routerLink="/tabs/profile/rules" detail>
-            <IonLabel>{t('pointRules.title')}</IonLabel>
-          </IonItem>
-        )}
-
-        {isAdmin && (
-          <IonItem button routerLink="/tabs/profile/invite" detail>
-            <IonLabel>{t('invite.title')}</IonLabel>
-          </IonItem>
-        )}
-
-        {isAdmin && (
-          <IonItem button routerLink="/tabs/profile/requests" detail>
-            <IonLabel>{t('joinRequest.title')}</IonLabel>
-            {(pendingRequests.data?.length ?? 0) > 0 && (
-              <IonBadge slot="end" color="danger">
-                {pendingRequests.data!.length}
-              </IonBadge>
-            )}
-          </IonItem>
-        )}
+        <ClubAdminLinks />
 
         <IonItem
           button

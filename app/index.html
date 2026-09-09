@@ -11,7 +11,16 @@
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-tap-highlight" content="no" />
     <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#1d4ed8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Installierte Fassung im Browser. Das Manifest hängt vite-plugin-pwa
+         selbst ein; diese Angaben kennt nur Safari. -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="myclub" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
   </head>
   <body>
     <div id="root"></div>

@@ -1,9 +1,11 @@
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   IonBackButton,
   IonButtons,
   IonContent,
   IonHeader,
+  IonMenuButton,
   IonPage,
   IonRefresher,
   IonRefresherContent,
@@ -19,7 +21,10 @@ interface AppPageProps {
    * Seiten, die direkt mit Inhalt beginnen sollen (z.B. Formulare).
    */
   largeTitle?: string | false;
-  /** Zielroute des Zurück-Knopfs. Ohne Angabe erscheint keiner. */
+  /**
+   * Zielroute des Zurück-Knopfs. Ohne Angabe steht links der Menüknopf –
+   * eine Detailseite führt zurück, eine Hauptseite öffnet die Seitenleiste.
+   */
   backHref?: string;
   /** Aktionen rechts in der Kopfzeile, üblicherweise `IonButtons`. */
   toolbarEnd?: ReactNode;
@@ -51,17 +56,25 @@ export function AppPage({
   onRefresh,
   children,
 }: AppPageProps) {
+  const { t } = useTranslation();
   const large = largeTitle === false ? null : (largeTitle ?? title);
 
   return (
     <IonPage>
       <IonHeader translucent>
         <IonToolbar>
-          {backHref && (
-            <IonButtons slot="start">
+          <IonButtons slot="start">
+            {backHref ? (
               <IonBackButton defaultHref={backHref} />
-            </IonButtons>
-          )}
+            ) : (
+              /* `autoHide` ist die Voreinstellung und trägt hier die halbe
+                 Logik: Der Knopf verschwindet von selbst, sobald kein Menü
+                 angemeldet ist (Anmeldung, Onboarding) oder das Menü als
+                 Spalte danebensteht (ab lg). Keine Abfrage der Breite im
+                 Code. */
+              <IonMenuButton aria-label={t('menu.open')} />
+            )}
+          </IonButtons>
           <IonTitle>{title}</IonTitle>
           {toolbarEnd}
         </IonToolbar>
