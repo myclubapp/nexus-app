@@ -157,6 +157,38 @@ export type Database = {
           },
         ]
       }
+      club_message_log: {
+        Row: {
+          club_id: string
+          id: string
+          kind: string
+          reference: string
+          sent_at: string
+        }
+        Insert: {
+          club_id: string
+          id?: string
+          kind: string
+          reference: string
+          sent_at?: string
+        }
+        Update: {
+          club_id?: string
+          id?: string
+          kind?: string
+          reference?: string
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "club_message_log_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clubs: {
         Row: {
           club_kind: string
@@ -228,30 +260,33 @@ export type Database = {
       }
       event_shifts: {
         Row: {
-          ends_at: string | null
+          ends_at: string
           event_id: string
           id: string
           needed: number
-          point_rule_code: string | null
-          starts_at: string | null
+          point_rule_code: string
+          points: number
+          starts_at: string
           title: string
         }
         Insert: {
-          ends_at?: string | null
+          ends_at: string
           event_id: string
           id?: string
           needed?: number
-          point_rule_code?: string | null
-          starts_at?: string | null
+          point_rule_code: string
+          points?: number
+          starts_at: string
           title: string
         }
         Update: {
-          ends_at?: string | null
+          ends_at?: string
           event_id?: string
           id?: string
           needed?: number
-          point_rule_code?: string | null
-          starts_at?: string | null
+          point_rule_code?: string
+          points?: number
+          starts_at?: string
           title?: string
         }
         Relationships: [
@@ -278,6 +313,7 @@ export type Database = {
           is_sample: boolean
           location: string | null
           point_rule_code: string | null
+          published_at: string | null
           qr_token: string
           series_id: string | null
           starts_at: string
@@ -299,6 +335,7 @@ export type Database = {
           is_sample?: boolean
           location?: string | null
           point_rule_code?: string | null
+          published_at?: string | null
           qr_token?: string
           series_id?: string | null
           starts_at: string
@@ -320,6 +357,7 @@ export type Database = {
           is_sample?: boolean
           location?: string | null
           point_rule_code?: string | null
+          published_at?: string | null
           qr_token?: string
           series_id?: string | null
           starts_at?: string
@@ -562,32 +600,47 @@ export type Database = {
       }
       news: {
         Row: {
+          author: string | null
+          author_image_url: string | null
           body: string | null
           club_id: string | null
+          external_id: string | null
+          external_url: string | null
           id: string
           image_url: string | null
           published_at: string
           source: string
+          synced_at: string | null
           team_id: string | null
           title: string
         }
         Insert: {
+          author?: string | null
+          author_image_url?: string | null
           body?: string | null
           club_id?: string | null
+          external_id?: string | null
+          external_url?: string | null
           id?: string
           image_url?: string | null
           published_at?: string
           source?: string
+          synced_at?: string | null
           team_id?: string | null
           title: string
         }
         Update: {
+          author?: string | null
+          author_image_url?: string | null
           body?: string | null
           club_id?: string | null
+          external_id?: string | null
+          external_url?: string | null
           id?: string
           image_url?: string | null
           published_at?: string
           source?: string
+          synced_at?: string | null
           team_id?: string | null
           title?: string
         }
@@ -605,6 +658,77 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "teams"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      news_sources: {
+        Row: {
+          active: boolean
+          club_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          kind: string
+          last_error: string | null
+          last_imported: number
+          last_status: string | null
+          last_sync_at: string | null
+          url: string
+        }
+        Insert: {
+          active?: boolean
+          club_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          last_error?: string | null
+          last_imported?: number
+          last_status?: string | null
+          last_sync_at?: string | null
+          url: string
+        }
+        Update: {
+          active?: boolean
+          club_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          last_error?: string | null
+          last_imported?: number
+          last_status?: string | null
+          last_sync_at?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_sources_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "news_sources_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "news_sources_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "news_sources_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["member_id"]
           },
         ]
       }
@@ -1117,6 +1241,7 @@ export type Database = {
         }
         Returns: number
       }
+      call_is_muted: { Args: { p_club_id: string }; Returns: boolean }
       cancel_event: {
         Args: { p_event_id: string; p_reason: string }
         Returns: undefined
@@ -1157,6 +1282,17 @@ export type Database = {
         }
         Returns: string
       }
+      create_helper_event: {
+        Args: {
+          p_ends_at?: string
+          p_location?: string
+          p_shifts?: Json
+          p_starts_at: string
+          p_title: string
+          p_why: string
+        }
+        Returns: string
+      }
       current_member_id: { Args: { p_club_id: string }; Returns: string }
       decide_join_request: {
         Args: {
@@ -1181,6 +1317,11 @@ export type Database = {
       is_club_admin: { Args: { p_club_id: string }; Returns: boolean }
       is_club_member: { Args: { p_club_id: string }; Returns: boolean }
       is_club_trainer: { Args: { p_club_id: string }; Returns: boolean }
+      last_connection_at: { Args: { p_club_id: string }; Returns: string }
+      log_club_message: {
+        Args: { p_club_id: string; p_kind: string; p_reference: string }
+        Returns: undefined
+      }
       my_clubs_left_without_admin: {
         Args: never
         Returns: {
@@ -1208,6 +1349,13 @@ export type Database = {
           reason: string
           role: string
           team_name: string
+        }[]
+      }
+      publish_event: {
+        Args: { p_event_id: string }
+        Returns: {
+          muted: boolean
+          notified: number
         }[]
       }
       redeem_invite: {
@@ -1249,6 +1397,7 @@ export type Database = {
         Returns: number
       }
       slugify: { Args: { p_value: string }; Returns: string }
+      sync_news_sources: { Args: never; Returns: number }
       update_my_profile: {
         Args: {
           p_display_name?: string

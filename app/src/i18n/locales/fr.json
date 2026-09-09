@@ -178,7 +178,8 @@
     "declineLate": "Le rendez-vous commence bientôt. Un refus ne coûte jamais de points.",
     "declinedWithPoints": "Refus enregistré – {{points}} points pour la désinscription à temps",
     "tally": "{{yes}} oui · {{no}} non · {{open}} sans réponse",
-    "cancelledWithReason": "Annulé: {{reason}}"
+    "cancelledWithReason": "Annulé: {{reason}}",
+    "draft": "Brouillon"
   },
   "profile": {
     "title": "Profil",
@@ -261,6 +262,10 @@
     "rules": {
       "title": "Voir les règles de points",
       "hint": "Elles sont déjà en place"
+    },
+    "news": {
+      "title": "Récupérer les actualités de votre site",
+      "hint": "Reprendre les articles existants"
     }
   },
   "invite": {
@@ -453,5 +458,48 @@
     "previewCapped": "Une série ne crée pas plus de {{max}} rendez-vous. Choisissez une date de fin plus proche.",
     "previewTitle_one": "Aperçu: {{count}} rendez-vous",
     "previewMore_one": "et {{count}} autre"
+  },
+  "helperEvent": {
+    "title": "Publier un appel aux bénévoles",
+    "publish": "Publier",
+    "whyTitle": "À quoi cela sert-il?",
+    "shifts_other": "{{count}} créneaux",
+    "shiftsHint": "Glissez vers la gauche pour supprimer un créneau.",
+    "noShifts": "Aucun créneau créé",
+    "addShift": "Ajouter un créneau",
+    "removeShift": "Supprimer",
+    "shiftTitle": "Désignation du créneau",
+    "neededLabel": "Bénévoles nécessaires",
+    "needed_other": "{{count}} personnes",
+    "pointsLabel": "Points pour ce créneau",
+    "pointsHint": "La proposition suit la durée – une demi-journée compte autrement qu’une journée entière. Vous pouvez la modifier.",
+    "needsShift": "Un appel aux bénévoles a besoin d’au moins un créneau.",
+    "saveDraft": "Enregistrer comme brouillon",
+    "draftHint": "Un brouillon n’est pas visible pour les membres et ne notifie personne.",
+    "published": "Appel publié",
+    "draftSaved": "Brouillon enregistré",
+    "mutedHint": "Publié – mais sans push. Depuis plus de quatre semaines, aucun message de lien n’est parti. Envoyez d’abord un pouls de la société.",
+    "shifts_one": "{{count}} créneau",
+    "needed_one": "{{count}} personne",
+    "needsWhy": "Chaque appel doit indiquer à quoi il sert, sinon il ne peut pas être publié."
+  },
+  "newsImport": {
+    "title": "Actualités du site web",
+    "adminOnly": "Seul le comité peut connecter le site web.",
+    "url": "Adresse de votre site web",
+    "urlHint": "Si votre site tourne sous WordPress, nous reprenons les derniers articles dans le fil – puis les nouveaux chaque nuit. «monclub.ch» suffit.",
+    "willFetch": "Adresse interrogée: {{url}}",
+    "connect": "Récupérer les articles",
+    "refresh": "Actualiser maintenant",
+    "imported_one": "{{count}} article repris",
+    "imported_other": "{{count}} articles repris",
+    "status": "Site web connecté",
+    "lastSync_one": "{{when}} · {{count}} article",
+    "lastSync_other": "{{when}} · {{count}} articles",
+    "neverSynced": "Pas encore de synchronisation",
+    "lastError": "Dernière synchronisation échouée",
+    "disconnect": "Déconnecter le site",
+    "disconnected": "Site déconnecté. Les articles repris restent.",
+    "scheduleHint": "La synchronisation se fait ensuite automatiquement chaque nuit. Les articles repris restent dans le fil même après la déconnexion."
   }
 }

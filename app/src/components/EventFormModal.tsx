@@ -28,7 +28,14 @@ import {
 import { formatDateTime } from '../lib/format';
 import type { EventType } from '../lib/database.types';
 
-/** Reihenfolge wie im check-Constraint auf `events.type`. */
+/**
+ * Reihenfolge wie im check-Constraint auf `events.type`, **ohne** `helper`.
+ *
+ * Ein Helferaufruf braucht Schichten und sein Warum (UC-011, BR-041, BR-043).
+ * Stünde er hier zur Auswahl, entstünde über diesen Weg ein sofort
+ * ausgeschriebenes Helfer-Event ohne eine einzige Schicht – ein Aufruf, dem
+ * niemand folgen kann. Er hat sein eigenes Formular.
+ */
 const EVENT_TYPES: EventType[] = [
   'training',
   'match',
@@ -36,7 +43,6 @@ const EVENT_TYPES: EventType[] = [
   'tournament',
   'gv',
   'social',
-  'helper',
 ];
 
 interface EventFormProps {

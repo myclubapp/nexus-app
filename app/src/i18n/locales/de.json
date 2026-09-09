@@ -178,7 +178,8 @@
     "declineLate": "Der Termin beginnt bald. Eine Absage kostet nie Punkte.",
     "declinedWithPoints": "Absage gespeichert – {{points}} Punkte für die rechtzeitige Abmeldung",
     "tally": "{{yes}} zugesagt · {{no}} abgesagt · {{open}} offen",
-    "cancelledWithReason": "Abgesagt: {{reason}}"
+    "cancelledWithReason": "Abgesagt: {{reason}}",
+    "draft": "Entwurf"
   },
   "profile": {
     "title": "Profil",
@@ -261,6 +262,10 @@
     "rules": {
       "title": "Punkteregeln ansehen",
       "hint": "Sie sind schon eingerichtet"
+    },
+    "news": {
+      "title": "News von eurer Website holen",
+      "hint": "Bestehende Beiträge übernehmen"
     }
   },
   "invite": {
@@ -453,5 +458,48 @@
     "previewCapped": "Mehr als {{max}} Termine legt eine Serie nicht an. Wähle ein früheres Enddatum.",
     "previewTitle_one": "Vorschau: {{count}} Termin",
     "previewMore_one": "und {{count}} weiterer"
+  },
+  "helperEvent": {
+    "title": "Helfer-Event ausschreiben",
+    "publish": "Ausschreiben",
+    "whyTitle": "Wozu dient das?",
+    "shifts_other": "{{count}} Schichten",
+    "shiftsHint": "Nach links wischen, um eine Schicht zu entfernen.",
+    "noShifts": "Noch keine Schicht angelegt",
+    "addShift": "Schicht hinzufügen",
+    "removeShift": "Entfernen",
+    "shiftTitle": "Bezeichnung der Schicht",
+    "neededLabel": "Benötigte Helfer:innen",
+    "needed_other": "{{count}} Personen",
+    "pointsLabel": "Punkte für diese Schicht",
+    "pointsHint": "Der Vorschlag richtet sich nach der Dauer – ein halber Tag zählt anders als ein ganzer. Du kannst ihn überschreiben.",
+    "needsShift": "Ein Helfer-Event braucht mindestens eine Schicht.",
+    "saveDraft": "Als Entwurf sichern",
+    "draftHint": "Ein Entwurf ist für Mitglieder nicht sichtbar und benachrichtigt niemanden.",
+    "published": "Helfer-Event ausgeschrieben",
+    "draftSaved": "Entwurf gesichert",
+    "mutedHint": "Ausgeschrieben – aber ohne Push. Seit über vier Wochen ging keine Verbindungs-Nachricht an den Verein. Versende zuerst einen Vereins-Puls.",
+    "shifts_one": "{{count}} Schicht",
+    "needed_one": "{{count}} Person",
+    "needsWhy": "Zu jedem Aufruf gehört, wozu er dient – sonst lässt er sich nicht ausschreiben."
+  },
+  "newsImport": {
+    "title": "News von der Website",
+    "adminOnly": "Nur der Vorstand kann die Website verbinden.",
+    "url": "Adresse eurer Website",
+    "urlHint": "Läuft eure Website mit WordPress, holen wir die letzten Beiträge in den Feed – und danach jede Nacht die neuen. «verein.ch» genügt.",
+    "willFetch": "Abgefragt wird {{url}}",
+    "connect": "Beiträge holen",
+    "refresh": "Jetzt aktualisieren",
+    "imported_one": "{{count}} Beitrag übernommen",
+    "imported_other": "{{count}} Beiträge übernommen",
+    "status": "Verbundene Website",
+    "lastSync_one": "{{when}} · {{count}} Beitrag",
+    "lastSync_other": "{{when}} · {{count}} Beiträge",
+    "neverSynced": "Noch kein Abgleich",
+    "lastError": "Letzter Abgleich fehlgeschlagen",
+    "disconnect": "Verbindung trennen",
+    "disconnected": "Verbindung getrennt. Die übernommenen Beiträge bleiben.",
+    "scheduleHint": "Der Abgleich läuft danach jede Nacht von selbst. Übernommene Beiträge bleiben auch nach dem Trennen im Feed."
   }
 }

@@ -178,7 +178,8 @@
     "declineLate": "L’appuntamento inizia presto. Una disdetta non costa mai punti.",
     "declinedWithPoints": "Disdetta salvata – {{points}} punti per la disdetta puntuale",
     "tally": "{{yes}} sì · {{no}} no · {{open}} senza risposta",
-    "cancelledWithReason": "Annullato: {{reason}}"
+    "cancelledWithReason": "Annullato: {{reason}}",
+    "draft": "Bozza"
   },
   "profile": {
     "title": "Profilo",
@@ -261,6 +262,10 @@
     "rules": {
       "title": "Vedere le regole dei punti",
       "hint": "Sono già pronte"
+    },
+    "news": {
+      "title": "Recuperare le notizie dal vostro sito",
+      "hint": "Riprendere gli articoli esistenti"
     }
   },
   "invite": {
@@ -453,5 +458,48 @@
     "previewCapped": "Una serie non crea più di {{max}} appuntamenti. Scegli una data di fine più vicina.",
     "previewTitle_one": "Anteprima: {{count}} appuntamento",
     "previewMore_one": "e altro {{count}}"
+  },
+  "helperEvent": {
+    "title": "Pubblicare una chiamata volontari",
+    "publish": "Pubblica",
+    "whyTitle": "A cosa serve?",
+    "shifts_other": "{{count}} turni",
+    "shiftsHint": "Scorri a sinistra per rimuovere un turno.",
+    "noShifts": "Nessun turno creato",
+    "addShift": "Aggiungi un turno",
+    "removeShift": "Rimuovi",
+    "shiftTitle": "Denominazione del turno",
+    "neededLabel": "Volontari necessari",
+    "needed_other": "{{count}} persone",
+    "pointsLabel": "Punti per questo turno",
+    "pointsHint": "La proposta segue la durata – mezza giornata conta diversamente da una intera. Puoi modificarla.",
+    "needsShift": "Una chiamata volontari ha bisogno di almeno un turno.",
+    "saveDraft": "Salva come bozza",
+    "draftHint": "Una bozza non è visibile ai membri e non avvisa nessuno.",
+    "published": "Chiamata pubblicata",
+    "draftSaved": "Bozza salvata",
+    "mutedHint": "Pubblicata – ma senza push. Da più di quattro settimane non è partito nessun messaggio di legame. Invia prima un polso della società.",
+    "shifts_one": "{{count}} turno",
+    "needed_one": "{{count}} persona",
+    "needsWhy": "Ogni appello deve indicare a cosa serve, altrimenti non può essere pubblicato."
+  },
+  "newsImport": {
+    "title": "Notizie dal sito web",
+    "adminOnly": "Solo il comitato può collegare il sito web.",
+    "url": "Indirizzo del vostro sito web",
+    "urlHint": "Se il vostro sito usa WordPress, riprendiamo gli ultimi articoli nel feed – e ogni notte quelli nuovi. Basta «societa.ch».",
+    "willFetch": "Verrà interrogato {{url}}",
+    "connect": "Recupera gli articoli",
+    "refresh": "Aggiorna ora",
+    "imported_one": "{{count}} articolo ripreso",
+    "imported_other": "{{count}} articoli ripresi",
+    "status": "Sito web collegato",
+    "lastSync_one": "{{when}} · {{count}} articolo",
+    "lastSync_other": "{{when}} · {{count}} articoli",
+    "neverSynced": "Nessuna sincronizzazione finora",
+    "lastError": "Ultima sincronizzazione non riuscita",
+    "disconnect": "Scollega il sito",
+    "disconnected": "Sito scollegato. Gli articoli ripresi restano.",
+    "scheduleHint": "La sincronizzazione avviene poi automaticamente ogni notte. Gli articoli ripresi restano nel feed anche dopo lo scollegamento."
   }
 }

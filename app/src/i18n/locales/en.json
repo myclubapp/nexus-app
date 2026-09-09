@@ -178,7 +178,8 @@
     "declineLate": "The event starts soon. Declining never costs points.",
     "declinedWithPoints": "Decline saved – {{points}} points for cancelling in good time",
     "tally": "{{yes}} in · {{no}} out · {{open}} open",
-    "cancelledWithReason": "Cancelled: {{reason}}"
+    "cancelledWithReason": "Cancelled: {{reason}}",
+    "draft": "Draft"
   },
   "profile": {
     "title": "Profile",
@@ -261,6 +262,10 @@
     "rules": {
       "title": "Review the point rules",
       "hint": "They are already set up"
+    },
+    "news": {
+      "title": "Bring in news from your website",
+      "hint": "Take over existing posts"
     }
   },
   "invite": {
@@ -453,5 +458,48 @@
     "previewCapped": "A series creates at most {{max}} events. Choose an earlier end date.",
     "previewTitle_one": "Preview: {{count}} event",
     "previewMore_one": "and {{count}} more"
+  },
+  "helperEvent": {
+    "title": "Publish a call for helpers",
+    "publish": "Publish",
+    "whyTitle": "What is it for?",
+    "shifts_other": "{{count}} shifts",
+    "shiftsHint": "Swipe left to remove a shift.",
+    "noShifts": "No shift created yet",
+    "addShift": "Add a shift",
+    "removeShift": "Remove",
+    "shiftTitle": "Shift label",
+    "neededLabel": "Helpers needed",
+    "needed_other": "{{count}} people",
+    "pointsLabel": "Points for this shift",
+    "pointsHint": "The suggestion follows the duration – half a day counts differently from a whole one. You can override it.",
+    "needsShift": "A call for helpers needs at least one shift.",
+    "saveDraft": "Save as draft",
+    "draftHint": "A draft is invisible to members and notifies nobody.",
+    "published": "Call published",
+    "draftSaved": "Draft saved",
+    "mutedHint": "Published – but without a push. No connecting message has gone out for over four weeks. Send a club pulse first.",
+    "shifts_one": "{{count}} shift",
+    "needed_one": "{{count}} person",
+    "needsWhy": "Every call needs to say what it is for — otherwise it cannot be published."
+  },
+  "newsImport": {
+    "title": "News from your website",
+    "adminOnly": "Only the board can connect the website.",
+    "url": "Your website address",
+    "urlHint": "If your website runs on WordPress we pull the latest posts into the feed – and the new ones every night. «ourclub.ch» is enough.",
+    "willFetch": "We will fetch {{url}}",
+    "connect": "Fetch posts",
+    "refresh": "Refresh now",
+    "imported_one": "{{count}} post imported",
+    "imported_other": "{{count}} posts imported",
+    "status": "Connected website",
+    "lastSync_one": "{{when}} · {{count}} post",
+    "lastSync_other": "{{when}} · {{count}} posts",
+    "neverSynced": "No sync yet",
+    "lastError": "Last sync failed",
+    "disconnect": "Disconnect website",
+    "disconnected": "Website disconnected. Imported posts stay.",
+    "scheduleHint": "The sync then runs automatically every night. Imported posts stay in the feed even after disconnecting."
   }
 }

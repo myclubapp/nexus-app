@@ -6,7 +6,7 @@
 **Use Case Name:** Helfer-Event mit Schichten ausschreiben
 **Primary Actor:** Vorstand
 **Goal:** Einen Anlass mit mehreren Schichten so ausschreiben, dass sich Mitglieder gezielt eintragen können
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 
