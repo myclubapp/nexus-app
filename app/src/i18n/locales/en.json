@@ -135,7 +135,9 @@
     "overdue": "Deadline passed",
     "thanksOnly": "Thanks only",
     "expired": "Expired",
-    "expiredHint": "Nobody took these on. They are no longer visible to members."
+    "expiredHint": "Nobody took these on. They are no longer visible to members.",
+    "takenThisSeason": "Taken on this season",
+    "openNow": "Open right now"
   },
   "leaderboard": {
     "title": "Rankings",
@@ -661,5 +663,23 @@
       "dueInPast": "The deadline is in the past.",
       "recurrenceOutOfRange": "The rhythm lies between one day and two years."
     }
+  },
+  "taskDetail": {
+    "facts": "At a glance",
+    "taken": "Taken on",
+    "noDeadline": "No deadline",
+    "report": "Report as done",
+    "reported": "Reported – the points follow with the confirmation.",
+    "proof": "Proof",
+    "proofLabel": "Link to the proof",
+    "proofHint": "Optional. A link to a photo, a document or a confirmation.",
+    "proofInvalid": "That is not a complete link. It starts with http:// or https://.",
+    "lateHint": "The deadline has passed. You can still report it – you helped after all.",
+    "full": "This task has already been taken.",
+    "awaiting": "Reported. The committee will confirm it.",
+    "release": "Actually, no",
+    "releaseHint": "No point deduction and no record. The task goes back on offer.",
+    "released": "Handed back. The task is open again.",
+    "releasedWarned": "Handed back. The committee knows, because the deadline is close."
   }
 }

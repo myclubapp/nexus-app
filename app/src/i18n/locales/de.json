@@ -135,7 +135,9 @@
     "overdue": "Frist abgelaufen",
     "thanksOnly": "Nur Dank",
     "expired": "Abgelaufen",
-    "expiredHint": "Diese Aufgaben hat niemand übernommen. Sie sind für Mitglieder nicht mehr sichtbar."
+    "expiredHint": "Diese Aufgaben hat niemand übernommen. Sie sind für Mitglieder nicht mehr sichtbar.",
+    "takenThisSeason": "Diese Saison übernommen",
+    "openNow": "Offen im Marktplatz"
   },
   "leaderboard": {
     "title": "Ranglisten",
@@ -661,5 +663,23 @@
       "dueInPast": "Die Frist liegt in der Vergangenheit.",
       "recurrenceOutOfRange": "Der Rhythmus liegt zwischen einem Tag und zwei Jahren."
     }
+  },
+  "taskDetail": {
+    "facts": "Eckdaten",
+    "taken": "Übernommen",
+    "noDeadline": "Ohne Frist",
+    "report": "Erledigt melden",
+    "reported": "Gemeldet – die Punkte kommen mit der Bestätigung.",
+    "proof": "Nachweis",
+    "proofLabel": "Link zum Nachweis",
+    "proofHint": "Freiwillig. Ein Link auf ein Foto, ein Dokument oder eine Bestätigung.",
+    "proofInvalid": "Das ist kein vollständiger Link. Er beginnt mit http:// oder https://.",
+    "lateHint": "Die Frist ist verstrichen. Melden kannst du trotzdem – geholfen hast du ja.",
+    "full": "Diese Aufgabe ist bereits vergeben.",
+    "awaiting": "Gemeldet. Der Vorstand bestätigt sie.",
+    "release": "Doch nicht",
+    "releaseHint": "Ohne Punkteabzug und ohne Vermerk. Die Aufgabe steht danach wieder offen.",
+    "released": "Zurückgegeben. Die Aufgabe steht wieder offen.",
+    "releasedWarned": "Zurückgegeben. Der Vorstand ist informiert, weil die Frist bald abläuft."
   }
 }

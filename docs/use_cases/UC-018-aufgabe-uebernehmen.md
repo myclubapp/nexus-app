@@ -6,7 +6,7 @@
 **Use Case Name:** Aufgabe übernehmen und einreichen
 **Primary Actor:** Mitglied
 **Goal:** Eine Vereinsaufgabe übernehmen, erledigen und zur Bestätigung einreichen
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

@@ -1410,6 +1410,7 @@ export type Database = {
           club_name: string
         }[]
       }
+      my_season_task_count: { Args: { p_club_id: string }; Returns: number }
       notify: {
         Args: {
           p_body?: string
@@ -1458,6 +1459,7 @@ export type Database = {
           warned: boolean
         }[]
       }
+      release_task: { Args: { p_task_id: string }; Returns: boolean }
       remind_undecided: {
         Args: { p_event_id: string }
         Returns: {
@@ -1528,6 +1530,10 @@ export type Database = {
         }[]
       }
       slugify: { Args: { p_value: string }; Returns: string }
+      submit_task: {
+        Args: { p_proof_url?: string; p_task_id: string }
+        Returns: boolean
+      }
       suggest_task: { Args: { p_task_id: string }; Returns: number }
       sync_news_sources: { Args: never; Returns: number }
       take_shift: {
@@ -1537,6 +1543,7 @@ export type Database = {
           needed: number
         }[]
       }
+      task_in_scope: { Args: { p_task_id: string }; Returns: boolean }
       update_my_profile: {
         Args: {
           p_display_name?: string

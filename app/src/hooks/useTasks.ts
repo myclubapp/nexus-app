@@ -125,6 +125,83 @@ export function useClaimTask() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['tasks', activeClub?.id] });
+      void queryClient.invalidateQueries({ queryKey: ['task-count', activeClub?.id] });
+    },
+  });
+}
+
+/**
+ * Erledigt melden (UC-018, Schritte 7–8).
+ *
+ * Die Frist hält niemanden auf (A4) und der Nachweis ist freiwillig (A5) –
+ * beides entscheidet der Server, damit das Formular nicht strenger ist als die
+ * Regel.
+ */
+export function useSubmitTask() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (input: { taskId: string; proofUrl: string }): Promise<boolean> => {
+      const { data, error } = await supabase.rpc('submit_task', {
+        p_task_id: input.taskId,
+        p_proof_url: input.proofUrl || undefined,
+      });
+      if (error) throw new Error(error.message);
+      return data ?? false;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['tasks', activeClub?.id] });
+    },
+  });
+}
+
+/**
+ * Übernahme zurückgeben (A3).
+ *
+ * Gibt zurück, ob die ausschreibende Person gewarnt wurde – das passiert nur,
+ * wenn die Frist innerhalb von 48 Stunden abläuft. Die Person soll wissen,
+ * dass ihre Rückgabe jemanden erreicht hat, und dass sie folgenlos bleibt
+ * (BR-075).
+ */
+export function useReleaseTask() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (taskId: string): Promise<boolean> => {
+      const { data, error } = await supabase.rpc('release_task', {
+        p_task_id: taskId,
+      });
+      if (error) throw new Error(error.message);
+      return data ?? false;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['tasks', activeClub?.id] });
+      void queryClient.invalidateQueries({ queryKey: ['task-count', activeClub?.id] });
+    },
+  });
+}
+
+/**
+ * Wie viele Aufgaben habe ich diese Saison übernommen (BR-076, FR-057)?
+ *
+ * Die eigene Zahl. Der Server rechnet sie mit `season_label()` – derselben
+ * Funktion, die den Ledger einordnet; eine zweite Saisonrechnung im Client
+ * wäre eine zweite Saison.
+ */
+export function useMyTaskCount() {
+  const { activeClub, activeMembership } = useClub();
+
+  return useQuery({
+    queryKey: ['task-count', activeClub?.id, activeMembership?.id],
+    enabled: Boolean(activeClub) && Boolean(activeMembership) && isConfigured,
+    queryFn: async (): Promise<number> => {
+      const { data, error } = await supabase.rpc('my_season_task_count', {
+        p_club_id: activeClub!.id,
+      });
+      if (error) throw new Error(error.message);
+      return data ?? 0;
     },
   });
 }

@@ -135,7 +135,9 @@
     "overdue": "Scadenza superata",
     "thanksOnly": "Solo grazie",
     "expired": "Scadute",
-    "expiredHint": "Nessuno ha assunto questi compiti. Non sono più visibili ai membri."
+    "expiredHint": "Nessuno ha assunto questi compiti. Non sono più visibili ai membri.",
+    "takenThisSeason": "Assunti questa stagione",
+    "openNow": "Aperti nel mercato"
   },
   "leaderboard": {
     "title": "Classifiche",
@@ -661,5 +663,23 @@
       "dueInPast": "La scadenza è nel passato.",
       "recurrenceOutOfRange": "Il ritmo va da un giorno a due anni."
     }
+  },
+  "taskDetail": {
+    "facts": "In breve",
+    "taken": "Assunto",
+    "noDeadline": "Senza scadenza",
+    "report": "Segnala come fatto",
+    "reported": "Segnalato – i punti arrivano con la conferma.",
+    "proof": "Prova",
+    "proofLabel": "Link alla prova",
+    "proofHint": "Facoltativo. Un link a una foto, un documento o una conferma.",
+    "proofInvalid": "Non è un link completo. Inizia con http:// o https://.",
+    "lateHint": "La scadenza è passata. Puoi segnalare lo stesso – hai aiutato.",
+    "full": "Questo compito è già assegnato.",
+    "awaiting": "Segnalato. Il comitato lo confermerà.",
+    "release": "Alla fine no",
+    "releaseHint": "Senza detrazione di punti e senza annotazione. Il compito torna aperto.",
+    "released": "Restituito. Il compito è di nuovo aperto.",
+    "releasedWarned": "Restituito. Il comitato è informato, perché la scadenza è vicina."
   }
 }

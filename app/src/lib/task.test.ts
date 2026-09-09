@@ -3,7 +3,9 @@ import {
   DEFAULT_TASK_POINTS,
   TASK_CATEGORIES,
   groupTasks,
+  isProofUsable,
   suggestedTaskPoints,
+  taskAction,
   taskCapacity,
   taskUrgency,
   validateTask,
@@ -254,5 +256,92 @@ describe('groupTasks', () => {
   it('kennt jede Kategorie der Datenbank – sonst zeigt der Marktplatz einen Schlüssel', () => {
     expect(TASK_CATEGORIES).toHaveLength(8);
     expect(TASK_CATEGORIES).toContain('other');
+  });
+});
+
+describe('taskAction', () => {
+  const mine = (extra: Record<string, unknown> = {}) =>
+    [{ member_id: 'me', submitted_at: null, confirmed_at: null, ...extra }] as
+      TaskWithAssignments['assignments'];
+
+  it('bietet eine freie Aufgabe zum Übernehmen an (Schritt 4)', () => {
+    expect(taskAction(task(), 'me')).toBe('claim');
+  });
+
+  it('nennt eine vergebene Aufgabe vergeben, statt sie anzubieten (A1)', () => {
+    const taken = task({
+      max_assignees: 1,
+      assignments: [{ member_id: 'someone' }] as TaskWithAssignments['assignments'],
+    });
+    expect(taskAction(taken, 'me')).toBe('full');
+  });
+
+  it('lässt bei freiem Platz weiterhin übernehmen (A2)', () => {
+    const partly = task({
+      max_assignees: 2,
+      assignments: [{ member_id: 'someone' }] as TaskWithAssignments['assignments'],
+    });
+    expect(taskAction(partly, 'me')).toBe('claim');
+  });
+
+  it('führt von der eigenen Übernahme zum Melden (Schritt 7)', () => {
+    expect(taskAction(task({ status: 'claimed', assignments: mine() }), 'me')).toBe(
+      'submit',
+    );
+  });
+
+  it('unterscheidet gemeldet von bestätigt', () => {
+    const submitted = task({
+      status: 'submitted',
+      assignments: mine({ submitted_at: NOW.toISOString() }),
+    });
+    const confirmed = task({
+      status: 'done',
+      assignments: mine({ submitted_at: NOW.toISOString(), confirmed_at: NOW.toISOString() }),
+    });
+
+    expect(taskAction(submitted, 'me')).toBe('awaiting');
+    expect(taskAction(confirmed, 'me')).toBe('confirmed');
+  });
+
+  it('lässt in einen Entwurf und in Abgelaufenes keinen Weg hinein', () => {
+    expect(taskAction(task({ status: 'draft' }), 'me')).toBe('closed');
+    expect(taskAction(task({ status: 'expired' }), 'me')).toBe('closed');
+  });
+
+  it('stellt die eigene Übernahme über den Status der Aufgabe', () => {
+    // Auch eine volle Aufgabe bleibt für die eigene Person der Weg zum Melden –
+    // sonst käme man an die eigene Übernahme nicht mehr heran.
+    const full = task({
+      max_assignees: 1,
+      status: 'claimed',
+      assignments: mine(),
+    });
+    expect(taskAction(full, 'me')).toBe('submit');
+  });
+
+  it('erkennt ohne Mitgliedschaft keine eigene Übernahme', () => {
+    // Ohne `memberId` darf der Zweig «meine Übernahme» nicht greifen – sonst
+    // böte die Ansicht einer nicht angemeldeten Person das Melden an.
+    const free = task({ max_assignees: 2, assignments: mine() });
+    expect(taskAction(free, null)).toBe('claim');
+  });
+});
+
+describe('isProofUsable', () => {
+  it('lässt den fehlenden Nachweis zu – er ist freiwillig (A5)', () => {
+    expect(isProofUsable('')).toBe(true);
+    expect(isProofUsable('   ')).toBe(true);
+  });
+
+  it('nimmt einen vollständigen Link an', () => {
+    expect(isProofUsable('https://beleg.example/foto.jpg')).toBe(true);
+    expect(isProofUsable('http://beleg.example')).toBe(true);
+  });
+
+  it('weist ab, was niemanden irgendwohin führt', () => {
+    expect(isProofUsable('beleg.example')).toBe(false);
+    expect(isProofUsable('foto vom handy')).toBe(false);
+    expect(isProofUsable('javascript:alert(1)')).toBe(false);
   });
 });

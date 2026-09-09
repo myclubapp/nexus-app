@@ -152,6 +152,57 @@ export function taskCapacity(task: TaskWithAssignments): TaskCapacity {
   return { taken, open: Math.max(0, max - taken), isFull: taken >= max };
 }
 
+export type TaskAction =
+  /** Frei und im Angebot (Schritt 4). */
+  | 'claim'
+  /** Von der eigenen Person übernommen, noch nicht gemeldet (Schritt 7). */
+  | 'submit'
+  /** Gemeldet, wartet auf die Bestätigung (UC-019). */
+  | 'awaiting'
+  /** Bestätigt – die Punkte sind gebucht. */
+  | 'confirmed'
+  /** Vergeben, ohne dass die eigene Person dabei wäre (A1). */
+  | 'full'
+  /** Entwurf oder abgelaufen: kein Weg hinein. */
+  | 'closed';
+
+/**
+ * Welcher Weg einer Person bei dieser Aufgabe offensteht.
+ *
+ * Eine Funktion und keine Kette von Bedingungen im JSX: Sie entscheidet in
+ * der Detailansicht, in der Liste und im Test dasselbe – und sie ist die
+ * einzige Stelle, an der «vergeben» und «von mir übernommen» auseinandergehen
+ * (A1 gegen Schritt 5).
+ */
+export function taskAction(
+  task: TaskWithAssignments,
+  memberId: string | null,
+): TaskAction {
+  const mine = memberId
+    ? task.assignments.find((entry) => entry.member_id === memberId)
+    : undefined;
+
+  if (mine?.confirmed_at) return 'confirmed';
+  if (mine?.submitted_at) return 'awaiting';
+  if (mine) return 'submit';
+
+  if (task.status === 'draft' || task.status === 'expired') return 'closed';
+  if (taskCapacity(task).isFull) return 'full';
+  return 'claim';
+}
+
+/**
+ * Der Nachweis ist ein Verweis, kein Anhang (A5, Entitätsmodell `proof_url`).
+ *
+ * Leer ist gültig – die Aufgabe verlangt ihn nicht. Was dasteht, soll aber
+ * anklickbar sein: Ein Fragment ohne Schema führt niemanden irgendwohin.
+ */
+export function isProofUsable(proof: string): boolean {
+  const value = proof.trim();
+  if (value === '') return true;
+  return /^https?:\/\/\S+$/i.test(value);
+}
+
 export interface TaskGroups {
   /** Vom angemeldeten Mitglied übernommen – zuoberst, weil offen. */
   mine: TaskWithAssignments[];

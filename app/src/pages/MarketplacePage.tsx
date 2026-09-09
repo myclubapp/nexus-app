@@ -15,10 +15,12 @@ import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
 import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
+import { TaskDetailModal } from '../components/TaskDetailModal';
 import { TaskFormModal } from '../components/TaskFormModal';
+import { StatCard } from '../components/StatCard';
 import { useClub } from '../hooks/useClub';
 import { useToast } from '../hooks/useToast';
-import { useClaimTask, usePublishTask, useTasks } from '../hooks/useTasks';
+import { useMyTaskCount, usePublishTask, useTasks } from '../hooks/useTasks';
 import { formatDate } from '../lib/format';
 import {
   groupTasks,
@@ -39,10 +41,11 @@ export function MarketplacePage() {
   const { activeMembership, isTrainer } = useClub();
   const toast = useToast();
   const tasks = useTasks();
-  const claim = useClaimTask();
   const publish = usePublishTask();
+  const taskCount = useMyTaskCount();
 
   const [formOpen, setFormOpen] = useState(false);
+  const [openTaskId, setOpenTaskId] = useState<string | null>(null);
 
   // Der Vorschlag verlinkt `/tabs/marketplace?task=<id>` und soll die Aufgabe
   // zeigen, nicht bloss den Marktplatz (BR-070).
@@ -69,7 +72,12 @@ export function MarketplacePage() {
     return () => window.clearTimeout(timer);
   }, [highlightId, items.length]);
 
-  function renderTask(task: TaskWithAssignments, action: 'claim' | 'publish' | 'none') {
+  // Die geöffnete Aufgabe wird aus der Liste gelesen und nicht kopiert:
+  // Nach dem Übernehmen soll das Blatt den neuen Stand zeigen, nicht den von
+  // vorhin.
+  const openTask = items.find((entry) => entry.id === openTaskId) ?? null;
+
+  function renderTask(task: TaskWithAssignments, action: 'open' | 'publish' | 'none') {
     const capacity = taskCapacity(task);
     const urgency = taskUrgency(task.due_at);
     const isHighlighted = task.id === highlightId;
@@ -79,6 +87,9 @@ export function MarketplacePage() {
         key={task.id}
         ref={isHighlighted ? highlightRef : undefined}
         color={isHighlighted ? 'light' : undefined}
+        button={action !== 'publish'}
+        detail={action !== 'publish'}
+        onClick={action === 'publish' ? undefined : () => setOpenTaskId(task.id)}
       >
         <IonLabel className="ion-text-wrap">
           <h2>{task.title}</h2>
@@ -117,22 +128,6 @@ export function MarketplacePage() {
           </IonBadge>
         ) : (
           <IonNote slot="end">{t('marketplace.thanksOnly')}</IonNote>
-        )}
-
-        {action === 'claim' && (
-          <IonButton
-            slot="end"
-            size="small"
-            disabled={capacity.isFull || claim.isPending}
-            onClick={() =>
-              claim.mutate(task.id, {
-                onSuccess: () => toast.success(t('marketplace.claimed')),
-                onError: (cause) => toast.failure(cause.message),
-              })
-            }
-          >
-            {t('marketplace.claim')}
-          </IonButton>
         )}
 
         {action === 'publish' && (
@@ -193,9 +188,23 @@ export function MarketplacePage() {
         <EmptyState message={t('marketplace.empty')} />
       ) : (
         <>
+          {/* FR-057/BR-076: Die eigene Zahl macht die Verteilung sichtbar,
+              ohne eine Rangliste über Personen zu ziehen (NFR-022). */}
+          <div className="app-stat-row">
+            <StatCard
+              value={taskCount.data ?? 0}
+              label={t('marketplace.takenThisSeason')}
+            />
+            <StatCard
+              value={groups.urgent.length + groups.open.length}
+              label={t('marketplace.openNow')}
+              accent="tertiary"
+            />
+          </div>
+
           {groups.mine.length > 0 && (
             <ListSection title={t('marketplace.mine')}>
-              {groups.mine.map((task) => renderTask(task, 'none'))}
+              {groups.mine.map((task) => renderTask(task, 'open'))}
             </ListSection>
           )}
 
@@ -204,13 +213,13 @@ export function MarketplacePage() {
               title={t('marketplace.urgentSection')}
               footnote={t('marketplace.urgentHint')}
             >
-              {groups.urgent.map((task) => renderTask(task, 'claim'))}
+              {groups.urgent.map((task) => renderTask(task, 'open'))}
             </ListSection>
           )}
 
           {groups.open.length > 0 && (
             <ListSection title={t('marketplace.openSection')} footnote={t('marketplace.subtitle')}>
-              {groups.open.map((task) => renderTask(task, 'claim'))}
+              {groups.open.map((task) => renderTask(task, 'open'))}
             </ListSection>
           )}
 
@@ -239,6 +248,26 @@ export function MarketplacePage() {
           )}
         </>
       )}
+
+      <TaskDetailModal
+        task={openTask}
+        onDismiss={() => setOpenTaskId(null)}
+        onDone={(outcome, warned) => {
+          // Nach jedem der drei Wege ist an dieser Aufgabe im Blatt nichts mehr
+          // zu tun. Schritt 5 sagt, wohin der Blick gehört: in die persönliche
+          // Liste – und die steht dahinter.
+          setOpenTaskId(null);
+          if (outcome === 'claimed') {
+            toast.success(t('marketplace.claimed'));
+          } else if (outcome === 'submitted') {
+            toast.success(t('taskDetail.reported'));
+          } else {
+            toast.success(
+              t(warned ? 'taskDetail.releasedWarned' : 'taskDetail.released'),
+            );
+          }
+        }}
+      />
 
       <TaskFormModal
         isOpen={formOpen}

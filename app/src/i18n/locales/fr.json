@@ -135,7 +135,9 @@
     "overdue": "Délai dépassé",
     "thanksOnly": "Merci seulement",
     "expired": "Expirées",
-    "expiredHint": "Personne n’a repris ces tâches. Elles ne sont plus visibles pour les membres."
+    "expiredHint": "Personne n’a repris ces tâches. Elles ne sont plus visibles pour les membres.",
+    "takenThisSeason": "Repris cette saison",
+    "openNow": "Ouvertes au marché"
   },
   "leaderboard": {
     "title": "Classements",
@@ -661,5 +663,23 @@
       "dueInPast": "Le délai est dans le passé.",
       "recurrenceOutOfRange": "Le rythme se situe entre un jour et deux ans."
     }
+  },
+  "taskDetail": {
+    "facts": "En bref",
+    "taken": "Repris",
+    "noDeadline": "Sans délai",
+    "report": "Annoncer comme fait",
+    "reported": "Annoncé – les points arrivent avec la confirmation.",
+    "proof": "Justificatif",
+    "proofLabel": "Lien vers le justificatif",
+    "proofHint": "Facultatif. Un lien vers une photo, un document ou une confirmation.",
+    "proofInvalid": "Ce n’est pas un lien complet. Il commence par http:// ou https://.",
+    "lateHint": "Le délai est passé. Tu peux annoncer quand même – tu as aidé.",
+    "full": "Cette tâche est déjà attribuée.",
+    "awaiting": "Annoncé. Le comité va confirmer.",
+    "release": "Finalement non",
+    "releaseHint": "Sans retrait de points et sans mention. La tâche redevient ouverte.",
+    "released": "Rendue. La tâche est de nouveau ouverte.",
+    "releasedWarned": "Rendue. Le comité est informé, car le délai approche."
   }
 }
