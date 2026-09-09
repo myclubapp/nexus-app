@@ -6,7 +6,7 @@
 **Use Case Name:** Transparenz-Seite einsehen und Health-Opt-out setzen
 **Primary Actor:** Mitglied
 **Goal:** Genau wissen, welche Signale zur eigenen Person bestehen und wer sie sieht – und sie abbestellen können
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

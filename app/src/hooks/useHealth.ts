@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase, isConfigured } from '../lib/supabase';
 import { useClub } from './useClub';
-import type { HealthSignal, HealthStatus } from '../lib/health';
+import type { HealthSignal, HealthStatus, MyHealthSignal } from '../lib/health';
 
 /**
  * Die offenen Fürsorge-Hinweise im eigenen Bereich (UC-023, Schritt 2).
@@ -86,6 +86,67 @@ export function useSetSignalStatus() {
       void queryClient.invalidateQueries({
         queryKey: ['health-signals', activeClub?.id],
       });
+    },
+  });
+}
+
+/**
+ * Die Signale zur eigenen Person (UC-025, Schritt 3, BR-105).
+ *
+ * Über eine eigene Funktion und nicht über die Tabelle: Die Policy aus `0040`
+ * kennt das betroffene Mitglied nicht als Empfänger, und das soll so bleiben.
+ * Diese Auskunft gibt **nur** die eigenen Zeilen heraus.
+ */
+export function useMyHealthSignals() {
+  const { activeClub, activeMembership } = useClub();
+
+  return useQuery({
+    queryKey: ['my-health-signals', activeClub?.id, activeMembership?.id],
+    enabled: Boolean(activeClub) && Boolean(activeMembership) && isConfigured,
+    queryFn: async (): Promise<MyHealthSignal[]> => {
+      const { data, error } = await supabase.rpc('my_health_signals', {
+        p_club_id: activeClub!.id,
+      });
+      if (error) throw new Error(error.message);
+      return (data ?? []).map((row) => ({
+        id: row.id,
+        signalType: row.signal_type,
+        severity: row.severity as MyHealthSignal['severity'],
+        status: row.status as MyHealthSignal['status'],
+        detectedAt: row.detected_at,
+        expiresAt: row.expires_at,
+      }));
+    },
+  });
+}
+
+/**
+ * Den Opt-out setzen oder zurücknehmen (Schritte 6–8, FR-074).
+ *
+ * Er wirkt sofort: Der Server löscht die bestehenden personenbezogenen
+ * Signale in derselben Anweisung (BR-106) und gibt zurück, wie viele es waren.
+ */
+export function useSetHealthOptOut() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (optOut: boolean): Promise<number> => {
+      const { data, error } = await supabase.rpc('set_health_opt_out', {
+        p_club_id: activeClub!.id,
+        p_opt_out: optOut,
+      });
+      if (error) throw new Error(error.message);
+      return data ?? 0;
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ['my-health-signals'] });
+      void queryClient.invalidateQueries({ queryKey: ['health-signals'] });
+      // `health_opt_out` hängt an der Mitgliedschaft, und die steht unter
+      // `['memberships', …]` – nicht unter `['club']`. Ohne diesen Schlüssel
+      // bliebe der Schalter nach dem Umlegen auf dem alten Stand stehen und
+      // die Seite behauptete das Gegenteil dessen, was gilt.
+      void queryClient.invalidateQueries({ queryKey: ['memberships'] });
     },
   });
 }

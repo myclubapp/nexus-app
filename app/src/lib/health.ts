@@ -101,3 +101,46 @@ export function canTakeOver(
   if (signal.ownedBy === null) return true;
   return signal.ownedBy === memberId;
 }
+
+/**
+ * Die Datenarten, aus denen überhaupt Signale entstehen können (Schritt 2).
+ *
+ * `invoice` steht dabei, obwohl Rechnungen erst mit UC-036 kommen: Die Seite
+ * beschreibt, was das System erhebt – und ein Modul, das später etwas erhebt,
+ * gehört benannt, bevor es das tut. Die Ansicht kennzeichnet es als noch nicht
+ * in Betrieb.
+ */
+export const COLLECTED_DATA = ['attendance', 'response', 'invoice'] as const;
+
+/**
+ * BR-108: Was **nicht** erhoben wird – und das ausdrücklich.
+ *
+ * Der ungewöhnlichere Teil der Seite. Eine Aufzählung dessen, was ein System
+ * nicht tut, ist keine Selbstverständlichkeit, sondern eine Zusage.
+ */
+export const NOT_COLLECTED = ['usage', 'readReceipts', 'location', 'content'] as const;
+
+export interface MyHealthSignal {
+  id: string;
+  signalType: string;
+  severity: HealthSeverity;
+  status: HealthStatus;
+  detectedAt: string;
+  expiresAt: string;
+}
+
+/**
+ * Wer sieht diesen Hinweis (Schritt 4)?
+ *
+ * Personenbezogene Hinweise gehen an die Trainer:innen der eigenen Teams und
+ * an den Vorstand; Vereinssignale nur an den Vorstand (BR-096, A3). Die
+ * Auskunft der eigenen Seite kennt nur die erste Art – die Unterscheidung
+ * steht hier trotzdem, damit die Antwort aus der Regel kommt und nicht aus
+ * einem festen Satz.
+ */
+export function signalAudienceKey(signal: { signalType: string }): string {
+  return (LIVE_SIGNAL_TYPES as readonly string[]).includes(signal.signalType) &&
+    (signal.signalType === 'comms_pause' || signal.signalType === 'connection_ratio')
+    ? 'transparency.audience.board'
+    : 'transparency.audience.trainers';
+}

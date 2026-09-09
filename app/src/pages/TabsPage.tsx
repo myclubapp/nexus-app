@@ -29,6 +29,7 @@ import { NewsSourcePage } from './club/NewsSourcePage';
 import { InboxPage } from './InboxPage';
 import { PointHistoryPage } from './PointHistoryPage';
 import { HealthPage } from './HealthPage';
+import { TransparencyPage } from './TransparencyPage';
 import { PointRulePage } from './club/PointRulePage';
 
 /**
@@ -67,6 +68,7 @@ export function TabsPage() {
         <Route path="profile/inbox" element={<InboxPage />} />
         <Route path="profile/points" element={<PointHistoryPage />} />
         <Route path="profile/health" element={<HealthPage />} />
+        <Route path="profile/transparency" element={<TransparencyPage />} />
         <Route path="" element={<Navigate to="dashboard" replace />} />
       </IonRouterOutlet>
 

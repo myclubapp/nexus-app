@@ -1419,6 +1419,17 @@ export type Database = {
           club_name: string
         }[]
       }
+      my_health_signals: {
+        Args: { p_club_id: string }
+        Returns: {
+          detected_at: string
+          expires_at: string
+          id: string
+          severity: string
+          signal_type: string
+          status: string
+        }[]
+      }
       my_points_summary: {
         Args: { p_club_id: string }
         Returns: {
@@ -1452,6 +1463,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      notify_signal_owners: { Args: { p_signal_id: string }; Returns: number }
       preview_invite: {
         Args: { p_code: string }
         Returns: {
@@ -1539,6 +1551,10 @@ export type Database = {
         Returns: undefined
       }
       send_due_reminders: { Args: { p_limit?: number }; Returns: number }
+      set_health_opt_out: {
+        Args: { p_club_id: string; p_opt_out: boolean }
+        Returns: number
+      }
       set_member_teams: {
         Args: { p_member_id: string; p_team_ids: string[] }
         Returns: undefined

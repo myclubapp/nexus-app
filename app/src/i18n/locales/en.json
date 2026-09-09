@@ -294,39 +294,45 @@
         "body": "No response to the last {{detail}} events. Maybe the timing does not fit right now.",
         "prompt1": "Ask openly how things are going – without mentioning the events.",
         "prompt2": "Say you would be glad to see them again.",
-        "prompt3": "Ask whether the times still work at all."
+        "prompt3": "Ask whether the times still work at all.",
+        "definition": "Appears when no reply came for the last three events in your area."
       },
       "silent_churn": {
         "title": "Has not been around for a while",
         "body": "No participation for about {{detail}} days. A call says more than a message.",
         "prompt1": "Call instead of writing – and ask how they are.",
         "prompt2": "Tell them what is going on in the team.",
-        "prompt3": "Ask what would have to change for it to work again."
+        "prompt3": "Ask what would have to change for it to work again.",
+        "definition": "Appears after about 60 days without taking part in an event."
       },
       "attendance_drop": {
         "title": "Around less often than before",
         "body": "Recently {{detail}} events attended – noticeably more before that.",
         "prompt1": "Ask whether something has changed in daily life.",
         "prompt2": "Ask whether the time or the place still works.",
-        "prompt3": "Say that the team misses them."
+        "prompt3": "Say that the team misses them.",
+        "definition": "Appears if you were around noticeably less in the last 60 days than in the 60 before that."
       },
       "comms_pause": {
         "title": "No connecting message for {{detail}} days",
         "body": "The club last told a story without asking for anything {{detail}} days ago.",
         "prompt1": "What went well in recent weeks that nobody knows about?",
         "prompt2": "Who contributed something worth thanking publicly?",
-        "prompt3": "What is coming up that the club can look forward to?"
+        "prompt3": "What is coming up that the club can look forward to?",
+        "definition": "About the club: for more than four weeks no message went out that was not a request."
       },
       "connection_ratio": {
         "title": "More asking than telling",
         "body": "Over the last eight weeks {{detail}} – connecting messages to calls.",
         "prompt1": "What can we tell before we ask for help again?",
         "prompt2": "Which recent contribution deserves a thank you?",
-        "prompt3": "Would a club pulse be due now?"
+        "prompt3": "Would a club pulse be due now?",
+        "definition": "About the club: over eight weeks noticeably more asking than telling."
       },
       "unknown": {
         "title": "A signal",
-        "body": "There is no description for this signal yet."
+        "body": "There is no description for this signal yet.",
+        "definition": "There is no explanation for this signal yet."
       }
     }
   },
@@ -825,5 +831,48 @@
       "tooManyMembers": "At most 100 people at a time.",
       "reasonMissing": "A correction goes with its justification."
     }
+  },
+  "transparency": {
+    "title": "What does my club see?",
+    "collected": "Where signals come from",
+    "collectedHint": "These three sources only. None of them is an assessment of you as a person.",
+    "data": {
+      "attendance": {
+        "title": "Attendance",
+        "body": "Whether you were there at an event."
+      },
+      "response": {
+        "title": "Replies",
+        "body": "Whether you replied to an event."
+      },
+      "invoice": {
+        "title": "Payment status",
+        "body": "Whether an invoice is open. Not in service yet."
+      }
+    },
+    "notCollected": "What is expressly not collected",
+    "notCollectedHint": "This is not a given, it is a commitment.",
+    "notData": {
+      "usage": "When and how often you open the app.",
+      "readReceipts": "Whether you have read a message.",
+      "location": "Where you are.",
+      "content": "What you write or look at."
+    },
+    "mySignals": "Signals about you",
+    "signalsHint": "Complete – nothing is left out here. Signals expire by themselves and never become a record.",
+    "noSignals": "There is currently no signal about you.",
+    "whoSees": "Who sees this",
+    "audience": {
+      "trainers": "Your coaches and the committee",
+      "board": "The committee"
+    },
+    "expires": "Expires on",
+    "expiresHint": "After that the signal is deleted, without a trace.",
+    "optOut": "Individual signals",
+    "optOutLabel": "No signals about me",
+    "optOutHint": "You still count anonymously towards team and club figures, and your points are untouched.",
+    "optedOut_one": "Turned off. {{count}} existing signal was deleted.",
+    "optedOut_other": "Turned off. {{count}} existing signals were deleted.",
+    "optedIn": "Turned back on. Nothing appears retroactively."
   }
 }

@@ -294,39 +294,45 @@
         "body": "Auf die letzten {{detail}} Termine kam noch keine Rückmeldung. Vielleicht passt die Zeit gerade nicht.",
         "prompt1": "Frag offen, wie es gerade läuft – ohne die Termine zu erwähnen.",
         "prompt2": "Sag, dass ihr euch freut, wenn er oder sie wieder dabei ist.",
-        "prompt3": "Frag, ob die Termine zeitlich überhaupt passen."
+        "prompt3": "Frag, ob die Termine zeitlich überhaupt passen.",
+        "definition": "Entsteht, wenn auf die letzten drei Termine in deinem Bereich keine Antwort kam."
       },
       "silent_churn": {
         "title": "Länger nicht dabei gewesen",
         "body": "Seit rund {{detail}} Tagen keine Teilnahme. Ein kurzer Anruf sagt mehr als eine Nachricht.",
         "prompt1": "Ruf an, statt zu schreiben – und frag, wie es geht.",
         "prompt2": "Erzähl, was im Team gerade läuft.",
-        "prompt3": "Frag, ob sich etwas ändern müsste, damit es wieder passt."
+        "prompt3": "Frag, ob sich etwas ändern müsste, damit es wieder passt.",
+        "definition": "Entsteht nach rund 60 Tagen ohne Teilnahme an einem Termin."
       },
       "attendance_drop": {
         "title": "Weniger oft dabei als früher",
         "body": "Zuletzt {{detail}} Termine wahrgenommen – vorher deutlich mehr.",
         "prompt1": "Frag, ob sich im Alltag etwas geändert hat.",
         "prompt2": "Frag, ob Zeit oder Ort noch passen.",
-        "prompt3": "Sag, dass er oder sie im Team fehlt."
+        "prompt3": "Sag, dass er oder sie im Team fehlt.",
+        "definition": "Entsteht, wenn du in den letzten 60 Tagen deutlich seltener dabei warst als in den 60 Tagen davor."
       },
       "comms_pause": {
         "title": "Seit {{detail}} Tagen keine Verbindungs-Nachricht",
         "body": "Der Verein hat zuletzt vor {{detail}} Tagen etwas erzählt, das keine Bitte war.",
         "prompt1": "Was ist in den letzten Wochen gut gelaufen, das noch niemand weiss?",
         "prompt2": "Wer hat etwas beigetragen, dem wir öffentlich danken könnten?",
-        "prompt3": "Was steht an, worauf sich der Verein freuen kann?"
+        "prompt3": "Was steht an, worauf sich der Verein freuen kann?",
+        "definition": "Betrifft den Verein: Seit über vier Wochen ging keine Nachricht raus, die keine Bitte war."
       },
       "connection_ratio": {
         "title": "Mehr Aufrufe als Erzähltes",
         "body": "In den letzten acht Wochen {{detail}} – Verbindungs-Nachrichten zu Aufrufen.",
         "prompt1": "Was können wir erzählen, bevor wir das nächste Mal um Hilfe bitten?",
         "prompt2": "Welcher Beitrag der letzten Wochen verdient ein Dankeswort?",
-        "prompt3": "Wäre jetzt ein Vereins-Puls dran?"
+        "prompt3": "Wäre jetzt ein Vereins-Puls dran?",
+        "definition": "Betrifft den Verein: In acht Wochen kamen deutlich mehr Aufrufe als Erzähltes."
       },
       "unknown": {
         "title": "Ein Hinweis",
-        "body": "Zu diesem Hinweis liegt noch keine Beschreibung vor."
+        "body": "Zu diesem Hinweis liegt noch keine Beschreibung vor.",
+        "definition": "Zu diesem Hinweis liegt noch keine Erklärung vor."
       }
     }
   },
@@ -825,5 +831,48 @@
       "tooManyMembers": "Höchstens 100 Personen auf einmal.",
       "reasonMissing": "Zu einer Korrektur gehört ihre Begründung."
     }
+  },
+  "transparency": {
+    "title": "Was sieht mein Verein?",
+    "collected": "Woraus Hinweise entstehen",
+    "collectedHint": "Nur diese drei Quellen. Nichts davon ist eine Bewertung deiner Person.",
+    "data": {
+      "attendance": {
+        "title": "Anwesenheiten",
+        "body": "Ob du an einem Termin da warst."
+      },
+      "response": {
+        "title": "Zu- und Absagen",
+        "body": "Ob du auf einen Termin geantwortet hast."
+      },
+      "invoice": {
+        "title": "Zahlungsstatus",
+        "body": "Ob eine Rechnung offen ist. Noch nicht in Betrieb."
+      }
+    },
+    "notCollected": "Was ausdrücklich nicht erhoben wird",
+    "notCollectedHint": "Das ist keine Selbstverständlichkeit, sondern eine Zusage.",
+    "notData": {
+      "usage": "Wann und wie oft du die App öffnest.",
+      "readReceipts": "Ob du eine Nachricht gelesen hast.",
+      "location": "Wo du bist.",
+      "content": "Was du schreibst oder ansiehst."
+    },
+    "mySignals": "Hinweise zu dir",
+    "signalsHint": "Vollständig – hier fehlt nichts. Hinweise verfallen von selbst und werden nie zu einer Akte.",
+    "noSignals": "Zurzeit besteht kein Hinweis zu dir.",
+    "whoSees": "Wer sieht das",
+    "audience": {
+      "trainers": "Deine Trainer:innen und der Vorstand",
+      "board": "Der Vorstand"
+    },
+    "expires": "Verfällt am",
+    "expiresHint": "Danach wird der Hinweis gelöscht, ohne Spur.",
+    "optOut": "Individuelle Hinweise",
+    "optOutLabel": "Keine Hinweise zu meiner Person",
+    "optOutHint": "Du fliesst weiterhin anonym in Team- und Vereinswerte ein, und dein Punktestand bleibt unberührt.",
+    "optedOut_one": "Abbestellt. {{count}} bestehender Hinweis wurde gelöscht.",
+    "optedOut_other": "Abbestellt. {{count}} bestehende Hinweise wurden gelöscht.",
+    "optedIn": "Wieder eingeschaltet. Rückwirkend entsteht nichts."
   }
 }

@@ -294,39 +294,45 @@
         "body": "Aucune réponse aux {{detail}} derniers rendez-vous. Le moment ne convient peut-être pas.",
         "prompt1": "Demande simplement comment ça va – sans parler des rendez-vous.",
         "prompt2": "Dis que vous seriez contents de le ou la revoir.",
-        "prompt3": "Demande si les horaires conviennent encore."
+        "prompt3": "Demande si les horaires conviennent encore.",
+        "definition": "Apparaît lorsqu’aucune réponse n’est venue pour les trois derniers rendez-vous de ton domaine."
       },
       "silent_churn": {
         "title": "Absent depuis un moment",
         "body": "Aucune participation depuis environ {{detail}} jours. Un appel dit plus qu’un message.",
         "prompt1": "Appelle plutôt que d’écrire – et demande comment ça va.",
         "prompt2": "Raconte ce qui se passe dans l’équipe.",
-        "prompt3": "Demande ce qui devrait changer pour que ça reparte."
+        "prompt3": "Demande ce qui devrait changer pour que ça reparte.",
+        "definition": "Apparaît après environ 60 jours sans participation à un rendez-vous."
       },
       "attendance_drop": {
         "title": "Moins souvent présent qu’avant",
         "body": "Dernièrement {{detail}} rendez-vous suivis – nettement plus auparavant.",
         "prompt1": "Demande si quelque chose a changé au quotidien.",
         "prompt2": "Demande si l’horaire ou le lieu conviennent encore.",
-        "prompt3": "Dis qu’il ou elle manque à l’équipe."
+        "prompt3": "Dis qu’il ou elle manque à l’équipe.",
+        "definition": "Apparaît si tu étais nettement moins présent ces 60 derniers jours que les 60 jours précédents."
       },
       "comms_pause": {
         "title": "Aucun message de lien depuis {{detail}} jours",
         "body": "Le club a raconté quelque chose sans rien demander il y a {{detail}} jours.",
         "prompt1": "Qu’est-ce qui a bien marché ces dernières semaines et que personne ne sait ?",
         "prompt2": "Qui a contribué et mériterait un merci public ?",
-        "prompt3": "Qu’est-ce qui arrive et réjouit le club ?"
+        "prompt3": "Qu’est-ce qui arrive et réjouit le club ?",
+        "definition": "Concerne le club : depuis plus de quatre semaines, aucun message qui ne soit pas une demande."
       },
       "connection_ratio": {
         "title": "Plus d’appels que de récits",
         "body": "Ces huit dernières semaines {{detail}} – messages de lien contre appels.",
         "prompt1": "Que pouvons-nous raconter avant de redemander de l’aide ?",
         "prompt2": "Quelle contribution récente mérite un remerciement ?",
-        "prompt3": "Serait-ce le moment d’un pouls du club ?"
+        "prompt3": "Serait-ce le moment d’un pouls du club ?",
+        "definition": "Concerne le club : en huit semaines, nettement plus d’appels que de récits."
       },
       "unknown": {
         "title": "Un signalement",
-        "body": "Aucune description n’est encore disponible pour ce signalement."
+        "body": "Aucune description n’est encore disponible pour ce signalement.",
+        "definition": "Aucune explication n’est encore disponible pour ce signalement."
       }
     }
   },
@@ -825,5 +831,48 @@
       "tooManyMembers": "Au maximum 100 personnes à la fois.",
       "reasonMissing": "Une correction va avec sa justification."
     }
+  },
+  "transparency": {
+    "title": "Que voit mon club ?",
+    "collected": "D’où viennent les signalements",
+    "collectedHint": "Ces trois sources seulement. Aucune n’est une évaluation de ta personne.",
+    "data": {
+      "attendance": {
+        "title": "Présences",
+        "body": "Si tu étais là à un rendez-vous."
+      },
+      "response": {
+        "title": "Réponses",
+        "body": "Si tu as répondu à un rendez-vous."
+      },
+      "invoice": {
+        "title": "État des paiements",
+        "body": "S’il reste une facture ouverte. Pas encore en service."
+      }
+    },
+    "notCollected": "Ce qui n’est expressément pas collecté",
+    "notCollectedHint": "Ce n’est pas une évidence, c’est un engagement.",
+    "notData": {
+      "usage": "Quand et à quelle fréquence tu ouvres l’application.",
+      "readReceipts": "Si tu as lu un message.",
+      "location": "Où tu te trouves.",
+      "content": "Ce que tu écris ou consultes."
+    },
+    "mySignals": "Signalements te concernant",
+    "signalsHint": "Complet – rien ne manque ici. Les signalements expirent d’eux-mêmes et ne deviennent jamais un dossier.",
+    "noSignals": "Aucun signalement ne te concerne actuellement.",
+    "whoSees": "Qui voit cela",
+    "audience": {
+      "trainers": "Tes entraîneur:es et le comité",
+      "board": "Le comité"
+    },
+    "expires": "Expire le",
+    "expiresHint": "Ensuite le signalement est supprimé, sans trace.",
+    "optOut": "Signalements individuels",
+    "optOutLabel": "Aucun signalement me concernant",
+    "optOutHint": "Tu continues d’entrer anonymement dans les valeurs d’équipe et de club, et ton total de points reste intact.",
+    "optedOut_one": "Désactivé. {{count}} signalement existant a été supprimé.",
+    "optedOut_other": "Désactivé. {{count}} signalements existants ont été supprimés.",
+    "optedIn": "Réactivé. Rien ne naît rétroactivement."
   }
 }

@@ -1,10 +1,13 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
+  COLLECTED_DATA,
   LIVE_SIGNAL_TYPES,
+  NOT_COLLECTED,
   canTakeOver,
   isClubSignal,
   severityColor,
+  signalAudienceKey,
   signalKey,
   sortSignals,
   type HealthSignal,
@@ -141,6 +144,64 @@ describe('BR-095: kein Wort urteilt', () => {
       const prompts = [1, 2, 3].filter((n) => data.health.signal[type][`prompt${n}`]);
       expect(prompts.length, type).toBeGreaterThanOrEqual(2);
       expect(prompts.length, type).toBeLessThanOrEqual(3);
+    }
+  });
+});
+
+describe('signalAudienceKey', () => {
+  it('nennt bei einem persönlichen Hinweis Trainer:innen und Vorstand (Schritt 4)', () => {
+    expect(signalAudienceKey({ signalType: 'no_response' })).toBe(
+      'transparency.audience.trainers',
+    );
+  });
+
+  it('nennt bei einem Vereinssignal nur den Vorstand (A3, BR-096)', () => {
+    expect(signalAudienceKey({ signalType: 'comms_pause' })).toBe(
+      'transparency.audience.board',
+    );
+    expect(signalAudienceKey({ signalType: 'connection_ratio' })).toBe(
+      'transparency.audience.board',
+    );
+  });
+});
+
+/**
+ * BR-108: «Die Seite sagt ausdrücklich, dass keine App-Nutzung, keine
+ * Lesebestätigungen und keine Standortdaten erhoben werden.»
+ *
+ * Eine Zusage, die man streichen kann, ohne dass etwas bricht, ist keine
+ * Zusage. Der Test hält sie in allen vier Sprachen fest.
+ */
+describe('BR-108: die Nicht-Erhebung steht ausdrücklich da', () => {
+  const REQUIRED = ['usage', 'readReceipts', 'location'] as const;
+
+  it('nennt mindestens die drei ausdrücklich verlangten Punkte', () => {
+    for (const kind of REQUIRED) {
+      expect(NOT_COLLECTED).toContain(kind);
+    }
+  });
+
+  for (const lang of ['de', 'fr', 'it', 'en']) {
+    it(`beschreibt jeden davon in ${lang}`, () => {
+      const data = JSON.parse(
+        readFileSync(`${process.cwd()}/src/i18n/locales/${lang}.json`, 'utf8'),
+      );
+      for (const kind of NOT_COLLECTED) {
+        expect(data.transparency.notData[kind], `${kind} in ${lang}`).toBeTruthy();
+      }
+      for (const kind of COLLECTED_DATA) {
+        expect(data.transparency.data[kind]?.title, `${kind} in ${lang}`).toBeTruthy();
+        expect(data.transparency.data[kind]?.body, `${kind} in ${lang}`).toBeTruthy();
+      }
+    });
+  }
+
+  it('erklärt jeden lebenden Signaltyp samt Schwelle (A3, FR-075)', () => {
+    const data = JSON.parse(
+      readFileSync(`${process.cwd()}/src/i18n/locales/de.json`, 'utf8'),
+    );
+    for (const type of LIVE_SIGNAL_TYPES) {
+      expect(data.health.signal[type]?.definition, type).toBeTruthy();
     }
   });
 });

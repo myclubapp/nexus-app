@@ -120,9 +120,9 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-070 | Verbindungs-Quote              | Als Vorstand möchte ich das Verhältnis von Verbindungs-Nachrichten zu Aufrufen sehen, damit wir nicht nur um Hilfe bitten (K1).                                  | High     | Open   |
 | FR-071 | Spider-Selbstsicht             | Als Mitglied möchte ich meine fünf Wertdimensionen im Vergleich zu Team und Verein sehen, damit ich meine Stärke erkenne.                                        | High     | Open   |
 | FR-072 | Spider-Führungssicht           | Als Trainer:in möchte ich dasselbe Diagramm für Mitglieder meines Teams als Gesprächsgrundlage sehen, damit ich individuell begleiten kann.                      | Medium   | Open   |
-| FR-073 | Transparenz-Seite              | Als Mitglied möchte ich sehen, welche Signale zu mir existieren und wer sie sieht, damit ich weiss, was mein Verein weiss.                                       | High     | Open   |
-| FR-074 | Health-Opt-out                 | Als Mitglied möchte ich individuelle Fürsorge-Hinweise abbestellen, damit ich nur anonym in Aggregate einfliesse.                                                | High     | Open   |
-| FR-075 | Definitionskatalog             | Als Vorstand möchte ich die Definitionen von «aktiv», «Aktivierung» und den Silent-Churn-Schwellen einsehen und anpassen, damit jede Kennzahl erklärt ist (V1).  | Medium   | Open   |
+| FR-073 | Transparenz-Seite              | Als Mitglied möchte ich sehen, welche Signale zu mir existieren und wer sie sieht, damit ich weiss, was mein Verein weiss.                                       | High     | Implemented   |
+| FR-074 | Health-Opt-out                 | Als Mitglied möchte ich individuelle Fürsorge-Hinweise abbestellen, damit ich nur anonym in Aggregate einfliesse.                                                | High     | Implemented   |
+| FR-075 | Definitionskatalog             | Als Vorstand möchte ich die Definitionen von «aktiv», «Aktivierung» und den Silent-Churn-Schwellen einsehen und anpassen, damit jede Kennzahl erklärt ist (V1).  | Medium   | In Progress|
 
 ### 1.6 News & Benachrichtigungen
 

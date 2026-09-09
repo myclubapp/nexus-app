@@ -294,39 +294,45 @@
         "body": "Nessun riscontro agli ultimi {{detail}} appuntamenti. Forse il momento non va bene.",
         "prompt1": "Chiedi apertamente come va – senza nominare gli appuntamenti.",
         "prompt2": "Di’ che sareste contenti di rivederlo o rivederla.",
-        "prompt3": "Chiedi se gli orari vanno ancora bene."
+        "prompt3": "Chiedi se gli orari vanno ancora bene.",
+        "definition": "Nasce quando agli ultimi tre appuntamenti del tuo ambito non è arrivata risposta."
       },
       "silent_churn": {
         "title": "Da un po’ non c’è",
         "body": "Nessuna partecipazione da circa {{detail}} giorni. Una telefonata dice più di un messaggio.",
         "prompt1": "Telefona invece di scrivere – e chiedi come va.",
         "prompt2": "Racconta che cosa sta succedendo nella squadra.",
-        "prompt3": "Chiedi che cosa dovrebbe cambiare perché torni a funzionare."
+        "prompt3": "Chiedi che cosa dovrebbe cambiare perché torni a funzionare.",
+        "definition": "Nasce dopo circa 60 giorni senza partecipazione a un appuntamento."
       },
       "attendance_drop": {
         "title": "Presente meno spesso di prima",
         "body": "Ultimamente {{detail}} appuntamenti seguiti – prima molti di più.",
         "prompt1": "Chiedi se è cambiato qualcosa nella quotidianità.",
         "prompt2": "Chiedi se orario e luogo vanno ancora bene.",
-        "prompt3": "Di’ che alla squadra manca."
+        "prompt3": "Di’ che alla squadra manca.",
+        "definition": "Nasce se negli ultimi 60 giorni ci sei stato molto meno che nei 60 precedenti."
       },
       "comms_pause": {
         "title": "Da {{detail}} giorni nessun messaggio di legame",
         "body": "La società ha raccontato qualcosa senza chiedere nulla {{detail}} giorni fa.",
         "prompt1": "Che cosa è andato bene nelle ultime settimane e nessuno lo sa?",
         "prompt2": "Chi ha contribuito e meriterebbe un grazie pubblico?",
-        "prompt3": "Che cosa sta arrivando di bello per la società?"
+        "prompt3": "Che cosa sta arrivando di bello per la società?",
+        "definition": "Riguarda la società: da più di quattro settimane non è uscito un messaggio che non fosse una richiesta."
       },
       "connection_ratio": {
         "title": "Più richieste che racconti",
         "body": "Nelle ultime otto settimane {{detail}} – messaggi di legame contro richieste.",
         "prompt1": "Che cosa possiamo raccontare prima di chiedere di nuovo aiuto?",
         "prompt2": "Quale contributo recente merita un ringraziamento?",
-        "prompt3": "Sarebbe il momento di un polso della società?"
+        "prompt3": "Sarebbe il momento di un polso della società?",
+        "definition": "Riguarda la società: in otto settimane molte più richieste che racconti."
       },
       "unknown": {
         "title": "Una segnalazione",
-        "body": "Per questa segnalazione non c’è ancora una descrizione."
+        "body": "Per questa segnalazione non c’è ancora una descrizione.",
+        "definition": "Per questa segnalazione non c’è ancora una spiegazione."
       }
     }
   },
@@ -825,5 +831,48 @@
       "tooManyMembers": "Al massimo 100 persone alla volta.",
       "reasonMissing": "A una correzione serve la sua motivazione."
     }
+  },
+  "transparency": {
+    "title": "Che cosa vede la mia società?",
+    "collected": "Da dove nascono le segnalazioni",
+    "collectedHint": "Solo queste tre fonti. Nessuna è una valutazione della tua persona.",
+    "data": {
+      "attendance": {
+        "title": "Presenze",
+        "body": "Se eri presente a un appuntamento."
+      },
+      "response": {
+        "title": "Risposte",
+        "body": "Se hai risposto a un appuntamento."
+      },
+      "invoice": {
+        "title": "Stato dei pagamenti",
+        "body": "Se una fattura è aperta. Non ancora in funzione."
+      }
+    },
+    "notCollected": "Che cosa non viene espressamente raccolto",
+    "notCollectedHint": "Non è una cosa ovvia, è un impegno.",
+    "notData": {
+      "usage": "Quando e quanto spesso apri l’app.",
+      "readReceipts": "Se hai letto un messaggio.",
+      "location": "Dove ti trovi.",
+      "content": "Che cosa scrivi o guardi."
+    },
+    "mySignals": "Segnalazioni che ti riguardano",
+    "signalsHint": "Complete – qui non manca nulla. Le segnalazioni scadono da sole e non diventano mai un fascicolo.",
+    "noSignals": "Al momento non c’è nessuna segnalazione che ti riguarda.",
+    "whoSees": "Chi lo vede",
+    "audience": {
+      "trainers": "I tuoi allenatori e il comitato",
+      "board": "Il comitato"
+    },
+    "expires": "Scade il",
+    "expiresHint": "Poi la segnalazione viene cancellata, senza traccia.",
+    "optOut": "Segnalazioni individuali",
+    "optOutLabel": "Nessuna segnalazione sulla mia persona",
+    "optOutHint": "Continui a entrare in forma anonima nei valori di squadra e società, e il tuo punteggio resta intatto.",
+    "optedOut_one": "Disattivato. {{count}} segnalazione esistente è stata cancellata.",
+    "optedOut_other": "Disattivato. {{count}} segnalazioni esistenti sono state cancellate.",
+    "optedIn": "Riattivato. Nulla nasce retroattivamente."
   }
 }
