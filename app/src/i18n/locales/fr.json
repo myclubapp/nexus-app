@@ -914,5 +914,29 @@
       "grow": "Tenir dans la durée – et confirmer ce que tu tiendras."
     },
     "leadHint": "Montre les mêmes cinq dimensions qu’au membre lui-même – sans classement ni export."
+  },
+  "newsForm": {
+    "title": "Écrire une actualité",
+    "editTitle": "Modifier l’actualité",
+    "newsTitle": "Titre",
+    "body": "Texte",
+    "image": "Image",
+    "imageLabel": "Lien vers l’image",
+    "imageHint": "Sous forme de lien. Il n’existe pas encore d’espace de stockage du club.",
+    "scope": "Portée",
+    "team": "Équipe",
+    "wholeClub": "Tout le club",
+    "scopeHint": "Une actualité d’équipe n’atteint que cette équipe.",
+    "publish": "Publier",
+    "published": "Publiée. Tous les concernés l’ont dans leur boîte.",
+    "edit": "Modifier",
+    "saved": "Enregistré. Personne n’a été averti à nouveau.",
+    "editHint": "À l’enregistrement, personne n’est averti à nouveau.",
+    "retract": "Retirer",
+    "retracted": "Retirée. L’entrée reste dans la boîte comme historique.",
+    "problem": {
+      "titleMissing": "L’actualité a besoin d’un titre.",
+      "imageNotALink": "Ce n’est pas un lien complet. Il commence par http:// ou https://."
+    }
   }
 }

@@ -1483,6 +1483,17 @@ export type Database = {
           notified: number
         }[]
       }
+      publish_news: {
+        Args: {
+          p_body: string
+          p_club_id: string
+          p_image_url?: string
+          p_source?: string
+          p_team_id?: string
+          p_title: string
+        }
+        Returns: string
+      }
       publish_task: {
         Args: { p_task_id: string }
         Returns: {
@@ -1532,6 +1543,7 @@ export type Database = {
           points_awarded: number
         }[]
       }
+      retract_news: { Args: { p_news_id: string }; Returns: undefined }
       reverse_points: {
         Args: { p_note: string; p_transaction_id: string }
         Returns: string

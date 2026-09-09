@@ -1,14 +1,18 @@
 import {
   IonButton,
+  IonButtons,
   IonCard,
   IonCardContent,
   IonCardHeader,
   IonCardSubtitle,
   IonCardTitle,
+  IonIcon,
   IonItem,
   IonLabel,
   IonNote,
 } from '@ionic/react';
+import { createOutline } from 'ionicons/icons';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useClub } from '../hooks/useClub';
@@ -24,17 +28,28 @@ import { useNewsSource } from '../hooks/useNewsSources';
 import { useIsNewClub } from '../hooks/useOnboarding';
 import { AppPage } from '../components/AppPage';
 import { FirstStepsCard } from '../components/FirstStepsCard';
+import { NewsFormModal } from '../components/NewsFormModal';
 import { ListSection } from '../components/ListSection';
 import { StatCard } from '../components/StatCard';
 import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonCard, SkeletonList, SkeletonStats } from '../components/Skeletons';
 import { formatDate, formatDateTime } from '../lib/format';
 import { bookingLabel } from '../lib/points';
+import { isEditable } from '../lib/news';
+import { useRetractNews } from '../hooks/useNews';
+import { useToast } from '../hooks/useToast';
+import type { News } from '../lib/database.types';
 
 export function DashboardPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { activeClub, activeMembership, eventLabel } = useClub();
+  const { activeClub, activeMembership, eventLabel, isTrainer } = useClub();
+  const toast = useToast();
+  const retract = useRetractNews();
+  const [newsForm, setNewsForm] = useState<{ open: boolean; editing: News | null }>({
+    open: false,
+    editing: null,
+  });
   const isNewClub = useIsNewClub();
   const points = useMyPoints();
   const summary = useMyPointsSummary();
@@ -65,6 +80,20 @@ export function DashboardPage() {
       largeTitle={t('dashboard.greeting', {
         name: activeMembership?.display_name ?? '',
       })}
+      toolbarEnd={
+        /* Schritt 1: «News schreiben» steht dort, wo News gelesen werden. */
+        isTrainer ? (
+          <IonButtons slot="end">
+            <IonButton onClick={() => setNewsForm({ open: true, editing: null })}>
+              <IonIcon
+                slot="icon-only"
+                icon={createOutline}
+                aria-label={t('newsForm.title')}
+              />
+            </IonButton>
+          </IonButtons>
+        ) : undefined
+      }
       onRefresh={() =>
         Promise.all([
           summary.refetch(),
@@ -210,10 +239,50 @@ export function DashboardPage() {
                 <IonCardTitle>{entry.title}</IonCardTitle>
               </IonCardHeader>
               {entry.body && <IonCardContent>{entry.body}</IonCardContent>}
+
+              {/* A3 und A4. Übernommene News der Website werden nicht zum
+                  Bearbeiten angeboten: Die Änderung ginge beim nächsten
+                  Abgleich verloren (UC-038). */}
+              {isTrainer && (
+                <IonCardContent>
+                  {isEditable(entry) && (
+                    <IonButton
+                      size="small"
+                      fill="clear"
+                      onClick={() => setNewsForm({ open: true, editing: entry })}
+                    >
+                      {t('newsForm.edit')}
+                    </IonButton>
+                  )}
+                  <IonButton
+                    size="small"
+                    fill="clear"
+                    color="medium"
+                    disabled={retract.isPending}
+                    onClick={() =>
+                      retract.mutate(entry.id, {
+                        onSuccess: () => toast.success(t('newsForm.retracted')),
+                        onError: (cause) => toast.failure(cause.message),
+                      })
+                    }
+                  >
+                    {t('newsForm.retract')}
+                  </IonButton>
+                </IonCardContent>
+              )}
             </IonCard>
           ))
         )}
       </ListSection>
+      <NewsFormModal
+        isOpen={newsForm.open}
+        editing={newsForm.editing}
+        onDismiss={() => setNewsForm({ open: false, editing: null })}
+        onDone={(edited) => {
+          setNewsForm({ open: false, editing: null });
+          toast.success(edited ? t('newsForm.saved') : t('newsForm.published'));
+        }}
+      />
     </AppPage>
   );
 }

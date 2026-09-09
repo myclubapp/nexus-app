@@ -914,5 +914,29 @@
       "grow": "Stay with it – and say yes to what you will keep."
     },
     "leadHint": "Shows the same five dimensions the member sees – no rank, no export."
+  },
+  "newsForm": {
+    "title": "Write news",
+    "editTitle": "Edit news",
+    "newsTitle": "Title",
+    "body": "Text",
+    "image": "Image",
+    "imageLabel": "Link to the image",
+    "imageHint": "As a link. There is no club storage for uploads yet.",
+    "scope": "Scope",
+    "team": "Team",
+    "wholeClub": "Whole club",
+    "scopeHint": "Team news reaches that team only.",
+    "publish": "Publish",
+    "published": "Published. Everyone concerned has it in their inbox.",
+    "edit": "Edit",
+    "saved": "Saved. Nobody was notified again.",
+    "editHint": "Saving does not notify anyone again.",
+    "retract": "Retract",
+    "retracted": "Retracted. The inbox entry stays as history.",
+    "problem": {
+      "titleMissing": "The news needs a title.",
+      "imageNotALink": "That is not a complete link. It starts with http:// or https://."
+    }
   }
 }

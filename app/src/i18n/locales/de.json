@@ -914,5 +914,29 @@
       "grow": "Dranbleiben – und zusagen, was du auch einhältst."
     },
     "leadHint": "Zeigt dieselben fünf Dimensionen wie dem Mitglied selbst – ohne Rang und ohne Export."
+  },
+  "newsForm": {
+    "title": "News schreiben",
+    "editTitle": "News bearbeiten",
+    "newsTitle": "Titel",
+    "body": "Text",
+    "image": "Bild",
+    "imageLabel": "Link zum Bild",
+    "imageHint": "Als Link. Einen Vereinsspeicher für Uploads gibt es noch nicht.",
+    "scope": "Geltungsbereich",
+    "team": "Team",
+    "wholeClub": "Ganzer Verein",
+    "scopeHint": "Eine Team-News erreicht ausschliesslich dieses Team.",
+    "publish": "Publizieren",
+    "published": "Publiziert. Alle Betroffenen haben sie in der Inbox.",
+    "edit": "Bearbeiten",
+    "saved": "Gespeichert. Es wurde niemand erneut benachrichtigt.",
+    "editHint": "Beim Speichern wird niemand erneut benachrichtigt.",
+    "retract": "Zurückziehen",
+    "retracted": "Zurückgezogen. In der Inbox bleibt der Eintrag als Verlauf.",
+    "problem": {
+      "titleMissing": "Die News braucht einen Titel.",
+      "imageNotALink": "Das ist kein vollständiger Link. Er beginnt mit http:// oder https://."
+    }
   }
 }

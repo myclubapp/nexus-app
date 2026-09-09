@@ -90,6 +90,11 @@ vi.mock('../hooks/useAgenda', () => ({
 vi.mock('../hooks/useNews', () => ({
   useNews: () => emptyQuery,
   useInbox: () => emptyQuery,
+  useMarkNotificationRead: () => ({ mutate: () => {}, isPending: false }),
+  // Seit UC-026 schreibt und verwaltet das Dashboard News.
+  usePublishNews: () => ({ mutate: () => {}, isPending: false, error: null }),
+  useUpdateNews: () => ({ mutate: () => {}, isPending: false, error: null }),
+  useRetractNews: () => ({ mutate: () => {}, isPending: false, error: null }),
 }));
 // Die Seitenleiste hängt am ganzen App-Rahmen und fragt die offenen
 // Beitrittsgesuche ab, sobald jemand Vorstand ist.

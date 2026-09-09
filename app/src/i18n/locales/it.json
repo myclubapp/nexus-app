@@ -914,5 +914,29 @@
       "grow": "Restare nel tempo – e confermare ciò che poi mantieni."
     },
     "leadHint": "Mostra le stesse cinque dimensioni che vede il membro – senza classifica e senza esportazione."
+  },
+  "newsForm": {
+    "title": "Scrivere una notizia",
+    "editTitle": "Modificare la notizia",
+    "newsTitle": "Titolo",
+    "body": "Testo",
+    "image": "Immagine",
+    "imageLabel": "Link all’immagine",
+    "imageHint": "Come link. Non esiste ancora uno spazio di archiviazione della società.",
+    "scope": "Ambito",
+    "team": "Squadra",
+    "wholeClub": "Tutta la società",
+    "scopeHint": "Una notizia di squadra raggiunge solo quella squadra.",
+    "publish": "Pubblicare",
+    "published": "Pubblicata. Tutti gli interessati l’hanno in posta.",
+    "edit": "Modificare",
+    "saved": "Salvato. Nessuno è stato avvisato di nuovo.",
+    "editHint": "Al salvataggio non viene avvisato nessuno di nuovo.",
+    "retract": "Ritirare",
+    "retracted": "Ritirata. In posta la voce resta come cronologia.",
+    "problem": {
+      "titleMissing": "La notizia ha bisogno di un titolo.",
+      "imageNotALink": "Non è un link completo. Inizia con http:// o https://."
+    }
   }
 }
