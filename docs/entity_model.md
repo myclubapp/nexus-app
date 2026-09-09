@@ -332,17 +332,18 @@ Eine ausgeschriebene Vereinsaufgabe, die Mitglieder freiwillig übernehmen.
 | team_id       | Team, falls die Aufgabe nur dort gilt           | UUID      | 36               | Optional, Foreign Key (TEAM.id)                      |
 | title         | Titel der Aufgabe                               | String    | 160              | Not Null                                             |
 | description   | Beschreibung der Aufgabe                        | String    | 2000             | Optional                                             |
-| why           | Sinnzusammenhang, Voraussetzung der Publikation | String    | 500              | Not Null                                             |
-| category      | Kategorie für Matching und Filter               | String    | 40               | Not Null                                             |
+| why           | Sinnzusammenhang, Voraussetzung der Publikation | String    | 500              | Not Null ab Status open                              |
+| category      | Kategorie für Matching und Filter               | String    | 40               | Not Null, Values: organisation, facility, catering, transport, communication, finance, coaching, other |
 | points        | Punktwert bei Bestätigung                       | Integer   | 10               | Not Null, Min: 0                                     |
 | task_type     | Art der Wiederholung                            | String    | 20               | Not Null, Values: oneoff, recurring, season_role     |
 | due_at        | Frist der Erledigung                            | DateTime  | -                | Optional                                             |
 | max_assignees | Höchstzahl übernehmender Personen               | Integer   | 10               | Not Null, Min: 1                                     |
+| recurrence_days | Rhythmus der Wiederholung in Tagen            | Integer   | 10               | Optional, Min: 1, Max: 730; gesetzt genau bei task_type = recurring |
 | status        | Bearbeitungsstand                               | String    | 20               | Not Null, Values: draft, open, claimed, submitted, done, expired |
 | is_sample     | Kennzeichen als Beispielinhalt der Erstbefüllung | Boolean   | 1                | Not Null                                             |
 | created_by    | Ausschreibende Person                           | UUID      | 36               | Not Null, Foreign Key (CLUB_MEMBER.id)               |
 
-**Constraints:** Eine Aufgabe mit anderem Status als draft trägt ein nicht leeres `why`. Der Punktwert steht an der Aufgabe selbst und nicht an einer Regel.
+**Constraints:** Eine Aufgabe mit anderem Status als draft trägt ein nicht leeres `why`. Der Punktwert steht an der Aufgabe selbst und nicht an einer Regel; 0 bedeutet «nur Dank» und nicht «wertlos». Die Kategorie stammt aus derselben Liste, aus der MEMBER_CONTRIBUTION_PROFILE seine Interessen wählt – sonst gäbe es kein Matching. Entwürfe und abgelaufene Aufgaben sind nur für Trainer:innen und den Vorstand sichtbar; eine Aufgabe mit `team_id` ist ausserhalb dieses Teams weder sichtbar noch übernehmbar.
 
 ### TASK_ASSIGNMENT
 

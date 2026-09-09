@@ -1,12 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase, isConfigured } from '../lib/supabase';
 import { seasonLabel } from '../lib/season';
 import type {
   LeaderboardRow,
   PointRule,
   PointTransaction,
-  Task,
-  TaskAssignment,
 } from '../lib/database.types';
 import { useClub } from './useClub';
 
@@ -81,48 +79,6 @@ export function useLeaderboard(scope: 'club' | 'team', teamId?: string | null) {
       const { data, error } = await request;
       if (error) throw new Error(error.message);
       return data ?? [];
-    },
-  });
-}
-
-export interface MarketplaceTask extends Task {
-  assignments: TaskAssignment[];
-}
-
-export function useTasks() {
-  const { activeClub } = useClub();
-
-  return useQuery({
-    queryKey: ['tasks', activeClub?.id],
-    enabled: Boolean(activeClub) && isConfigured,
-    queryFn: async (): Promise<MarketplaceTask[]> => {
-      const { data, error } = await supabase
-        .from('tasks')
-        .select('*, assignments:task_assignments(*)')
-        .eq('club_id', activeClub!.id)
-        .in('status', ['open', 'claimed', 'submitted'])
-        .order('due_at', { ascending: true, nullsFirst: false });
-      if (error) throw new Error(error.message);
-      return (data ?? []) as unknown as MarketplaceTask[];
-    },
-  });
-}
-
-/**
- * Aufgabe übernehmen. Die Buchung läuft über eine security-definer-Funktion –
- * Clients schreiben nie direkt in den Punkte-Ledger (Architektur §10).
- */
-export function useClaimTask() {
-  const queryClient = useQueryClient();
-  const { activeClub } = useClub();
-
-  return useMutation({
-    mutationFn: async (taskId: string) => {
-      const { error } = await supabase.rpc('claim_task', { p_task_id: taskId });
-      if (error) throw new Error(error.message);
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['tasks', activeClub?.id] });
     },
   });
 }

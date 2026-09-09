@@ -92,16 +92,16 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-047 | Team-Leaderboard               | Als Mitglied möchte ich die Rangliste meines Teams sehen, damit der Vergleich im vertrauten Kreis stattfindet.                                                      | High     | In Progress |
 | FR-048 | Leaderboard nach Säule filtern | Als Vorstand möchte ich die Rangliste nach Säule filtern (z.B. Helferpunkte Säule 3), damit ich das frühere Helfer-Reporting ohne eigenes Modul erhalte.            | High     | Open        |
 | FR-049 | Zeitraum wählen                | Als Mitglied möchte ich zwischen Woche, Monat, Saison und Gesamt wechseln, damit auch Neumitglieder sichtbar werden.                                                | Medium   | Open        |
-| FR-050 | Aufgabe ausschreiben           | Als Vorstand möchte ich eine Aufgabe mit Beschreibung, Kategorie, Frist und Punktwert ausschreiben, damit Vereinsarbeit verteilt wird.                              | High     | In Progress |
-| FR-051 | Warum-Pflichtfeld              | Als Mitglied möchte ich zu jeder Aufgabe, jedem Amt und jedem Helfer-Event lesen, wozu es dient und wem es hilft, damit ich den Sinn kenne (K3a).                   | High     | In Progress |
+| FR-050 | Aufgabe ausschreiben           | Als Vorstand möchte ich eine Aufgabe mit Beschreibung, Kategorie, Frist und Punktwert ausschreiben, damit Vereinsarbeit verteilt wird.                              | High     | Implemented |
+| FR-051 | Warum-Pflichtfeld              | Als Mitglied möchte ich zu jeder Aufgabe, jedem Amt und jedem Helfer-Event lesen, wozu es dient und wem es hilft, damit ich den Sinn kenne (K3a).                   | High     | Implemented |
 | FR-052 | Aufgabe übernehmen             | Als Mitglied möchte ich eine Aufgabe reservieren, damit klar ist, dass ich sie übernehme.                                                                           | High     | In Progress |
 | FR-053 | Aufgabe einreichen             | Als Mitglied möchte ich eine erledigte Aufgabe mit optionalem Nachweis einreichen, damit sie bestätigt werden kann.                                                 | High     | In Progress |
 | FR-054 | Aufgabe bestätigen             | Als Vorstand möchte ich eine eingereichte Aufgabe bestätigen und Punkte auslösen, damit der Beitrag gewürdigt wird.                                                 | High     | In Progress |
 | FR-055 | Kudos zur Bestätigung          | Als Vorstand möchte ich der Bestätigung ein kurzes Dankeswort beilegen, damit Wertschätzung vor der Punktzahl steht (V7).                                           | High     | Open        |
-| FR-056 | Wiederkehrende Aufgaben        | Als Vorstand möchte ich Aufgaben als wiederkehrend anlegen, damit ich sie nicht jede Runde neu erfassen muss.                                                       | Medium   | Open        |
+| FR-056 | Wiederkehrende Aufgaben        | Als Vorstand möchte ich Aufgaben als wiederkehrend anlegen, damit ich sie nicht jede Runde neu erfassen muss.                                                       | Medium   | Implemented |
 | FR-057 | Verteilungs-Transparenz        | Als Mitglied möchte ich sehen, wie viele Aufgaben bereits übernommen wurden, damit die Verteilung fair sichtbar ist.                                                | Medium   | Open        |
 | FR-058 | Beitrags-Profil erfassen       | Als Mitglied möchte ich angeben, womit ich gern beitrage (Interessen, Stärken, Zeitbudget), damit mir passende Beiträge angeboten werden (K3b).                     | High     | Open        |
-| FR-059 | Beitrags-Matching              | Als Mitglied möchte ich Aufgaben und Ämter vorgeschlagen bekommen, die zu meinem Beitrags-Profil passen, damit Verantwortung angeboten statt ausgeschrieben wird.   | High     | Open        |
+| FR-059 | Beitrags-Matching              | Als Mitglied möchte ich Aufgaben und Ämter vorgeschlagen bekommen, die zu meinem Beitrags-Profil passen, damit Verantwortung angeboten statt ausgeschrieben wird.   | High     | In Progress
 
 ### 1.5 Vereins-Gesundheit & Frühwarnung
 

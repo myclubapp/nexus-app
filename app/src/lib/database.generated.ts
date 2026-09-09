@@ -1054,49 +1054,58 @@ export type Database = {
       }
       tasks: {
         Row: {
-          category: string | null
+          category: string
           club_id: string
           created_at: string
           created_by: string
           description: string | null
           due_at: string | null
           id: string
+          is_sample: boolean
           max_assignees: number
           points: number
+          recurrence_days: number | null
           status: string
           task_type: string
           team_id: string | null
           title: string
+          why: string | null
         }
         Insert: {
-          category?: string | null
+          category?: string
           club_id: string
           created_at?: string
           created_by: string
           description?: string | null
           due_at?: string | null
           id?: string
+          is_sample?: boolean
           max_assignees?: number
           points?: number
+          recurrence_days?: number | null
           status?: string
           task_type?: string
           team_id?: string | null
           title: string
+          why?: string | null
         }
         Update: {
-          category?: string | null
+          category?: string
           club_id?: string
           created_at?: string
           created_by?: string
           description?: string | null
           due_at?: string | null
           id?: string
+          is_sample?: boolean
           max_assignees?: number
           points?: number
+          recurrence_days?: number | null
           status?: string
           task_type?: string
           team_id?: string | null
           title?: string
+          why?: string | null
         }
         Relationships: [
           {
@@ -1264,6 +1273,13 @@ export type Database = {
     }
     Functions: {
       announce_event: { Args: { p_event_id: string }; Returns: number }
+      announce_task: {
+        Args: { p_task_id: string }
+        Returns: {
+          muted: boolean
+          notified: number
+        }[]
+      }
       award_points: {
         Args: {
           p_member_id: string
@@ -1330,6 +1346,21 @@ export type Database = {
         }
         Returns: string
       }
+      create_task: {
+        Args: {
+          p_category: string
+          p_club_id: string
+          p_description?: string
+          p_due_at?: string
+          p_max_assignees?: number
+          p_points: number
+          p_recurrence_days?: number
+          p_team_id?: string
+          p_title: string
+          p_why: string
+        }
+        Returns: string
+      }
       current_member_id: { Args: { p_club_id: string }; Returns: string }
       decide_join_request: {
         Args: {
@@ -1352,6 +1383,7 @@ export type Database = {
           status: string
         }[]
       }
+      expire_tasks: { Args: { p_limit?: number }; Returns: number }
       find_club_by_slug: {
         Args: { p_slug: string }
         Returns: {
@@ -1407,6 +1439,13 @@ export type Database = {
           notified: number
         }[]
       }
+      publish_task: {
+        Args: { p_task_id: string }
+        Returns: {
+          muted: boolean
+          notified: number
+        }[]
+      }
       redeem_invite: {
         Args: { p_code: string; p_display_name?: string }
         Returns: string
@@ -1429,6 +1468,7 @@ export type Database = {
       remind_undecided_internal: {
         Args: { p_event_id: string }
         Returns: {
+          last_reminder: string
           notified: number
         }[]
       }
@@ -1458,7 +1498,7 @@ export type Database = {
         Args: { p_club_id: string; p_club_kind: string }
         Returns: undefined
       }
-      send_due_reminders: { Args: never; Returns: number }
+      send_due_reminders: { Args: { p_limit?: number }; Returns: number }
       set_member_teams: {
         Args: { p_member_id: string; p_team_ids: string[] }
         Returns: undefined
@@ -1488,6 +1528,7 @@ export type Database = {
         }[]
       }
       slugify: { Args: { p_value: string }; Returns: string }
+      suggest_task: { Args: { p_task_id: string }; Returns: number }
       sync_news_sources: { Args: never; Returns: number }
       take_shift: {
         Args: { p_accept_overlap?: boolean; p_shift_id: string }

@@ -6,7 +6,7 @@
 **Use Case Name:** Aufgabe im Marktplatz ausschreiben
 **Primary Actor:** Vorstand
 **Goal:** Eine Vereinsaufgabe so ausschreiben, dass Mitglieder sie freiwillig übernehmen
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 
