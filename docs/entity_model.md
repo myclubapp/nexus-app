@@ -227,7 +227,6 @@ Ein Termin des Vereins: Training, Wettkampf, Anlass, Helfer-Event, Sitzung oder 
 | location         | Ortsangabe in Textform                                 | String    | 200              | Optional                                                                |
 | capacity_needed  | Benötigte Anzahl Teilnehmender                         | Integer   | 10               | Optional, Min: 1                                                        |
 | point_rule_code  | Regel, die eine Teilnahme bewertet                     | String    | 60               | Optional                                                                |
-| qr_token         | Zufälliges Token für den Check-in                      | String    | 64               | Not Null, Unique                                                        |
 | audience_role_ids| Ämter, an die eine Sitzungseinladung geht              | JSON      | -                | Optional                                                                |
 | cancelled_at     | Zeitpunkt der Absage                                   | DateTime  | -                | Optional                                                                |
 | cancelled_reason | Begründung der Absage                                  | String    | 500              | Optional                                                                |
@@ -235,6 +234,22 @@ Ein Termin des Vereins: Training, Wettkampf, Anlass, Helfer-Event, Sitzung oder 
 | created_by       | Erfassende Person                                      | UUID      | 36               | Not Null, Foreign Key (CLUB_MEMBER.id)                                  |
 
 **Constraints:** `ends_at` liegt nach `starts_at`. Für die Typen helper, gv und social ist `why` nicht leer. Eine Absage verlangt `cancelled_at` und `cancelled_reason`.
+
+### EVENT_QR_TOKEN
+
+Das Check-in-Token eines Termins. Eigene Entität und nicht ein Attribut von
+EVENT, weil es ein **Geheimnis** ist: Als Spalte in `events` liesse es jede
+Lesepolicy auf den Termin mitlesen, und ein Code, den alle Mitglieder kennen,
+beweist keine Anwesenheit mehr (UC-014, BR-055/BR-056).
+
+| Attribut | Beschreibung                        | Datentyp | Länge | Constraints                                   |
+| -------- | ----------------------------------- | -------- | ----- | --------------------------------------------- |
+| event_id | Termin, zu dem der Code gehört       | UUID     | —     | PK, FK → EVENT, On Delete Cascade             |
+| token    | Zufälliges Token für den Check-in    | String   | 32    | Not Null, Unique                              |
+
+Sichtbar ausschliesslich für Trainer:innen und den Vorstand des Vereins.
+Vergeben wird es beim Anlegen des Termins durch einen Trigger.
+
 
 ### EVENT_SHIFT
 

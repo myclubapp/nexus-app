@@ -543,5 +543,45 @@
     "add": "Ajouter une personne",
     "addHint": "Pour les remplaçant·e·s : inscription et confirmation en une fois.",
     "confirmedNoPoints": "{{name}} confirmé·e – cette tranche ne donne pas de points."
+  },
+  "checkIn": {
+    "showQr": "Afficher le code QR",
+    "qrLabel": "Code de présence de ce rendez-vous",
+    "qrHint": "Présente le code pour que les personnes présentes puissent le scanner. Il est valable de 30 minutes avant le début jusqu'à la fin.",
+    "roster_one": "{{count}} personne",
+    "roster_other": "{{count}} personnes",
+    "rosterEmpty": "Personne n'est prévu pour ce rendez-vous",
+    "rosterHint": "Pour celles et ceux qui ne peuvent pas scanner : à saisir ici à la main.",
+    "markPresent": "Présent·e",
+    "present": "Présent·e",
+    "unmarked": "La présence est retirée. Les points déjà crédités restent acquis.",
+    "marked": "{{name}} noté·e comme présent·e",
+    "markedWithPoints": "{{name}} noté·e comme présent·e – {{points}} points",
+    "awarded": "Enregistré – {{points}} points crédités",
+    "done": "Enregistré",
+    "already": "Tu étais déjà enregistré·e ici. Rien n'est crédité deux fois.",
+    "queued": "Pas de réseau – la présence est enregistrée et sera transmise dès que tu seras reconnecté·e.",
+    "status": {
+      "open": "Sans réponse",
+      "registered": "Oui",
+      "present": "Présent·e",
+      "excused": "Non",
+      "absent": "Absent·e",
+      "substitute": "Remplaçant·e"
+    },
+    "error": {
+      "window": "Le code n'est valable qu'à partir de 30 minutes avant le début et jusqu'à la fin du rendez-vous.",
+      "wrongCode": "Ce code appartient à un autre rendez-vous.",
+      "notMember": "Tu n'es pas membre de ce club.",
+      "cancelled": "Ce rendez-vous a été annulé.",
+      "notFound": "Aucun rendez-vous ne correspond à ce code.",
+      "offline": "Pas de connexion. Réessaie dès que tu es de nouveau en ligne.",
+      "generic": "L'enregistrement n'a pas fonctionné. Merci de réessayer.",
+      "forbidden": "Tu n'as pas les droits nécessaires.",
+      "camera": "Impossible d'ouvrir la caméra. Vérifie l'autorisation d'accès pour myclub."
+    },
+    "queueRejected_one": "Une présence enregistrée n'a pas pu être validée – la fenêtre était fermée.",
+    "queueRejected_other": "{{count}} présences enregistrées n'ont pas pu être validées – la fenêtre était fermée.",
+    "unmark": "Retirer"
   }
 }

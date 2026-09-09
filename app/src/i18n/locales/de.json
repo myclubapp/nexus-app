@@ -543,5 +543,45 @@
     "add": "Person hinzufügen",
     "addHint": "Für Eingesprungene: wird eingetragen und im selben Schritt bestätigt.",
     "confirmedNoPoints": "{{name}} bestätigt – diese Schicht vergibt keine Punkte."
+  },
+  "checkIn": {
+    "showQr": "QR-Code zeigen",
+    "qrLabel": "Check-in-Code dieses Termins",
+    "qrHint": "Halte den Code hin, damit die Anwesenden ihn scannen können. Er gilt von 30 Minuten vor Beginn bis zum Ende des Termins.",
+    "roster_one": "{{count}} Person",
+    "roster_other": "{{count}} Personen",
+    "rosterEmpty": "Für diesen Termin ist niemand vorgesehen",
+    "rosterHint": "Für alle, die nicht scannen können: hier von Hand erfassen.",
+    "markPresent": "Anwesend",
+    "present": "Anwesend",
+    "unmarked": "Der Anwesenheitsvermerk ist zurückgenommen. Bereits gebuchte Punkte bleiben.",
+    "marked": "{{name}} als anwesend erfasst",
+    "markedWithPoints": "{{name}} als anwesend erfasst – {{points}} Punkte",
+    "awarded": "Eingecheckt – {{points}} Punkte gutgeschrieben",
+    "done": "Eingecheckt",
+    "already": "Du warst hier schon eingecheckt. Es wird nichts doppelt gebucht.",
+    "queued": "Kein Netz – der Check-in ist gespeichert und wird nachgesendet, sobald du wieder verbunden bist.",
+    "status": {
+      "open": "Noch offen",
+      "registered": "Zugesagt",
+      "present": "Anwesend",
+      "excused": "Abgesagt",
+      "absent": "Nicht da",
+      "substitute": "Eingesprungen"
+    },
+    "error": {
+      "window": "Der Code gilt erst ab 30 Minuten vor Beginn und nur bis zum Ende des Termins.",
+      "wrongCode": "Dieser Code gehört zu einem anderen Termin.",
+      "notMember": "Du gehörst diesem Verein nicht an.",
+      "cancelled": "Dieser Termin wurde abgesagt.",
+      "notFound": "Zu diesem Code gibt es keinen Termin.",
+      "offline": "Keine Verbindung. Versuche es nochmals, sobald du wieder online bist.",
+      "generic": "Der Check-in hat nicht geklappt. Bitte nochmals versuchen.",
+      "forbidden": "Dafür fehlt dir die Berechtigung.",
+      "camera": "Die Kamera lässt sich nicht öffnen. Prüfe die Kamera-Erlaubnis für myclub."
+    },
+    "queueRejected_one": "Ein gespeicherter Check-in konnte nicht mehr gebucht werden – das Zeitfenster war zu.",
+    "queueRejected_other": "{{count}} gespeicherte Check-ins konnten nicht mehr gebucht werden – das Zeitfenster war zu.",
+    "unmark": "Zurücknehmen"
   }
 }

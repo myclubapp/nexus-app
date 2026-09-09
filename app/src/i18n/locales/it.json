@@ -543,5 +543,45 @@
     "add": "Aggiungi una persona",
     "addHint": "Per i sostituti: iscrizione e conferma in un solo passaggio.",
     "confirmedNoPoints": "{{name}} confermato – questo turno non assegna punti."
+  },
+  "checkIn": {
+    "showQr": "Mostra il codice QR",
+    "qrLabel": "Codice di presenza di questo appuntamento",
+    "qrHint": "Mostra il codice affinché i presenti possano scansionarlo. È valido da 30 minuti prima dell'inizio fino alla fine.",
+    "roster_one": "{{count}} persona",
+    "roster_other": "{{count}} persone",
+    "rosterEmpty": "Per questo appuntamento non è previsto nessuno",
+    "rosterHint": "Per chi non può scansionare: registra qui a mano.",
+    "markPresent": "Presente",
+    "present": "Presente",
+    "unmarked": "La presenza è stata ritirata. I punti già accreditati restano.",
+    "marked": "{{name}} registrato come presente",
+    "markedWithPoints": "{{name}} registrato come presente – {{points}} punti",
+    "awarded": "Registrato – {{points}} punti accreditati",
+    "done": "Registrato",
+    "already": "Eri già registrato qui. Non viene accreditato nulla due volte.",
+    "queued": "Nessuna rete – la presenza è salvata e verrà inviata appena sarai di nuovo connesso.",
+    "status": {
+      "open": "Senza risposta",
+      "registered": "Sì",
+      "present": "Presente",
+      "excused": "No",
+      "absent": "Assente",
+      "substitute": "Sostituto"
+    },
+    "error": {
+      "window": "Il codice è valido solo da 30 minuti prima dell'inizio fino alla fine dell'appuntamento.",
+      "wrongCode": "Questo codice appartiene a un altro appuntamento.",
+      "notMember": "Non fai parte di questa società.",
+      "cancelled": "Questo appuntamento è stato annullato.",
+      "notFound": "Nessun appuntamento corrisponde a questo codice.",
+      "offline": "Nessuna connessione. Riprova appena sei di nuovo online.",
+      "generic": "La registrazione non è riuscita. Riprova.",
+      "forbidden": "Non hai i permessi necessari.",
+      "camera": "Impossibile aprire la fotocamera. Controlla l'autorizzazione per myclub."
+    },
+    "queueRejected_one": "Una presenza salvata non ha più potuto essere registrata – la finestra era chiusa.",
+    "queueRejected_other": "{{count}} presenze salvate non hanno più potuto essere registrate – la finestra era chiusa.",
+    "unmark": "Ritira"
   }
 }

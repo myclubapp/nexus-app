@@ -28,7 +28,9 @@ import { DeclineModal } from '../components/DeclineModal';
 import { HelperEventModal } from '../components/HelperEventModal';
 import { ShiftListModal } from '../components/ShiftListModal';
 import { ShiftRosterModal } from '../components/ShiftRosterModal';
+import { EventQrModal } from '../components/EventQrModal';
 import { canRespond, tallyAttendance } from '../lib/attendance';
+import { isCheckInOpen } from '../lib/checkInWindow';
 import { shiftCoverage } from '../lib/shift';
 
 type Range = 'upcoming' | 'past';
@@ -45,6 +47,8 @@ export function AgendaPage() {
   const [shiftEventId, setShiftEventId] = useState<string | null>(null);
   // UC-013 Schritt 1: der vergangene Aufruf, dessen Einsätze zu bestätigen sind.
   const [rosterEventId, setRosterEventId] = useState<string | null>(null);
+  // UC-014 Schritt 1: Die Trainer:in zeigt den Code und erfasst, wer da ist.
+  const [qrEventId, setQrEventId] = useState<string | null>(null);
   const [decliningEvent, setDecliningEvent] = useState<{
     id: string;
     startsAt: string;
@@ -130,6 +134,17 @@ export function AgendaPage() {
                 isCancelled,
                 hasStarted: new Date(event.starts_at) <= new Date(),
               });
+            // Der Check-in folgt seinem eigenen Fenster (BR-054) und nicht der
+            // Einteilung der Agenda: Die teilt bei `starts_at`, das Fenster
+            // reicht aber bis zum Ende. Wer um 19:05 die Halle betritt, fände
+            // den Termin sonst nur unter «Vergangen» – ohne Knopf, obwohl der
+            // Server bis 20:30 bucht.
+            const checkInOpen = isCheckInOpen({
+              startsAt: event.starts_at,
+              endsAt: event.ends_at,
+              isCancelled,
+              isDraft,
+            });
             // Betroffen ist bei einem Team-Termin nur dieses Team, sonst der
             // ganze Verein. Nähme man immer die Vereinsgrösse, stünde bei jedem
             // Team-Termin eine zu hohe Zahl Unentschlossener.
@@ -209,6 +224,29 @@ export function AgendaPage() {
                     </IonNote>
                   </p>
 
+                  {/* FR-034 und Schritt 4: beide nur, solange das Fenster offen
+                      ist – der Code nützt sonst niemandem, und der Scan wird
+                      abgewiesen. */}
+                  {checkInOpen && (
+                    <IonButtons>
+                      <IonButton
+                        size="small"
+                        onClick={() => setCheckInEventId(event.id)}
+                      >
+                        {t('agenda.checkIn')}
+                      </IonButton>
+                      {isTrainer && (
+                        <IonButton
+                          size="small"
+                          fill="outline"
+                          onClick={() => setQrEventId(event.id)}
+                        >
+                          {t('checkIn.showQr')}
+                        </IonButton>
+                      )}
+                    </IonButtons>
+                  )}
+
                   {/* A3: Ein abgesagter Termin zeigt den Grund und sperrt. */}
                   {isCancelled && (
                     <p>
@@ -276,9 +314,6 @@ export function AgendaPage() {
                       >
                         {t('agenda.decline')}
                       </IonButton>
-                      <IonButton size="small" onClick={() => setCheckInEventId(event.id)}>
-                        {t('agenda.checkIn')}
-                      </IonButton>
                     </IonButtons>
                   )}
                 </IonLabel>
@@ -304,6 +339,8 @@ export function AgendaPage() {
         eventId={checkInEventId}
         onDismiss={() => setCheckInEventId(null)}
       />
+
+      <EventQrModal eventId={qrEventId} onDismiss={() => setQrEventId(null)} />
 
       <ShiftRosterModal
         isOpen={rosterEventId !== null}

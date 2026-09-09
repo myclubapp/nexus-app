@@ -8,6 +8,7 @@ import {
 } from '@ionic/react';
 import { Navigate, Route } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useCheckInQueue } from '../hooks/useCheckIn';
 import {
   calendarOutline,
   homeOutline,
@@ -24,6 +25,7 @@ import { ClubSettingsPage } from './ClubSettingsPage';
 import { InvitePage } from './club/InvitePage';
 import { JoinRequestPage } from './club/JoinRequestPage';
 import { MemberPage } from './club/MemberPage';
+import { NewsSourcePage } from './club/NewsSourcePage';
 import { PointRulePage } from './club/PointRulePage';
 
 /**
@@ -40,6 +42,10 @@ import { PointRulePage } from './club/PointRulePage';
  */
 export function TabsPage() {
   const { t } = useTranslation();
+  // A5: Was im Funkloch gescannt wurde, geht von hier aus nach – einmal beim
+  // Start und danach bei jedem `online`-Ereignis. An den Tabs aufgehängt,
+  // weil dies die Hülle ist, die die ganze angemeldete Zeit über steht.
+  useCheckInQueue();
 
   return (
     <IonTabs>
@@ -54,6 +60,7 @@ export function TabsPage() {
         <Route path="profile/requests" element={<JoinRequestPage />} />
         <Route path="profile/members" element={<MemberPage />} />
         <Route path="profile/rules" element={<PointRulePage />} />
+        <Route path="profile/news" element={<NewsSourcePage />} />
         <Route path="" element={<Navigate to="dashboard" replace />} />
       </IonRouterOutlet>
 

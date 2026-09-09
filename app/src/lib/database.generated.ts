@@ -229,6 +229,29 @@ export type Database = {
         }
         Relationships: []
       }
+      event_qr_tokens: {
+        Row: {
+          event_id: string
+          token: string
+        }
+        Insert: {
+          event_id: string
+          token?: string
+        }
+        Update: {
+          event_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_qr_tokens_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_series: {
         Row: {
           club_id: string
@@ -324,7 +347,6 @@ export type Database = {
           location: string | null
           point_rule_code: string | null
           published_at: string | null
-          qr_token: string
           series_id: string | null
           starts_at: string
           team_id: string | null
@@ -346,7 +368,6 @@ export type Database = {
           location?: string | null
           point_rule_code?: string | null
           published_at?: string | null
-          qr_token?: string
           series_id?: string | null
           starts_at: string
           team_id?: string | null
@@ -368,7 +389,6 @@ export type Database = {
           location?: string | null
           point_rule_code?: string | null
           published_at?: string | null
-          qr_token?: string
           series_id?: string | null
           starts_at?: string
           team_id?: string | null
@@ -1320,6 +1340,14 @@ export type Database = {
       default_event_labels: { Args: { p_club_kind: string }; Returns: Json }
       default_season_start: { Args: { p_club_kind: string }; Returns: string }
       delete_my_account: { Args: never; Returns: undefined }
+      event_roster: {
+        Args: { p_event_id: string }
+        Returns: {
+          display_name: string
+          member_id: string
+          status: string
+        }[]
+      }
       find_club_by_slug: {
         Args: { p_slug: string }
         Returns: {
@@ -1334,6 +1362,10 @@ export type Database = {
       log_club_message: {
         Args: { p_club_id: string; p_kind: string; p_reference: string }
         Returns: undefined
+      }
+      mark_attendance: {
+        Args: { p_event_id: string; p_member_id: string; p_present?: boolean }
+        Returns: number
       }
       my_clubs_left_without_admin: {
         Args: never

@@ -37,10 +37,10 @@ synchron gehalten werden können.
 |---|---|---|---|---|
 | [UC-009](UC-009-termin-erstellen.md) | Termin erstellen | Trainer:in | FR-021, FR-022, FR-023, FR-029, FR-051 | Draft |
 | [UC-010](UC-010-zu-oder-absagen.md) | Auf einen Termin zu- oder absagen | Mitglied | FR-024, FR-025, FR-026 | Draft |
-| [UC-011](UC-011-helfer-event-ausschreiben.md) | Helfer-Event mit Schichten ausschreiben | Vorstand | FR-030, FR-051, FR-084 | Draft |
-| [UC-012](UC-012-schicht-uebernehmen.md) | Helfer-Schicht übernehmen | Mitglied | FR-031 | Draft |
-| [UC-013](UC-013-schicht-bestaetigen.md) | Helfer-Schicht bestätigen | Vorstand | FR-032, FR-039 | Draft |
-| [UC-014](UC-014-qr-check-in.md) | QR-Check-in am Termin | Mitglied | FR-033, FR-034, FR-039 | Draft |
+| [UC-011](UC-011-helfer-event-ausschreiben.md) | Helfer-Event mit Schichten ausschreiben | Vorstand | FR-030, FR-051, FR-084 | Implemented |
+| [UC-012](UC-012-schicht-uebernehmen.md) | Helfer-Schicht übernehmen | Mitglied | FR-031 | Implemented |
+| [UC-013](UC-013-schicht-bestaetigen.md) | Helfer-Schicht bestätigen | Vorstand | FR-032, FR-039 | Implemented |
+| [UC-014](UC-014-qr-check-in.md) | QR-Check-in am Termin | Mitglied | FR-033, FR-034, FR-039 | Implemented |
 | [UC-015](UC-015-unentschlossene-erinnern.md) | Unentschlossene erinnern | Trainer:in | FR-027, FR-028 | Draft |
 
 ### Gamification
@@ -70,6 +70,7 @@ synchron gehalten werden können.
 | [UC-026](UC-026-news-publizieren.md) | Vereins-News publizieren | Vorstand | FR-076, FR-077, FR-078, FR-070 | Draft |
 | [UC-027](UC-027-vereins-puls-freigeben.md) | Vereins-Puls freigeben | Vorstand | FR-082, FR-083, FR-084 | Draft |
 | [UC-028](UC-028-benachrichtigungen-einstellen.md) | Benachrichtigungen einstellen | Mitglied | FR-079, FR-080, FR-081 | Draft |
+| [UC-038](UC-038-website-news-uebernehmen.md) | News von der Vereins-Website übernehmen | Vorstand | FR-146, FR-147 | In Progress |
 
 ### «Stimme» & Dialog
 

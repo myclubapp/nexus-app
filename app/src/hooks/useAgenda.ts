@@ -84,26 +84,5 @@ export function useRespondToEvent() {
   });
 }
 
-/**
- * QR-Check-in. Der Token wird serverseitig geprüft und bucht die Punkte in
- * derselben Transaktion – der Client kann keine Punkte erzeugen.
- */
-export function useCheckIn() {
-  const queryClient = useQueryClient();
-  const { activeClub, activeMembership } = useClub();
-
-  return useMutation({
-    mutationFn: async (input: { eventId: string; qrToken: string }) => {
-      const { data, error } = await supabase.rpc('check_in', {
-        p_event_id: input.eventId,
-        p_qr_token: input.qrToken,
-      });
-      if (error) throw new Error(error.message);
-      return data;
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['agenda', activeClub?.id] });
-      void queryClient.invalidateQueries({ queryKey: ['points', activeMembership?.id] });
-    },
-  });
-}
+/* Der Check-in ist nach `useCheckIn.ts` gezogen: Er puffert seit UC-014 bei
+   fehlendem Netz (A5) und braucht dafür mehr als eine Mutation. */

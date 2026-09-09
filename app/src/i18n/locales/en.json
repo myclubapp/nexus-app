@@ -543,5 +543,45 @@
     "add": "Add a person",
     "addHint": "For stand-ins: signed up and confirmed in one step.",
     "confirmedNoPoints": "{{name}} confirmed – this shift awards no points."
+  },
+  "checkIn": {
+    "showQr": "Show QR code",
+    "qrLabel": "Check-in code for this event",
+    "qrHint": "Hold up the code so the people present can scan it. It is valid from 30 minutes before the start until the event ends.",
+    "roster_one": "{{count}} person",
+    "roster_other": "{{count}} people",
+    "rosterEmpty": "Nobody is expected at this event",
+    "rosterHint": "For anyone who cannot scan: record them here by hand.",
+    "markPresent": "Present",
+    "present": "Present",
+    "unmarked": "The attendance mark is withdrawn. Points already credited stay.",
+    "marked": "{{name}} recorded as present",
+    "markedWithPoints": "{{name}} recorded as present – {{points}} points",
+    "awarded": "Checked in – {{points}} points credited",
+    "done": "Checked in",
+    "already": "You were already checked in here. Nothing is credited twice.",
+    "queued": "No connection – your check-in is saved and will be sent once you are back online.",
+    "status": {
+      "open": "No answer yet",
+      "registered": "Attending",
+      "present": "Present",
+      "excused": "Declined",
+      "absent": "Absent",
+      "substitute": "Stand-in"
+    },
+    "error": {
+      "window": "The code is only valid from 30 minutes before the start until the event ends.",
+      "wrongCode": "This code belongs to a different event.",
+      "notMember": "You are not a member of this club.",
+      "cancelled": "This event was cancelled.",
+      "notFound": "No event matches this code.",
+      "offline": "No connection. Try again once you are back online.",
+      "generic": "The check-in did not work. Please try again.",
+      "forbidden": "You do not have permission for that.",
+      "camera": "The camera cannot be opened. Check the camera permission for myclub."
+    },
+    "queueRejected_one": "A saved check-in could no longer be booked – the window had closed.",
+    "queueRejected_other": "{{count}} saved check-ins could no longer be booked – the window had closed.",
+    "unmark": "Undo"
   }
 }

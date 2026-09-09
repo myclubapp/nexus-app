@@ -6,7 +6,7 @@
 **Use Case Name:** QR-Check-in am Termin
 **Primary Actor:** Mitglied
 **Goal:** Die eigene Anwesenheit am Termin erfassen und die zugehörigen Punkte erhalten
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 
