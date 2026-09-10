@@ -938,5 +938,34 @@
       "titleMissing": "L’actualité a besoin d’un titre.",
       "imageNotALink": "Ce n’est pas un lien complet. Il commence par http:// ou https://."
     }
+  },
+  "pulse": {
+    "title": "Pouls du club",
+    "readTitle": "Le pouls du club",
+    "section": {
+      "happening": "Ce qui se passe",
+      "workingOn": "Ce sur quoi nous travaillons",
+      "joinIn": "Où tu peux participer"
+    },
+    "connections": "Raconté",
+    "calls": "Demandé",
+    "ratioHint": "Messages de lien et appels des huit dernières semaines.",
+    "ratioTilted": "Depuis des semaines, les appels dominent. Un pouls rétablit l’équilibre.",
+    "noDraft": "Aucun brouillon cette semaine.",
+    "composedOn": "Composé le {{date}}",
+    "noDate": "sans date",
+    "intro": "Introduction",
+    "introLabel": "Une phrase personnelle",
+    "introHint": "Facultatif. Le pouls part aussi sans – il est préparé pour cela.",
+    "allStruck": "Il ne reste rien. Retire moins ou abandonne le pouls.",
+    "release": "Publier",
+    "released_one": "Envoyé. {{count}} personne l’a dans sa boîte.",
+    "released_other": "Envoyé. {{count}} personnes l’ont dans leur boîte.",
+    "discard": "Pas cette semaine",
+    "discardHint": "Le brouillon expire. Le ratio de lien continue de courir – c’est aussi une réponse.",
+    "discarded": "Abandonné. Aucun pouls cette semaine.",
+    "gone": "Ce pouls n’est plus disponible.",
+    "yourPoints": "Ton total de points",
+    "pointsHint": "Placé ici en dernier volontairement : le pouls parle du club."
   }
 }

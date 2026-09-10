@@ -102,6 +102,8 @@ describe('AppMenu', () => {
       '/tabs/profile',
       // Seit UC-023 zuoberst: die Vereins-Gesundheit.
       '/tabs/profile/health',
+      // Seit UC-027: der Vereins-Puls.
+      '/tabs/profile/pulse',
       '/tabs/profile/club',
       '/tabs/profile/members',
       '/tabs/profile/rules',

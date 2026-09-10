@@ -938,5 +938,34 @@
       "titleMissing": "Die News braucht einen Titel.",
       "imageNotALink": "Das ist kein vollständiger Link. Er beginnt mit http:// oder https://."
     }
+  },
+  "pulse": {
+    "title": "Vereins-Puls",
+    "readTitle": "Der Vereins-Puls",
+    "section": {
+      "happening": "Was passiert",
+      "workingOn": "Woran wir arbeiten",
+      "joinIn": "Wo du dabei sein kannst"
+    },
+    "connections": "Erzählt",
+    "calls": "Gebeten",
+    "ratioHint": "Verbindungs-Nachrichten und Aufrufe der letzten acht Wochen.",
+    "ratioTilted": "Seit Wochen überwiegen die Aufrufe. Ein Puls bringt das ins Gleichgewicht.",
+    "noDraft": "Diese Woche liegt kein Entwurf vor.",
+    "composedOn": "Zusammengestellt am {{date}}",
+    "noDate": "ohne Datum",
+    "intro": "Einleitung",
+    "introLabel": "Ein persönlicher Satz",
+    "introHint": "Freiwillig. Der Puls geht auch ohne raus – dafür ist er vorbereitet.",
+    "allStruck": "Es ist nichts mehr übrig. Streiche weniger oder verwirf den Puls.",
+    "release": "Freigeben",
+    "released_one": "Versendet. {{count}} Person hat ihn in der Inbox.",
+    "released_other": "Versendet. {{count}} Personen haben ihn in der Inbox.",
+    "discard": "Diese Woche nicht",
+    "discardHint": "Der Entwurf verfällt. Die Verbindungs-Quote läuft weiter – auch das ist eine Aussage.",
+    "discarded": "Verworfen. Diese Woche geht kein Puls raus.",
+    "gone": "Dieser Puls ist nicht mehr verfügbar.",
+    "yourPoints": "Dein Punktestand",
+    "pointsHint": "Steht hier bewusst zuletzt: Der Puls handelt vom Verein."
   }
 }

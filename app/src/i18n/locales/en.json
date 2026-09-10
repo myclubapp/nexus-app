@@ -938,5 +938,34 @@
       "titleMissing": "The news needs a title.",
       "imageNotALink": "That is not a complete link. It starts with http:// or https://."
     }
+  },
+  "pulse": {
+    "title": "Club pulse",
+    "readTitle": "The club pulse",
+    "section": {
+      "happening": "What is happening",
+      "workingOn": "What we are working on",
+      "joinIn": "Where you can join in"
+    },
+    "connections": "Told",
+    "calls": "Asked",
+    "ratioHint": "Connecting messages and calls over the last eight weeks.",
+    "ratioTilted": "For weeks the asking has outweighed the telling. A pulse brings that back into balance.",
+    "noDraft": "There is no draft this week.",
+    "composedOn": "Composed on {{date}}",
+    "noDate": "no date",
+    "intro": "Introduction",
+    "introLabel": "A personal sentence",
+    "introHint": "Optional. The pulse goes out without one – that is what it is prepared for.",
+    "allStruck": "Nothing is left. Remove fewer items or discard the pulse.",
+    "release": "Release",
+    "released_one": "Sent. {{count}} person has it in their inbox.",
+    "released_other": "Sent. {{count}} people have it in their inbox.",
+    "discard": "Not this week",
+    "discardHint": "The draft expires. The connection ratio keeps running – that is an answer too.",
+    "discarded": "Discarded. No pulse goes out this week.",
+    "gone": "This pulse is no longer available.",
+    "yourPoints": "Your points",
+    "pointsHint": "Deliberately last: the pulse is about the club."
   }
 }

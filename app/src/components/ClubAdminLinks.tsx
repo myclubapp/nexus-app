@@ -35,6 +35,10 @@ export function ClubAdminLinks() {
 
       {!isAdmin ? null : (
         <>
+          <IonItem button routerLink="/tabs/profile/pulse" detail>
+            <IonLabel>{t("pulse.title")}</IonLabel>
+          </IonItem>
+
           <IonItem button routerLink="/tabs/profile/club" detail>
             <IonLabel>
               <h2>{t("clubSettings.open")}</h2>

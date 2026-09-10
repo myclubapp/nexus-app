@@ -185,6 +185,67 @@ export type Database = {
           },
         ]
       }
+      club_pulses: {
+        Row: {
+          club_id: string
+          composed_at: string
+          happening: Json
+          id: string
+          intro: string | null
+          join_in: Json
+          released_by: string | null
+          sent_at: string | null
+          status: string
+          working_on: Json
+        }
+        Insert: {
+          club_id: string
+          composed_at?: string
+          happening?: Json
+          id?: string
+          intro?: string | null
+          join_in?: Json
+          released_by?: string | null
+          sent_at?: string | null
+          status?: string
+          working_on?: Json
+        }
+        Update: {
+          club_id?: string
+          composed_at?: string
+          happening?: Json
+          id?: string
+          intro?: string | null
+          join_in?: Json
+          released_by?: string | null
+          sent_at?: string | null
+          status?: string
+          working_on?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "club_pulses_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "club_pulses_released_by_fkey"
+            columns: ["released_by"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "club_pulses_released_by_fkey"
+            columns: ["released_by"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clubs: {
         Row: {
           club_kind: string
@@ -1249,6 +1310,7 @@ export type Database = {
           notified: number
         }[]
       }
+      auto_release_pulses: { Args: never; Returns: number }
       award_points: {
         Args: {
           p_member_id: string
@@ -1289,6 +1351,7 @@ export type Database = {
           club_name: string
         }[]
       }
+      compose_club_pulse: { Args: { p_club_id?: string }; Returns: number }
       confirm_shift: {
         Args: { p_member_id: string; p_shift_id: string }
         Returns: {
@@ -1301,6 +1364,14 @@ export type Database = {
         Returns: {
           booked: boolean
           points: number
+        }[]
+      }
+      connection_ratio: {
+        Args: { p_club_id: string; p_days?: number }
+        Returns: {
+          calls: number
+          connections: number
+          last_connection: string
         }[]
       }
       count_club_admins: {
@@ -1359,6 +1430,7 @@ export type Database = {
       delete_my_account: { Args: never; Returns: undefined }
       detect_health_signals: { Args: { p_club_id?: string }; Returns: number }
       dimension_of_pillar: { Args: { p_pillar: number }; Returns: string }
+      discard_pulse: { Args: { p_pulse_id: string }; Returns: undefined }
       event_roster: {
         Args: { p_event_id: string }
         Returns: {
@@ -1508,6 +1580,10 @@ export type Database = {
       reject_task: {
         Args: { p_assignment_id: string; p_note: string }
         Returns: undefined
+      }
+      release_pulse: {
+        Args: { p_intro?: string; p_keep?: Json; p_pulse_id: string }
+        Returns: number
       }
       release_shift: {
         Args: { p_shift_id: string }
