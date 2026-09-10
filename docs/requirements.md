@@ -171,14 +171,14 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 
 | ID     | Titel                       | User Story                                                                                                                                                   | Priority | Status |
 | ------ | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------ |
-| FR-102 | Kontextabhängige Frage      | Als Mitglied möchte ich nach einer Teilnahme genau die Frage erhalten, die zu meiner Rolle im Ereignis passt, damit sie in unter zehn Sekunden zu beantworten ist. | High | Open |
-| FR-103 | Check-in überspringen       | Als Mitglied möchte ich ein Check-in überspringen, damit die Teilnahme freiwillig bleibt.                                                                     | High     | Open   |
-| FR-104 | Sichtbarkeit wählen         | Als Mitglied möchte ich pro Antwort sehen und bestimmen, wer sie sieht, damit Befinden standardmässig privat bleibt.                                          | High     | Open   |
-| FR-105 | Eigener Verlauf             | Als Mitglied möchte ich meinen Zufriedenheitsverlauf über die Saison sehen, damit ich mein eigenes Erleben einordnen kann.                                    | Medium   | Open   |
-| FR-106 | Team-Stimmung aggregiert    | Als Trainer:in möchte ich die Team-Stimmung nur als anonymen Aggregatwert sehen, damit keine einzelne Person rückschliessbar ist.                             | Medium   | Open   |
-| FR-107 | Einsatz-Feedback            | Als Mitglied möchte ich nach einem Helfereinsatz rückmelden, was gut und was nicht lief, damit der nächste Einsatz besser wird.                               | Medium   | Open   |
-| FR-108 | Selbst-Nudge                | Als Mitglied möchte ich bei anhaltend tiefen eigenen Werten gefragt werden, ob ich das teilen mag, damit Teilen mein Entscheid bleibt.                        | Medium   | Open   |
-| FR-109 | Entlastungs-Index           | Als Funktionär:in möchte ich quartalsweise freiwillig angeben, wie tragfähig sich mein Amt anfühlt, damit Überlastung sichtbar wird, ohne überwacht zu werden. | Medium  | Open   |
+| FR-102 | Kontextabhängige Frage      | Als Mitglied möchte ich nach einer Teilnahme genau die Frage erhalten, die zu meiner Rolle im Ereignis passt, damit sie in unter zehn Sekunden zu beantworten ist. | High | Implemented |
+| FR-103 | Check-in überspringen       | Als Mitglied möchte ich ein Check-in überspringen, damit die Teilnahme freiwillig bleibt.                                                                     | High     | Implemented   |
+| FR-104 | Sichtbarkeit wählen         | Als Mitglied möchte ich pro Antwort sehen und bestimmen, wer sie sieht, damit Befinden standardmässig privat bleibt.                                          | High     | Implemented   |
+| FR-105 | Eigener Verlauf             | Als Mitglied möchte ich meinen Zufriedenheitsverlauf über die Saison sehen, damit ich mein eigenes Erleben einordnen kann.                                    | Medium   | Implemented   |
+| FR-106 | Team-Stimmung aggregiert    | Als Trainer:in möchte ich die Team-Stimmung nur als anonymen Aggregatwert sehen, damit keine einzelne Person rückschliessbar ist.                             | Medium   | Implemented   |
+| FR-107 | Einsatz-Feedback            | Als Mitglied möchte ich nach einem Helfereinsatz rückmelden, was gut und was nicht lief, damit der nächste Einsatz besser wird.                               | Medium   | Implemented   |
+| FR-108 | Selbst-Nudge                | Als Mitglied möchte ich bei anhaltend tiefen eigenen Werten gefragt werden, ob ich das teilen mag, damit Teilen mein Entscheid bleibt.                        | Medium   | Implemented   |
+| FR-109 | Entlastungs-Index           | Als Funktionär:in möchte ich quartalsweise freiwillig angeben, wie tragfähig sich mein Amt anfühlt, damit Überlastung sichtbar wird, ohne überwacht zu werden. | Medium  | Partial   |
 
 ### 1.10 Konfiguration, i18n & Theming
 

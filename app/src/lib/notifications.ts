@@ -16,6 +16,9 @@ export const PUSH_CATEGORIES = [
   // Seit UC-030 stellt `notify()` unter dieser Kategorie zu – ohne sie hier
   // wäre sie in den Einstellungen nicht abschaltbar.
   'input',
+  // Seit UC-032: die Frage nach dem Befinden. Sie ist die Kategorie, die man
+  // am ehesten abschalten will – deshalb muss sie in der Liste stehen.
+  'checkin',
   'join_request',
 ] as const;
 

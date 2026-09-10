@@ -6,7 +6,7 @@
 **Use Case Name:** Kontext-Check-in beantworten
 **Primary Actor:** Mitglied
 **Goal:** Nach einer Teilnahme in wenigen Sekunden mitteilen, wie es einem damit ging
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

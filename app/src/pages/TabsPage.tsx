@@ -37,6 +37,7 @@ import { NotificationsPage } from './NotificationsPage';
 import { VoicePage } from './VoicePage';
 import { MeetingPage } from './MeetingPage';
 import { OfficePage } from './club/OfficePage';
+import { MoodPage } from './MoodPage';
 import { PointRulePage } from './club/PointRulePage';
 
 /**
@@ -83,6 +84,7 @@ export function TabsPage() {
         <Route path="profile/voice" element={<VoicePage />} />
         <Route path="profile/meeting" element={<MeetingPage />} />
         <Route path="profile/offices" element={<OfficePage />} />
+        <Route path="profile/mood" element={<MoodPage />} />
         <Route path="" element={<Navigate to="dashboard" replace />} />
       </IonRouterOutlet>
 

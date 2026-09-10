@@ -1027,6 +1027,10 @@
       "input": {
         "title": "Proposte e richieste",
         "body": "Quando una richiesta o una proposta ti raggiunge o riceve risposta."
+      },
+      "checkin": {
+        "title": "Come stai",
+        "body": "La domanda breve dopo un appuntamento e il promemoria solo per te."
       }
     }
   },
@@ -1200,6 +1204,75 @@
       "titleTooLong": "La denominazione è troppo lunga."
     },
     "removeConfirm": "«{{title}}» viene sciolta. Le proposte a questa carica restano, ma non raggiungono più nessuno."
+  },
+  "checkin": {
+    "pageTitle": "Come stai",
+    "title": "Una domanda veloce",
+    "send": "Invia",
+    "skip": "Salta",
+    "empty": "Ancora nulla. Dopo il prossimo appuntamento ti chiederemo brevemente come è andata.",
+    "openTitle": "In sospeso",
+    "openHint": "Dieci secondi, facoltativo e senza punti.",
+    "context": {
+      "training_attended": "Dopo l'allenamento",
+      "match_lineup": "Dopo la tua partita",
+      "match_bench": "Dopo la giornata",
+      "helper_shift": "Dopo il tuo turno",
+      "office_load": "Sulla tua carica"
+    },
+    "visibilityTitle": "Chi lo vede?",
+    "visibilityLabel": "Visibilità",
+    "visibility": {
+      "private": "Solo tu",
+      "shared_trainer": "Tu e chi ti allena",
+      "event_organizer": "Tu e chi ha organizzato"
+    },
+    "visibilityHint": {
+      "private": "Nessun altro lo legge – nemmeno il comitato.",
+      "shared_trainer": "Chi ti allena vede esattamente questa risposta. Non il tuo storico.",
+      "event_organizer": "Chi ha lanciato il turno vede questa risposta."
+    },
+    "textLabel": "Il tuo riscontro",
+    "noPoints": "Per questo non ci sono punti. La partecipazione li ha già dati – un umore premiato sarebbe un umore falsato.",
+    "step": {
+      "emoji5": {
+        "1": "😞",
+        "2": "🙁",
+        "3": "😐",
+        "4": "🙂",
+        "5": "😄"
+      },
+      "stars5": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5"
+      }
+    },
+    "trendTitle": "Il tuo andamento",
+    "trendHint": "Solo per te. Nessun altro vede questa curva.",
+    "trendSummary_one": "{{count}} risposta, media {{average}}",
+    "trendSummary_other": "{{count}} risposte, media {{average}}",
+    "trendDescription": "Andamento delle tue risposte, media {{average}} su 5",
+    "teamTitle": "Umore della squadra",
+    "teamLabel": "Squadra",
+    "teamHint": "Anonimo e aggregato. Le singole risposte non le vedi mai.",
+    "teamResponses_one": "su {{count}} risposta",
+    "teamResponses_other": "su {{count}} risposte",
+    "teamTooSmall": "Troppo poche risposte. Sotto le cinque non viene mostrato alcun valore – nemmeno approssimativo.",
+    "done": {
+      "answered": "Grazie. Resta da te, come hai scelto.",
+      "skipped": "Saltato. Per questo appuntamento non chiederemo di nuovo."
+    },
+    "problem": {
+      "answerMissing": "Rispondi ad almeno una domanda.",
+      "textTooLong": "Il testo è troppo lungo."
+    },
+    "givenTitle": "Le tue risposte",
+    "givenHint": "Scorri a sinistra per mostrare a chi ti allena una risposta ancora privata. Non si può annullare.",
+    "share": "Condividi",
+    "shared": "Condivisa. Chi ti allena vede esattamente questa risposta."
   },
   "noteAnswer": {
     "title": "Richiesta",

@@ -100,6 +100,191 @@ export type Database = {
           },
         ]
       }
+      checkin_invitations: {
+        Row: {
+          answered_at: string | null
+          asked_on: string
+          club_id: string
+          context: string
+          created_at: string
+          event_id: string | null
+          id: string
+          member_id: string
+          skipped_at: string | null
+        }
+        Insert: {
+          answered_at?: string | null
+          asked_on?: string
+          club_id: string
+          context: string
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          member_id: string
+          skipped_at?: string | null
+        }
+        Update: {
+          answered_at?: string | null
+          asked_on?: string
+          club_id?: string
+          context?: string
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          member_id?: string
+          skipped_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checkin_invitations_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkin_invitations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkin_invitations_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "checkin_invitations_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checkin_prompts: {
+        Row: {
+          club_id: string
+          context: string
+          id: string
+          is_active: boolean
+          question: string
+          scale: string
+          sort: number
+        }
+        Insert: {
+          club_id: string
+          context: string
+          id?: string
+          is_active?: boolean
+          question: string
+          scale: string
+          sort?: number
+        }
+        Update: {
+          club_id?: string
+          context?: string
+          id?: string
+          is_active?: boolean
+          question?: string
+          scale?: string
+          sort?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checkin_prompts_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checkin_responses: {
+        Row: {
+          club_id: string
+          created_at: string
+          event_id: string | null
+          id: string
+          invitation_id: string
+          member_id: string
+          prompt_id: string
+          value_num: number | null
+          value_text: string | null
+          visibility: string
+        }
+        Insert: {
+          club_id: string
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          invitation_id: string
+          member_id: string
+          prompt_id: string
+          value_num?: number | null
+          value_text?: string | null
+          visibility?: string
+        }
+        Update: {
+          club_id?: string
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          invitation_id?: string
+          member_id?: string
+          prompt_id?: string
+          value_num?: number | null
+          value_text?: string | null
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checkin_responses_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkin_responses_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkin_responses_invitation_id_fkey"
+            columns: ["invitation_id"]
+            isOneToOne: false
+            referencedRelation: "checkin_invitations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkin_responses_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "checkin_responses_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkin_responses_prompt_id_fkey"
+            columns: ["prompt_id"]
+            isOneToOne: false
+            referencedRelation: "checkin_prompts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       club_members: {
         Row: {
           avatar_url: string | null
@@ -1710,6 +1895,7 @@ export type Database = {
         Args: { p_answer: string; p_decline?: boolean; p_note_id: string }
         Returns: undefined
       }
+      ask_office_load: { Args: never; Returns: number }
       assign_input: {
         Args: { p_input_id: string; p_meeting_event_id?: string }
         Returns: undefined
@@ -1749,6 +1935,10 @@ export type Database = {
           already_checked_in: boolean
           points_awarded: number
         }[]
+      }
+      checkin_context: {
+        Args: { p_event_type: string; p_shift_id: string; p_status: string }
+        Returns: string
       }
       claim_task: { Args: { p_task_id: string }; Returns: string }
       clubs_left_without_admin: {
@@ -1853,6 +2043,7 @@ export type Database = {
       default_event_labels: { Args: { p_club_kind: string }; Returns: Json }
       default_season_start: { Args: { p_club_kind: string }; Returns: string }
       delete_my_account: { Args: never; Returns: undefined }
+      detect_checkins: { Args: never; Returns: number }
       detect_health_signals: { Args: { p_club_id?: string }; Returns: number }
       dimension_of_pillar: { Args: { p_pillar: number }; Returns: string }
       discard_pulse: { Args: { p_pulse_id: string }; Returns: undefined }
@@ -1934,6 +2125,14 @@ export type Database = {
           title: string
         }[]
       }
+      my_checkin_trend: {
+        Args: { p_club_id: string }
+        Returns: {
+          at: string
+          context: string
+          value: number
+        }[]
+      }
       my_clubs_left_without_admin: {
         Args: never
         Returns: {
@@ -1986,6 +2185,7 @@ export type Database = {
         Returns: undefined
       }
       notify_signal_owners: { Args: { p_signal_id: string }; Returns: number }
+      nudge_low_checkins: { Args: never; Returns: number }
       preview_invite: {
         Args: { p_code: string }
         Returns: {
@@ -2091,6 +2291,7 @@ export type Database = {
         Args: { p_at?: string; p_club_id: string }
         Returns: string
       }
+      seed_checkin_prompts: { Args: { p_club_id: string }; Returns: number }
       seed_point_rules: {
         Args: { p_club_id: string; p_club_kind: string }
         Returns: undefined
@@ -2124,6 +2325,7 @@ export type Database = {
         Args: { p_signal_id: string; p_status: string }
         Returns: string
       }
+      share_checkin: { Args: { p_response_id: string }; Returns: undefined }
       shift_candidates: {
         Args: { p_shift_id: string }
         Returns: {
@@ -2140,7 +2342,16 @@ export type Database = {
           status: string
         }[]
       }
+      skip_checkin: { Args: { p_invitation_id: string }; Returns: undefined }
       slugify: { Args: { p_value: string }; Returns: string }
+      submit_checkin: {
+        Args: {
+          p_answers: Json
+          p_invitation_id: string
+          p_visibility?: string
+        }
+        Returns: number
+      }
       submit_meeting_input: {
         Args: {
           p_anonymous?: boolean
@@ -2189,6 +2400,13 @@ export type Database = {
           member_id: string
           proof_url: string
           submitted_at: string
+        }[]
+      }
+      team_mood: {
+        Args: { p_team_id: string }
+        Returns: {
+          average: number
+          responses: number
         }[]
       }
       update_my_profile: {

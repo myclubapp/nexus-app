@@ -79,7 +79,7 @@ synchron gehalten werden können.
 | [UC-029](UC-029-sprachmemo-aufnehmen.md) | Sprachmemo aufnehmen und adressieren | Mitglied | FR-085, FR-086, FR-087, FR-088, FR-089, FR-090 | In Progress |
 | [UC-030](UC-030-anliegen-beantworten.md) | Anliegen beantworten | Vorstand | FR-091, FR-092, FR-093, FR-094, FR-099, FR-100 | Implemented |
 | [UC-031](UC-031-sitzungs-input-einreichen.md) | Sitzungs-Input einreichen und zuordnen | Mitglied | FR-095, FR-096, FR-097, FR-098, FR-101 | Implemented |
-| [UC-032](UC-032-kontext-check-in.md) | Kontext-Check-in beantworten | Mitglied | FR-102 bis FR-109 | Draft |
+| [UC-032](UC-032-kontext-check-in.md) | Kontext-Check-in beantworten | Mitglied | FR-102 bis FR-109 | Implemented |
 
 ### Sinn, Konfiguration & Anschlüsse
 

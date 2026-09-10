@@ -377,6 +377,9 @@ genau eine englische Entsprechung im Code:
 | Gremium              | `committee_role_ids`           | eine **Menge Ämter**, kein eigenes Objekt (BR-133) |
 | Sitzung              | `event` mit `type = 'meeting'`  | kein eigenes Objekt              |
 | Sitzungs-Input       | `meeting_input`                | nie «Antrag» oder «Traktandum» (BR-132) |
+| Anwesenheits-Check-in | `check_in()`                  | UC-013, QR-Code – **nicht** UC-032       |
+| Kontext-Check-in     | `checkin_prompt` / `checkin_response` | UC-032, Befinden; im Client `contextCheckin` |
+| Befinden             | `checkin_responses.value_num`  | nie «Zufriedenheitsnote», nie «Score»    |
 
 ---
 

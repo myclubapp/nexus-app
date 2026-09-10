@@ -1027,6 +1027,10 @@
       "input": {
         "title": "Proposals and notes",
         "body": "When a note or proposal reaches you or gets an answer."
+      },
+      "checkin": {
+        "title": "How you are",
+        "body": "The short question after an event and the nudge meant only for you."
       }
     }
   },
@@ -1200,6 +1204,75 @@
       "titleTooLong": "The name is too long."
     },
     "removeConfirm": "«{{title}}» will be dissolved. Proposals addressed to it remain, but reach nobody any more."
+  },
+  "checkin": {
+    "pageTitle": "How you are",
+    "title": "One quick question",
+    "send": "Send",
+    "skip": "Skip",
+    "empty": "Nothing yet. After the next event we will briefly ask how it went for you.",
+    "openTitle": "Open",
+    "openHint": "Ten seconds, voluntary, and no points.",
+    "context": {
+      "training_attended": "After training",
+      "match_lineup": "After your match",
+      "match_bench": "After the day",
+      "helper_shift": "After your shift",
+      "office_load": "About your office"
+    },
+    "visibilityTitle": "Who sees this?",
+    "visibilityLabel": "Visibility",
+    "visibility": {
+      "private": "Only you",
+      "shared_trainer": "You and your coach",
+      "event_organizer": "You and the organiser"
+    },
+    "visibilityHint": {
+      "private": "Nobody else reads this – not the board either.",
+      "shared_trainer": "Your coach sees exactly this answer. Not your history.",
+      "event_organizer": "The person who called the shift sees this answer."
+    },
+    "textLabel": "Your feedback",
+    "noPoints": "There are no points for this. Taking part already gave them – a rewarded mood would be a distorted mood.",
+    "step": {
+      "emoji5": {
+        "1": "😞",
+        "2": "🙁",
+        "3": "😐",
+        "4": "🙂",
+        "5": "😄"
+      },
+      "stars5": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5"
+      }
+    },
+    "trendTitle": "Your trend",
+    "trendHint": "Yours alone. Nobody else sees this curve.",
+    "trendSummary_one": "{{count}} answer, average {{average}}",
+    "trendSummary_other": "{{count}} answers, average {{average}}",
+    "trendDescription": "Trend of your answers, average {{average}} out of 5",
+    "teamTitle": "Team mood",
+    "teamLabel": "Team",
+    "teamHint": "Anonymous and aggregated. You never see individual answers.",
+    "teamResponses_one": "from {{count}} answer",
+    "teamResponses_other": "from {{count}} answers",
+    "teamTooSmall": "Too few answers. Below five no value is shown – not even a rough one.",
+    "done": {
+      "answered": "Thank you. It stays with you, as you chose.",
+      "skipped": "Skipped. We will not ask again for this event."
+    },
+    "problem": {
+      "answerMissing": "Answer at least one question.",
+      "textTooLong": "The text is too long."
+    },
+    "givenTitle": "Your answers",
+    "givenHint": "Swipe left to show a still-private answer to your coach. This cannot be undone.",
+    "share": "Share",
+    "shared": "Shared. Your coach sees exactly this answer."
   },
   "noteAnswer": {
     "title": "Note",

@@ -1027,6 +1027,10 @@
       "input": {
         "title": "Propositions et demandes",
         "body": "Lorsqu'une demande ou une proposition t'atteint ou reçoit une réponse."
+      },
+      "checkin": {
+        "title": "Ressenti",
+        "body": "La petite question après un rendez-vous et le rappel qui ne va qu'à toi."
       }
     }
   },
@@ -1200,6 +1204,75 @@
       "titleTooLong": "L'intitulé est trop long."
     },
     "removeConfirm": "« {{title}} » sera dissoute. Les propositions adressées à cette fonction subsistent, mais n'atteignent plus personne."
+  },
+  "checkin": {
+    "pageTitle": "Ressenti",
+    "title": "Une petite question",
+    "send": "Envoyer",
+    "skip": "Passer",
+    "empty": "Rien pour l'instant. Après le prochain rendez-vous, on te demandera brièvement comment tu l'as vécu.",
+    "openTitle": "En attente",
+    "openHint": "Dix secondes, facultatif, et sans points.",
+    "context": {
+      "training_attended": "Après l'entraînement",
+      "match_lineup": "Après ton match",
+      "match_bench": "Après la journée",
+      "helper_shift": "Après ta mission",
+      "office_load": "À propos de ta fonction"
+    },
+    "visibilityTitle": "Qui voit cela ?",
+    "visibilityLabel": "Visibilité",
+    "visibility": {
+      "private": "Toi seul·e",
+      "shared_trainer": "Toi et ton entraîneur·e",
+      "event_organizer": "Toi et la personne organisatrice"
+    },
+    "visibilityHint": {
+      "private": "Personne d'autre ne lit cela – pas même le comité.",
+      "shared_trainer": "Ton entraîneur·e voit exactement cette réponse. Pas ton historique.",
+      "event_organizer": "La personne qui a lancé la mission voit cette réponse."
+    },
+    "textLabel": "Ton retour",
+    "noPoints": "Cela ne donne aucun point. La participation les a déjà donnés – un ressenti récompensé serait un ressenti faussé.",
+    "step": {
+      "emoji5": {
+        "1": "😞",
+        "2": "🙁",
+        "3": "😐",
+        "4": "🙂",
+        "5": "😄"
+      },
+      "stars5": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5"
+      }
+    },
+    "trendTitle": "Ton évolution",
+    "trendHint": "Rien que pour toi. Personne d'autre ne voit cette courbe.",
+    "trendSummary_one": "{{count}} réponse, moyenne {{average}}",
+    "trendSummary_other": "{{count}} réponses, moyenne {{average}}",
+    "trendDescription": "Évolution de tes réponses, moyenne {{average}} sur 5",
+    "teamTitle": "Ambiance de l'équipe",
+    "teamLabel": "Équipe",
+    "teamHint": "Anonyme et agrégée. Tu ne vois jamais les réponses individuelles.",
+    "teamResponses_one": "sur {{count}} réponse",
+    "teamResponses_other": "sur {{count}} réponses",
+    "teamTooSmall": "Trop peu de réponses. En dessous de cinq, aucune valeur n'est affichée – pas même approximative.",
+    "done": {
+      "answered": "Merci. Cela reste chez toi, comme tu l'as choisi.",
+      "skipped": "Passé. On ne redemandera pas pour ce rendez-vous."
+    },
+    "problem": {
+      "answerMissing": "Réponds à au moins une question.",
+      "textTooLong": "Le texte est trop long."
+    },
+    "givenTitle": "Tes réponses",
+    "givenHint": "Glisse vers la gauche pour montrer à ton entraîneur·e une réponse encore privée. Ce partage ne peut pas être annulé.",
+    "share": "Partager",
+    "shared": "Partagé. Ton entraîneur·e voit exactement cette réponse."
   },
   "noteAnswer": {
     "title": "Demande",

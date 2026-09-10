@@ -296,3 +296,30 @@
   stroke: var(--ion-color-medium);
   stroke-dasharray: 2 3;
 }
+
+/* --- Verlaufskurve des eigenen Befindens (UC-032) ---------------------------
+   Dieselbe Trennung wie beim Netzdiagramm: Die Geometrie entsteht zur Laufzeit
+   aus Daten (`trendPath()`), das Aussehen steht hier. Die Kurve trägt bewusst
+   keine Achsenbeschriftung – sie zeigt eine Richtung, keine Note. */
+.app-trend {
+  display: block;
+  width: 100%;
+  height: 72px;
+  margin: var(--app-space-2) 0;
+}
+
+.app-trend__grid {
+  stroke: var(--ion-color-step-200, rgba(0, 0, 0, 0.12));
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.app-trend__line {
+  fill: none;
+  stroke: var(--ion-color-primary);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  /* Ohne dies zöge `preserveAspectRatio="none"` die Linie mit in die Breite. */
+  vector-effect: non-scaling-stroke;
+}

@@ -1027,6 +1027,10 @@
       "input": {
         "title": "Vorschläge und Anliegen",
         "body": "Wenn ein Anliegen oder ein Vorschlag dich erreicht oder beantwortet wird."
+      },
+      "checkin": {
+        "title": "Befinden",
+        "body": "Die kurze Frage nach einem Termin und der Hinweis an dich selbst."
       }
     }
   },
@@ -1200,6 +1204,75 @@
       "titleTooLong": "Die Bezeichnung ist zu lang."
     },
     "removeConfirm": "«{{title}}» wird aufgelöst. Vorschläge an dieses Amt bleiben bestehen, erreichen aber niemanden mehr."
+  },
+  "checkin": {
+    "pageTitle": "Befinden",
+    "title": "Kurz nachgefragt",
+    "send": "Absenden",
+    "skip": "Überspringen",
+    "empty": "Noch nichts. Nach dem nächsten Termin fragen wir dich kurz, wie es dir damit ging.",
+    "openTitle": "Offen",
+    "openHint": "Zehn Sekunden, freiwillig, und ohne Punkte.",
+    "context": {
+      "training_attended": "Nach dem Training",
+      "match_lineup": "Nach deinem Einsatz",
+      "match_bench": "Nach dem Spieltag",
+      "helper_shift": "Nach deinem Einsatz",
+      "office_load": "Zu deinem Amt"
+    },
+    "visibilityTitle": "Wer sieht das?",
+    "visibilityLabel": "Sichtbarkeit",
+    "visibility": {
+      "private": "Nur du",
+      "shared_trainer": "Du und deine Trainer:in",
+      "event_organizer": "Du und die organisierende Person"
+    },
+    "visibilityHint": {
+      "private": "Niemand sonst liest das – auch der Vorstand nicht.",
+      "shared_trainer": "Deine Trainer:in sieht genau diese Antwort. Nicht deinen Verlauf.",
+      "event_organizer": "Die Person, die den Einsatz ausgeschrieben hat, sieht diese Antwort."
+    },
+    "textLabel": "Deine Rückmeldung",
+    "noPoints": "Dafür gibt es keine Punkte. Die Teilnahme hat sie bereits gegeben – belohntes Befinden wäre verzerrtes Befinden.",
+    "step": {
+      "emoji5": {
+        "1": "😞",
+        "2": "🙁",
+        "3": "😐",
+        "4": "🙂",
+        "5": "😄"
+      },
+      "stars5": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5"
+      }
+    },
+    "trendTitle": "Dein Verlauf",
+    "trendHint": "Nur für dich. Niemand sonst sieht diese Kurve.",
+    "trendSummary_one": "{{count}} Antwort, Schnitt {{average}}",
+    "trendSummary_other": "{{count}} Antworten, Schnitt {{average}}",
+    "trendDescription": "Verlauf deiner Antworten, Schnitt {{average}} von 5",
+    "teamTitle": "Team-Stimmung",
+    "teamLabel": "Team",
+    "teamHint": "Anonym und aggregiert. Einzelne Antworten siehst du nie.",
+    "teamResponses_one": "aus {{count}} Antwort",
+    "teamResponses_other": "aus {{count}} Antworten",
+    "teamTooSmall": "Zu wenige Antworten. Unter fünf wird kein Wert ausgewiesen – auch kein ungefährer.",
+    "done": {
+      "answered": "Danke. Das bleibt bei dir, wie gewählt.",
+      "skipped": "Übersprungen. Zu diesem Termin fragen wir nicht erneut."
+    },
+    "problem": {
+      "answerMissing": "Beantworte mindestens eine Frage.",
+      "textTooLong": "Der Text ist zu lang."
+    },
+    "givenTitle": "Deine Antworten",
+    "givenHint": "Nach links wischen, um eine noch private Antwort deiner Trainer:in zu zeigen. Zurücknehmen lässt sich das nicht.",
+    "share": "Teilen",
+    "shared": "Geteilt. Deine Trainer:in sieht genau diese Antwort."
   },
   "noteAnswer": {
     "title": "Anliegen",

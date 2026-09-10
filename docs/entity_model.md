@@ -36,6 +36,8 @@ erDiagram
     CLUB ||--o{ HEALTH_ALERT_ROUTING : "konfiguriert"
     CLUB ||--o{ CLUB_MESSAGE_LOG : "protokolliert"
     CLUB ||--o{ VOICE_NOTE : "sammelt"
+    CLUB_MEMBER ||--o{ CHECKIN_INVITATION : "wird gefragt"
+    CHECKIN_INVITATION ||--o{ CHECKIN_RESPONSE : "sammelt"
     CLUB ||--o{ FUNCTIONARY_ROLE : "gliedert"
     CLUB_MEMBER ||--o| FUNCTIONARY_ROLE : "hält"
     CLUB ||--o{ MEETING_INPUT : "behandelt"
@@ -595,13 +597,31 @@ Eine pro Verein anpassbare Mikro-Frage, die an einen Teilnahme-Kontext gebunden 
 | --------- | ------------------------------------ | --------- | ---------------- | ------------------------------------------------------------------------- |
 | id        | Eindeutige Kennung der Frage         | UUID      | 36               | Primary Key, Generated                                                    |
 | club_id   | Verein der Frage                     | UUID      | 36               | Not Null, Foreign Key (CLUB.id)                                           |
-| context   | Auslösender Teilnahme-Kontext        | String    | 30               | Not Null, Values: training_attended, match_lineup, match_bench, helper_shift |
+| context   | Auslösender Teilnahme-Kontext        | String    | 30               | Not Null, Values: training_attended, match_lineup, match_bench, helper_shift, office_load |
 | question  | Wortlaut der Frage                   | String    | 300              | Not Null                                                                  |
-| scale     | Antwortformat                        | String    | 20               | Not Null, Values: emoji5, stars5, freetext, voice                         |
+| scale     | Antwortformat                        | String    | 20               | Not Null, Values: emoji5, stars5, freetext                                |
 | sort      | Reihenfolge innerhalb des Kontexts   | Integer   | 10               | Optional                                                                  |
 | is_active | Kennzeichen, ob die Frage gestellt wird | Boolean | 1                | Not Null                                                                  |
 
-**Constraints:** Es existiert kein Kontext für Abwesenheit. Nach dem Grund einer Nichtteilnahme kann per Schema nicht gefragt werden.
+**Constraints:** Es existiert kein Kontext für Abwesenheit. Nach dem Grund einer Nichtteilnahme kann per Schema nicht gefragt werden. Der Kontext `office_load` hängt nicht an einer Teilnahme, sondern an einem Amt (FR-109). Das Format `voice` ist nicht umgesetzt, solange die Aufnahme fehlt (BR-125).
+
+### CHECKIN_INVITATION
+
+Die Aufforderung an ein Mitglied, eine Mikro-Frage zu beantworten – und der Nachweis darüber, dass sie erledigt ist.
+
+| Attribute   | Description                                    | Data Type | Length/Precision | Validation Rules                                      |
+| ----------- | ---------------------------------------------- | --------- | ---------------- | ----------------------------------------------------- |
+| id          | Eindeutige Kennung der Aufforderung            | UUID      | 36               | Primary Key, Generated                                |
+| club_id     | Verein der Aufforderung                        | UUID      | 36               | Not Null, Foreign Key (CLUB.id)                       |
+| member_id   | Gefragtes Mitglied                             | UUID      | 36               | Not Null, Foreign Key (CLUB_MEMBER.id)                |
+| event_id    | Auslösender Termin; leer beim Entlastungs-Index | UUID     | 36               | Optional, Foreign Key (EVENT.id)                      |
+| context     | Kontext der Frage                              | String    | 30               | Not Null, dieselben Werte wie CHECKIN_PROMPT.context   |
+| asked_on    | Tag, an dem gefragt wurde                      | Date      | -                | Not Null                                              |
+| answered_at | Zeitpunkt der Antwort                          | DateTime  | -                | Optional                                              |
+| skipped_at  | Zeitpunkt des Überspringens                    | DateTime  | -                | Optional                                              |
+| created_at  | Zeitpunkt der Erstellung                       | DateTime  | -                | Not Null                                              |
+
+**Constraints:** Je Mitglied und Tag besteht höchstens eine Aufforderung; je Mitglied und Termin ebenfalls höchstens eine. `answered_at` und `skipped_at` schliessen sich aus. Ein Überspringen erzeugt **keine** CHECKIN_RESPONSE und erscheint in keiner Auswertung – es hält nur fest, dass zu diesem Termin nicht erneut gefragt wird.
 
 ### CHECKIN_RESPONSE
 
@@ -612,15 +632,15 @@ Die Antwort eines Mitglieds auf eine Mikro-Frage samt der von ihm gewählten Sic
 | id            | Eindeutige Kennung der Antwort             | UUID      | 36               | Primary Key, Generated                                              |
 | club_id       | Verein der Antwort                         | UUID      | 36               | Not Null, Foreign Key (CLUB.id)                                     |
 | member_id     | Antwortendes Mitglied                      | UUID      | 36               | Not Null, Foreign Key (CLUB_MEMBER.id)                              |
-| event_id      | Termin, der die Frage ausgelöst hat        | UUID      | 36               | Not Null, Foreign Key (EVENT.id)                                    |
+| invitation_id | Aufforderung, auf die geantwortet wurde    | UUID      | 36               | Not Null, Foreign Key (CHECKIN_INVITATION.id)                       |
+| event_id      | Termin, der die Frage ausgelöst hat        | UUID      | 36               | Optional, Foreign Key (EVENT.id)                                    |
 | prompt_id     | Beantwortete Frage                         | UUID      | 36               | Not Null, Foreign Key (CHECKIN_PROMPT.id)                           |
 | value_num     | Wert auf der Skala                         | Integer   | 10               | Optional, Min: 1, Max: 5                                            |
 | value_text    | Freitext oder Transkript                   | String    | 2000             | Optional                                                            |
-| voice_note_id | Sprachmemo zur Antwort                     | UUID      | 36               | Optional, Foreign Key (VOICE_NOTE.id)                               |
 | visibility    | Wer die Antwort sehen darf                 | String    | 20               | Not Null, Values: private, shared_trainer, event_organizer          |
 | created_at    | Zeitpunkt der Antwort                      | DateTime  | -                | Not Null                                                            |
 
-**Constraints:** Je Mitglied, Termin und Frage besteht höchstens eine Antwort. Eine Antwort setzt eine erfasste Teilnahme voraus. Die Sichtbarkeit shared_trainer entsteht nur durch einen aktiven Entscheid des Mitglieds. Aggregierte Team-Werte werden erst ab fünf Antworten im Zeitfenster ausgewiesen. Zu einer Antwort wird nie eine Punktebuchung erzeugt.
+**Constraints:** Je Aufforderung und Frage besteht höchstens eine Antwort. Eine Antwort setzt eine erfasste Teilnahme voraus. Die Sichtbarkeit shared_trainer entsteht nur durch einen aktiven Entscheid des Mitglieds. Aggregierte Team-Werte werden erst ab fünf Antworten im Zeitfenster ausgewiesen. Zu einer Antwort wird nie eine Punktebuchung erzeugt.
 
 ### INVOICE_REF
 
