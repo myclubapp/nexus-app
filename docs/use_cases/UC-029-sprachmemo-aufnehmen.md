@@ -6,7 +6,7 @@
 **Use Case Name:** Sprachmemo aufnehmen und adressieren
 **Primary Actor:** Mitglied
 **Goal:** Ein Anliegen sprechen statt tippen und es an die richtige Stelle bringen – oder für sich behalten
-**Status:** Draft
+**Status:** In Progress
 
 ## Preconditions
 

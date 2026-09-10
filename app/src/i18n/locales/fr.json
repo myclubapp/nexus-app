@@ -1023,5 +1023,59 @@
         "body": "Demandes et décisions"
       }
     }
+  },
+  "voice": {
+    "title": "Voix",
+    "write": "Saisir une préoccupation",
+    "send": "Envoyer",
+    "micPending": "L’enregistrement manque encore : une transcription dans le navigateur enverrait l’audio à un service tiers, ce qui est exclu. En attendant, tu écris.",
+    "quotaLeft_one": "Encore {{count}} préoccupation possible ce mois.",
+    "quotaLeft_other": "Encore {{count}} préoccupations possibles ce mois.",
+    "empty": "Aucune préoccupation pour l’instant.",
+    "mine": "Les tiennes et celles qui te sont adressées",
+    "listHint": "Ce qui est privé n’est visible que par toi – pas même par le comité.",
+    "kindTitle": "Type",
+    "kindLabel": "De quoi s’agit-il ?",
+    "kind": {
+      "self_reflection": "Pour moi",
+      "coach_log": "Journal d’entraîneur",
+      "feedback": "Adressé à quelqu’un",
+      "anonymous": "Anonyme au comité"
+    },
+    "kindHint": {
+      "self_reflection": "Reste strictement chez toi. Personne d’autre ne peut le lire.",
+      "coach_log": "Ton journal. Reste strictement chez toi.",
+      "feedback": "Va à l’endroit choisi – et seulement là.",
+      "anonymous": "Sans aucune indication sur toi. Même l’heure est arrondie à la semaine."
+    },
+    "targetTitle": "À qui",
+    "targetLabel": "Destinataire",
+    "target": {
+      "person": "À une personne",
+      "trainer": "Aux entraîneur:es",
+      "admin": "Au comité",
+      "team": "À une équipe"
+    },
+    "person": "Personne",
+    "team": "Équipe",
+    "text": "Ton texte",
+    "textLabel": "Que veux-tu dire ?",
+    "textHint": "Ce qui est écrit ici part tel quel – rien n’est envoyé sans être vu.",
+    "anonymousHint": "Ton ticket de réponse est stocké sur cet appareil. Si tu effaces le stockage, la voie de retour disparaît – sinon ce ne serait pas de l’anonymat.",
+    "sent": "Envoyé.",
+    "savedPrivate": "Enregistré. Cela reste chez toi.",
+    "status": {
+      "open": "Ouvert",
+      "in_progress": "En cours",
+      "answered": "Répondu",
+      "resolved": "Réglé",
+      "declined": "Refusé"
+    },
+    "problem": {
+      "textMissing": "Une préoccupation a besoin de son texte.",
+      "textTooLong": "Le texte est trop long.",
+      "targetMissing": "Choisis à qui cela doit aller.",
+      "quotaSpent": "Le quota de ce mois est épuisé."
+    }
   }
 }

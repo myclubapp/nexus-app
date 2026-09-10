@@ -1023,5 +1023,59 @@
         "body": "Requests and decisions"
       }
     }
+  },
+  "voice": {
+    "title": "Voice",
+    "write": "Write a concern",
+    "send": "Send",
+    "micPending": "Recording is still missing: transcription in the browser would send the audio to a third-party service, and that is ruled out. Until then you write.",
+    "quotaLeft_one": "{{count}} concern left this month.",
+    "quotaLeft_other": "{{count}} concerns left this month.",
+    "empty": "No concerns yet.",
+    "mine": "Yours and those addressed to you",
+    "listHint": "What is private is visible to you alone – not even to the committee.",
+    "kindTitle": "Kind",
+    "kindLabel": "What is it about?",
+    "kind": {
+      "self_reflection": "For myself",
+      "coach_log": "Coach log",
+      "feedback": "Addressed to someone",
+      "anonymous": "Anonymous to the committee"
+    },
+    "kindHint": {
+      "self_reflection": "Stays strictly with you. Nobody else can read it.",
+      "coach_log": "Your log. Stays strictly with you.",
+      "feedback": "Goes to the chosen place – and only there.",
+      "anonymous": "Without any detail about you. Even the time is coarsened to the week."
+    },
+    "targetTitle": "To whom",
+    "targetLabel": "Recipient",
+    "target": {
+      "person": "To a person",
+      "trainer": "To the coaches",
+      "admin": "To the committee",
+      "team": "To a team"
+    },
+    "person": "Person",
+    "team": "Team",
+    "text": "Your text",
+    "textLabel": "What would you like to say?",
+    "textHint": "What stands here goes out as it is – nothing is sent unseen.",
+    "anonymousHint": "Your ticket for the reply is stored on this device. Clear the storage and the way back is gone – anything else would not be anonymity.",
+    "sent": "Sent.",
+    "savedPrivate": "Saved. This stays with you.",
+    "status": {
+      "open": "Open",
+      "in_progress": "In progress",
+      "answered": "Answered",
+      "resolved": "Resolved",
+      "declined": "Declined"
+    },
+    "problem": {
+      "textMissing": "A concern needs its text.",
+      "textTooLong": "The text is too long.",
+      "targetMissing": "Choose where it should go.",
+      "quotaSpent": "This month’s quota is used up."
+    }
   }
 }

@@ -1023,5 +1023,59 @@
         "body": "Anfragen und Entscheide"
       }
     }
+  },
+  "voice": {
+    "title": "Stimme",
+    "write": "Anliegen erfassen",
+    "send": "Absenden",
+    "micPending": "Die Aufnahme fehlt noch: Eine Transkription im Browser würde das Audio zu einem fremden Dienst schicken, und das ist ausgeschlossen. Bis dahin schreibst du.",
+    "quotaLeft_one": "Diesen Monat noch {{count}} Anliegen möglich.",
+    "quotaLeft_other": "Diesen Monat noch {{count}} Anliegen möglich.",
+    "empty": "Noch kein Anliegen.",
+    "mine": "Deine und die an dich gerichteten",
+    "listHint": "Privates sieht niemand ausser dir – auch der Vorstand nicht.",
+    "kindTitle": "Art",
+    "kindLabel": "Worum geht es?",
+    "kind": {
+      "self_reflection": "Für mich",
+      "coach_log": "Trainer-Logbuch",
+      "feedback": "An jemanden gerichtet",
+      "anonymous": "Anonym an den Vorstand"
+    },
+    "kindHint": {
+      "self_reflection": "Bleibt strikt bei dir. Niemand sonst kann es lesen.",
+      "coach_log": "Dein Logbuch. Bleibt strikt bei dir.",
+      "feedback": "Geht an die gewählte Stelle – und nur dorthin.",
+      "anonymous": "Ohne jede Angabe zu dir. Auch der Zeitpunkt wird auf die Woche vergröbert."
+    },
+    "targetTitle": "An wen",
+    "targetLabel": "Empfänger",
+    "target": {
+      "person": "An eine Person",
+      "trainer": "An die Trainer:innen",
+      "admin": "An den Vorstand",
+      "team": "An ein Team"
+    },
+    "person": "Person",
+    "team": "Team",
+    "text": "Dein Text",
+    "textLabel": "Was möchtest du sagen?",
+    "textHint": "Was hier steht, geht so raus – nichts wird ungesehen verschickt.",
+    "anonymousHint": "Dein Ticket für die Antwort wird auf diesem Gerät gespeichert. Löschst du den Speicher, ist der Rückweg weg – anders wäre es keine Anonymität.",
+    "sent": "Abgesendet.",
+    "savedPrivate": "Gespeichert. Das bleibt bei dir.",
+    "status": {
+      "open": "Offen",
+      "in_progress": "In Arbeit",
+      "answered": "Beantwortet",
+      "resolved": "Erledigt",
+      "declined": "Abgelehnt"
+    },
+    "problem": {
+      "textMissing": "Ein Anliegen braucht seinen Text.",
+      "textTooLong": "Der Text ist zu lang.",
+      "targetMissing": "Wähle, an wen es gehen soll.",
+      "quotaSpent": "Das Kontingent dieses Monats ist ausgeschöpft."
+    }
   }
 }

@@ -1023,5 +1023,59 @@
         "body": "Richieste e decisioni"
       }
     }
+  },
+  "voice": {
+    "title": "Voce",
+    "write": "Registrare una questione",
+    "send": "Inviare",
+    "micPending": "La registrazione manca ancora: una trascrizione nel browser manderebbe l’audio a un servizio esterno, ed è escluso. Fino ad allora scrivi.",
+    "quotaLeft_one": "Questo mese ancora {{count}} questione possibile.",
+    "quotaLeft_other": "Questo mese ancora {{count}} questioni possibili.",
+    "empty": "Ancora nessuna questione.",
+    "mine": "Le tue e quelle indirizzate a te",
+    "listHint": "Ciò che è privato lo vedi solo tu – nemmeno il comitato.",
+    "kindTitle": "Tipo",
+    "kindLabel": "Di che cosa si tratta?",
+    "kind": {
+      "self_reflection": "Per me",
+      "coach_log": "Diario dell’allenatore",
+      "feedback": "Indirizzato a qualcuno",
+      "anonymous": "Anonimo al comitato"
+    },
+    "kindHint": {
+      "self_reflection": "Resta strettamente da te. Nessun altro può leggerlo.",
+      "coach_log": "Il tuo diario. Resta strettamente da te.",
+      "feedback": "Va al punto scelto – e solo lì.",
+      "anonymous": "Senza alcuna indicazione su di te. Anche l’orario è arrotondato alla settimana."
+    },
+    "targetTitle": "A chi",
+    "targetLabel": "Destinatario",
+    "target": {
+      "person": "A una persona",
+      "trainer": "Agli allenatori",
+      "admin": "Al comitato",
+      "team": "A una squadra"
+    },
+    "person": "Persona",
+    "team": "Squadra",
+    "text": "Il tuo testo",
+    "textLabel": "Che cosa vuoi dire?",
+    "textHint": "Quello che scrivi qui parte così – nulla viene inviato senza essere visto.",
+    "anonymousHint": "Il tuo biglietto per la risposta è salvato su questo dispositivo. Se cancelli la memoria, la via di ritorno sparisce – altrimenti non sarebbe anonimato.",
+    "sent": "Inviato.",
+    "savedPrivate": "Salvato. Resta da te.",
+    "status": {
+      "open": "Aperto",
+      "in_progress": "In lavorazione",
+      "answered": "Risposto",
+      "resolved": "Risolto",
+      "declined": "Respinto"
+    },
+    "problem": {
+      "textMissing": "Una questione ha bisogno del suo testo.",
+      "textTooLong": "Il testo è troppo lungo.",
+      "targetMissing": "Scegli a chi deve andare.",
+      "quotaSpent": "Il contingente di questo mese è esaurito."
+    }
   }
 }

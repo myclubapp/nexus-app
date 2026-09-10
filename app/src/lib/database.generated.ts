@@ -1309,6 +1309,110 @@ export type Database = {
           },
         ]
       }
+      voice_notes: {
+        Row: {
+          anon_token_hash: string | null
+          audio_url: string | null
+          author_member_id: string | null
+          club_id: string
+          converted_task_id: string | null
+          created_at: string | null
+          created_week: string
+          id: string
+          kind: string
+          response: string | null
+          status: string
+          target_member_id: string | null
+          target_role: string | null
+          target_team_id: string | null
+          transcript: string
+        }
+        Insert: {
+          anon_token_hash?: string | null
+          audio_url?: string | null
+          author_member_id?: string | null
+          club_id: string
+          converted_task_id?: string | null
+          created_at?: string | null
+          created_week: string
+          id?: string
+          kind: string
+          response?: string | null
+          status?: string
+          target_member_id?: string | null
+          target_role?: string | null
+          target_team_id?: string | null
+          transcript: string
+        }
+        Update: {
+          anon_token_hash?: string | null
+          audio_url?: string | null
+          author_member_id?: string | null
+          club_id?: string
+          converted_task_id?: string | null
+          created_at?: string | null
+          created_week?: string
+          id?: string
+          kind?: string
+          response?: string | null
+          status?: string
+          target_member_id?: string | null
+          target_role?: string | null
+          target_team_id?: string | null
+          transcript?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voice_notes_author_member_id_fkey"
+            columns: ["author_member_id"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "voice_notes_author_member_id_fkey"
+            columns: ["author_member_id"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voice_notes_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voice_notes_converted_task_id_fkey"
+            columns: ["converted_task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voice_notes_target_member_id_fkey"
+            columns: ["target_member_id"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "voice_notes_target_member_id_fkey"
+            columns: ["target_member_id"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voice_notes_target_team_id_fkey"
+            columns: ["target_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       club_directory: {
@@ -1726,6 +1830,18 @@ export type Database = {
         Args: { p_proof_url?: string; p_task_id: string }
         Returns: boolean
       }
+      submit_voice_note: {
+        Args: {
+          p_club_id: string
+          p_kind: string
+          p_target_member?: string
+          p_target_role?: string
+          p_target_team?: string
+          p_token_hash?: string
+          p_transcript: string
+        }
+        Returns: string
+      }
       suggest_task: { Args: { p_task_id: string }; Returns: number }
       sync_news_sources: { Args: never; Returns: number }
       take_shift: {
@@ -1771,6 +1887,7 @@ export type Database = {
           team_value: number
         }[]
       }
+      voice_quota_left: { Args: { p_club_id: string }; Returns: number }
       withdraw_join_request: {
         Args: { p_request_id: string }
         Returns: undefined

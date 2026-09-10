@@ -34,6 +34,7 @@ import { StrengthsPage } from './StrengthsPage';
 import { PulsePage } from './PulsePage';
 import { PulseReadPage } from './PulseReadPage';
 import { NotificationsPage } from './NotificationsPage';
+import { VoicePage } from './VoicePage';
 import { PointRulePage } from './club/PointRulePage';
 
 /**
@@ -77,6 +78,7 @@ export function TabsPage() {
         <Route path="profile/pulse" element={<PulsePage />} />
         <Route path="pulse/:pulseId" element={<PulseReadPage />} />
         <Route path="profile/notifications" element={<NotificationsPage />} />
+        <Route path="profile/voice" element={<VoicePage />} />
         <Route path="" element={<Navigate to="dashboard" replace />} />
       </IonRouterOutlet>
 
