@@ -378,6 +378,20 @@ Die Selbstauskunft eines Mitglieds darüber, womit es gern beiträgt.
 
 **Constraints:** Das Profil ist freiwillig. Es fliesst nie in Gesundheitsansichten ein und löst keine Signale aus.
 
+### NOTIFICATION_SETTINGS
+
+Die Zustellwünsche eines Kontos. Sie hängen am Konto und nicht an der Mitgliedschaft: Wer in zwei Vereinen ist, hat eine Einstellung.
+
+| Attribute  | Description                                        | Data Type | Length/Precision | Validation Rules                                              |
+| ---------- | -------------------------------------------------- | --------- | ---------------- | ------------------------------------------------------------- |
+| user_id    | Konto                                              | UUID      | 36               | Primary Key, Foreign Key (auth.users.id)                       |
+| push       | Erlaubnis je Kategorie                             | JSON      | -                | Not Null; eine fehlende Kategorie gilt als erlaubt              |
+| quiet_from | Beginn der stillen Zeit                            | Time      | -                | Optional; nur zusammen mit `quiet_to`                           |
+| quiet_to   | Ende der stillen Zeit                              | Time      | -                | Optional; nur zusammen mit `quiet_from`                         |
+| updated_at | Zeitpunkt der letzten Änderung                     | DateTime  | -                | Not Null                                                        |
+
+**Constraints:** Die Inbox ist nicht abschaltbar; die Einstellungen betreffen ausschliesslich den Push-Kanal. Ein Fenster über Mitternacht ist zulässig, ein halbes Fenster nicht. Anmeldelinks und Hinweise zur Kontolöschung laufen über E-Mail und bleiben unberührt.
+
 ### HEALTH_SIGNAL
 
 Ein befristeter Frühwarnhinweis aus Teilnahmedaten; gelöste und abgelaufene Hinweise werden gelöscht.

@@ -967,5 +967,61 @@
     "gone": "Ce pouls n’est plus disponible.",
     "yourPoints": "Ton total de points",
     "pointsHint": "Placé ici en dernier volontairement : le pouls parle du club."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "inbox": "La boîte",
+    "inboxAlways": "Chaque notification arrive dans la boîte.",
+    "inboxWhy": "Elle ne se désactive pas : c’est le canal qui atteint tout le monde, même sans push.",
+    "push": "Push par catégorie",
+    "pushPending": "Le push n’est pas encore en service. Ton choix s’applique déjà et sera respecté au démarrage.",
+    "quiet": "Heures calmes",
+    "quietOn": "Pas de push la nuit",
+    "quietFrom": "De",
+    "quietTo": "À",
+    "quietHint": "Rien n’est envoyé dans cette fenêtre, mais rattrapé ensuite. La boîte continue de se remplir.",
+    "quietInvalid": "Le début et la fin doivent être définis et différents.",
+    "saved": "Enregistré. Valable dès le prochain envoi.",
+    "devices": "Appareils enregistrés",
+    "forget": "Déconnecter",
+    "noDevices": "Aucun appareil enregistré.",
+    "devicesHint": "Les appareils apparaîtront ici dès que le push sera en service.",
+    "deviceForgotten": "Déconnecté.",
+    "platform": {
+      "webpush": "Navigateur",
+      "ios_apns": "iPhone ou iPad",
+      "android_ntfy": "Android"
+    },
+    "securityNote": "Les liens de connexion et les avis de suppression de compte passent toujours par e-mail et ne sont pas concernés.",
+    "category": {
+      "event": {
+        "title": "Rendez-vous",
+        "body": "Annonces, rappels, annulations"
+      },
+      "points": {
+        "title": "Points",
+        "body": "Crédits et corrections"
+      },
+      "task": {
+        "title": "Tâches",
+        "body": "Propositions, annonces, confirmations"
+      },
+      "news": {
+        "title": "Actualités",
+        "body": "Ce que raconte le club"
+      },
+      "pulse": {
+        "title": "Pouls du club",
+        "body": "L’aperçu hebdomadaire"
+      },
+      "health": {
+        "title": "Signalements",
+        "body": "Réservé aux responsables"
+      },
+      "join_request": {
+        "title": "Adhésions",
+        "body": "Demandes et décisions"
+      }
+    }
   }
 }

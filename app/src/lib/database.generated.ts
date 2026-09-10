@@ -862,6 +862,30 @@ export type Database = {
           },
         ]
       }
+      notification_settings: {
+        Row: {
+          push: Json
+          quiet_from: string | null
+          quiet_to: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          push?: Json
+          quiet_from?: string | null
+          quiet_to?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          push?: Json
+          quiet_from?: string | null
+          quiet_to?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string | null
@@ -870,6 +894,9 @@ export type Database = {
           created_at: string
           id: string
           link: string | null
+          push_after: string | null
+          push_sent_at: string | null
+          push_wanted: boolean
           read_at: string | null
           title: string
           user_id: string
@@ -881,6 +908,9 @@ export type Database = {
           created_at?: string
           id?: string
           link?: string | null
+          push_after?: string | null
+          push_sent_at?: string | null
+          push_wanted?: boolean
           read_at?: string | null
           title: string
           user_id: string
@@ -892,6 +922,9 @@ export type Database = {
           created_at?: string
           id?: string
           link?: string | null
+          push_after?: string | null
+          push_sent_at?: string | null
+          push_wanted?: boolean
           read_at?: string | null
           title?: string
           user_id?: string
@@ -1448,6 +1481,7 @@ export type Database = {
           club_name: string
         }[]
       }
+      forget_device: { Args: { p_token_id: string }; Returns: undefined }
       health_signal_in_reach: {
         Args: { p_signal_id: string }
         Returns: boolean
@@ -1573,6 +1607,13 @@ export type Database = {
           notified: number
         }[]
       }
+      push_decision: {
+        Args: { p_at?: string; p_category: string; p_user_id: string }
+        Returns: {
+          after_at: string
+          wanted: boolean
+        }[]
+      }
       redeem_invite: {
         Args: { p_code: string; p_display_name?: string }
         Returns: string
@@ -1646,6 +1687,10 @@ export type Database = {
       }
       set_member_teams: {
         Args: { p_member_id: string; p_team_ids: string[] }
+        Returns: undefined
+      }
+      set_notification_settings: {
+        Args: { p_push?: Json; p_quiet_from?: string; p_quiet_to?: string }
         Returns: undefined
       }
       set_pillar_active: {

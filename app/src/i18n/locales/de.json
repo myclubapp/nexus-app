@@ -967,5 +967,61 @@
     "gone": "Dieser Puls ist nicht mehr verfügbar.",
     "yourPoints": "Dein Punktestand",
     "pointsHint": "Steht hier bewusst zuletzt: Der Puls handelt vom Verein."
+  },
+  "notifications": {
+    "title": "Benachrichtigungen",
+    "inbox": "Die Inbox",
+    "inboxAlways": "Jede Benachrichtigung landet in der Inbox.",
+    "inboxWhy": "Sie ist nicht abschaltbar: Sie ist der Weg, der alle erreicht – auch ohne Push.",
+    "push": "Push je Kategorie",
+    "pushPending": "Push selbst ist noch nicht in Betrieb. Deine Wahl gilt trotzdem ab sofort und wird beim Start des Versands beachtet.",
+    "quiet": "Stille Zeiten",
+    "quietOn": "Nachts kein Push",
+    "quietFrom": "Ab",
+    "quietTo": "Bis",
+    "quietHint": "In diesem Fenster wird nichts zugestellt, sondern danach nachgeholt. Die Inbox füllt sich weiter.",
+    "quietInvalid": "Anfang und Ende müssen gesetzt und verschieden sein.",
+    "saved": "Gespeichert. Gilt ab der nächsten Zustellung.",
+    "devices": "Registrierte Geräte",
+    "forget": "Abmelden",
+    "noDevices": "Noch kein Gerät registriert.",
+    "devicesHint": "Geräte erscheinen hier, sobald Push in Betrieb ist.",
+    "deviceForgotten": "Abgemeldet.",
+    "platform": {
+      "webpush": "Browser",
+      "ios_apns": "iPhone oder iPad",
+      "android_ntfy": "Android"
+    },
+    "securityNote": "Anmeldelinks und Hinweise zur Kontolöschung laufen immer über E-Mail und bleiben von diesen Einstellungen unberührt.",
+    "category": {
+      "event": {
+        "title": "Termine",
+        "body": "Ankündigungen, Erinnerungen, Absagen"
+      },
+      "points": {
+        "title": "Punkte",
+        "body": "Gutschriften und Korrekturen"
+      },
+      "task": {
+        "title": "Aufgaben",
+        "body": "Vorschläge, Meldungen, Bestätigungen"
+      },
+      "news": {
+        "title": "News",
+        "body": "Was der Verein erzählt"
+      },
+      "pulse": {
+        "title": "Vereins-Puls",
+        "body": "Der wöchentliche Überblick"
+      },
+      "health": {
+        "title": "Hinweise",
+        "body": "Nur für Zuständige: Fürsorge-Hinweise"
+      },
+      "join_request": {
+        "title": "Beitritte",
+        "body": "Anfragen und Entscheide"
+      }
+    }
   }
 }

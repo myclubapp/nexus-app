@@ -967,5 +967,61 @@
     "gone": "Questo polso non è più disponibile.",
     "yourPoints": "Il tuo punteggio",
     "pointsHint": "Sta qui per ultimo di proposito: il polso parla della società."
+  },
+  "notifications": {
+    "title": "Notifiche",
+    "inbox": "La posta",
+    "inboxAlways": "Ogni notifica arriva in posta.",
+    "inboxWhy": "Non si può disattivare: è il canale che raggiunge tutti, anche senza push.",
+    "push": "Push per categoria",
+    "pushPending": "Il push non è ancora in funzione. La tua scelta vale già e sarà rispettata all’avvio.",
+    "quiet": "Ore di silenzio",
+    "quietOn": "Di notte nessun push",
+    "quietFrom": "Dalle",
+    "quietTo": "Alle",
+    "quietHint": "In questa finestra non viene inviato nulla, ma recuperato dopo. La posta continua a riempirsi.",
+    "quietInvalid": "Inizio e fine devono essere impostati e diversi.",
+    "saved": "Salvato. Vale dal prossimo invio.",
+    "devices": "Dispositivi registrati",
+    "forget": "Disconnettere",
+    "noDevices": "Nessun dispositivo registrato.",
+    "devicesHint": "I dispositivi appariranno qui appena il push sarà in funzione.",
+    "deviceForgotten": "Disconnesso.",
+    "platform": {
+      "webpush": "Browser",
+      "ios_apns": "iPhone o iPad",
+      "android_ntfy": "Android"
+    },
+    "securityNote": "I link di accesso e gli avvisi di cancellazione dell’account passano sempre per e-mail e non sono toccati da queste impostazioni.",
+    "category": {
+      "event": {
+        "title": "Appuntamenti",
+        "body": "Annunci, promemoria, disdette"
+      },
+      "points": {
+        "title": "Punti",
+        "body": "Accrediti e correzioni"
+      },
+      "task": {
+        "title": "Compiti",
+        "body": "Proposte, segnalazioni, conferme"
+      },
+      "news": {
+        "title": "Notizie",
+        "body": "Che cosa racconta la società"
+      },
+      "pulse": {
+        "title": "Polso della società",
+        "body": "La panoramica settimanale"
+      },
+      "health": {
+        "title": "Segnalazioni",
+        "body": "Solo per i responsabili"
+      },
+      "join_request": {
+        "title": "Adesioni",
+        "body": "Richieste e decisioni"
+      }
+    }
   }
 }

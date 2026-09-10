@@ -967,5 +967,61 @@
     "gone": "This pulse is no longer available.",
     "yourPoints": "Your points",
     "pointsHint": "Deliberately last: the pulse is about the club."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "inbox": "The inbox",
+    "inboxAlways": "Every notification lands in the inbox.",
+    "inboxWhy": "It cannot be turned off: it is the channel that reaches everyone, even without push.",
+    "push": "Push per category",
+    "pushPending": "Push itself is not in service yet. Your choice applies already and will be honoured when sending starts.",
+    "quiet": "Quiet hours",
+    "quietOn": "No push at night",
+    "quietFrom": "From",
+    "quietTo": "To",
+    "quietHint": "Nothing is delivered in this window, it is caught up afterwards. The inbox keeps filling.",
+    "quietInvalid": "Start and end must be set and different.",
+    "saved": "Saved. Applies from the next delivery.",
+    "devices": "Registered devices",
+    "forget": "Sign out",
+    "noDevices": "No device registered yet.",
+    "devicesHint": "Devices will appear here once push is in service.",
+    "deviceForgotten": "Signed out.",
+    "platform": {
+      "webpush": "Browser",
+      "ios_apns": "iPhone or iPad",
+      "android_ntfy": "Android"
+    },
+    "securityNote": "Sign-in links and account deletion notices always go by e-mail and are untouched by these settings.",
+    "category": {
+      "event": {
+        "title": "Events",
+        "body": "Announcements, reminders, cancellations"
+      },
+      "points": {
+        "title": "Points",
+        "body": "Credits and corrections"
+      },
+      "task": {
+        "title": "Tasks",
+        "body": "Suggestions, reports, confirmations"
+      },
+      "news": {
+        "title": "News",
+        "body": "What the club tells"
+      },
+      "pulse": {
+        "title": "Club pulse",
+        "body": "The weekly overview"
+      },
+      "health": {
+        "title": "Signals",
+        "body": "For responsible people only"
+      },
+      "join_request": {
+        "title": "Joining",
+        "body": "Requests and decisions"
+      }
+    }
   }
 }
