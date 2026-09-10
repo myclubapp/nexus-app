@@ -150,10 +150,10 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-088 | Trainer-Logbuch           | Als Trainer:in möchte ich nach dem Training ein privates Logbuch-Memo aufnehmen, damit ich meinen Saisonverlauf reflektieren kann.                             | Medium   | Implemented   |
 | FR-089 | Gerichtetes Feedback      | Als Mitglied möchte ich ein Memo an eine Person oder eine Rolle richten, damit mein Anliegen bei der richtigen Stelle landet.                                  | High     | Implemented   |
 | FR-090 | Anonymer Kanal            | Als Mitglied möchte ich ein Anliegen anonym an den Vorstand richten, damit ich auch Heikles ansprechen kann.                                                   | High     | Implemented   |
-| FR-091 | Anonymer Zwei-Weg-Faden   | Als anonyme:r Einreicher:in möchte ich die Antwort des Vorstands lesen und nachfassen, ohne meine Identität preiszugeben, damit Speak-up eine Antwort bekommt. | High     | Open   |
-| FR-092 | Anliegen triagieren       | Als Empfänger:in möchte ich ein Anliegen mit einem Tap auf offen, in Arbeit oder beantwortet setzen, damit nichts liegen bleibt.                               | High     | Open   |
-| FR-093 | Anliegen in Aufgabe wandeln | Als Empfänger:in möchte ich aus einem Anliegen eine Aufgabe im Marktplatz erzeugen, damit aus dem Wort eine Handlung wird.                                   | Medium   | Open   |
-| FR-094 | Anmahnung unbeantworteter Anliegen | Als System möchte ich unbeantwortete anonyme Anliegen beim Vorstand anmahnen, damit Listen-up verbindlich ist.                                       | High     | Open   |
+| FR-091 | Anonymer Zwei-Weg-Faden   | Als anonyme:r Einreicher:in möchte ich die Antwort des Vorstands lesen und nachfassen, ohne meine Identität preiszugeben, damit Speak-up eine Antwort bekommt. | High     | Implemented   |
+| FR-092 | Anliegen triagieren       | Als Empfänger:in möchte ich ein Anliegen mit einem Tap auf offen, in Arbeit oder beantwortet setzen, damit nichts liegen bleibt.                               | High     | Implemented   |
+| FR-093 | Anliegen in Aufgabe wandeln | Als Empfänger:in möchte ich aus einem Anliegen eine Aufgabe im Marktplatz erzeugen, damit aus dem Wort eine Handlung wird.                                   | Medium   | Implemented   |
+| FR-094 | Anmahnung unbeantworteter Anliegen | Als System möchte ich unbeantwortete anonyme Anliegen beim Vorstand anmahnen, damit Listen-up verbindlich ist.                                       | High     | Implemented   |
 
 ### 1.8 Sitzungs-Anbindung
 
@@ -163,8 +163,8 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-096 | Einladung über Ämter      | Als Vorstand möchte ich den Teilnehmerkreis über Ämter statt Namenslisten definieren, damit der Verteiler bei Amtswechsel automatisch stimmt.                | Medium   | Open   |
 | FR-097 | Input einreichen          | Als Mitglied möchte ich einen Vorschlag als Text oder Sprachmemo an ein Gremium einreichen, damit meine Idee gehört wird.                                    | High     | Open   |
 | FR-098 | Input zuordnen            | Als Vorstand möchte ich einen Input laufend bearbeiten oder einer Sitzung zuordnen, damit die Einreicher:in den Stand kennt.                                 | High     | Open   |
-| FR-099 | Dokumentierte Antwort     | Als Vorstand möchte ich jeden behandelten Input mit einer Antwort in 2–3 Sätzen, Datum und Gremium abschliessen, damit nichts versandet.                     | High     | Open   |
-| FR-100 | «Aus dem Vorstand»        | Als Vorstand möchte ich eine Antwort optional als News publizieren, damit der Verein sieht, was aus Vorschlägen wurde.                                       | Medium   | Open   |
+| FR-099 | Dokumentierte Antwort     | Als Vorstand möchte ich jeden behandelten Input mit einer Antwort in 2–3 Sätzen, Datum und Gremium abschliessen, damit nichts versandet.                     | High     | Implemented   |
+| FR-100 | «Aus dem Vorstand»        | Als Vorstand möchte ich eine Antwort optional als News publizieren, damit der Verein sieht, was aus Vorschlägen wurde.                                       | Medium   | Implemented   |
 | FR-101 | Sitzungs-Sammelansicht    | Als Vorstand möchte ich in der Sitzung die zugeordneten offenen Anliegen plus vakante Ämter und offene Helfereinsätze sehen, damit ich keine Traktandenliste pflegen muss. | Medium | Open |
 
 ### 1.9 Kontext-Check-ins

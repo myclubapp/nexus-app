@@ -3,6 +3,7 @@
     "appName": "myclub",
     "save": "Save",
     "cancel": "Cancel",
+    "ok": "OK",
     "close": "Close",
     "back": "Back",
     "next": "Next",
@@ -1032,7 +1033,7 @@
     "quotaLeft_one": "{{count}} concern left this month.",
     "quotaLeft_other": "{{count}} concerns left this month.",
     "empty": "No concerns yet.",
-    "mine": "Yours and those addressed to you",
+    "mine": "Your notes",
     "listHint": "What is private is visible to you alone – not even to the committee.",
     "kindTitle": "Kind",
     "kindLabel": "What is it about?",
@@ -1076,6 +1077,52 @@
       "textTooLong": "The text is too long.",
       "targetMissing": "Choose where it should go.",
       "quotaSpent": "This month’s quota is used up."
-    }
+    },
+    "inbox": "Inbox",
+    "inboxHint": "Notes addressed to you. Every one gets an answer – you may decline it, but not let it fade away.",
+    "anonThread": "Anonymous thread",
+    "anonThreadHint": "This thread hangs on the ticket on this device, not on your account. Nobody can trace it back to you.",
+    "followUp": "Follow up",
+    "followUpSend": "Send",
+    "followUpSent": "Added to the thread.",
+    "done": {
+      "answered": "Answer delivered.",
+      "declined": "Declined – with a reason.",
+      "flagged": "Reported. The note has left your inbox."
+    },
+    "flagged": "Reported",
+    "flaggedHint": "A reported note leaves the inbox but is not deleted. Whoever reports does not decide alone.",
+    "ticketLost": "Your ticket could not be kept – the answer to this note will not reach you."
+  },
+  "noteAnswer": {
+    "title": "Note",
+    "send": "Answer",
+    "statusTitle": "Status",
+    "statusHint": "One tap is enough. «In progress» tells the author that someone is looking.",
+    "answerTitle": "Answer",
+    "answerLabel": "What do you answer?",
+    "answerHint": "No final status without an answer – a refusal needs its reason too.",
+    "closedHint": "This note is closed.",
+    "thread": "History",
+    "side": {
+      "board": "Board",
+      "author": "Author"
+    },
+    "followTitle": "What follows",
+    "followHint": "A note yields at most one task.",
+    "asNews": "Publish as news",
+    "asTask": "Turn into a task",
+    "taskTitle": "The task",
+    "taskHint": "The transcript becomes the description. You add the why and the points.",
+    "newsTitle": "From the board",
+    "decline": "Decline",
+    "flag": "Report note",
+    "taskExists": "A task has already come out of this note.",
+    "problem": {
+      "answerMissing": "Write your answer first.",
+      "taskTitleMissing": "The task needs a title.",
+      "taskWhyMissing": "The task needs its why."
+    },
+    "followHintAdmin": "A note yields at most one task. «Publish as news» makes your answer visible to the whole club."
   }
 }

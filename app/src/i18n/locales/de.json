@@ -3,6 +3,7 @@
     "appName": "myclub",
     "save": "Speichern",
     "cancel": "Abbrechen",
+    "ok": "OK",
     "close": "Schliessen",
     "back": "Zurück",
     "next": "Weiter",
@@ -1032,7 +1033,7 @@
     "quotaLeft_one": "Diesen Monat noch {{count}} Anliegen möglich.",
     "quotaLeft_other": "Diesen Monat noch {{count}} Anliegen möglich.",
     "empty": "Noch kein Anliegen.",
-    "mine": "Deine und die an dich gerichteten",
+    "mine": "Deine Anliegen",
     "listHint": "Privates sieht niemand ausser dir – auch der Vorstand nicht.",
     "kindTitle": "Art",
     "kindLabel": "Worum geht es?",
@@ -1076,6 +1077,52 @@
       "textTooLong": "Der Text ist zu lang.",
       "targetMissing": "Wähle, an wen es gehen soll.",
       "quotaSpent": "Das Kontingent dieses Monats ist ausgeschöpft."
-    }
+    },
+    "inbox": "Eingang",
+    "inboxHint": "Anliegen, die an dich gerichtet sind. Jedes bekommt eine Antwort – ablehnen darfst du es, versanden lassen nicht.",
+    "anonThread": "Anonymer Faden",
+    "anonThreadHint": "Dieser Faden hängt am Ticket auf diesem Gerät, nicht an deinem Konto. Niemand kann ihn dir zuordnen.",
+    "followUp": "Nachfassen",
+    "followUpSend": "Senden",
+    "followUpSent": "Im Faden abgelegt.",
+    "done": {
+      "answered": "Antwort zugestellt.",
+      "declined": "Abgelehnt – mit Begründung.",
+      "flagged": "Gemeldet. Das Anliegen ist aus deinem Eingang verschwunden."
+    },
+    "flagged": "Gemeldet",
+    "flaggedHint": "Gemeldete Anliegen sind aus dem Eingang, aber nicht gelöscht. Wer meldet, entscheidet nicht allein.",
+    "ticketLost": "Dein Ticket liess sich nicht sichern – die Antwort auf dieses Anliegen erreicht dich nicht."
+  },
+  "noteAnswer": {
+    "title": "Anliegen",
+    "send": "Antworten",
+    "statusTitle": "Status",
+    "statusHint": "Ein Tipp genügt. «In Arbeit» sagt der einreichenden Person, dass jemand hinschaut.",
+    "answerTitle": "Antwort",
+    "answerLabel": "Was antwortest du?",
+    "answerHint": "Ohne Antwort kein Endstatus – auch eine Ablehnung braucht ihre Begründung.",
+    "closedHint": "Dieses Anliegen ist abgeschlossen.",
+    "thread": "Verlauf",
+    "side": {
+      "board": "Vorstand",
+      "author": "Einreichende Person"
+    },
+    "followTitle": "Was daraus folgt",
+    "followHint": "Aus einem Anliegen entsteht höchstens eine Aufgabe.",
+    "asNews": "Als News publizieren",
+    "asTask": "In Aufgabe umwandeln",
+    "taskTitle": "Die Aufgabe",
+    "taskHint": "Das Transkript wird die Beschreibung. Warum und Punktwert ergänzt du.",
+    "newsTitle": "Aus dem Vorstand",
+    "decline": "Ablehnen",
+    "flag": "Anliegen melden",
+    "taskExists": "Aus diesem Anliegen ist bereits eine Aufgabe entstanden.",
+    "problem": {
+      "answerMissing": "Schreibe zuerst deine Antwort.",
+      "taskTitleMissing": "Die Aufgabe braucht einen Titel.",
+      "taskWhyMissing": "Die Aufgabe braucht ihr Warum."
+    },
+    "followHintAdmin": "Aus einem Anliegen entsteht höchstens eine Aufgabe. «Als News publizieren» macht deine Antwort für den ganzen Verein sichtbar."
   }
 }

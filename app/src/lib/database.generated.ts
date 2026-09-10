@@ -1309,15 +1309,50 @@ export type Database = {
           },
         ]
       }
+      voice_note_messages: {
+        Row: {
+          author_side: string
+          body: string
+          created_at: string
+          id: string
+          note_id: string
+        }
+        Insert: {
+          author_side: string
+          body: string
+          created_at?: string
+          id?: string
+          note_id: string
+        }
+        Update: {
+          author_side?: string
+          body?: string
+          created_at?: string
+          id?: string
+          note_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voice_note_messages_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "voice_notes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       voice_notes: {
         Row: {
           anon_token_hash: string | null
+          answered_at: string | null
+          answered_by: string | null
           audio_url: string | null
           author_member_id: string | null
           club_id: string
           converted_task_id: string | null
           created_at: string | null
           created_week: string
+          flagged_at: string | null
           id: string
           kind: string
           response: string | null
@@ -1329,12 +1364,15 @@ export type Database = {
         }
         Insert: {
           anon_token_hash?: string | null
+          answered_at?: string | null
+          answered_by?: string | null
           audio_url?: string | null
           author_member_id?: string | null
           club_id: string
           converted_task_id?: string | null
           created_at?: string | null
           created_week: string
+          flagged_at?: string | null
           id?: string
           kind: string
           response?: string | null
@@ -1346,12 +1384,15 @@ export type Database = {
         }
         Update: {
           anon_token_hash?: string | null
+          answered_at?: string | null
+          answered_by?: string | null
           audio_url?: string | null
           author_member_id?: string | null
           club_id?: string
           converted_task_id?: string | null
           created_at?: string | null
           created_week?: string
+          flagged_at?: string | null
           id?: string
           kind?: string
           response?: string | null
@@ -1362,6 +1403,20 @@ export type Database = {
           transcript?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "voice_notes_answered_by_fkey"
+            columns: ["answered_by"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "voice_notes_answered_by_fkey"
+            columns: ["answered_by"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "voice_notes_author_member_id_fkey"
             columns: ["author_member_id"]
@@ -1447,6 +1502,20 @@ export type Database = {
           notified: number
         }[]
       }
+      anon_thread: {
+        Args: { p_token_hash: string }
+        Returns: {
+          created_week: string
+          messages: Json
+          note_id: string
+          status: string
+          transcript: string
+        }[]
+      }
+      answer_voice_note: {
+        Args: { p_answer: string; p_decline?: boolean; p_note_id: string }
+        Returns: undefined
+      }
       auto_release_pulses: { Args: never; Returns: number }
       award_points: {
         Args: {
@@ -1469,6 +1538,7 @@ export type Database = {
         Returns: number
       }
       call_is_muted: { Args: { p_club_id: string }; Returns: boolean }
+      can_handle_note: { Args: { p_note_id: string }; Returns: boolean }
       cancel_event: {
         Args: { p_event_id: string; p_reason: string }
         Returns: undefined
@@ -1510,6 +1580,17 @@ export type Database = {
           connections: number
           last_connection: string
         }[]
+      }
+      convert_note_to_task: {
+        Args: {
+          p_category: string
+          p_due_at?: string
+          p_note_id: string
+          p_points: number
+          p_title: string
+          p_why: string
+        }
+        Returns: string
       }
       count_club_admins: {
         Args: { p_club_id: string; p_except?: string }
@@ -1584,6 +1665,12 @@ export type Database = {
           club_id: string
           club_name: string
         }[]
+      }
+      flag_note: { Args: { p_note_id: string }; Returns: undefined }
+      flag_unanswered_notes: { Args: never; Returns: number }
+      follow_up_anon: {
+        Args: { p_body: string; p_token_hash: string }
+        Returns: undefined
       }
       forget_device: { Args: { p_token_id: string }; Returns: undefined }
       health_signal_in_reach: {
@@ -1791,6 +1878,10 @@ export type Database = {
       }
       set_member_teams: {
         Args: { p_member_id: string; p_team_ids: string[] }
+        Returns: undefined
+      }
+      set_note_status: {
+        Args: { p_note_id: string; p_status: string }
         Returns: undefined
       }
       set_notification_settings: {

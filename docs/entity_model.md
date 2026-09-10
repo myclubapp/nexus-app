@@ -73,6 +73,7 @@ erDiagram
     TASK ||--o| MEETING_INPUT : "folgt aus"
 
     NEWS ||--o| MEETING_INPUT : "veröffentlicht"
+    VOICE_NOTE ||--o{ VOICE_NOTE_MESSAGE : "führt"
     VOICE_NOTE ||--o| MEETING_INPUT : "wird zu"
     VOICE_NOTE ||--o| CHECKIN_RESPONSE : "ergänzt"
     CHECKIN_PROMPT ||--o{ CHECKIN_RESPONSE : "wird beantwortet durch"
@@ -524,8 +525,25 @@ Ein gesprochenes Anliegen mit geprüftem Transkript, privat oder adressiert.
 | converted_task_id| Aufgabe, die aus dem Anliegen entstanden ist                    | UUID      | 36               | Optional, Foreign Key (TASK.id)                                     |
 | created_week     | Kalenderwoche des Eingangs                                      | String    | 10               | Not Null                                                            |
 | created_at       | Genauer Zeitpunkt; bei anonym leer                              | DateTime  | -                | Optional                                                            |
+| answered_at      | Zeitpunkt der Antwort                                           | DateTime  | -                | Optional                                                            |
+| answered_by      | Person, die geantwortet hat                                     | UUID      | 36               | Optional, Foreign Key (CLUB_MEMBER.id)                              |
+| flagged_at       | Zeitpunkt der Meldung wegen Missbrauchs                         | DateTime  | -                | Optional                                                            |
 
-**Constraints:** Für `kind = anonymous` sind `author_member_id` und `created_at` immer leer und `anon_token_hash` gefüllt – die Anonymität ist eine Eigenschaft des Schemas, nicht einer Berechtigungsregel. Anliegen der Arten self_reflection und coach_log sind ausschliesslich für ihre Verfasser:innen lesbar. Es existiert kein Export, keine Volltextsuche über fremde Anliegen und kein Schlagwort-Scan.
+**Constraints:** Für `kind = anonymous` sind `author_member_id` und `created_at` immer leer und `anon_token_hash` gefüllt – die Anonymität ist eine Eigenschaft des Schemas, nicht einer Berechtigungsregel. Anliegen der Arten self_reflection und coach_log sind ausschliesslich für ihre Verfasser:innen lesbar. Ein Endstatus (answered, declined) setzt eine gefüllte `response` voraus – ein Anliegen darf abgelehnt werden, aber nicht versanden. Aus einem Anliegen entsteht höchstens **eine** Aufgabe. Ein gemeldetes Anliegen verschwindet aus dem Eingang der Empfänger:in, wird aber nicht gelöscht. Es existiert kein Export, keine Volltextsuche über fremde Anliegen und kein Schlagwort-Scan.
+
+### VOICE_NOTE_MESSAGE
+
+Eine Nachricht im Faden zu einem Anliegen. Für ein anonymes Anliegen ist sie der einzige Weg zurück.
+
+| Attribute   | Description                                     | Data Type | Length/Precision | Validation Rules                                    |
+| ----------- | ----------------------------------------------- | --------- | ---------------- | --------------------------------------------------- |
+| id          | Eindeutige Kennung der Nachricht                | UUID      | 36               | Primary Key, Generated                              |
+| note_id     | Anliegen, zu dem die Nachricht gehört           | UUID      | 36               | Not Null, Foreign Key (VOICE_NOTE.id)               |
+| author_side | Seite, von der die Nachricht kommt              | String    | 10               | Not Null, Values: board, author                     |
+| body        | Text der Nachricht                              | String    | 2000             | Not Null                                            |
+| created_at  | Zeitpunkt der Nachricht                         | DateTime  | -                | Not Null                                            |
+
+**Constraints:** Es steht nie ein Name an der Nachricht – beim anonymen Faden gäbe es keinen, beim gerichteten steht er schon am Anliegen. Der Faden ist lesbar, wenn das Anliegen lesbar ist; die Reichweite steht damit an einer Stelle. Wer den Faden über das lokale Ticket abholt, weist sich mit dessen Prüfwert aus und nie mit einer Identität.
 
 ### MEETING_INPUT
 

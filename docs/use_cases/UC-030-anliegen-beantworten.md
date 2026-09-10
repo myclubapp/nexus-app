@@ -6,7 +6,7 @@
 **Use Case Name:** Anliegen beantworten
 **Primary Actor:** Vorstand
 **Goal:** Auf ein eingegangenes Anliegen sichtbar reagieren, auch wenn es anonym eingereicht wurde
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

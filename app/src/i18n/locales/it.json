@@ -3,6 +3,7 @@
     "appName": "myclub",
     "save": "Salva",
     "cancel": "Annulla",
+    "ok": "OK",
     "close": "Chiudi",
     "back": "Indietro",
     "next": "Avanti",
@@ -1032,7 +1033,7 @@
     "quotaLeft_one": "Questo mese ancora {{count}} questione possibile.",
     "quotaLeft_other": "Questo mese ancora {{count}} questioni possibili.",
     "empty": "Ancora nessuna questione.",
-    "mine": "Le tue e quelle indirizzate a te",
+    "mine": "Le tue richieste",
     "listHint": "Ciò che è privato lo vedi solo tu – nemmeno il comitato.",
     "kindTitle": "Tipo",
     "kindLabel": "Di che cosa si tratta?",
@@ -1076,6 +1077,52 @@
       "textTooLong": "Il testo è troppo lungo.",
       "targetMissing": "Scegli a chi deve andare.",
       "quotaSpent": "Il contingente di questo mese è esaurito."
-    }
+    },
+    "inbox": "In arrivo",
+    "inboxHint": "Le richieste indirizzate a te. Ognuna riceve una risposta – puoi rifiutarla, non lasciarla cadere.",
+    "anonThread": "Filo anonimo",
+    "anonThreadHint": "Questo filo è legato al biglietto su questo dispositivo, non al tuo conto. Nessuno può ricondurlo a te.",
+    "followUp": "Insistere",
+    "followUpSend": "Invia",
+    "followUpSent": "Aggiunto al filo.",
+    "done": {
+      "answered": "Risposta recapitata.",
+      "declined": "Rifiutata – con motivazione.",
+      "flagged": "Segnalata. La richiesta è uscita dalla tua casella."
+    },
+    "flagged": "Segnalate",
+    "flaggedHint": "Una richiesta segnalata esce dalla casella, ma non viene cancellata. Chi segnala non decide da solo.",
+    "ticketLost": "Non è stato possibile conservare il tuo biglietto – la risposta a questa richiesta non ti raggiungerà."
+  },
+  "noteAnswer": {
+    "title": "Richiesta",
+    "send": "Rispondi",
+    "statusTitle": "Stato",
+    "statusHint": "Basta un tocco. «In corso» dice a chi ha scritto che qualcuno se ne occupa.",
+    "answerTitle": "Risposta",
+    "answerLabel": "Che cosa rispondi?",
+    "answerHint": "Nessuno stato finale senza risposta – anche un rifiuto ha bisogno della sua motivazione.",
+    "closedHint": "Questa richiesta è chiusa.",
+    "thread": "Cronologia",
+    "side": {
+      "board": "Comitato",
+      "author": "Chi ha scritto"
+    },
+    "followTitle": "Che cosa ne segue",
+    "followHint": "Da una richiesta nasce al massimo un compito.",
+    "asNews": "Pubblica come notizia",
+    "asTask": "Trasforma in compito",
+    "taskTitle": "Il compito",
+    "taskHint": "La trascrizione diventa la descrizione. Il perché e i punti li aggiungi tu.",
+    "newsTitle": "Dal comitato",
+    "decline": "Rifiuta",
+    "flag": "Segnala la richiesta",
+    "taskExists": "Da questa richiesta è già nato un compito.",
+    "problem": {
+      "answerMissing": "Scrivi prima la tua risposta.",
+      "taskTitleMissing": "Il compito ha bisogno di un titolo.",
+      "taskWhyMissing": "Il compito ha bisogno del suo perché."
+    },
+    "followHintAdmin": "Da una richiesta nasce al massimo un compito. «Pubblica come notizia» rende la tua risposta visibile a tutta la società."
   }
 }

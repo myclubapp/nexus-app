@@ -3,6 +3,7 @@
     "appName": "myclub",
     "save": "Enregistrer",
     "cancel": "Annuler",
+    "ok": "OK",
     "close": "Fermer",
     "back": "Retour",
     "next": "Suivant",
@@ -1032,7 +1033,7 @@
     "quotaLeft_one": "Encore {{count}} préoccupation possible ce mois.",
     "quotaLeft_other": "Encore {{count}} préoccupations possibles ce mois.",
     "empty": "Aucune préoccupation pour l’instant.",
-    "mine": "Les tiennes et celles qui te sont adressées",
+    "mine": "Tes demandes",
     "listHint": "Ce qui est privé n’est visible que par toi – pas même par le comité.",
     "kindTitle": "Type",
     "kindLabel": "De quoi s’agit-il ?",
@@ -1076,6 +1077,52 @@
       "textTooLong": "Le texte est trop long.",
       "targetMissing": "Choisis à qui cela doit aller.",
       "quotaSpent": "Le quota de ce mois est épuisé."
-    }
+    },
+    "inbox": "Boîte de réception",
+    "inboxHint": "Les demandes qui te sont adressées. Chacune reçoit une réponse – tu peux la refuser, pas la laisser sans suite.",
+    "anonThread": "Fil anonyme",
+    "anonThreadHint": "Ce fil est lié au ticket sur cet appareil, pas à ton compte. Personne ne peut te l'attribuer.",
+    "followUp": "Relancer",
+    "followUpSend": "Envoyer",
+    "followUpSent": "Ajouté au fil.",
+    "done": {
+      "answered": "Réponse transmise.",
+      "declined": "Refusée – avec motif.",
+      "flagged": "Signalée. La demande a quitté ta boîte de réception."
+    },
+    "flagged": "Signalées",
+    "flaggedHint": "Une demande signalée quitte la boîte de réception, mais n'est pas supprimée. Celle ou celui qui signale ne décide pas seul.",
+    "ticketLost": "Ton ticket n'a pas pu être conservé – la réponse à cette demande ne te parviendra pas."
+  },
+  "noteAnswer": {
+    "title": "Demande",
+    "send": "Répondre",
+    "statusTitle": "Statut",
+    "statusHint": "Une pression suffit. « En cours » indique à la personne que quelqu'un s'en occupe.",
+    "answerTitle": "Réponse",
+    "answerLabel": "Que réponds-tu ?",
+    "answerHint": "Pas de statut final sans réponse – un refus aussi demande son motif.",
+    "closedHint": "Cette demande est close.",
+    "thread": "Historique",
+    "side": {
+      "board": "Comité",
+      "author": "Personne à l'origine"
+    },
+    "followTitle": "Ce qui en découle",
+    "followHint": "Une demande donne au plus une tâche.",
+    "asNews": "Publier comme actualité",
+    "asTask": "Convertir en tâche",
+    "taskTitle": "La tâche",
+    "taskHint": "La transcription devient la description. Tu ajoutes le pourquoi et les points.",
+    "newsTitle": "Du comité",
+    "decline": "Refuser",
+    "flag": "Signaler la demande",
+    "taskExists": "Une tâche est déjà née de cette demande.",
+    "problem": {
+      "answerMissing": "Écris d'abord ta réponse.",
+      "taskTitleMissing": "La tâche a besoin d'un titre.",
+      "taskWhyMissing": "La tâche a besoin de son pourquoi."
+    },
+    "followHintAdmin": "Une demande donne au plus une tâche. « Publier comme actualité » rend ta réponse visible pour tout le club."
   }
 }
