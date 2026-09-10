@@ -100,8 +100,8 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-055 | Kudos zur Bestätigung          | Als Vorstand möchte ich der Bestätigung ein kurzes Dankeswort beilegen, damit Wertschätzung vor der Punktzahl steht (V7).                                           | High     | Implemented |
 | FR-056 | Wiederkehrende Aufgaben        | Als Vorstand möchte ich Aufgaben als wiederkehrend anlegen, damit ich sie nicht jede Runde neu erfassen muss.                                                       | Medium   | Implemented |
 | FR-057 | Verteilungs-Transparenz        | Als Mitglied möchte ich sehen, wie viele Aufgaben bereits übernommen wurden, damit die Verteilung fair sichtbar ist.                                                | Medium   | Implemented |
-| FR-058 | Beitrags-Profil erfassen       | Als Mitglied möchte ich angeben, womit ich gern beitrage (Interessen, Stärken, Zeitbudget), damit mir passende Beiträge angeboten werden (K3b).                     | High     | Open        |
-| FR-059 | Beitrags-Matching              | Als Mitglied möchte ich Aufgaben und Ämter vorgeschlagen bekommen, die zu meinem Beitrags-Profil passen, damit Verantwortung angeboten statt ausgeschrieben wird.   | High     | In Progress
+| FR-058 | Beitrags-Profil erfassen       | Als Mitglied möchte ich angeben, womit ich gern beitrage (Interessen, Stärken, Zeitbudget), damit mir passende Beiträge angeboten werden (K3b).                     | High     | Implemented        |
+| FR-059 | Beitrags-Matching              | Als Mitglied möchte ich Aufgaben und Ämter vorgeschlagen bekommen, die zu meinem Beitrags-Profil passen, damit Verantwortung angeboten statt ausgeschrieben wird.   | High     | Implemented|
 
 ### 1.5 Vereins-Gesundheit & Frühwarnung
 

@@ -378,10 +378,11 @@ Die Selbstauskunft eines Mitglieds darüber, womit es gern beiträgt.
 | member_id   | Mitglied, dem das Profil gehört                      | UUID      | 36               | Primary Key, Foreign Key (CLUB_MEMBER.id)    |
 | interests   | Gewählte Interessengebiete                           | JSON      | -                | Not Null                                     |
 | strengths   | Was für das Mitglied ein sinnvoller Beitrag wäre     | String    | 1000             | Optional                                     |
-| time_budget | Verfügbares Zeitbudget                               | String    | 20               | Not Null, Values: einmalig, monatlich, saisonal |
+| time_budget | Verfügbares Zeitbudget                               | String    | 20               | Optional, Values: once, monthly, seasonal    |
+| asked_at    | Zeitpunkt der letzten Nachfrage                      | DateTime  | -                | Optional                                     |
 | updated_at  | Zeitpunkt der letzten Pflege                         | DateTime  | -                | Not Null                                     |
 
-**Constraints:** Das Profil ist freiwillig. Es fliesst nie in Gesundheitsansichten ein und löst keine Signale aus.
+**Constraints:** Das Profil ist freiwillig. Es fliesst nie in Gesundheitsansichten ein und löst keine Signale aus – gelesen wird es ausschliesslich von der Person selbst und von den Serverfunktionen, die Vorschläge erzeugen. Eine Zeile kann **leer** sein: `asked_at` ohne Interessen hält fest, dass gefragt wurde und die Person später ausfüllen wollte. Ein ausgefülltes Profil trägt sein Zeitbudget, sonst wäre die Budgetregel nicht anwendbar. Die Interessen stammen aus derselben Liste wie `TASK.category`.
 
 ### NOTIFICATION_SETTINGS
 

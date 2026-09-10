@@ -6,7 +6,7 @@
 **Use Case Name:** Beitrags-Profil erfassen
 **Primary Actor:** Mitglied
 **Goal:** Angeben, womit man gern beiträgt, damit Verantwortung persönlich angeboten wird
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

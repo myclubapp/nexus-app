@@ -1274,6 +1274,49 @@
     "share": "Partager",
     "shared": "Partagé. Ton entraîneur·e voit exactement cette réponse."
   },
+  "contribution": {
+    "title": "Ton profil de contribution",
+    "edit": "Modifier",
+    "saved": "Enregistré. Les propositions s'y réfèrent désormais.",
+    "strengthsTitle": "Qu'est-ce qui serait pour toi une contribution qui a du sens ?",
+    "strengthsLabel": "En une phrase",
+    "strengthsHint": "Cette question vient en premier parce qu'elle est la plus importante : le club s'intéresse à toi, pas à son trou.",
+    "interestsTitle": "À quoi contribues-tu volontiers ?",
+    "interestsLabel": "Domaines d'intérêt",
+    "interestsHint": "Les mêmes domaines d'où une tâche tire sa catégorie – sinon aucun rapprochement n'est possible.",
+    "budgetTitle": "De combien de temps disposes-tu ?",
+    "budget": {
+      "once": "Une fois",
+      "monthly": "Mensuel",
+      "seasonal": "Saisonnier"
+    },
+    "budgetHint": {
+      "once": "Une contribution, puis on te laisse tranquille – jusqu'à ce que tu refasses ton profil.",
+      "monthly": "La proposition arrive au plus une fois par mois.",
+      "seasonal": "Plusieurs contributions, réparties sur la saison."
+    },
+    "budgetHintNone": "Sans budget-temps, pas de propositions personnelles – mais aucun désavantage non plus.",
+    "voluntary": "Tout est facultatif. Sans profil, l'app reste pleinement utilisable, et personne ne sait qui n'en a pas.",
+    "forYou": "Pour toi",
+    "forYouHint": "Proposé, pas affiché – choisi selon ce que tu as indiqué.",
+    "noMatch": "Pour l'instant, rien ne correspond à ton profil.",
+    "noMatchHint": "On te préviendra dès que quelque chose arrive. Tu n'as pas à chercher.",
+    "budgetSpent": "Pour cette période, tu en as assez fait.",
+    "budgetSpentHint": "Les propositions personnelles sont mises en attente. La liste ouverte ci-dessous te reste bien sûr accessible.",
+    "vacancies": "Fonctions qui te correspondent",
+    "vacanciesHint": "Vacante signifie : personne ne l'occupe. Aucune pression – juste l'information.",
+    "inviteTitle": "Profil de contribution",
+    "invite": "À quoi contribues-tu volontiers ?",
+    "inviteHint": "Trois questions, ensuite les propositions viennent à toi.",
+    "problem": {
+      "budgetMissing": "Choisis ton budget-temps – sinon il ne peut pas être respecté.",
+      "strengthsTooLong": "La phrase est trop longue.",
+      "nothingChosen": "Choisis au moins un domaine ou écris une phrase."
+    },
+    "budgetCap_one": "{{count}} contribution par période",
+    "budgetCap_other": "{{count}} contributions par période",
+    "updatedAt": "Dernière mise à jour le {{date}}"
+  },
   "noteAnswer": {
     "title": "Demande",
     "send": "Répondre",

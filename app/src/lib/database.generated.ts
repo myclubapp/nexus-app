@@ -1087,6 +1087,58 @@ export type Database = {
           },
         ]
       }
+      member_contribution_profiles: {
+        Row: {
+          asked_at: string | null
+          club_id: string
+          interests: Json
+          member_id: string
+          strengths: string | null
+          time_budget: string | null
+          updated_at: string
+        }
+        Insert: {
+          asked_at?: string | null
+          club_id: string
+          interests?: Json
+          member_id: string
+          strengths?: string | null
+          time_budget?: string | null
+          updated_at?: string
+        }
+        Update: {
+          asked_at?: string | null
+          club_id?: string
+          interests?: Json
+          member_id?: string
+          strengths?: string | null
+          time_budget?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_contribution_profiles_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "member_contribution_profiles_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: true
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "member_contribution_profiles_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: true
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       news: {
         Row: {
           author: string | null
@@ -1895,6 +1947,7 @@ export type Database = {
         Args: { p_answer: string; p_decline?: boolean; p_note_id: string }
         Returns: undefined
       }
+      ask_contribution_profiles: { Args: never; Returns: number }
       ask_office_load: { Args: never; Returns: number }
       assign_input: {
         Args: { p_input_id: string; p_meeting_event_id?: string }
@@ -1977,6 +2030,10 @@ export type Database = {
           connections: number
           last_connection: string
         }[]
+      }
+      contribution_budget_left: {
+        Args: { p_member_id: string }
+        Returns: number
       }
       convert_note_to_task: {
         Args: {
@@ -2116,6 +2173,24 @@ export type Database = {
         Args: { p_event_id: string; p_member_id: string; p_present?: boolean }
         Returns: number
       }
+      matching_tasks: {
+        Args: { p_club_id: string; p_limit?: number }
+        Returns: {
+          category: string
+          due_at: string
+          points: number
+          task_id: string
+          title: string
+          why: string
+        }[]
+      }
+      matching_vacancies: {
+        Args: { p_club_id: string }
+        Returns: {
+          role_id: string
+          title: string
+        }[]
+      }
       meeting_agenda: {
         Args: { p_event_id: string }
         Returns: {
@@ -2140,6 +2215,7 @@ export type Database = {
           club_name: string
         }[]
       }
+      my_contribution_budget: { Args: { p_club_id: string }; Returns: number }
       my_health_signals: {
         Args: { p_club_id: string }
         Returns: {
@@ -2286,6 +2362,15 @@ export type Database = {
           p_rule: Database["public"]["Tables"]["point_rules"]["Row"]
         }
         Returns: boolean
+      }
+      save_contribution_profile: {
+        Args: {
+          p_club_id: string
+          p_interests: Json
+          p_strengths?: string
+          p_time_budget?: string
+        }
+        Returns: undefined
       }
       season_label: {
         Args: { p_at?: string; p_club_id: string }

@@ -22,6 +22,14 @@ import { StatCard } from '../components/StatCard';
 import { useClub } from '../hooks/useClub';
 import { useToast } from '../hooks/useToast';
 import { useMyTaskCount, usePublishTask, useTasks } from '../hooks/useTasks';
+import {
+  useContributionBudget,
+  useContributionProfile,
+  useMatchingTasks,
+  useMatchingVacancies,
+} from '../hooks/useContribution';
+import { ContributionProfileForm } from '../components/ContributionProfileModal';
+import { isBudgetSpent, isProfileFilled } from '../lib/contribution';
 import { formatDate } from '../lib/format';
 import {
   groupTasks,
@@ -42,12 +50,17 @@ export function MarketplacePage() {
   const { activeMembership, isTrainer } = useClub();
   const toast = useToast();
   const tasks = useTasks();
+  const profile = useContributionProfile();
+  const matching = useMatchingTasks();
+  const vacancies = useMatchingVacancies();
+  const budget = useContributionBudget();
   const publish = usePublishTask();
   const taskCount = useMyTaskCount();
 
   const [formOpen, setFormOpen] = useState(false);
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const [confirmTaskId, setConfirmTaskId] = useState<string | null>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   // Der Vorschlag verlinkt `/tabs/marketplace?task=<id>` und soll die Aufgabe
   // zeigen, nicht bloss den Marktplatz (BR-070).
@@ -69,6 +82,11 @@ export function MarketplacePage() {
   // auf die übrigen zu warten hiesse, den Dank zu verzögern.
   // BR-080: Die eigene Übernahme bestätigt jemand anderes – eine Aufgabe, an
   // der nur die eigene Meldung offen ist, gehört nicht in diese Liste.
+  const filled = isProfileFilled(profile.data ?? null);
+  const budgetSpent = isBudgetSpent(budget.data);
+  const suggestions = matching.data ?? [];
+  const openVacancies = vacancies.data ?? [];
+
   const toConfirm = isTrainer
     ? items.filter((entry) =>
         entry.assignments.some(
@@ -243,6 +261,106 @@ export function MarketplacePage() {
             </ListSection>
           )}
 
+          {/* UC-033: «Für dich» – der Unterschied zwischen ausschreiben und
+              anbieten (BR-142). Der Abschnitt steht vor der offenen Liste,
+              weil ein Angebot mehr ist als ein Aushang. */}
+          {filled && suggestions.length > 0 && (
+            <ListSection
+              title={t('contribution.forYou')}
+              footnote={t('contribution.forYouHint')}
+              action={
+                <IonButton fill="clear" size="small" onClick={() => setProfileOpen(true)}>
+                  {t('contribution.edit')}
+                </IonButton>
+              }
+            >
+              {suggestions.map((suggestion) => {
+                const task = (tasks.data ?? []).find((entry) => entry.id === suggestion.id);
+                // Die Liste des Marktplatzes ist der Normalfall; der Rückfall
+                // greift, wenn ein Vorschlag ausserhalb ihres Ausschnitts liegt.
+                return task ? (
+                  renderTask(task, 'open')
+                ) : (
+                  <IonItem key={suggestion.id}>
+                    <IonLabel className="ion-text-wrap">
+                      <h2>{suggestion.title}</h2>
+                      {suggestion.why && <p>{suggestion.why}</p>}
+                      <IonNote>
+                        {t(`taskCategory.${suggestion.category}`)} ·{' '}
+                        {t('common.points', { count: suggestion.points })}
+                      </IonNote>
+                    </IonLabel>
+                  </IonItem>
+                );
+              })}
+            </ListSection>
+          )}
+
+          {/* Ein Fehler der Vorschlagsabfrage blendete den Abschnitt bisher
+              still aus – er sähe aus wie «nichts passt» (guidelines §9). */}
+          {filled && matching.error && (
+            <ListSection title={t('contribution.forYou')}>
+              <ErrorState
+                error={matching.error as Error}
+                onRetry={() => void matching.refetch()}
+              />
+            </ListSection>
+          )}
+
+          {/* A4: Das Budget ist ausgeschöpft. Die Ansicht sagt es, statt eine
+              leere Liste zu zeigen – sonst sähe es aus, als gäbe es nichts. */}
+          {filled && budgetSpent && (
+            <ListSection title={t('contribution.forYou')} footnote={t('contribution.budgetSpentHint')}>
+              <IonItem lines="none">
+                <IonLabel className="ion-text-wrap">
+                  <p>{t('contribution.budgetSpent')}</p>
+                </IonLabel>
+              </IonItem>
+            </ListSection>
+          )}
+
+          {/* A3: Kein Treffer heisst nicht «nichts zu tun» – es heisst, dass
+              sich der Verein meldet, sobald etwas passt. */}
+          {filled && !budgetSpent && suggestions.length === 0 && openVacancies.length === 0 && (
+            <ListSection title={t('contribution.forYou')} footnote={t('contribution.noMatchHint')}>
+              <IonItem lines="none">
+                <IonLabel className="ion-text-wrap">
+                  <p>{t('contribution.noMatch')}</p>
+                </IonLabel>
+              </IonItem>
+            </ListSection>
+          )}
+
+          {/* Der zweite Teil des Ziels: Ämter werden angeboten, nicht
+              ausgeschrieben. */}
+          {filled && openVacancies.length > 0 && (
+            <ListSection
+              title={t('contribution.vacancies')}
+              footnote={t('contribution.vacanciesHint')}
+            >
+              {openVacancies.map((vacancy) => (
+                <IonItem key={vacancy.id}>
+                  <IonLabel className="ion-text-wrap">
+                    <h2>{vacancy.title}</h2>
+                  </IonLabel>
+                </IonItem>
+              ))}
+            </ListSection>
+          )}
+
+          {/* BR-143: Ohne Profil bleibt alles nutzbar – die Einladung dazu ist
+              eine Zeile, kein Hindernis. */}
+          {!filled && (
+            <ListSection title={t('contribution.inviteTitle')} footnote={t('contribution.voluntary')}>
+              <IonItem button detail onClick={() => setProfileOpen(true)}>
+                <IonLabel className="ion-text-wrap">
+                  <h2>{t('contribution.invite')}</h2>
+                  <IonNote>{t('contribution.inviteHint')}</IonNote>
+                </IonLabel>
+              </IonItem>
+            </ListSection>
+          )}
+
           {groups.mine.length > 0 && (
             <ListSection title={t('marketplace.mine')}>
               {groups.mine.map((task) => renderTask(task, 'open'))}
@@ -288,6 +406,17 @@ export function MarketplacePage() {
             </ListSection>
           )}
         </>
+      )}
+
+      {profileOpen && (
+        <ContributionProfileForm
+          profile={profile.data ?? null}
+          onDismiss={() => setProfileOpen(false)}
+          onDone={() => {
+            setProfileOpen(false);
+            toast.success(t('contribution.saved'));
+          }}
+        />
       )}
 
       <TaskDetailModal

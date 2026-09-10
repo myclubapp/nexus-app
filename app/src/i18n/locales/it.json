@@ -1274,6 +1274,49 @@
     "share": "Condividi",
     "shared": "Condivisa. Chi ti allena vede esattamente questa risposta."
   },
+  "contribution": {
+    "title": "Il tuo profilo di contributo",
+    "edit": "Modifica",
+    "saved": "Salvato. Da ora le proposte si basano su questo.",
+    "strengthsTitle": "Che cosa sarebbe per te un contributo sensato?",
+    "strengthsLabel": "In una frase",
+    "strengthsHint": "Questa domanda viene per prima perché è la più importante: la società chiede di te, non del suo buco.",
+    "interestsTitle": "A che cosa contribuisci volentieri?",
+    "interestsLabel": "Ambiti di interesse",
+    "interestsHint": "Gli stessi ambiti da cui un compito prende la sua categoria – altrimenti non c'è alcun abbinamento.",
+    "budgetTitle": "Quanto tempo hai?",
+    "budget": {
+      "once": "Una volta",
+      "monthly": "Mensile",
+      "seasonal": "Stagionale"
+    },
+    "budgetHint": {
+      "once": "Un contributo, poi silenzio – finché non rifai il profilo.",
+      "monthly": "La proposta arriva al massimo una volta al mese.",
+      "seasonal": "Più contributi, distribuiti sulla stagione."
+    },
+    "budgetHintNone": "Senza budget di tempo non ci sono proposte personali – ma nemmeno svantaggi.",
+    "voluntary": "Tutto facoltativo. Senza profilo l'app resta pienamente utilizzabile e nessuno sa chi non ne ha uno.",
+    "forYou": "Per te",
+    "forYouHint": "Proposto, non affisso – scelto in base a quello che hai indicato.",
+    "noMatch": "Al momento non c'è nulla che corrisponda al tuo profilo.",
+    "noMatchHint": "Ci facciamo vivi appena arriva qualcosa. Non devi cercare.",
+    "budgetSpent": "Per questo periodo hai fatto abbastanza.",
+    "budgetSpentHint": "Le proposte personali sono sospese. La lista aperta qui sotto ti resta naturalmente accessibile.",
+    "vacancies": "Cariche che ti corrispondono",
+    "vacanciesHint": "Vacante significa: nessuno la ricopre. Nessuna pressione – solo l'informazione.",
+    "inviteTitle": "Profilo di contributo",
+    "invite": "A che cosa contribuisci volentieri?",
+    "inviteHint": "Tre domande, poi le proposte vengono da te.",
+    "problem": {
+      "budgetMissing": "Scegli il tuo budget di tempo – altrimenti non può essere rispettato.",
+      "strengthsTooLong": "La frase è troppo lunga.",
+      "nothingChosen": "Scegli almeno un ambito oppure scrivi una frase."
+    },
+    "budgetCap_one": "{{count}} contributo nel periodo",
+    "budgetCap_other": "{{count}} contributi nel periodo",
+    "updatedAt": "Ultimo aggiornamento il {{date}}"
+  },
   "noteAnswer": {
     "title": "Richiesta",
     "send": "Rispondi",

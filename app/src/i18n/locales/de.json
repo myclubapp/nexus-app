@@ -1274,6 +1274,49 @@
     "share": "Teilen",
     "shared": "Geteilt. Deine Trainer:in sieht genau diese Antwort."
   },
+  "contribution": {
+    "title": "Dein Beitrags-Profil",
+    "edit": "Ändern",
+    "saved": "Gespeichert. Die Vorschläge richten sich ab jetzt danach.",
+    "strengthsTitle": "Was wäre für dich ein sinnvoller Beitrag?",
+    "strengthsLabel": "In einem Satz",
+    "strengthsHint": "Diese Frage steht zuerst, weil sie die wichtigere ist: Der Verein fragt nach dir, nicht nach seiner Lücke.",
+    "interestsTitle": "Womit trägst du gern bei?",
+    "interestsLabel": "Interessengebiete",
+    "interestsHint": "Dieselben Gebiete, aus denen eine Aufgabe ihre Kategorie nimmt – sonst gäbe es kein Zusammenführen.",
+    "budgetTitle": "Wie viel Zeit hast du?",
+    "budget": {
+      "once": "Einmalig",
+      "monthly": "Monatlich",
+      "seasonal": "Saisonal"
+    },
+    "budgetHint": {
+      "once": "Ein Beitrag, dann ist Ruhe – bis du das Profil neu setzt.",
+      "monthly": "Der Vorschlag kommt höchstens einmal im Monat.",
+      "seasonal": "Mehrere Beiträge, über die Saison verteilt."
+    },
+    "budgetHintNone": "Ohne Zeitbudget gibt es keine persönlichen Vorschläge – aber auch keinen Nachteil.",
+    "voluntary": "Alles freiwillig. Ohne Profil bleibt die App vollständig nutzbar, und niemand erfährt, wer keines führt.",
+    "forYou": "Für dich",
+    "forYouHint": "Angeboten, nicht ausgeschrieben – ausgewählt nach dem, was du angegeben hast.",
+    "noMatch": "Derzeit passt nichts zu deinem Profil.",
+    "noMatchHint": "Wir melden uns, sobald etwas dazukommt. Suchen musst du nicht.",
+    "budgetSpent": "Für diesen Zeitraum hast du genug getan.",
+    "budgetSpentHint": "Persönliche Vorschläge sind zurückgestellt. Die offene Liste unten bleibt dir natürlich offen.",
+    "vacancies": "Ämter, die zu dir passen",
+    "vacanciesHint": "Vakant heisst: Es gibt niemanden, der es hält. Kein Druck – nur die Information.",
+    "inviteTitle": "Beitrags-Profil",
+    "invite": "Womit trägst du gern bei?",
+    "inviteHint": "Drei Fragen, danach kommen die Vorschläge zu dir.",
+    "problem": {
+      "budgetMissing": "Wähle dein Zeitbudget – sonst lässt sich es nicht einhalten.",
+      "strengthsTooLong": "Der Satz ist zu lang.",
+      "nothingChosen": "Wähle mindestens ein Gebiet oder schreib einen Satz."
+    },
+    "budgetCap_one": "{{count}} Beitrag im Zeitraum",
+    "budgetCap_other": "{{count}} Beiträge im Zeitraum",
+    "updatedAt": "Zuletzt gepflegt am {{date}}"
+  },
   "noteAnswer": {
     "title": "Anliegen",
     "send": "Antworten",

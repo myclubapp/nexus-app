@@ -1274,6 +1274,49 @@
     "share": "Share",
     "shared": "Shared. Your coach sees exactly this answer."
   },
+  "contribution": {
+    "title": "Your contribution profile",
+    "edit": "Edit",
+    "saved": "Saved. Suggestions follow it from now on.",
+    "strengthsTitle": "What would be a meaningful contribution for you?",
+    "strengthsLabel": "In one sentence",
+    "strengthsHint": "This question comes first because it is the more important one: the club asks about you, not about its gap.",
+    "interestsTitle": "What do you like to contribute to?",
+    "interestsLabel": "Areas of interest",
+    "interestsHint": "The same areas a task takes its category from – otherwise there is nothing to match.",
+    "budgetTitle": "How much time do you have?",
+    "budget": {
+      "once": "Once",
+      "monthly": "Monthly",
+      "seasonal": "Seasonal"
+    },
+    "budgetHint": {
+      "once": "One contribution, then quiet – until you set the profile again.",
+      "monthly": "The suggestion comes at most once a month.",
+      "seasonal": "Several contributions, spread over the season."
+    },
+    "budgetHintNone": "Without a time budget there are no personal suggestions – but no disadvantage either.",
+    "voluntary": "All voluntary. Without a profile the app stays fully usable, and nobody learns who has none.",
+    "forYou": "For you",
+    "forYouHint": "Offered, not advertised – picked from what you told us.",
+    "noMatch": "Nothing currently matches your profile.",
+    "noMatchHint": "We will come to you as soon as something does. You need not search.",
+    "budgetSpent": "For this period you have done enough.",
+    "budgetSpentHint": "Personal suggestions are on hold. The open list below of course stays open to you.",
+    "vacancies": "Offices that fit you",
+    "vacanciesHint": "Vacant means: nobody holds it. No pressure – just the information.",
+    "inviteTitle": "Contribution profile",
+    "invite": "What do you like to contribute to?",
+    "inviteHint": "Three questions, then the suggestions come to you.",
+    "problem": {
+      "budgetMissing": "Choose your time budget – otherwise it cannot be respected.",
+      "strengthsTooLong": "The sentence is too long.",
+      "nothingChosen": "Choose at least one area or write a sentence."
+    },
+    "budgetCap_one": "{{count}} contribution per period",
+    "budgetCap_other": "{{count}} contributions per period",
+    "updatedAt": "Last updated on {{date}}"
+  },
   "noteAnswer": {
     "title": "Note",
     "send": "Answer",
