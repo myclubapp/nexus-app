@@ -35,6 +35,8 @@ import { PulsePage } from './PulsePage';
 import { PulseReadPage } from './PulseReadPage';
 import { NotificationsPage } from './NotificationsPage';
 import { VoicePage } from './VoicePage';
+import { MeetingPage } from './MeetingPage';
+import { OfficePage } from './club/OfficePage';
 import { PointRulePage } from './club/PointRulePage';
 
 /**
@@ -79,6 +81,8 @@ export function TabsPage() {
         <Route path="pulse/:pulseId" element={<PulseReadPage />} />
         <Route path="profile/notifications" element={<NotificationsPage />} />
         <Route path="profile/voice" element={<VoicePage />} />
+        <Route path="profile/meeting" element={<MeetingPage />} />
+        <Route path="profile/offices" element={<OfficePage />} />
         <Route path="" element={<Navigate to="dashboard" replace />} />
       </IonRouterOutlet>
 

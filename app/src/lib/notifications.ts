@@ -13,6 +13,9 @@ export const PUSH_CATEGORIES = [
   'news',
   'pulse',
   'health',
+  // Seit UC-030 stellt `notify()` unter dieser Kategorie zu – ohne sie hier
+  // wäre sie in den Einstellungen nicht abschaltbar.
+  'input',
   'join_request',
 ] as const;
 

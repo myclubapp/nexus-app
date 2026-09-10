@@ -159,13 +159,13 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 
 | ID     | Titel                     | User Story                                                                                                                                                 | Priority | Status |
 | ------ | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------ |
-| FR-095 | Sitzung als Termin        | Als Vorstand möchte ich eine Sitzung als Termin vom Typ meeting anlegen, damit Einladung, Zu-/Absage und Erinnerung wie bei jedem Termin funktionieren.      | Medium   | Open   |
-| FR-096 | Einladung über Ämter      | Als Vorstand möchte ich den Teilnehmerkreis über Ämter statt Namenslisten definieren, damit der Verteiler bei Amtswechsel automatisch stimmt.                | Medium   | Open   |
-| FR-097 | Input einreichen          | Als Mitglied möchte ich einen Vorschlag als Text oder Sprachmemo an ein Gremium einreichen, damit meine Idee gehört wird.                                    | High     | Open   |
-| FR-098 | Input zuordnen            | Als Vorstand möchte ich einen Input laufend bearbeiten oder einer Sitzung zuordnen, damit die Einreicher:in den Stand kennt.                                 | High     | Open   |
+| FR-095 | Sitzung als Termin        | Als Vorstand möchte ich eine Sitzung als Termin vom Typ meeting anlegen, damit Einladung, Zu-/Absage und Erinnerung wie bei jedem Termin funktionieren.      | Medium   | Implemented   |
+| FR-096 | Einladung über Ämter      | Als Vorstand möchte ich den Teilnehmerkreis über Ämter statt Namenslisten definieren, damit der Verteiler bei Amtswechsel automatisch stimmt.                | Medium   | Implemented   |
+| FR-097 | Input einreichen          | Als Mitglied möchte ich einen Vorschlag als Text oder Sprachmemo an ein Gremium einreichen, damit meine Idee gehört wird.                                    | High     | Implemented   |
+| FR-098 | Input zuordnen            | Als Vorstand möchte ich einen Input laufend bearbeiten oder einer Sitzung zuordnen, damit die Einreicher:in den Stand kennt.                                 | High     | Implemented   |
 | FR-099 | Dokumentierte Antwort     | Als Vorstand möchte ich jeden behandelten Input mit einer Antwort in 2–3 Sätzen, Datum und Gremium abschliessen, damit nichts versandet.                     | High     | Implemented   |
 | FR-100 | «Aus dem Vorstand»        | Als Vorstand möchte ich eine Antwort optional als News publizieren, damit der Verein sieht, was aus Vorschlägen wurde.                                       | Medium   | Implemented   |
-| FR-101 | Sitzungs-Sammelansicht    | Als Vorstand möchte ich in der Sitzung die zugeordneten offenen Anliegen plus vakante Ämter und offene Helfereinsätze sehen, damit ich keine Traktandenliste pflegen muss. | Medium | Open |
+| FR-101 | Sitzungs-Sammelansicht    | Als Vorstand möchte ich in der Sitzung die zugeordneten offenen Anliegen plus vakante Ämter und offene Helfereinsätze sehen, damit ich keine Traktandenliste pflegen muss. | Medium | Implemented |
 
 ### 1.9 Kontext-Check-ins
 

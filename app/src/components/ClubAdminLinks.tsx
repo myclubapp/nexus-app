@@ -50,6 +50,10 @@ export function ClubAdminLinks() {
             <IonLabel>{t("members.title")}</IonLabel>
           </IonItem>
 
+          <IonItem button routerLink="/tabs/profile/offices" detail>
+            <IonLabel>{t("offices.title")}</IonLabel>
+          </IonItem>
+
           <IonItem button routerLink="/tabs/profile/rules" detail>
             <IonLabel>{t("pointRules.title")}</IonLabel>
           </IonItem>

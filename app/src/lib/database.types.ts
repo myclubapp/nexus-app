@@ -48,7 +48,10 @@ export type EventType =
   | 'tournament'
   | 'gv'
   | 'social'
-  | 'helper';
+  | 'helper'
+  // Seit UC-031: die Sitzung. Sie ist ein Termin wie jeder andere – mit
+  // Einladung, Zu- und Absage –, nur geht ihre Einladung an Ämter (FR-095).
+  | 'meeting';
 
 /** `attendance.status` – Constraint aus `0003_agenda.sql`. */
 export type AttendanceStatus = 'registered' | 'present' | 'excused' | 'absent';

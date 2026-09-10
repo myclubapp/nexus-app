@@ -1,3 +1,8 @@
+import {
+  readStoredTickets as readStoredTicketsFor,
+  storeTicket as storeTicketIn,
+} from './tickets';
+
 /** Die vier Arten eines Anliegens – dieselben Werte wie in `0046`. */
 export const VOICE_KINDS = [
   'self_reflection',
@@ -74,47 +79,22 @@ export interface AnonThread {
  * Wo die Tickets des anonymen Rückkanals liegen (A2).
  *
  * Der Schlüssel steht hier und nicht in der Ansicht: Die Seite, die ein Ticket
- * ablegt, und die, die den Faden abholt, müssen denselben Speicher meinen.
+ * ablegt, und die, die den Faden abholt, müssen denselben Speicher meinen. Das
+ * Verfahren selbst liegt in `lib/tickets.ts` – es teilt sich der anonyme Faden
+ * mit dem anonymen Sitzungs-Input (UC-031).
  */
 export const TICKET_KEY = 'myclub.voiceTickets';
 
-/** Die Tickets auf diesem Gerät (A2). */
-export function readTickets(raw: string | null): string[] {
-  try {
-    const parsed = JSON.parse(raw ?? '[]');
-    return Array.isArray(parsed) ? parsed.filter((t) => typeof t === 'string') : [];
-  } catch {
-    return [];
-  }
-}
+export { readTickets, createAnonTicket, hashTicket } from './tickets';
 
-/** Die Tickets dieses Geräts, ohne dass der Speicher die Seite umbringt. */
+/** Die Tickets dieses Geräts. */
 export function readStoredTickets(): string[] {
-  try {
-    return readTickets(window.localStorage.getItem(TICKET_KEY));
-  } catch {
-    // Privates Fenster oder gesperrter Speicher: kein Rückkanal, kein Absturz.
-    return [];
-  }
+  return readStoredTicketsFor(TICKET_KEY);
 }
 
-/**
- * Ein Ticket ablegen. Der Rückgabewert sagt, ob der Rückweg besteht.
- *
- * Wo der Speicher gesperrt ist, geht das Anliegen trotzdem raus – nur die
- * Antwort erreicht niemanden mehr. Das muss die Person erfahren, statt es
- * später zu bemerken.
- */
+/** Ein Ticket ablegen; `false` heisst: Der Rückweg besteht nicht. */
 export function storeTicket(ticket: string): boolean {
-  try {
-    window.localStorage.setItem(
-      TICKET_KEY,
-      JSON.stringify([...readStoredTickets(), ticket]),
-    );
-    return true;
-  } catch {
-    return false;
-  }
+  return storeTicketIn(TICKET_KEY, ticket);
 }
 
 /** Die Höchstlänge des Textes – dieselbe wie der Constraint in `0046`. */
@@ -225,28 +205,4 @@ export function validateVoiceNote(
   }
 
   return problems;
-}
-
-/**
- * Das Ticket für den anonymen Rückkanal (A2).
- *
- * Es entsteht **auf dem Gerät** und bleibt dort; der Server bekommt nur seinen
- * Prüfwert. Wer den Speicher löscht, verliert den Rückweg – das ist der Preis
- * echter Anonymität, und er ist gewollt.
- */
-export function createAnonTicket(): string {
-  const bytes = new Uint8Array(16);
-  crypto.getRandomValues(bytes);
-  return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
-}
-
-/** Der Prüfwert, den der Server sieht – nie das Ticket selbst. */
-export async function hashTicket(ticket: string): Promise<string> {
-  const digest = await crypto.subtle.digest(
-    'SHA-256',
-    new TextEncoder().encode(ticket),
-  );
-  return Array.from(new Uint8Array(digest), (b) =>
-    b.toString(16).padStart(2, '0'),
-  ).join('');
 }

@@ -372,6 +372,11 @@ genau eine englische Entsprechung im Code:
 | Mitteilung           | `notification` / `push_token`  |                                  |
 | Fürsorge-Hinweis     | `health_signal`                | nie «inaktiv», «säumig» (BR-095) |
 | Vereins-Puls         | `pulse`                        |                                  |
+| Anliegen             | `voice_note`                   | nie «Sprachmemo» im Code         |
+| Amt                  | `functionary_role`             | Verteiler; Factsheet und Vakanz-Anzeige sind Ausbaustufe 2 |
+| Gremium              | `committee_role_ids`           | eine **Menge Ämter**, kein eigenes Objekt (BR-133) |
+| Sitzung              | `event` mit `type = 'meeting'`  | kein eigenes Objekt              |
+| Sitzungs-Input       | `meeting_input`                | nie «Antrag» oder «Traktandum» (BR-132) |
 
 ---
 

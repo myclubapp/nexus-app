@@ -6,7 +6,7 @@
 **Use Case Name:** Sitzungs-Input einreichen und zuordnen
 **Primary Actor:** Mitglied
 **Goal:** Einen Vorschlag an ein Gremium bringen und erfahren, was damit geschieht
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

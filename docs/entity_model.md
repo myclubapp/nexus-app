@@ -36,6 +36,8 @@ erDiagram
     CLUB ||--o{ HEALTH_ALERT_ROUTING : "konfiguriert"
     CLUB ||--o{ CLUB_MESSAGE_LOG : "protokolliert"
     CLUB ||--o{ VOICE_NOTE : "sammelt"
+    CLUB ||--o{ FUNCTIONARY_ROLE : "gliedert"
+    CLUB_MEMBER ||--o| FUNCTIONARY_ROLE : "hält"
     CLUB ||--o{ MEETING_INPUT : "behandelt"
     CLUB ||--o{ CHECKIN_PROMPT : "stellt"
     CLUB ||--o{ CHECKIN_RESPONSE : "sammelt"
@@ -556,6 +558,7 @@ Ein Vorschlag eines Mitglieds an ein Gremium samt dokumentierter Antwort.
 | body               | Text oder Transkript des Vorschlags                      | String    | 5000             | Not Null                                                                  |
 | source_voice_note_id | Anliegen, aus dem der Input entstand                   | UUID      | 36               | Optional, Foreign Key (VOICE_NOTE.id)                                     |
 | author_member_id   | Einreichende Person; bei anonym niemals gefüllt          | UUID      | 36               | Optional, Foreign Key (CLUB_MEMBER.id)                                    |
+| anon_token_hash    | Prüfwert des lokalen Tickets für den anonymen Rückweg    | String    | 128              | Optional                                                                  |
 | committee_role_ids | Zielgremium, aufgelöst über Ämter                        | JSON      | -                | Not Null                                                                  |
 | meeting_event_id   | Sitzung, der der Input zugeordnet wurde                  | UUID      | 36               | Optional, Foreign Key (EVENT.id)                                          |
 | status             | Bearbeitungsstand                                        | String    | 20               | Not Null, Values: open, scheduled, in_progress, answered, declined        |
@@ -567,7 +570,22 @@ Ein Vorschlag eines Mitglieds an ein Gremium samt dokumentierter Antwort.
 | functionary_action | Ämter-Aktion als zweites Folge-Artefakt                  | JSON      | -                | Optional                                                                  |
 | created_at         | Zeitpunkt der Einreichung                                | DateTime  | -                | Not Null                                                                  |
 
-**Constraints:** Ein Endstatus verlangt `decision_response`, `responded_at` und `responded_by`. Aus einem Input entstehen höchstens die beiden genannten Folge-Artefakte; es gibt kein Schema für Traktanden, Protokolle oder freie Aufgabenlisten. Der Verteiler wird zum Zustellzeitpunkt über die aktuellen Amtsinhaber:innen aufgelöst.
+**Constraints:** Ein Endstatus verlangt `decision_response`, `responded_at` und `responded_by`. Der Status `scheduled` verlangt eine Sitzung – «eingeplant» ohne Termin wäre keine Auskunft (BR-134). Für eine anonyme Einreichung ist `author_member_id` immer leer und `anon_token_hash` gefüllt, für eine persönliche umgekehrt. `committee_role_ids` ist nie leer: Ein Eingangskorb ohne Eigentümer wäre das Versanden, das ausgeschlossen sein soll. Aus einem Input entstehen höchstens die beiden genannten Folge-Artefakte; es gibt kein Schema für Traktanden, Protokolle oder freie Aufgabenlisten. Der Verteiler wird zum Zustellzeitpunkt über die aktuellen Amtsinhaber:innen aufgelöst.
+
+### FUNCTIONARY_ROLE
+
+Ein Amt des Vereins. Es ist der Verteiler, über den ein Gremium definiert wird – nicht ein Verzeichnis von Personen.
+
+| Attribute        | Description                              | Data Type | Length/Precision | Validation Rules                        |
+| ---------------- | ---------------------------------------- | --------- | ---------------- | --------------------------------------- |
+| id               | Eindeutige Kennung des Amtes             | UUID      | 36               | Primary Key, Generated                  |
+| club_id          | Verein des Amtes                         | UUID      | 36               | Not Null, Foreign Key (CLUB.id)         |
+| title            | Bezeichnung des Amtes                    | String    | 80               | Not Null, Min: 2                        |
+| holder_member_id | Inhaber:in; leer bedeutet vakant         | UUID      | 36               | Optional, Foreign Key (CLUB_MEMBER.id)  |
+| held_since       | Datum der Übernahme                      | Date      | -                | Optional                                |
+| created_at       | Zeitpunkt der Erstellung                 | DateTime  | -                | Not Null                                |
+
+**Constraints:** Ein Titel besteht je Verein genau einmal, unabhängig von Gross- und Kleinschreibung. Ein Amt hat höchstens **eine** Inhaber:in; ein Co-Präsidium sind zwei Ämter desselben Titels. `held_since` besteht genau dann, wenn eine Inhaber:in eingetragen ist, und wird vom Server geführt. Factsheets, Vakanz-Ausschreibung und Nachfolgeplanung sind **nicht** Teil dieser Entität – sie stehen im MVP-Schnitt als Ausbaustufe 2.
 
 ### CHECKIN_PROMPT
 

@@ -181,12 +181,43 @@ Immer mitzuprüfen, weil es automatisiert nicht sichtbar wird:
 ## 3. Datenbanktests
 
 Die Regeln, die nicht verhandelbar sind, hängen an der Datenbank und nicht am
-Frontend. Sie werden gegen eine lokale Instanz geprüft:
+Frontend. Geprüft werden sie dort, wo sie gelten – gegen die **verknüpfte**
+Instanz:
 
 ```bash
-supabase start
-supabase db reset      # Migrationen neu anwenden
+supabase db push                       # Migration einspielen
+supabase db query --linked -f probe.sql
 ```
+
+Eine Probe ist ein `do $probe$ … $probe$`-Block, der seinen Befund in einer
+Textvariablen sammelt und mit `raise exception '%', report` endet. **Die
+Ausnahme ist der Zweck**: Sie rollt alles zurück, was die Probe angelegt hat –
+in einer Datenbank mit echten Vereinen ist das der Unterschied zwischen einem
+Test und einem Schaden.
+
+Rollen werden dabei umgeschaltet, nicht angenommen:
+
+```sql
+perform set_config('request.jwt.claims', json_build_object('sub', u)::text, true);
+perform set_config('role', 'authenticated', true);   -- ab hier greift RLS
+perform set_config('role', 'postgres', true);        -- privilegiert aufbauen und **messen**
+```
+
+Vier Fallen, die eine Probe still bestehen lassen, obwohl sie nichts misst –
+alle vier sind in diesem Projekt schon aufgetreten:
+
+1. **«Kein Fehler» heisst nicht «hat gewirkt».** Ein `update`, für das keine
+   Policy greift, trifft null Zeilen und wirft nichts. Gemessen wird die
+   **Differenz**, nicht die Abwesenheit eines Fehlers.
+2. **Unter RLS zählt man nur das Eigene.** Wer `notifications` als angemeldete
+   Person zählt, bekommt seine eigenen – die Zustellung an andere ist unsichtbar
+   und der Test bestätigt eine Null, die nichts bedeutet. Zählen: als `postgres`.
+3. **Einen Endzustand ohne seinen Anfangszustand zu prüfen** beweist nichts.
+4. **Eine Kennung, die nach einer Korrektur nicht mehr existiert**, vergleicht
+   sich stillschweigend mit `null`.
+
+Wer eine bereits eingespielte Migration überarbeitet:
+`supabase migration repair --status reverted NNNN`, dann erneut `db push`.
 
 Zu prüfen sind mindestens:
 
@@ -197,6 +228,8 @@ Zu prüfen sind mindestens:
   Buchung (NFR-017).
 - Kein Lesezugriff über Vereinsgrenzen (NFR-011).
 - `season_label()` liefert dasselbe wie `seasonLabel()` in TypeScript (NFR-035).
+- Jede neue `security definer`-Funktion ist für `anon` **nicht** ausführbar –
+  am Ende jeder Probe über `has_function_privilege()` nachgezählt.
 
 ---
 

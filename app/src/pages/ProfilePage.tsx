@@ -130,6 +130,10 @@ export function ProfilePage() {
           <IonLabel>{t('voice.title')}</IonLabel>
         </IonItem>
 
+        <IonItem button routerLink="/tabs/profile/meeting" detail>
+          <IonLabel>{t('meeting.title')}</IonLabel>
+        </IonItem>
+
         <IonItem button routerLink="/tabs/profile/notifications" detail>
           <IonLabel>{t('notifications.title')}</IonLabel>
         </IonItem>

@@ -484,6 +484,55 @@ export type Database = {
           },
         ]
       }
+      functionary_roles: {
+        Row: {
+          club_id: string
+          created_at: string
+          held_since: string | null
+          holder_member_id: string | null
+          id: string
+          title: string
+        }
+        Insert: {
+          club_id: string
+          created_at?: string
+          held_since?: string | null
+          holder_member_id?: string | null
+          id?: string
+          title: string
+        }
+        Update: {
+          club_id?: string
+          created_at?: string
+          held_since?: string | null
+          holder_member_id?: string | null
+          id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "functionary_roles_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "functionary_roles_holder_member_id_fkey"
+            columns: ["holder_member_id"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "functionary_roles_holder_member_id_fkey"
+            columns: ["holder_member_id"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       health_signals: {
         Row: {
           club_id: string
@@ -702,6 +751,124 @@ export type Database = {
           },
         ]
       }
+      meeting_inputs: {
+        Row: {
+          anon_token_hash: string | null
+          author_member_id: string | null
+          body: string
+          club_id: string
+          committee_role_ids: Json
+          converted_task_id: string | null
+          created_at: string
+          decision_response: string | null
+          id: string
+          meeting_event_id: string | null
+          published_news_id: string | null
+          responded_at: string | null
+          responded_by: string | null
+          source_voice_note_id: string | null
+          status: string
+        }
+        Insert: {
+          anon_token_hash?: string | null
+          author_member_id?: string | null
+          body: string
+          club_id: string
+          committee_role_ids?: Json
+          converted_task_id?: string | null
+          created_at?: string
+          decision_response?: string | null
+          id?: string
+          meeting_event_id?: string | null
+          published_news_id?: string | null
+          responded_at?: string | null
+          responded_by?: string | null
+          source_voice_note_id?: string | null
+          status?: string
+        }
+        Update: {
+          anon_token_hash?: string | null
+          author_member_id?: string | null
+          body?: string
+          club_id?: string
+          committee_role_ids?: Json
+          converted_task_id?: string | null
+          created_at?: string
+          decision_response?: string | null
+          id?: string
+          meeting_event_id?: string | null
+          published_news_id?: string | null
+          responded_at?: string | null
+          responded_by?: string | null
+          source_voice_note_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meeting_inputs_author_member_id_fkey"
+            columns: ["author_member_id"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "meeting_inputs_author_member_id_fkey"
+            columns: ["author_member_id"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_inputs_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_inputs_converted_task_id_fkey"
+            columns: ["converted_task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_inputs_meeting_event_id_fkey"
+            columns: ["meeting_event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_inputs_published_news_id_fkey"
+            columns: ["published_news_id"]
+            isOneToOne: false
+            referencedRelation: "news"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_inputs_responded_by_fkey"
+            columns: ["responded_by"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "meeting_inputs_responded_by_fkey"
+            columns: ["responded_by"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_inputs_source_voice_note_id_fkey"
+            columns: ["source_voice_note_id"]
+            isOneToOne: false
+            referencedRelation: "voice_notes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       member_contacts: {
         Row: {
           email: string | null
@@ -801,6 +968,8 @@ export type Database = {
       news_sources: {
         Row: {
           active: boolean
+          api_style: string
+          categories: Json
           club_id: string
           created_at: string
           created_by: string | null
@@ -810,10 +979,14 @@ export type Database = {
           last_imported: number
           last_status: string | null
           last_sync_at: string | null
+          post_limit: number
+          site_name: string | null
           url: string
         }
         Insert: {
           active?: boolean
+          api_style?: string
+          categories?: Json
           club_id: string
           created_at?: string
           created_by?: string | null
@@ -823,10 +996,14 @@ export type Database = {
           last_imported?: number
           last_status?: string | null
           last_sync_at?: string | null
+          post_limit?: number
+          site_name?: string | null
           url: string
         }
         Update: {
           active?: boolean
+          api_style?: string
+          categories?: Json
           club_id?: string
           created_at?: string
           created_by?: string | null
@@ -836,6 +1013,8 @@ export type Database = {
           last_imported?: number
           last_status?: string | null
           last_sync_at?: string | null
+          post_limit?: number
+          site_name?: string | null
           url?: string
         }
         Relationships: [
@@ -1502,6 +1681,17 @@ export type Database = {
           notified: number
         }[]
       }
+      anon_input: {
+        Args: { p_token_hash: string }
+        Returns: {
+          body: string
+          created_at: string
+          input_id: string
+          meeting_at: string
+          response: string
+          status: string
+        }[]
+      }
       anon_thread: {
         Args: { p_token_hash: string }
         Returns: {
@@ -1512,8 +1702,16 @@ export type Database = {
           transcript: string
         }[]
       }
+      answer_meeting_input: {
+        Args: { p_answer: string; p_decline?: boolean; p_input_id: string }
+        Returns: undefined
+      }
       answer_voice_note: {
         Args: { p_answer: string; p_decline?: boolean; p_note_id: string }
+        Returns: undefined
+      }
+      assign_input: {
+        Args: { p_input_id: string; p_meeting_event_id?: string }
         Returns: undefined
       }
       auto_release_pulses: { Args: never; Returns: number }
@@ -1538,7 +1736,9 @@ export type Database = {
         Returns: number
       }
       call_is_muted: { Args: { p_club_id: string }; Returns: boolean }
+      can_handle_input: { Args: { p_input_id: string }; Returns: boolean }
       can_handle_note: { Args: { p_note_id: string }; Returns: boolean }
+      can_see_agenda: { Args: { p_event_id: string }; Returns: boolean }
       cancel_event: {
         Args: { p_event_id: string; p_reason: string }
         Returns: undefined
@@ -1556,6 +1756,13 @@ export type Database = {
         Returns: {
           club_id: string
           club_name: string
+        }[]
+      }
+      committee_members: {
+        Args: { p_club_id: string; p_roles: Json }
+        Returns: {
+          member_id: string
+          user_id: string
         }[]
       }
       compose_club_pulse: { Args: { p_club_id?: string }; Returns: number }
@@ -1673,6 +1880,10 @@ export type Database = {
         Returns: undefined
       }
       forget_device: { Args: { p_token_id: string }; Returns: undefined }
+      forward_input: {
+        Args: { p_input_id: string; p_roles: Json }
+        Returns: undefined
+      }
       health_signal_in_reach: {
         Args: { p_signal_id: string }
         Returns: boolean
@@ -1680,6 +1891,10 @@ export type Database = {
       health_threshold: {
         Args: { p_club_id: string; p_default: number; p_key: string }
         Returns: number
+      }
+      holds_committee_role: {
+        Args: { p_club_id: string; p_roles: Json }
+        Returns: boolean
       }
       is_club_admin: { Args: { p_club_id: string }; Returns: boolean }
       is_club_member: { Args: { p_club_id: string }; Returns: boolean }
@@ -1709,6 +1924,15 @@ export type Database = {
       mark_attendance: {
         Args: { p_event_id: string; p_member_id: string; p_present?: boolean }
         Returns: number
+      }
+      meeting_agenda: {
+        Args: { p_event_id: string }
+        Returns: {
+          detail: string
+          kind: string
+          ref_id: string
+          title: string
+        }[]
       }
       my_clubs_left_without_admin: {
         Args: never
@@ -1917,6 +2141,17 @@ export type Database = {
         }[]
       }
       slugify: { Args: { p_value: string }; Returns: string }
+      submit_meeting_input: {
+        Args: {
+          p_anonymous?: boolean
+          p_body: string
+          p_club_id: string
+          p_roles: Json
+          p_source_note?: string
+          p_token_hash?: string
+        }
+        Returns: string
+      }
       submit_task: {
         Args: { p_proof_url?: string; p_task_id: string }
         Returns: boolean

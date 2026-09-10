@@ -43,6 +43,8 @@ const EVENT_TYPES: EventType[] = [
   'tournament',
   'gv',
   'social',
+  // FR-095: Vorstandssitzung, Teamsitzung, GV – ein Termin wie jeder andere.
+  'meeting',
 ];
 
 interface EventFormProps {
