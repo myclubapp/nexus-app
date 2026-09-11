@@ -129,7 +129,7 @@ ausdrücklich diesen Ausweg an.
 - [x] 14. Vitest für die reine Logik des Entscheids.
 - [x] 15. Manueller Testplan `docs/test-plans/uc-004-beitritts-anfrage.md`.
 - [x] 16. **Migration gegen die Datenbank prüfen**, inklusive der Grants.
-- [ ] 17. **Statusabgleich** — FR-009 und FR-010 nachziehen, `Status` in
+- [x] 17. **Statusabgleich** — FR-009 und FR-010 nachziehen, `Status` in
       `UC-004-beitritts-anfrage-entscheiden.md` setzen.
 
 ---

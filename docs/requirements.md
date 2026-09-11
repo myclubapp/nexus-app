@@ -128,8 +128,8 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 
 | ID     | Titel                     | User Story                                                                                                                                            | Priority | Status      |
 | ------ | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
-| FR-076 | News publizieren          | Als Vorstand möchte ich eine Vereins- oder Team-News mit Titel, Text und Bild publizieren, damit Mitglieder erfahren, was läuft.                       | High     | In Progress |
-| FR-077 | News-Feed lesen           | Als Mitglied möchte ich die News meines Vereins und meiner Teams chronologisch lesen, damit ich auf dem Laufenden bin.                                 | High     | In Progress |
+| FR-076 | News publizieren          | Als Vorstand möchte ich eine Vereins- oder Team-News mit Titel, Text und Bild publizieren, damit Mitglieder erfahren, was läuft.                       | High     | Implemented |
+| FR-077 | News-Feed lesen           | Als Mitglied möchte ich die News meines Vereins und meiner Teams chronologisch lesen, damit ich auf dem Laufenden bin.                                 | High     | Implemented |
 | FR-078 | In-App-Inbox              | Als Mitglied möchte ich jede Benachrichtigung in einer Inbox nachlesen und als gelesen markieren, damit mich nichts erreicht nur über Push.            | High     | Implemented |
 | FR-079 | Push-Benachrichtigung     | Als Mitglied möchte ich Push-Benachrichtigungen auf iOS, Android und im Browser erhalten, damit ich Wichtiges rechtzeitig sehe.                        | High     | Open        |
 | FR-080 | Granulare Einstellungen   | Als Mitglied möchte ich pro Kanal und Kategorie festlegen, was mich erreicht, damit die App nicht lästig wird.                                         | High     | Implemented |

@@ -6,7 +6,7 @@
 **Use Case Name:** Vereins-News publizieren
 **Primary Actor:** Vorstand
 **Goal:** Den Verein oder ein Team über etwas informieren, das nicht in die Agenda gehört
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

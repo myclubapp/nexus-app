@@ -40,7 +40,7 @@ Verbindungs-Quote – und der Geltungsbereich ist wirkungslos.
 | FR-076 | News publizieren     | Open          | Implemented | Formular, Geltungsbereich, Zustellung                |
 | FR-077 | News bearbeiten und zurückziehen | Open | Implemented | A3 ohne zweite Zustellung, A4 lässt die Inbox stehen |
 | FR-078 | In-App-Inbox         | Implemented   | Implemented | Besteht seit UC-015; hier kommt eine Quelle dazu     |
-| FR-070 | Verbindungs-Quote    | Open          | **Partial** | Die News **zählt** jetzt als Verbindung; die Anzeige der Quote für den Vorstand fehlt weiterhin |
+| FR-070 | Verbindungs-Quote    | Open          | Implemented | Die News **zählt** als Verbindung; die Anzeige kam mit UC-027 dazu |
 
 ### Business Rules
 
@@ -96,18 +96,20 @@ Verbindungs-Quote – und der Geltungsbereich ist wirkungslos.
 
 ## Implementation Tasks
 
-- [ ] 1. Migration `0043_publish_news.sql`: Geltungsbereich in der Policy,
+- [x] 1. Migration `0043_publish_news.sql`: Geltungsbereich in der Policy,
       Schreibrecht für Trainer:innen, `publish_news()`, `retract_news()`
-- [ ] 2. `lib/news.ts`: `validateNews()`
-- [ ] 3. `hooks/useNews.ts`: `usePublishNews`, `useUpdateNews`, `useRetractNews`
-- [ ] 4. `components/NewsFormModal.tsx`
-- [ ] 5. Einstieg und Verwaltung auf einer News-Seite
-- [ ] 6. Vier Sprachen
-- [ ] 7. Verhaltensprüfung gegen die laufende Datenbank
-- [ ] 8. `ai-code-review` und Behebung der Befunde
-- [ ] 9. Vitest
-- [ ] 10. Manueller Testplan `docs/test-plans/uc-026-news.md`
-- [ ] 11. Statusabgleich
+- [x] 2. `lib/news.ts`: `validateNews()`
+- [x] 3. `hooks/useNews.ts`: `usePublishNews`, `useUpdateNews`, `useRetractNews`
+- [x] 4. `components/NewsFormModal.tsx`
+- [x] 5. Einstieg und Verwaltung – **im Feed auf dem Dashboard** statt auf
+      einer eigenen Seite: Die News steht dort, wo sie gelesen wird, und eine
+      zweite Liste derselben Beiträge wäre eine zweite Wahrheit
+- [x] 6. Vier Sprachen
+- [x] 7. Verhaltensprüfung gegen die laufende Datenbank
+- [x] 8. `ai-code-review` und Behebung der Befunde
+- [x] 9. Vitest
+- [x] 10. Manueller Testplan `docs/test-plans/uc-026-news.md`
+- [x] 11. Statusabgleich
 
 ---
 
@@ -118,7 +120,7 @@ Verbindungs-Quote – und der Geltungsbereich ist wirkungslos.
 | 1   | **A1 verlangt einen Vereinsspeicher, den es nicht gibt.** Es besteht kein Storage-Bucket – auch `club_members.avatar_url` wird heute nur als Verweis geführt. Umgesetzt ist deshalb das Bild als **Link**, wie `proof_url` in UC-018. Der Upload gehört mit dem Avatar-Upload in eine gemeinsame Aufgabe. | **High** | Stakeholder |
 | 2   | A4 sagt: «der Eintrag in der Inbox bleibt als Verlauf bestehen». Umgesetzt, indem `notifications` keinen Fremdschlüssel auf `news` hat – der Verlauf bleibt, der Link führt danach ins Leere. Das ist gewollt: Eine Nachricht, die rückwirkend verschwindet, wäre schlimmer. | Medium | Stakeholder |
 | 3   | A2 (News aus einer Vorstandsantwort) verlangt UC-030. Die Funktion nimmt die Quelle bereits entgegen, damit UC-030 nur noch aufrufen muss. | Low | Dev |
-| 4   | FR-070 verlangt die **Anzeige** der Verbindungs-Quote für den Vorstand. Gezählt wird sie seit `0018`, hier kommt die zweite Hälfte dazu – die Anzeige bleibt offen und gehört zu UC-027. | Medium | Dev |
+| 4   | ~~FR-070 verlangt die **Anzeige** der Verbindungs-Quote~~ – **erledigt in UC-027** am 2026-09-10: Die Quote steht auf der Puls-Seite. | Medium | Dev |
 
 ---
 
@@ -126,4 +128,6 @@ Verbindungs-Quote – und der Geltungsbereich ist wirkungslos.
 
 | Datum      | Eintrag       |
 | ---------- | ------------- |
+| 2026-09-11 | Nachtrag: Der Plan war nie abgeschlossen worden, obwohl `0043`, `lib/news.ts`, `hooks/useNews.ts` und `NewsFormModal` seit dem 10.09. stehen und A3 wie A4 im Feed erreichbar sind. Aufgaben abgehakt, FR-076 und FR-077 auf `Implemented`, Use Case geschlossen |
+| 2026-09-11 | A2 («News aus einer Vorstandsantwort») ist seit `0055` wirklich gebaut: `answer_voice_note()` und `answer_meeting_input()` publizieren mit `news.source = 'board'` |
 | 2026-09-09 | Plan erstellt |

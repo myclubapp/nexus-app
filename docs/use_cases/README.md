@@ -67,7 +67,7 @@ synchron gehalten werden können.
 
 | UC | Titel | Primärakteur | Requirements | Status |
 |---|---|---|---|---|
-| [UC-026](UC-026-news-publizieren.md) | Vereins-News publizieren | Vorstand | FR-076, FR-077, FR-078, FR-070 | Draft |
+| [UC-026](UC-026-news-publizieren.md) | Vereins-News publizieren | Vorstand | FR-076, FR-077, FR-078, FR-070 | Implemented |
 | [UC-027](UC-027-vereins-puls-freigeben.md) | Vereins-Puls freigeben | Vorstand | FR-082, FR-083, FR-084, FR-070 | Implemented |
 | [UC-028](UC-028-benachrichtigungen-einstellen.md) | Benachrichtigungen einstellen | Mitglied | FR-079, FR-080, FR-081 | In Progress |
 | [UC-038](UC-038-website-news-uebernehmen.md) | News von der Vereins-Website übernehmen | Vorstand | FR-146, FR-147 | In Progress |

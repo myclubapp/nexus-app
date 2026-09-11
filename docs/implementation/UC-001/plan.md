@@ -151,8 +151,9 @@ Aus `docs/guidelines.md`, verbindlich:
       neuer Schlüssel, jeder Fehlschlag zeigt eine Meldung.
 - [ ] 13. **Plattform-Parität** — Wizard und Datumsauswahl auf iOS, Android und
       im Browser (Testplan TC-009).
-- [ ] 15. **Beispielinhalte** — Schritt 9 der Spezifikation verlangt
-      gekennzeichnete Beispielinhalte. Das ist UC-037 und wird dort gebaut.
+- [x] 15. **Beispielinhalte** — Schritt 9 der Spezifikation verlangt
+      gekennzeichnete Beispielinhalte. Geliefert von UC-037 am 2026-09-11:
+      `create_club()` legt sie mit an, `seed_sample_content()` kennzeichnet sie.
 - [x] 16. **Migrationen gegen eine laufende Datenbank prüfen**
       (`supabase db reset`).
 - [ ] 17. **Statusabgleich** — FR-004, FR-005, FR-006, FR-112, FR-113 nachziehen
