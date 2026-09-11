@@ -121,7 +121,11 @@ Sinnzusammenhang, bevor er sichtbar wird (BR-036).
 - [x] 15. Manueller Testplan `docs/test-plans/uc-009-termin-erstellen.md`.
 - [x] 16. **Statusabgleich** — FR-021 bis FR-023 auf `Implemented`.
 - [x] 17. **Teilnehmerbedarf** ins Formular (FR-029) – erledigt am 2026-09-11.
-- [ ] 18. **Absage und Serienänderung** in der Agenda bedienbar machen.
+- [x] 18. **Absage und Serienänderung** in der Agenda bedienbar machen –
+      erledigt am 2026-09-11. Befund derselben Klasse wie in UC-022 und UC-024:
+      `useCancelEvent()` und `useUpdateEvent()` waren gebaut und von keiner
+      Ansicht aus erreichbar. FR-023 stand auf `Implemented`, ohne dass sich
+      ein Termin absagen liess.
 - [ ] 19. **Plattform-Parität** — die Datums- und Zeitauswahl auf iOS, Android
       und im Browser; `datetime-local` verhält sich dort unterschiedlich.
 

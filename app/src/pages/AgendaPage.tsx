@@ -46,6 +46,7 @@ import { ShiftListModal } from '../components/ShiftListModal';
 import { ShiftRosterModal } from '../components/ShiftRosterModal';
 import { EventQrModal } from '../components/EventQrModal';
 import { canRespond, coverageGap, tallyAttendance } from '../lib/attendance';
+import { EventEdit } from '../components/EventEditModal';
 import { isSample } from '../lib/sample';
 import { isCheckInOpen } from '../lib/checkInWindow';
 import { canRemind, reminderMessage } from '../lib/reminder';
@@ -74,6 +75,7 @@ export function AgendaPage() {
   const [isHelperOpen, setHelperOpen] = useState(false);
   // UC-012 Schritt 1: Der Aufruf öffnet sich aus der Agenda heraus.
   const [shiftEventId, setShiftEventId] = useState<string | null>(null);
+  const [editEventId, setEditEventId] = useState<string | null>(null);
   // UC-013 Schritt 1: der vergangene Aufruf, dessen Einsätze zu bestätigen sind.
   const [rosterEventId, setRosterEventId] = useState<string | null>(null);
   // UC-014 Schritt 1: Die Trainer:in zeigt den Code und erfasst, wer da ist.
@@ -116,6 +118,7 @@ export function AgendaPage() {
   const events = agenda.data ?? [];
   const shiftEvent = events.find((entry) => entry.id === shiftEventId);
   const rosterEvent = events.find((entry) => entry.id === rosterEventId);
+  const editEvent = events.find((entry) => entry.id === editEventId);
   const detailEvent = events.find((entry) => entry.id === detailEventId) ?? null;
 
   /** Betroffen ist bei einem Team-Termin nur dieses Team, sonst der ganze Verein. */
@@ -362,6 +365,23 @@ export function AgendaPage() {
                       </IonButtons>
                     )}
 
+                    {/* UC-009 A2 und FR-023: ändern und absagen. Beides war
+                        gebaut und von keiner Ansicht aus erreichbar – ein
+                        Termin liess sich anlegen und danach nie wieder
+                        anfassen. Nur für die planende Seite, und nicht an
+                        einem Beispielinhalt. */}
+                    {isTrainer && !isSample(event) && (
+                      <IonButtons onClick={stopBubbling}>
+                        <IonButton
+                          size="small"
+                          fill="clear"
+                          onClick={() => setEditEventId(event.id)}
+                        >
+                          {t('eventEdit.open')}
+                        </IonButton>
+                      </IonButtons>
+                    )}
+
                     {/* FR-027: der Stand in Zahlen – für die, die damit planen.
                         Alle anderen sehen die Zusagen rechts und die Namen im
                         Detail. */}
@@ -581,6 +601,22 @@ export function AgendaPage() {
         }}
         onDismiss={() => setDetailEventId(null)}
       />
+
+      {/* UC-009 A2 und FR-023. Das Blatt entsteht erst mit dem Termin: Ohne
+          ihn hätte es nichts zu bearbeiten, und `IonModal` behielte den Stand
+          des zuletzt geöffneten. */}
+      {editEvent && (
+        <EventEdit
+          event={editEvent}
+          onDismiss={() => setEditEventId(null)}
+          onDone={(outcome) => {
+            setEditEventId(null);
+            toast.success(
+              t(outcome === 'cancelled' ? 'eventEdit.cancelled' : 'eventEdit.changed'),
+            );
+          }}
+        />
+      )}
 
       <ShiftRosterModal
         isOpen={rosterEventId !== null}

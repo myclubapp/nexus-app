@@ -172,3 +172,47 @@ export function validateEventDraft(draft: EventDraft): EventDraftProblem[] {
 
   return problems;
 }
+
+// --- Ändern und Absagen (UC-009, A2 und Schritt 11) ------------------------
+
+/** Was ein Termin zum Ändern und Absagen mitbringen muss. */
+export interface EditableEvent {
+  cancelledAt: string | null;
+  startsAt: string;
+  seriesId: string | null;
+}
+
+/**
+ * Lässt sich dieser Termin noch absagen (FR-023)?
+ *
+ * Ein bereits abgesagter Termin nicht – die Absage steht, und ein zweiter
+ * Grund überschriebe den ersten, den alle Betroffenen bereits gelesen haben.
+ * Ein vergangener Termin ebenso wenig: Was stattgefunden hat, sagt man nicht
+ * mehr ab; es wäre eine Geschichtsfälschung gegenüber den Anwesenden.
+ */
+export function canCancelEvent(event: EditableEvent, now: Date = new Date()): boolean {
+  return event.cancelledAt === null && new Date(event.startsAt) > now;
+}
+
+/**
+ * Ist der Termin Teil einer Serie und kann die Änderung sie mitnehmen (A2)?
+ *
+ * Die Frage stellt sich nur bei Terminen mit Serie – sonst wäre sie eine
+ * Auswahl mit einer Möglichkeit.
+ */
+export function hasSeriesChoice(event: EditableEvent): boolean {
+  return event.seriesId !== null;
+}
+
+export type CancelProblem = 'reasonMissing';
+
+/**
+ * BR-035: Eine Absage braucht einen Grund.
+ *
+ * Die Regel steht am Server (`cancel_event()` weist ohne Grund ab) und hier –
+ * nicht damit sie zweimal gilt, sondern damit der Knopf gesperrt ist, statt
+ * eine Fehlermeldung zu erzeugen.
+ */
+export function validateCancel(reason: string): CancelProblem[] {
+  return reason.trim().length < 3 ? ['reasonMissing'] : [];
+}

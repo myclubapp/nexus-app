@@ -644,7 +644,8 @@
     "previewTitle_one": "Anteprima: {{count}} appuntamento",
     "previewMore_one": "e altro {{count}}",
     "capacity": "Numero di partecipanti necessario",
-    "capacityHint": "Facoltativo. Se qui c’è un numero, l’agenda mostra quante conferme mancano ancora."
+    "capacityHint": "Facoltativo. Se qui c’è un numero, l’agenda mostra quante conferme mancano ancora.",
+    "whyMissing": "Un appello ha bisogno del suo perché."
   },
   "helperEvent": {
     "title": "Pubblicare una chiamata volontari",
@@ -1480,5 +1481,22 @@
       "taskWhyMissing": "Il compito ha bisogno del suo perché."
     },
     "followHintAdmin": "Da una richiesta nasce al massimo un compito. «Pubblica come notizia» rende la tua risposta visibile a tutta la società."
+  },
+  "eventEdit": {
+    "title": "Modifica appuntamento",
+    "scope": "Ambito",
+    "scopeLabel": "Che cosa deve cambiare?",
+    "scopeHint": "Per l’intera serie cambiano solo gli appuntamenti futuri. Quelli passati restano come si sono svolti.",
+    "onlyThis": "Solo questo appuntamento",
+    "wholeSeries": "Tutta la serie",
+    "cancelTitle": "Annullare",
+    "cancelHint": "Il motivo raggiunge tutte le persone coinvolte. Un annullamento non si revoca.",
+    "reason": "Motivo dell’annullamento",
+    "reasonMissing": "A un annullamento appartiene il suo motivo.",
+    "cancelEvent": "Annulla appuntamento",
+    "cancelConfirm": "Tutte le persone coinvolte ricevono l’annullamento e il motivo. Non è reversibile.",
+    "cancelled": "Annullato. Tutte le persone coinvolte sono state avvisate.",
+    "changed": "Salvato.",
+    "open": "Modifica"
   }
 }

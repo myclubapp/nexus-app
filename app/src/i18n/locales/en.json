@@ -644,7 +644,8 @@
     "previewTitle_one": "Preview: {{count}} event",
     "previewMore_one": "and {{count}} more",
     "capacity": "Participants needed",
-    "capacityHint": "Optional. With a number here, the agenda shows how many replies are still missing."
+    "capacityHint": "Optional. With a number here, the agenda shows how many replies are still missing.",
+    "whyMissing": "A call needs its why."
   },
   "helperEvent": {
     "title": "Publish a call for helpers",
@@ -1480,5 +1481,22 @@
       "taskWhyMissing": "The task needs its why."
     },
     "followHintAdmin": "A note yields at most one task. «Publish as news» makes your answer visible to the whole club."
+  },
+  "eventEdit": {
+    "title": "Edit event",
+    "scope": "Scope",
+    "scopeLabel": "What should change?",
+    "scopeHint": "For the whole series only future events change. Past ones stay as they happened.",
+    "onlyThis": "This event only",
+    "wholeSeries": "The whole series",
+    "cancelTitle": "Cancel",
+    "cancelHint": "The reason reaches everyone affected. A cancellation cannot be taken back.",
+    "reason": "Reason for cancelling",
+    "reasonMissing": "A cancellation needs its reason.",
+    "cancelEvent": "Cancel event",
+    "cancelConfirm": "Everyone affected receives the cancellation and its reason. This cannot be undone.",
+    "cancelled": "Cancelled. Everyone affected has been notified.",
+    "changed": "Saved.",
+    "open": "Edit"
   }
 }

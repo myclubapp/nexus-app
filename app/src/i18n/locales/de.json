@@ -644,7 +644,8 @@
     "previewTitle_one": "Vorschau: {{count}} Termin",
     "previewMore_one": "und {{count}} weiterer",
     "capacity": "Benötigte Teilnehmerzahl",
-    "capacityHint": "Freiwillig. Steht hier eine Zahl, zeigt die Agenda, wie viele Zusagen noch fehlen."
+    "capacityHint": "Freiwillig. Steht hier eine Zahl, zeigt die Agenda, wie viele Zusagen noch fehlen.",
+    "whyMissing": "Ein Aufruf braucht sein Warum."
   },
   "helperEvent": {
     "title": "Helfer-Event ausschreiben",
@@ -1480,5 +1481,22 @@
       "taskWhyMissing": "Die Aufgabe braucht ihr Warum."
     },
     "followHintAdmin": "Aus einem Anliegen entsteht höchstens eine Aufgabe. «Als News publizieren» macht deine Antwort für den ganzen Verein sichtbar."
+  },
+  "eventEdit": {
+    "title": "Termin bearbeiten",
+    "scope": "Umfang",
+    "scopeLabel": "Was soll sich ändern?",
+    "scopeHint": "Bei der ganzen Serie ändern sich nur die künftigen Termine. Vergangene bleiben, wie sie stattgefunden haben.",
+    "onlyThis": "Nur dieser Termin",
+    "wholeSeries": "Die ganze Serie",
+    "cancelTitle": "Absagen",
+    "cancelHint": "Der Grund erreicht alle Betroffenen. Eine Absage lässt sich nicht zurücknehmen.",
+    "reason": "Grund der Absage",
+    "reasonMissing": "Zu einer Absage gehört ihr Grund.",
+    "cancelEvent": "Termin absagen",
+    "cancelConfirm": "Alle Betroffenen erhalten die Absage samt Grund. Rückgängig machen lässt sie sich nicht.",
+    "cancelled": "Abgesagt. Alle Betroffenen wurden benachrichtigt.",
+    "changed": "Gespeichert.",
+    "open": "Bearbeiten"
   }
 }

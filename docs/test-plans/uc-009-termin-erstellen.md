@@ -248,6 +248,29 @@
 
 ---
 
+## TC-014: Ändern und Absagen (A2, FR-023, BR-035)
+
+**Priority:** High
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als Mitglied ohne Rolle die Agenda öffnen | Kein «Bearbeiten» an einem Termin | | |
+| 2 | Als Trainer:in «Bearbeiten» antippen | Titel, Ort und Punkteregel stehen zum Ändern bereit | | |
+| 3 | An einem Einzeltermin hinsehen | **Keine** Serienfrage | | |
+| 4 | An einem Termin aus einer Serie hinsehen | «Nur dieser Termin» oder «Die ganze Serie» | | |
+| 5 | Titel ändern, «Die ganze Serie» wählen, speichern | Alle **künftigen** Termine der Serie tragen den neuen Titel | | |
+| 6 | Einen vergangenen Termin derselben Serie prüfen | Unverändert | | |
+| 7 | Bei einem Helfer-Event das Warum leeren | Speichern ist gesperrt, der Grund steht dabei (BR-036) | | |
+| 8 | Absagen ohne Grund versuchen | Der Knopf ist gesperrt (BR-035) | | |
+| 9 | Grund eintragen und absagen | Rückfrage, die die Folge nennt | | |
+| 10 | Bestätigen | Der Termin ist abgesagt; alle Betroffenen haben den Grund in der Inbox | | |
+| 11 | Denselben Termin erneut öffnen | **Keine** zweite Absage möglich | | |
+| 12 | Einen vergangenen Termin öffnen | Ebenfalls keine Absage – was stattgefunden hat, sagt man nicht ab | | |
+| 13 | An einem Beispielinhalt hinsehen | Kein «Bearbeiten» | | |
+| 14 | Die vier Sprachen prüfen | Blatt, Rückfrage und Meldungen sind übersetzt | | |
+
+---
+
 ## Test Matrix
 
 | Device / Browser | OS / Version | Screen Size | Status |

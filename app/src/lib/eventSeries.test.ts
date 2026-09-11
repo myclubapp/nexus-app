@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
   MAX_SERIES_EVENTS,
+  canCancelEvent,
   durationInMinutes,
   expandSeries,
+  hasSeriesChoice,
   requiresWhy,
   suggestedRuleCode,
+  validateCancel,
   validateEventDraft,
   type EventDraft,
   type SeriesRule,
@@ -216,5 +219,51 @@ describe('validateEventDraft', () => {
     expect(problems).toEqual(
       expect.arrayContaining(['titleMissing', 'endBeforeStart', 'whyMissing']),
     );
+  });
+});
+
+describe('Ändern und Absagen (UC-009, A2)', () => {
+  const future = '2026-12-01T18:00:00.000Z';
+  const past = '2026-01-01T18:00:00.000Z';
+  const now = new Date('2026-09-11T12:00:00.000Z');
+
+  it('lässt einen künftigen, nicht abgesagten Termin absagen', () => {
+    expect(
+      canCancelEvent({ cancelledAt: null, startsAt: future, seriesId: null }, now),
+    ).toBe(true);
+  });
+
+  it('sagt einen bereits abgesagten Termin nicht zweimal ab', () => {
+    // Der Grund steht, und alle Betroffenen haben ihn gelesen. Ein zweiter
+    // überschriebe den ersten.
+    expect(
+      canCancelEvent(
+        { cancelledAt: '2026-09-01T10:00:00.000Z', startsAt: future, seriesId: null },
+        now,
+      ),
+    ).toBe(false);
+  });
+
+  it('sagt keinen vergangenen Termin ab', () => {
+    // Was stattgefunden hat, sagt man nicht mehr ab – das wäre eine
+    // Geschichtsfälschung gegenüber den Anwesenden.
+    expect(
+      canCancelEvent({ cancelledAt: null, startsAt: past, seriesId: null }, now),
+    ).toBe(false);
+  });
+
+  it('stellt die Serienfrage nur bei einem Termin mit Serie', () => {
+    expect(hasSeriesChoice({ cancelledAt: null, startsAt: future, seriesId: 's-1' })).toBe(
+      true,
+    );
+    expect(hasSeriesChoice({ cancelledAt: null, startsAt: future, seriesId: null })).toBe(
+      false,
+    );
+  });
+
+  it('verlangt für die Absage einen Grund (BR-035)', () => {
+    expect(validateCancel('')).toContain('reasonMissing');
+    expect(validateCancel('  ')).toContain('reasonMissing');
+    expect(validateCancel('Halle gesperrt')).toEqual([]);
   });
 });

@@ -644,7 +644,8 @@
     "previewTitle_one": "Aperçu: {{count}} rendez-vous",
     "previewMore_one": "et {{count}} autre",
     "capacity": "Nombre de participants requis",
-    "capacityHint": "Facultatif. Si un nombre figure ici, l’agenda indique combien de réponses manquent encore."
+    "capacityHint": "Facultatif. Si un nombre figure ici, l’agenda indique combien de réponses manquent encore.",
+    "whyMissing": "Un appel a besoin de son pourquoi."
   },
   "helperEvent": {
     "title": "Publier un appel aux bénévoles",
@@ -1480,5 +1481,22 @@
       "taskWhyMissing": "La tâche a besoin de son pourquoi."
     },
     "followHintAdmin": "Une demande donne au plus une tâche. « Publier comme actualité » rend ta réponse visible pour tout le club."
+  },
+  "eventEdit": {
+    "title": "Modifier le rendez-vous",
+    "scope": "Portée",
+    "scopeLabel": "Que faut-il modifier ?",
+    "scopeHint": "Pour toute la série, seuls les rendez-vous à venir changent. Les passés restent tels qu’ils ont eu lieu.",
+    "onlyThis": "Ce rendez-vous seulement",
+    "wholeSeries": "Toute la série",
+    "cancelTitle": "Annuler",
+    "cancelHint": "Le motif parvient à toutes les personnes concernées. Une annulation ne se reprend pas.",
+    "reason": "Motif de l’annulation",
+    "reasonMissing": "Une annulation demande son motif.",
+    "cancelEvent": "Annuler le rendez-vous",
+    "cancelConfirm": "Toutes les personnes concernées reçoivent l’annulation et son motif. C’est irréversible.",
+    "cancelled": "Annulé. Toutes les personnes concernées ont été averties.",
+    "changed": "Enregistré.",
+    "open": "Modifier"
   }
 }
