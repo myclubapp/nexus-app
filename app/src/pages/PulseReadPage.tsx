@@ -33,7 +33,10 @@ export function PulseReadPage() {
       ) : pulse.error ? (
         <ErrorState error={pulse.error as Error} onRetry={() => void pulse.refetch()} />
       ) : !entry ? (
-        <EmptyState message={t('pulse.gone')} />
+        <EmptyState
+          message={t('pulse.gone')}
+          action={{ label: t('dashboard.title'), routerLink: '/tabs/dashboard' }}
+        />
       ) : (
         <>
           {entry.intro && (
@@ -56,6 +59,8 @@ export function PulseReadPage() {
                     <IonLabel className="ion-text-wrap">
                       <h2>{item.title}</h2>
                       <IonNote>
+                        {t(`pulse.kind.${item.kind}`)}
+                        {' · '}
                         {item.at ? formatDate(item.at) : t('pulse.noDate')}
                       </IonNote>
                     </IonLabel>

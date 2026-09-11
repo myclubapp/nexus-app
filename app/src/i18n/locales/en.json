@@ -1011,7 +1011,14 @@
     "discarded": "Discarded. No pulse goes out this week.",
     "gone": "This pulse is no longer available.",
     "yourPoints": "Your points",
-    "pointsHint": "Deliberately last: the pulse is about the club."
+    "pointsHint": "Deliberately last: the pulse is about the club.",
+    "tellSomething": "Tell them something",
+    "kind": {
+      "event": "Event",
+      "task": "Task",
+      "shift": "Shift",
+      "decision": "From the board"
+    }
   },
   "notifications": {
     "title": "Notifications",
@@ -1221,7 +1228,11 @@
       "committeeMissing": "Choose the target committee.",
       "answerMissing": "Write your answer first."
     },
-    "addressedTo": "To {{offices}}"
+    "addressedTo": "To {{offices}}",
+    "newsTitle": "From the board",
+    "publishTitle": "From the board",
+    "publishHint": "What gets published is the decision, not the proposal that was submitted. It appears in the feed and in every member’s inbox – and in the next club pulse.",
+    "asNews": "Publish the decision as news"
   },
   "offices": {
     "title": "Offices",

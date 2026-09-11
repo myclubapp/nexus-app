@@ -8,7 +8,12 @@ export const PULSE_SECTIONS = ['happening', 'workingOn', 'joinIn'] as const;
 export type PulseSection = (typeof PULSE_SECTIONS)[number];
 
 export interface PulseItem {
-  kind: 'event' | 'task' | 'shift';
+  /**
+   * `decision` seit dem Nachtrag zu UC-027: eine vom Vorstand publizierte
+   * Antwort (FR-100). Nur sie – ein eingereichtes Anliegen gehört der Person,
+   * die es geschrieben hat, und steht nie in einer Nachricht an alle.
+   */
+  kind: 'event' | 'task' | 'shift' | 'decision';
   id: string;
   title: string;
   at: string | null;

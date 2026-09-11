@@ -2,9 +2,10 @@
 
 **Use Case:** [UC-027](../use_cases/UC-027-vereins-puls-freigeben.md)
 **Geltungsbereich:** Komposition, Freigabe, Verwerfen, automatischer Versand, Leseansicht, Verbindungs-Quote
-**Anforderungen:** FR-082, FR-083, FR-084, FR-070
+**Anforderungen:** FR-082, FR-083, FR-084, FR-070, FR-100
 **Regeln:** BR-113 bis BR-116
 **Erstellt:** 2026-09-10
+**Ergänzt:** 2026-09-11 (Nachtrag `0055`: Modul-Riegel, dritte Quelle, FR-100)
 
 ## Vorbereitung
 
@@ -12,7 +13,8 @@
 - Im Verein: ein Termin in den nächsten 14 Tagen, eine **übernommene** Aufgabe,
   eine **offene** Aufgabe und eine unterbesetzte Schicht.
 - Ein zweiter Verein **ohne** jeden Inhalt für A3.
-- Migration `0044_club_pulse.sql` ist eingespielt.
+- Migrationen `0044_club_pulse.sql` und `0055_pulse_sources.sql` sind
+  eingespielt, das Modul «Vereins-Puls» ist eingeschaltet.
 - Von Hand auslösen: `select public.compose_club_pulse();`
 
 ---
@@ -117,8 +119,74 @@
 
 ---
 
+## TC-008: Ohne Modul kein Puls (UC-034)
+
+**Priority:** High
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Das Modul «Vereins-Puls» in den Vereinseinstellungen ausschalten | Vorbereitung | | |
+| 2 | Als **V** ins Profil und ins Seitenmenü sehen | «Vereins-Puls» ist **vollständig** ausgeblendet | | |
+| 3 | `compose_club_pulse()` auslösen | **Kein** Entwurf, **keine** Meldung an den Vorstand | | |
+| 4 | Bei eingeschaltetem Modul eines anderen Vereins prüfen | Dort entsteht der Entwurf wie gewohnt | | |
+| 5 | Einen Entwurf anlegen, den automatischen Versand einschalten, dann das Modul ausschalten | `auto_release_pulses()` versendet **nicht** | | |
+| 6 | Den Entwurf danach ansehen | Er steht noch als `draft` – nichts ist verloren | | |
+| 7 | Das Modul wieder einschalten und erneut auslösen | Jetzt geht er raus | | |
+
+---
+
+## TC-009: «Aus dem Vorstand» – die Antwort als News (FR-100)
+
+**Priority:** High
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als **M** ein Anliegen einreichen (UC-030) | Vorbereitung | | |
+| 2 | Als **V** antworten, «Als News publizieren» **aus** | Antwort zugestellt, **keine** News im Feed | | |
+| 3 | Ein zweites Anliegen mit eingeschaltetem Schalter beantworten | Die Antwort steht als News im Feed und in der Inbox aller | | |
+| 4 | Die News prüfen | Ihr Text ist die **Antwort**, nicht das eingereichte Anliegen | | |
+| 5 | Ein drittes Anliegen mit Schalter **ablehnen** | **Keine** News – ein Nein an eine Person ist keine Meldung an alle | | |
+| 6 | Dasselbe an einem Sitzungs-Input (UC-031) durchspielen | Gleiches Verhalten; am Input ist die News vermerkt | | |
+| 7 | Als Gremiumsmitglied ohne Vorstandsrolle einen Input beantworten | Der Schalter wird gar nicht erst angeboten | | |
+| 8 | Die Verbindungs-Quote danach ansehen | Jede publizierte Antwort zählt als Verbindung (BR-111) | | |
+
+---
+
+## TC-010: Die dritte Quelle im Entwurf (FR-082, Schritt 1)
+
+**Priority:** High
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Zwei Antworten publizieren (TC-009) und `compose_club_pulse()` auslösen | Sie stehen unter «Woran wir arbeiten» | | |
+| 2 | Die Reihenfolge prüfen | Die publizierten Antworten zuerst, die laufenden Aufgaben danach | | |
+| 3 | An jedem Eintrag hinsehen | Die Art steht dabei: «Aus dem Vorstand» oder «Aufgabe» | | |
+| 4 | Den **nicht** publizierten Entscheid suchen | Er steht nirgends im Puls | | |
+| 5 | Das eingereichte Anliegen suchen | Es steht nirgends im Puls – auch nicht gekürzt | | |
+| 6 | Eine Antwort auf ein Datum vor mehr als 14 Tagen setzen und neu komponieren | Sie fällt weg | | |
+| 7 | Eine Beispiel-News als `board` markieren | Sie kommt nicht in den Puls (C-031) | | |
+| 8 | Einen Eintrag streichen und freigeben | Er fehlt in der Leseansicht; die anderen stehen | | |
+
+---
+
 ## Vier Sprachen
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
 | 1 | Sprache auf Französisch, Italienisch und Englisch stellen | Die drei Abschnittstitel, Hinweise und Meldungen sind übersetzt | | |
+| 2 | Die Art der Einträge prüfen | «Termin», «Aufgabe», «Schicht», «Aus dem Vorstand» sind übersetzt | | |
+| 3 | Eine Antwort in jeder Sprache publizieren | Der News-Titel «Aus dem Vorstand» erscheint in der Sprache der publizierenden Person | | |
+
+---
+
+## Offen
+
+- **Der News-Titel kommt vom Client.** Publiziert jemand auf Französisch,
+  heisst die Meldung «Du comité» – auch für Lesende mit deutscher Oberfläche.
+  Das ist bei jeder News so, die jemand schreibt, und hier bewusst nicht
+  anders gelöst: Ein serverseitig übersetzter Titel wäre der einzige Text
+  dieser App, der nicht über i18next liefe.
+- **Die generierten Typen prüfen die RPC-Argumente nicht.** `supabase.rpc()`
+  nimmt in diesem Projekt jeden Parameternamen entgegen; die Verhaltensprüfung
+  gegen die verknüpfte Datenbank ist deshalb die einzige Stelle, an der ein
+  Tippfehler im Parameternamen auffällt.

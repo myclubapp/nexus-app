@@ -1011,7 +1011,14 @@
     "discarded": "Scartato. Questa settimana non parte nessun polso.",
     "gone": "Questo polso non è più disponibile.",
     "yourPoints": "Il tuo punteggio",
-    "pointsHint": "Sta qui per ultimo di proposito: il polso parla della società."
+    "pointsHint": "Sta qui per ultimo di proposito: il polso parla della società.",
+    "tellSomething": "Raccontare qualcosa",
+    "kind": {
+      "event": "Appuntamento",
+      "task": "Compito",
+      "shift": "Turno",
+      "decision": "Dal comitato"
+    }
   },
   "notifications": {
     "title": "Notifiche",
@@ -1221,7 +1228,11 @@
       "committeeMissing": "Scegli l'organo destinatario.",
       "answerMissing": "Scrivi prima la tua risposta."
     },
-    "addressedTo": "A {{offices}}"
+    "addressedTo": "A {{offices}}",
+    "newsTitle": "Dal comitato",
+    "publishTitle": "Dal comitato",
+    "publishHint": "Viene pubblicata la decisione, non la proposta inviata. Compare nel feed e nella posta di tutti i membri – e nel prossimo polso della società.",
+    "asNews": "Pubblicare la decisione come notizia"
   },
   "offices": {
     "title": "Cariche",

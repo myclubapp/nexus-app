@@ -35,6 +35,7 @@ erDiagram
     CLUB ||--o{ HEALTH_SIGNAL : "erzeugt"
     CLUB ||--o{ HEALTH_ALERT_ROUTING : "konfiguriert"
     CLUB ||--o{ CLUB_MESSAGE_LOG : "protokolliert"
+    CLUB ||--o{ CLUB_PULSE : "erzählt"
     CLUB ||--o{ VOICE_NOTE : "sammelt"
     CLUB_MEMBER ||--o{ CHECKIN_INVITATION : "wird gefragt"
     CHECKIN_INVITATION ||--o{ CHECKIN_RESPONSE : "sammelt"
@@ -511,6 +512,32 @@ Der Zähler, aus dem sich die Verbindungs-Quote eines Vereins ergibt.
 
 **Constraints:** Der Eintrag ist eine Vereinskennzahl und trägt nie einen Personenbezug. News, Vorstandsantworten, Kudos, Dank und der Vereins-Puls zählen als connection; Vakanzen, Helfergesuche und Aufgaben-Pushes als call.
 
+### CLUB_PULSE
+
+Die wöchentliche Verbindungs-Nachricht des Vereins: ein vorkomponierter Entwurf in drei
+Abschnitten, den der Vorstand prüft und freigibt.
+
+| Attribute   | Description                                        | Data Type | Length/Precision | Validation Rules                          |
+| ----------- | -------------------------------------------------- | --------- | ---------------- | ----------------------------------------- |
+| id          | Eindeutige Kennung des Pulses                      | UUID      | 36               | Primary Key, Generated                    |
+| club_id     | Verein des Pulses                                  | UUID      | 36               | Not Null, Foreign Key (CLUB.id)           |
+| happening   | «Was passiert» – Termine der kommenden vierzehn Tage | JSON    | -                | Not Null                                  |
+| working_on  | «Woran wir arbeiten» – publizierte Antworten und laufende Aufgaben | JSON | -       | Not Null                                  |
+| join_in     | «Wo du dabei sein kannst» – Offenes und Unterbesetztes | JSON   | -                | Not Null                                  |
+| intro       | Freiwilliger Einleitungssatz des Vorstands         | String    | 2000             | Optional                                  |
+| status      | Zustand des Pulses                                 | String    | 20               | Not Null, Values: draft, sent, discarded  |
+| composed_at | Zeitpunkt der Komposition                          | DateTime  | -                | Not Null                                  |
+| sent_at     | Zeitpunkt des Versands                             | DateTime  | -                | Optional                                  |
+| released_by | Person, die freigegeben hat; beim automatischen Versand leer | UUID | 36          | Optional, Foreign Key (CLUB_MEMBER.id)    |
+
+**Constraints:** Die drei Abschnitte stehen in fester Reihenfolge; sie ist eine Eigenschaft des
+Modells und nicht der Ansicht (BR-113). Je Verein besteht höchstens **ein** Entwurf. Ein Entwurf
+entsteht nur bei aktivem Modul und nur, wenn mindestens ein Abschnitt Inhalt hat. In «Woran wir
+arbeiten» stehen ausschliesslich Antworten, die der Vorstand als Beitrag publiziert hat
+(`NEWS.source = board`) – ein eingereichtes Anliegen erscheint nie. Der Versand zählt als
+Verbindungs-Nachricht (CLUB_MESSAGE_LOG), das Verwerfen nicht. Der persönliche Punktestand steht
+in der Leseansicht nach den drei Abschnitten (BR-114).
+
 ### VOICE_NOTE
 
 Ein gesprochenes Anliegen mit geprüftem Transkript, privat oder adressiert.
@@ -535,8 +562,9 @@ Ein gesprochenes Anliegen mit geprüftem Transkript, privat oder adressiert.
 | answered_at      | Zeitpunkt der Antwort                                           | DateTime  | -                | Optional                                                            |
 | answered_by      | Person, die geantwortet hat                                     | UUID      | 36               | Optional, Foreign Key (CLUB_MEMBER.id)                              |
 | flagged_at       | Zeitpunkt der Meldung wegen Missbrauchs                         | DateTime  | -                | Optional                                                            |
+| published_news_id| Beitrag, in dem die Antwort publiziert wurde                    | UUID      | 36               | Optional, Foreign Key (NEWS.id)                                     |
 
-**Constraints:** Für `kind = anonymous` sind `author_member_id` und `created_at` immer leer und `anon_token_hash` gefüllt – die Anonymität ist eine Eigenschaft des Schemas, nicht einer Berechtigungsregel. Anliegen der Arten self_reflection und coach_log sind ausschliesslich für ihre Verfasser:innen lesbar. Ein Endstatus (answered, declined) setzt eine gefüllte `response` voraus – ein Anliegen darf abgelehnt werden, aber nicht versanden. Aus einem Anliegen entsteht höchstens **eine** Aufgabe. Ein gemeldetes Anliegen verschwindet aus dem Eingang der Empfänger:in, wird aber nicht gelöscht. Es existiert kein Export, keine Volltextsuche über fremde Anliegen und kein Schlagwort-Scan.
+**Constraints:** Für `kind = anonymous` sind `author_member_id` und `created_at` immer leer und `anon_token_hash` gefüllt – die Anonymität ist eine Eigenschaft des Schemas, nicht einer Berechtigungsregel. Anliegen der Arten self_reflection und coach_log sind ausschliesslich für ihre Verfasser:innen lesbar. Ein Endstatus (answered, declined) setzt eine gefüllte `response` voraus – ein Anliegen darf abgelehnt werden, aber nicht versanden. Aus einem Anliegen entsteht höchstens **eine** Aufgabe. Publiziert wird eine Antwort nur auf ausdrücklichen Entscheid des Vorstands und nie bei einer Ablehnung; publiziert wird die **Antwort**, nie das Anliegen. Ein gemeldetes Anliegen verschwindet aus dem Eingang der Empfänger:in, wird aber nicht gelöscht. Es existiert kein Export, keine Volltextsuche über fremde Anliegen und kein Schlagwort-Scan.
 
 ### VOICE_NOTE_MESSAGE
 

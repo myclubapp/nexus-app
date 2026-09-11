@@ -40,3 +40,29 @@ export function validateNews(draft: NewsDraft): NewsProblem[] {
 export function isEditable(entry: Pick<News, 'source'>): boolean {
   return entry.source !== 'website';
 }
+
+/**
+ * FR-100 «Aus dem Vorstand»: Wird diese Antwort publiziert – und unter welchem
+ * Titel?
+ *
+ * Zwei Blätter stellen dieselbe Frage – das Anliegen (UC-030, A2) und der
+ * Sitzungs-Input (UC-031). Die Regel steht deshalb hier und nicht zweimal in
+ * einer Ansicht, und sie steht als reine Funktion, weil sich ein `ion-toggle`
+ * in jsdom nicht bedienen lässt (docs/TESTING.md §6.4).
+ *
+ * **Eine Ablehnung wird nie publiziert.** «Aus dem Vorstand» erzählt dem
+ * Verein, was aus Vorschlägen wurde; ein Nein an eine einzelne Person ist
+ * keine Meldung an alle. Der Server hält dieselbe Regel ein zweites Mal
+ * (`0055`) – hier verschwindet nur der Weg dorthin.
+ *
+ * Rückgabe `null` heisst: nicht publizieren. Der Server nimmt den Titel als
+ * Schalter, ein zweites Kennzeichen wäre eine zweite Wahrheit.
+ */
+export function publishedTitle(
+  asNews: boolean,
+  decline: boolean,
+  title: string,
+): string | null {
+  if (!asNews || decline) return null;
+  return title.trim() === '' ? null : title.trim();
+}

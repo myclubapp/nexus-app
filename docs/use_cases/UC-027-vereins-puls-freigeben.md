@@ -6,7 +6,7 @@
 **Use Case Name:** Vereins-Puls freigeben
 **Primary Actor:** Vorstand
 **Goal:** Den Mitgliedern regelmässig mitteilen, was passiert, woran gearbeitet wird und wo sie dabei sein können
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

@@ -101,8 +101,13 @@ export function PulsePage() {
       ) : draft.error ? (
         <ErrorState error={draft.error as Error} onRetry={() => void draft.refetch()} />
       ) : !pulse ? (
-        /* A3: Diese Woche liegt nichts vor. */
-        <EmptyState message={t('pulse.noDraft')} />
+        /* A3: Diese Woche liegt nichts vor – BR-165 verlangt trotzdem einen
+           nächsten Schritt. Im Feed kann der Vorstand selbst etwas erzählen,
+           und die Quote oben sagt, warum das zählt. */
+        <EmptyState
+          message={t('pulse.noDraft')}
+          action={{ label: t('pulse.tellSomething'), routerLink: '/tabs/dashboard' }}
+        />
       ) : (
         <>
           <IonNote className="app-footnote">
@@ -123,7 +128,12 @@ export function PulsePage() {
                     >
                       <IonLabel className="ion-text-wrap">
                         <h2>{item.title}</h2>
+                        {/* Die Art steht dabei: «Woran wir arbeiten» mischt
+                            publizierte Entscheide und laufende Aufgaben, und
+                            ohne dieses Wort sähen beide gleich aus. */}
                         <IonNote>
+                          {t(`pulse.kind.${item.kind}`)}
+                          {' · '}
                           {item.at ? formatDate(item.at) : t('pulse.noDate')}
                         </IonNote>
                       </IonLabel>

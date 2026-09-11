@@ -1011,7 +1011,14 @@
     "discarded": "Abandonné. Aucun pouls cette semaine.",
     "gone": "Ce pouls n’est plus disponible.",
     "yourPoints": "Ton total de points",
-    "pointsHint": "Placé ici en dernier volontairement : le pouls parle du club."
+    "pointsHint": "Placé ici en dernier volontairement : le pouls parle du club.",
+    "tellSomething": "Raconter quelque chose",
+    "kind": {
+      "event": "Rendez-vous",
+      "task": "Tâche",
+      "shift": "Créneau",
+      "decision": "Du comité"
+    }
   },
   "notifications": {
     "title": "Notifications",
@@ -1221,7 +1228,11 @@
       "committeeMissing": "Choisis l'organe destinataire.",
       "answerMissing": "Écris d'abord ta réponse."
     },
-    "addressedTo": "À {{offices}}"
+    "addressedTo": "À {{offices}}",
+    "newsTitle": "Du comité",
+    "publishTitle": "Du comité",
+    "publishHint": "C’est la décision qui est publiée, pas la proposition déposée. Elle paraît dans le fil et dans la boîte de tous les membres – et dans le prochain pouls du club.",
+    "asNews": "Publier la décision comme actualité"
   },
   "offices": {
     "title": "Fonctions",

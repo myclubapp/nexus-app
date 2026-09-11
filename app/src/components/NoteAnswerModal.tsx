@@ -15,7 +15,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useClub } from '../hooks/useClub';
 import { usePointRules } from '../hooks/useGamification';
-import { usePublishNews } from '../hooks/useNews';
 import {
   useAnswerNote,
   useConvertNoteToTask,
@@ -27,6 +26,7 @@ import { FormModal } from './FormModal';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import { formatDateTime } from '../lib/format';
+import { publishedTitle } from '../lib/news';
 import { TASK_CATEGORIES, suggestedTaskPoints, type TaskCategory } from '../lib/task';
 import {
   NOTE_STATUSES,
@@ -65,7 +65,6 @@ export function NoteAnswer({ note, onDone, onDismiss }: NoteAnswerProps) {
   const setStatus = useSetNoteStatus();
   const answer = useAnswerNote();
   const convert = useConvertNoteToTask();
-  const publishNews = usePublishNews();
   const flag = useFlagNote();
 
   const [text, setText] = useState('');
@@ -75,11 +74,12 @@ export function NoteAnswer({ note, onDone, onDismiss }: NoteAnswerProps) {
   const [why, setWhy] = useState('');
   const [category, setCategory] = useState<TaskCategory>('organisation');
   const [points, setPoints] = useState<number | null>(null);
-  // Scheitert die Antwort nach dem Folge-Artefakt, wird nur die Antwort
-  // wiederholt. Ohne diese beiden Merker entstünde beim zweiten Versuch eine
-  // zweite News – und die Umwandlung liefe gegen BR-130 ins Leere.
+  // Scheitert die Antwort nach der Umwandlung, wird nur die Antwort wiederholt.
+  // Ohne diesen Merker liefe der zweite Versuch gegen BR-130 ins Leere.
+  //
+  // Für die News braucht es ihn seit `0055` nicht mehr: Sie entsteht **in**
+  // der Antwort, nicht in einem zweiten Aufruf davor.
   const [taskDone, setTaskDone] = useState(false);
-  const [newsDone, setNewsDone] = useState(false);
 
   const closed = isClosed(note);
   const suggested = suggestedTaskPoints(rules.data);
@@ -89,12 +89,10 @@ export function NoteAnswer({ note, onDone, onDismiss }: NoteAnswerProps) {
   // fällt der Weg weg statt am Server zu scheitern.
   const canConvert = note.taskId === null;
 
-  const isBusy =
-    answer.isPending || convert.isPending || publishNews.isPending || flag.isPending;
+  const isBusy = answer.isPending || convert.isPending || flag.isPending;
   const error =
     (answer.error as Error | null)?.message ??
     (convert.error as Error | null)?.message ??
-    (publishNews.error as Error | null)?.message ??
     (flag.error as Error | null)?.message ??
     null;
 
@@ -120,17 +118,15 @@ export function NoteAnswer({ note, onDone, onDismiss }: NoteAnswerProps) {
       setTaskDone(true);
     }
 
-    if (asNews && !decline && !newsDone) {
-      await publishNews.mutateAsync({
-        title: t('noteAnswer.newsTitle'),
-        body: text,
-        teamId: null,
-        imageUrl: '',
-      });
-      setNewsDone(true);
-    }
-
-    await answer.mutateAsync({ noteId: note.id, answer: text, decline });
+    // A2: «Als News publizieren» ist seit `0055` Teil der Antwort. Scheitert
+    // eine von beiden Hälften, ist keine geschehen – vorher konnte eine News
+    // im Feed stehen, zu der es keine Antwort gab.
+    await answer.mutateAsync({
+      noteId: note.id,
+      answer: text,
+      decline,
+      newsTitle: publishedTitle(asNews, decline, t('noteAnswer.newsTitle')),
+    });
     onDone(decline ? 'declined' : 'answered');
   }
 

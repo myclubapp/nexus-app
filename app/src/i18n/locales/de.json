@@ -1011,7 +1011,14 @@
     "discarded": "Verworfen. Diese Woche geht kein Puls raus.",
     "gone": "Dieser Puls ist nicht mehr verfügbar.",
     "yourPoints": "Dein Punktestand",
-    "pointsHint": "Steht hier bewusst zuletzt: Der Puls handelt vom Verein."
+    "pointsHint": "Steht hier bewusst zuletzt: Der Puls handelt vom Verein.",
+    "tellSomething": "Selbst etwas erzählen",
+    "kind": {
+      "event": "Termin",
+      "task": "Aufgabe",
+      "shift": "Schicht",
+      "decision": "Aus dem Vorstand"
+    }
   },
   "notifications": {
     "title": "Benachrichtigungen",
@@ -1221,7 +1228,11 @@
       "committeeMissing": "Wähle das Zielgremium.",
       "answerMissing": "Schreibe zuerst deine Antwort."
     },
-    "addressedTo": "An {{offices}}"
+    "addressedTo": "An {{offices}}",
+    "newsTitle": "Aus dem Vorstand",
+    "publishTitle": "Aus dem Vorstand",
+    "publishHint": "Publiziert wird der Entscheid, nicht der eingereichte Vorschlag. Er erscheint im Feed und in der Inbox aller Mitglieder – und im nächsten Vereins-Puls.",
+    "asNews": "Entscheid als News publizieren"
   },
   "offices": {
     "title": "Ämter",

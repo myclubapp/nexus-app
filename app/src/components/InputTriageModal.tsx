@@ -7,8 +7,10 @@ import {
   IonSelect,
   IonSelectOption,
   IonTextarea,
+  IonToggle,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
+import { useClub } from '../hooks/useClub';
 import {
   useAnswerInput,
   useAssignInput,
@@ -20,6 +22,7 @@ import { FormModal } from './FormModal';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import { formatDateTime } from '../lib/format';
+import { publishedTitle } from '../lib/news';
 import { canDecide, isInputClosed, type MeetingInput } from '../lib/meeting';
 
 interface InputTriageProps {
@@ -44,6 +47,7 @@ const RUNNING = 'running';
  */
 export function InputTriage({ input, onDone, onDismiss }: InputTriageProps) {
   const { t } = useTranslation();
+  const { isAdmin } = useClub();
   const meetings = useMeetings();
   const offices = useOffices();
   const assign = useAssignInput();
@@ -54,6 +58,7 @@ export function InputTriage({ input, onDone, onDismiss }: InputTriageProps) {
     input.meetingEventId ?? (input.status === 'in_progress' ? RUNNING : null),
   );
   const [text, setText] = useState('');
+  const [asNews, setAsNews] = useState(false);
   const [forwardTo, setForwardTo] = useState<string[]>([]);
 
   const closed = isInputClosed(input.status);
@@ -71,7 +76,14 @@ export function InputTriage({ input, onDone, onDismiss }: InputTriageProps) {
     null;
 
   async function decide(decline: boolean) {
-    await answer.mutateAsync({ inputId: input.id, answer: text, decline });
+    await answer.mutateAsync({
+      inputId: input.id,
+      answer: text,
+      decline,
+      // FR-100 «Aus dem Vorstand»: publiziert wird der **Entscheid**, nie der
+      // eingereichte Vorschlag. Er gehört der Person, die ihn geschrieben hat.
+      newsTitle: publishedTitle(asNews, decline, t('meeting.newsTitle')),
+    });
     onDone(decline ? 'declined' : 'answered');
   }
 
@@ -191,6 +203,25 @@ export function InputTriage({ input, onDone, onDismiss }: InputTriageProps) {
               </IonSelect>
             </IonItem>
           </ListSection>
+
+          {/* FR-100: aus dem Entscheid eine Meldung an den ganzen Verein
+              machen. Nur der Vorstand – eine Vereinsmitteilung ist nicht Sache
+              des Gremiums, an das der Vorschlag ging. */}
+          {isAdmin && (
+            <ListSection
+              title={t('meeting.publishTitle')}
+              footnote={t('meeting.publishHint')}
+            >
+              <IonItem>
+                <IonToggle
+                  checked={asNews}
+                  onIonChange={(e) => setAsNews(e.detail.checked)}
+                >
+                  {t('meeting.asNews')}
+                </IonToggle>
+              </IonItem>
+            </ListSection>
+          )}
 
           {!canDecide(text) && <InlineError message={t('meeting.problem.answerMissing')} />}
 

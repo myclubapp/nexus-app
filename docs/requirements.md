@@ -117,7 +117,7 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-067 | Vorstands-Signale              | Als Vorstand möchte ich eigene Signale erhalten (Kommunikationspause, gekippte Verbindungs-Quote, unbeantwortete Inputs, fehlende Nachfolge), damit Symmetrie herrscht (V5, K5). | High | In Progress |
 | FR-068 | Verantwortungsverteilung       | Als Vorstand möchte ich den Anteil der Mitglieder sehen, die 80% der Einsätze tragen, damit ich die Konzentration von Verantwortung erkenne (K4).                | High     | Open   |
 | FR-069 | Nachfolge-Vorlauf              | Als Vorstand möchte ich Ämter ohne geplante Nachfolge und mit langer Amtsdauer sehen, damit Nachfolge geplant wird, bevor sie dringend ist (K4).                 | High     | Open   |
-| FR-070 | Verbindungs-Quote              | Als Vorstand möchte ich das Verhältnis von Verbindungs-Nachrichten zu Aufrufen sehen, damit wir nicht nur um Hilfe bitten (K1).                                  | High     | Open   |
+| FR-070 | Verbindungs-Quote              | Als Vorstand möchte ich das Verhältnis von Verbindungs-Nachrichten zu Aufrufen sehen, damit wir nicht nur um Hilfe bitten (K1).                                  | High     | Implemented |
 | FR-071 | Spider-Selbstsicht             | Als Mitglied möchte ich meine fünf Wertdimensionen im Vergleich zu Team und Verein sehen, damit ich meine Stärke erkenne.                                        | High     | Implemented   |
 | FR-072 | Spider-Führungssicht           | Als Trainer:in möchte ich dasselbe Diagramm für Mitglieder meines Teams als Gesprächsgrundlage sehen, damit ich individuell begleiten kann.                      | Medium   | Implemented |
 | FR-073 | Transparenz-Seite              | Als Mitglied möchte ich sehen, welche Signale zu mir existieren und wer sie sieht, damit ich weiss, was mein Verein weiss.                                       | High     | Implemented   |
@@ -136,9 +136,9 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-081 | Stille Zeiten             | Als Mitglied möchte ich Zeitfenster definieren, in denen mich kein Push erreicht, damit meine Ruhezeiten respektiert werden.                           | Low      | Implemented |
 | FR-146 | Website-News übernehmen   | Als Vorstand möchte ich beim Aufsetzen des Vereins die bestehenden Beiträge unserer Website übernehmen, damit der Feed ab dem ersten Tag echte Meldungen zeigt. | High | In Progress |
 | FR-147 | Website-News aktuell halten | Als Vorstand möchte ich, dass neue Beiträge unserer Website von selbst im Feed erscheinen, damit ich nichts zweimal schreiben muss. | High | In Progress |
-| FR-082 | Vereins-Puls komponieren  | Als System möchte ich wöchentlich einen Entwurf mit «Was passiert · Woran arbeiten wir · Wo kannst du dabei sein» erzeugen, damit Verbindung Routine wird (K2). | High | Open   |
-| FR-083 | Vereins-Puls freigeben    | Als Vorstand möchte ich den Puls-Entwurf in zwei Minuten prüfen und freigeben, damit der Versand wenig Zeit kostet.                                    | High     | Open        |
-| FR-084 | Symmetrie-Hinweis         | Als Vorstand möchte ich gewarnt werden, wenn seit Wochen nur Aufrufe und keine Verbindungs-Nachrichten ausgingen, damit wir das Muster korrigieren (K1). | High   | Open        |
+| FR-082 | Vereins-Puls komponieren  | Als System möchte ich wöchentlich einen Entwurf mit «Was passiert · Woran arbeiten wir · Wo kannst du dabei sein» erzeugen, damit Verbindung Routine wird (K2). | High | Implemented |
+| FR-083 | Vereins-Puls freigeben    | Als Vorstand möchte ich den Puls-Entwurf in zwei Minuten prüfen und freigeben, damit der Versand wenig Zeit kostet.                                    | High     | Implemented |
+| FR-084 | Symmetrie-Hinweis         | Als Vorstand möchte ich gewarnt werden, wenn seit Wochen nur Aufrufe und keine Verbindungs-Nachrichten ausgingen, damit wir das Muster korrigieren (K1). | High   | Implemented |
 
 ### 1.7 «Stimme»: Sprachmemos & Feedback
 

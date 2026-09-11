@@ -243,11 +243,14 @@ export function useAnswerInput() {
       inputId: string;
       answer: string;
       decline?: boolean;
+      /** FR-100, wie bei den Anliegen: Der Titel ist der Schalter. */
+      newsTitle?: string | null;
     }) => {
       const { error } = await supabase.rpc('answer_meeting_input', {
         p_input_id: input.inputId,
         p_answer: input.answer,
         p_decline: input.decline ?? false,
+        p_news_title: input.newsTitle || undefined,
       });
       if (error) throw new Error(error.message);
     },
@@ -256,6 +259,8 @@ export function useAnswerInput() {
         queryKey: ['meeting-inputs', activeClub?.id],
       });
       void queryClient.invalidateQueries({ queryKey: ['meeting-agenda'] });
+      void queryClient.invalidateQueries({ queryKey: ['news', activeClub?.id] });
+      void queryClient.invalidateQueries({ queryKey: ['inbox'] });
     },
   });
 }

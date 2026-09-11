@@ -6,7 +6,6 @@ import type { AnonMessage, VoiceNote } from '../lib/voice';
 
 const answerAsync = vi.fn(async () => undefined);
 const convertAsync = vi.fn(async () => 'task-1');
-const publishAsync = vi.fn(async () => 'news-1');
 const statusMutate = vi.fn();
 const flagMutate = vi.fn();
 let thread: AnonMessage[] = [];
@@ -21,10 +20,6 @@ vi.mock('../hooks/useVoice', () => ({
     error: null,
   }),
   useFlagNote: () => ({ mutate: flagMutate, isPending: false, error: null }),
-}));
-
-vi.mock('../hooks/useNews', () => ({
-  usePublishNews: () => ({ mutateAsync: publishAsync, isPending: false, error: null }),
 }));
 
 let isAdmin = true;

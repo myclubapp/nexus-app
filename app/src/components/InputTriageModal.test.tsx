@@ -8,6 +8,12 @@ const assignMutate = vi.fn();
 const forwardMutate = vi.fn();
 const answerAsync = vi.fn(async () => undefined);
 
+let isAdmin = true;
+
+vi.mock('../hooks/useClub', () => ({
+  useClub: () => ({ isAdmin }),
+}));
+
 vi.mock('../hooks/useMeeting', () => ({
   useMeetings: () => ({
     data: [
@@ -83,7 +89,10 @@ function input(overrides: Partial<MeetingInput> = {}): MeetingInput {
  * dort geprüft. Hier steht, **was in einem Zustand zu sehen ist**.
  */
 describe('InputTriage', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    isAdmin = true;
+  });
 
   function render(overrides: Partial<MeetingInput> = {}) {
     return renderWithProviders(
@@ -143,6 +152,23 @@ describe('InputTriage', () => {
     // gibt.
     const { container } = render({ isAnonymous: true });
     expect(container.textContent).toContain('Anonymer Vorschlag');
+  });
+
+  it('bietet dem Vorstand an, den Entscheid zu publizieren (FR-100)', () => {
+    const { container } = render();
+    expect(
+      [...container.querySelectorAll('ion-toggle')].map((element) =>
+        element.textContent?.trim(),
+      ),
+    ).toEqual(['Entscheid als News publizieren']);
+  });
+
+  it('bietet das dem Gremium ohne Vorstandsrolle nicht an', () => {
+    // Eine Vereinsmitteilung ist nicht Sache des Gremiums, an das der
+    // Vorschlag ging – es beantwortet ihn, es spricht nicht für den Verein.
+    isAdmin = false;
+    const { container } = render();
+    expect(container.querySelectorAll('ion-toggle')).toHaveLength(0);
   });
 
   it('zeigt einen abgeschlossenen Vorschlag nur noch als Lesestück', () => {

@@ -132,16 +132,27 @@ export function useAnswerNote() {
       noteId: string;
       answer: string;
       decline?: boolean;
+      /**
+       * FR-100 «Aus dem Vorstand»: Der Titel **ist** der Schalter. Steht er da,
+       * publiziert der Server die Antwort in derselben Transaktion als News
+       * (`source = 'board'`) – zwei Aufrufe hintereinander hinterliessen eine
+       * News ohne Antwort, wenn der zweite scheitert.
+       */
+      newsTitle?: string | null;
     }) => {
       const { error } = await supabase.rpc('answer_voice_note', {
         p_note_id: input.noteId,
         p_answer: input.answer,
         p_decline: input.decline ?? false,
+        p_news_title: input.newsTitle || undefined,
       });
       if (error) throw new Error(error.message);
     },
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ['voice-notes', activeClub?.id] });
+      // Die publizierte Antwort steht sofort im Feed und in der Inbox.
+      void queryClient.invalidateQueries({ queryKey: ['news', activeClub?.id] });
+      void queryClient.invalidateQueries({ queryKey: ['inbox'] });
     },
   });
 }
