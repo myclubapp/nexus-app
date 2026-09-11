@@ -318,6 +318,7 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | C-029 | Inkrement-Reihenfolge          | Die Umsetzung folgt den Inkrementen M1 Fundament, M2 Agenda-Loop, M3 Gemeinschaft, M4 Anschlüsse; Anschlüsse werden nicht vorgezogen.                    | Schedule    | High     | In Progress |
 | C-030 | Sichtbarkeit nach Struktur     | Kalender-Publishing und Grafik-Partner werden erst freigeschaltet, wenn die innere Struktur des Vereins steht, und nie einzeln verkauft (K6a).            | Business    | Medium   | Open        |
 | C-031 | Beispielinhalte sind folgenlos | Beispielinhalte erzeugen keine Punktebuchung, kein Gesundheitssignal und keine Benachrichtigung und hinterlassen dem Vorstand keine Aufräumarbeit (Entlastungs-Test K6b).             | Business    | High     | Open        |
+| C-032 | Geltungsbereich nach Team      | Jede Entität mit `team_id` ist nach Team abgegrenzt – lesend **und** schreibend; Trainer:innen und Vorstand ausgenommen. Was am Termin hängt, erbt dessen Geltungsbereich.        | Technical   | High     | In Progress |
 
 ---
 

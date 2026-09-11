@@ -58,6 +58,14 @@ supabase db push            # Migrationen deployen
   neue Punktequelle baut, baut sie als Datenbankfunktion, nicht im Frontend.
 - **Rollenprüfung serverseitig.** `is_club_admin()` in der Policy, nicht nur ein
   verstecktes Button im UI.
+- **Geltungsbereich nach Team, für jede Entität.** Trägt eine Tabelle einen
+  `team_id`, dann liest und schreibt sie nur, wer in diesem Team ist – plus
+  Trainer:innen und Vorstand, weil sie ausschreiben. `is_club_member(club_id)`
+  allein ist in einer Policy ein Befund. Vorlage sind `task_in_scope()` (`0034`)
+  und `event_in_scope()` (`0057`); was am Termin hängt (Serie, Schichten,
+  Teilnahmen, QR-Token), erbt seinen Geltungsbereich vom Termin. Das gilt auch
+  für das **Schreiben**: Eine Policy, die nur das Lesen abgrenzt, grenzt nichts
+  ab.
 - **Vier Sprachen ab dem ersten Commit.** Neue UI-Texte gehören in alle vier
   Dateien unter `src/i18n/locales/`. `npm run i18n:check` erzwingt das.
 - **Code-Bezeichner auf Englisch**, Benutzertexte über `react-i18next`.

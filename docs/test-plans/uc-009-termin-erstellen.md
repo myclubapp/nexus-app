@@ -227,6 +227,27 @@
 
 ---
 
+## TC-013: Geltungsbereich nach Team (C-032)
+
+**Priority:** High
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Je einen Termin für Team A, Team B und den ganzen Verein anlegen | Vorbereitung | | |
+| 2 | Als Mitglied von Team B die Agenda öffnen | Nur der eigene und der Vereinstermin | | |
+| 3 | Als Mitglied von Team B `events` direkt abfragen | Dasselbe – die Abgrenzung liegt in der Policy, nicht im Client | | |
+| 4 | Die Teilnehmerliste des fremden Termins abfragen | Leer | | |
+| 5 | Mit der Id des fremden Termins zusagen | Abgewiesen | | |
+| 6 | Eine Schicht des fremden Team-Termins übernehmen | Abgewiesen, mit Begründung | | |
+| 7 | Eine Schicht des **Vereinstermins** übernehmen | Geht durch | | |
+| 8 | Als Trainer:in hinsehen | Alle Teams – sie plant für sie | | |
+| 9 | Als Vorstand hinsehen | Alle Teams und Entwürfe | | |
+| 10 | Die Terminserie eines fremden Teams abfragen | Leer | | |
+| 11 | Den Vereins-Puls auslösen und lesen | Er nennt **keinen** Team-Termin, wohl aber die Vereinstermine | | |
+| 12 | Prüfen, ob eine Tabelle mit `team_id` noch vereinsweit liest | Keine | | |
+
+---
+
 ## Test Matrix
 
 | Device / Browser | OS / Version | Screen Size | Status |

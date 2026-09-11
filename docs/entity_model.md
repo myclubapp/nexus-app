@@ -90,6 +90,11 @@ erDiagram
 
 ## Entitäten
 
+Für **jede** Entität mit `team_id` gilt derselbe Geltungsbereich: Sie gehört ihrem Team, und
+Trainer:innen und Vorstand sehen sie zusätzlich, weil sie sie ausschreiben. Entitäten, die an einer
+solchen Entität hängen, erben deren Geltungsbereich, statt ihn selbst zu formulieren (C-032).
+
+
 ### USER_ACCOUNT
 
 Das plattformweite Anmeldekonto einer Person, unabhängig von der Vereinszugehörigkeit.
@@ -241,7 +246,7 @@ Ein Termin des Vereins: Training, Wettkampf, Anlass, Helfer-Event, Sitzung oder 
 | is_sample        | Kennzeichen als Beispielinhalt der Erstbefüllung        | Boolean   | 1                | Not Null                                                                |
 | created_by       | Erfassende Person                                      | UUID      | 36               | Not Null, Foreign Key (CLUB_MEMBER.id)                                  |
 
-**Constraints:** `ends_at` liegt nach `starts_at`. Für die Typen helper, gv und social ist `why` nicht leer. Eine Absage verlangt `cancelled_at` und `cancelled_reason`.
+**Constraints:** `ends_at` liegt nach `starts_at`. Für die Typen helper, gv und social ist `why` nicht leer. Eine Absage verlangt `cancelled_at` und `cancelled_reason`. **Ein Termin mit `team_id` ist nur für dieses Team sichtbar und beantwortbar** – Trainer:innen und Vorstand ausgenommen, weil sie ihn planen; ein Termin ohne `team_id` gilt dem ganzen Verein (C-032). EVENT_SERIES, EVENT_SHIFT, ATTENDANCE und EVENT_QR_TOKEN erben diesen Geltungsbereich vom Termin.
 
 ### EVENT_QR_TOKEN
 
