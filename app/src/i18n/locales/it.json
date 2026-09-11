@@ -704,7 +704,9 @@
     "overlapTitle": "C'è una sovrapposizione",
     "overlapMessage": "Sei già iscritto a un altro turno nello stesso orario. Prenderlo lo stesso?",
     "overlapConfirm": "Prendilo lo stesso",
-    "over": "Concluso"
+    "over": "Concluso",
+    "marketplaceSection": "Turni di aiuto",
+    "marketplaceHint": "Manifestazioni con posti ancora liberi. Toccane una per assumere un turno."
   },
   "roster": {
     "title": "Conferma gli impegni",

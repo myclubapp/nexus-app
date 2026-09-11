@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  openShiftOffers,
   shiftCoverage,
   suggestedShiftPoints,
   validateShift,
@@ -120,5 +121,68 @@ describe('shiftCoverage', () => {
 
   it('meldet eine leere Schicht vollständig offen', () => {
     expect(shiftCoverage(shift, [])).toMatchObject({ filled: 0, open: 3, isFull: false });
+  });
+});
+
+describe('openShiftOffers (UC-011, Postcondition)', () => {
+  const now = new Date('2026-09-11T12:00:00.000Z');
+  const future = '2026-09-20T12:00:00.000Z';
+  const past = '2026-09-01T12:00:00.000Z';
+
+  function event(shifts: { id: string; needed: number; ends_at: string }[], taken: string[] = []) {
+    return {
+      id: 'e-1',
+      shifts,
+      attendance: taken.map((id) => ({ shift_id: id, status: 'registered' })),
+    };
+  }
+
+  it('nennt einen Termin mit freien Plätzen samt Zahl', () => {
+    const offers = openShiftOffers(
+      [event([{ id: 's-1', needed: 3, ends_at: future }], ['s-1'])],
+      now,
+    );
+    expect(offers).toHaveLength(1);
+    expect(offers[0].open).toBe(2);
+    expect(offers[0].needed).toBe(3);
+  });
+
+  it('lässt einen besetzten Termin weg', () => {
+    // Der Marktplatz fragt: Wo kann ich beitragen? Eine volle Schicht ist
+    // dort kein Angebot.
+    const offers = openShiftOffers(
+      [event([{ id: 's-1', needed: 2, ends_at: future }], ['s-1', 's-1'])],
+      now,
+    );
+    expect(offers).toHaveLength(0);
+  });
+
+  it('zählt vergangene Schichten nicht mit', () => {
+    // Eine Schicht von gestern ist kein Angebot, sondern eine Lücke in der
+    // Geschichte.
+    const offers = openShiftOffers([event([{ id: 's-1', needed: 2, ends_at: past }])], now);
+    expect(offers).toHaveLength(0);
+  });
+
+  it('summiert über mehrere Schichten desselben Termins', () => {
+    const offers = openShiftOffers(
+      [
+        event(
+          [
+            { id: 's-1', needed: 2, ends_at: future },
+            { id: 's-2', needed: 4, ends_at: future },
+          ],
+          ['s-1', 's-2'],
+        ),
+      ],
+      now,
+    );
+    expect(offers[0].open).toBe(4);
+    expect(offers[0].needed).toBe(6);
+  });
+
+  it('kommt mit einem Termin ohne Schichten zurecht', () => {
+    expect(openShiftOffers([{ shifts: [] }], now)).toHaveLength(0);
+    expect(openShiftOffers([{}], now)).toHaveLength(0);
   });
 });

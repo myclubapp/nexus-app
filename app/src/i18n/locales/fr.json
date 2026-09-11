@@ -704,7 +704,9 @@
     "overlapTitle": "Il y a un chevauchement",
     "overlapMessage": "Tu es déjà inscrit·e pour une autre tranche au même moment. Prendre quand même ?",
     "overlapConfirm": "Prendre quand même",
-    "over": "Terminé"
+    "over": "Terminé",
+    "marketplaceSection": "Coups de main",
+    "marketplaceHint": "Manifestations où il reste des places. Touches-en une pour prendre un créneau."
   },
   "roster": {
     "title": "Confirmer les engagements",

@@ -704,7 +704,9 @@
     "overlapTitle": "Das überschneidet sich",
     "overlapMessage": "Du bist zur selben Zeit schon für eine andere Schicht eingetragen. Trotzdem übernehmen?",
     "overlapConfirm": "Trotzdem übernehmen",
-    "over": "Vorbei"
+    "over": "Vorbei",
+    "marketplaceSection": "Helfereinsätze",
+    "marketplaceHint": "Anlässe, bei denen noch Plätze frei sind. Tippe einen an, um eine Schicht zu übernehmen."
   },
   "roster": {
     "title": "Einsätze bestätigen",

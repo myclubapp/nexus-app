@@ -16,10 +16,12 @@ import { SkeletonList } from '../components/Skeletons';
 import { TaskConfirmModal } from '../components/TaskConfirmModal';
 import { TaskDetailModal } from '../components/TaskDetailModal';
 import { TaskFormModal } from '../components/TaskFormModal';
+import { ShiftListModal } from '../components/ShiftListModal';
 import { StatCard } from '../components/StatCard';
 import { useClub } from '../hooks/useClub';
 import { useToast } from '../hooks/useToast';
 import { useMyTaskCount, usePublishTask, useTasks } from '../hooks/useTasks';
+import { useAgenda } from '../hooks/useAgenda';
 import {
   useContributionBudget,
   useContributionProfile,
@@ -28,8 +30,9 @@ import {
 } from '../hooks/useContribution';
 import { ContributionProfileForm } from '../components/ContributionProfileModal';
 import { isBudgetSpent, isProfileFilled } from '../lib/contribution';
-import { isSample } from '../lib/sample';
-import { formatDate } from '../lib/format';
+import { canActOn, isSample } from '../lib/sample';
+import { formatDate, formatDateTime } from '../lib/format';
+import { openShiftOffers } from '../lib/shift';
 import {
   groupTasks,
   taskCapacity,
@@ -49,6 +52,10 @@ export function MarketplacePage() {
   const { activeMembership, isTrainer } = useClub();
   const toast = useToast();
   const tasks = useTasks();
+  // UC-011, Schritt 9: «in Agenda **und** Marktplatz». Dieselbe Abfrage wie die
+  // Agenda – ein zweiter Weg zu denselben Terminen wäre eine zweite Wahrheit.
+  const agenda = useAgenda('upcoming');
+  const [shiftEventId, setShiftEventId] = useState<string | null>(null);
   const profile = useContributionProfile();
   const matching = useMatchingTasks();
   const vacancies = useMatchingVacancies();
@@ -66,6 +73,16 @@ export function MarketplacePage() {
   const location = useLocation();
   const highlightId = new URLSearchParams(location.search).get('task');
   const highlightRef = useRef<HTMLIonItemElement | null>(null);
+
+  // Nur ausgeschriebene, nicht abgesagte und keine Beispiele – dieselbe
+  // Bedingung wie in der Agenda, und `canActOn()` sagt den Rest (BR-161).
+  const offers = openShiftOffers(
+    (agenda.data ?? []).filter(
+      (event) =>
+        event.published_at !== null && event.cancelled_at === null && canActOn(event),
+    ),
+  );
+  const shiftEvent = (agenda.data ?? []).find((entry) => entry.id === shiftEventId);
 
   const items = tasks.data ?? [];
   const groups = groupTasks(items, activeMembership?.id ?? null);
@@ -388,6 +405,35 @@ export function MarketplacePage() {
             </ListSection>
           )}
 
+          {/* UC-011, Postcondition: Das Helfer-Event stand bisher nur in der
+              Agenda. Der Marktplatz beantwortet dieselbe Frage wie die
+              Aufgaben darüber – wo kann ich beitragen? –, und ein Aufruf, den
+              man dort nicht findet, ist ein halber Aufruf. */}
+          {offers.length > 0 && (
+            <ListSection
+              title={t('shifts.marketplaceSection')}
+              footnote={t('shifts.marketplaceHint')}
+            >
+              {offers.map(({ event, open, needed }) => (
+                <IonItem
+                  key={event.id}
+                  button
+                  detail
+                  onClick={() => setShiftEventId(event.id)}
+                >
+                  <IonLabel className="ion-text-wrap">
+                    <h2>{event.title}</h2>
+                    <p>{formatDateTime(event.starts_at)}</p>
+                    {event.why && <IonNote>{event.why}</IonNote>}
+                  </IonLabel>
+                  <IonBadge slot="end" color="tertiary">
+                    {t('agenda.shiftNeeded', { filled: needed - open, needed })}
+                  </IonBadge>
+                </IonItem>
+              ))}
+            </ListSection>
+          )}
+
           {/* A3: Entwürfe sieht nur, wer sie ausschreiben kann. Die Policy
               blendet sie für Mitglieder ohnehin aus – der Abschnitt bleibt
               damit auch ohne Rollenprüfung im Client leer. */}
@@ -461,6 +507,17 @@ export function MarketplacePage() {
               : t('taskConfirm.confirmed'),
           );
         }}
+      />
+
+      {/* Dasselbe Blatt wie in der Agenda (UC-012): Wer eine Schicht
+          übernimmt, soll sie überall gleich übernehmen. */}
+      <ShiftListModal
+        isOpen={shiftEventId !== null}
+        why={shiftEvent?.why ?? null}
+        shifts={shiftEvent?.shifts ?? []}
+        attendance={shiftEvent?.attendance ?? []}
+        memberId={activeMembership?.id ?? null}
+        onDismiss={() => setShiftEventId(null)}
       />
 
       <TaskFormModal

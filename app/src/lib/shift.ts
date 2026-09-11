@@ -80,3 +80,45 @@ export function shiftCoverage(
     isFull: filled >= shift.needed,
   };
 }
+
+/**
+ * Termine mit offenen Schichten (UC-011, Schritt 9 und A3).
+ *
+ * Die Postcondition verlangt das Helfer-Event «in Agenda **und** Marktplatz».
+ * Der Marktplatz fragt nur eines: Wo kann ich beitragen? Also zählt hier
+ * ausschliesslich, wo noch Plätze frei sind – und nur in der Zukunft: Eine
+ * Schicht von gestern ist kein Angebot, sondern eine Lücke in der Geschichte.
+ *
+ * Ein Entwurf, eine Absage und ein Beispielinhalt kommen nicht vor; das
+ * entscheidet die aufrufende Seite über die Termine, die sie übergibt.
+ */
+export interface ShiftOffer<E> {
+  event: E;
+  open: number;
+  needed: number;
+}
+
+export function openShiftOffers<
+  E extends {
+    shifts?: readonly (Pick<EventShift, 'id' | 'needed'> & { ends_at: string })[] | null;
+    attendance?: readonly { shift_id: string | null; status: string }[] | null;
+  },
+>(events: readonly E[], now: Date = new Date()): ShiftOffer<E>[] {
+  const offers: ShiftOffer<E>[] = [];
+
+  for (const event of events) {
+    let open = 0;
+    let needed = 0;
+
+    for (const shift of event.shifts ?? []) {
+      if (new Date(shift.ends_at) <= now) continue;
+      const coverage = shiftCoverage(shift, event.attendance ?? []);
+      open += coverage.open;
+      needed += coverage.needed;
+    }
+
+    if (open > 0) offers.push({ event, open, needed });
+  }
+
+  return offers;
+}

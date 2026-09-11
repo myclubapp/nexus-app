@@ -704,7 +704,9 @@
     "overlapTitle": "That overlaps",
     "overlapMessage": "You are already signed up for another shift at the same time. Take it anyway?",
     "overlapConfirm": "Take it anyway",
-    "over": "Over"
+    "over": "Over",
+    "marketplaceSection": "Helper shifts",
+    "marketplaceHint": "Events that still have places open. Tap one to take a shift."
   },
   "roster": {
     "title": "Confirm shifts",

@@ -135,7 +135,10 @@ Aufruf-Push, bis wieder eine Verbindungs-Nachricht ausging (BR-044, K1).
       erst damit ist A2 keine Sackgasse.
 - [x] 19. **Verhaltensprüfung gegen die laufende Datenbank** — zwölf Prüfungen
       über `supabase db query --linked`, in einer zurückgerollten Transaktion.
-- [ ] 20. **Marktplatz-Anzeige** des Helfer-Events (Postcondition).
+- [x] 20. **Marktplatz-Anzeige** des Helfer-Events (Postcondition) – erledigt
+      am 2026-09-11. Schritt 9 und A3 nennen beide «Agenda **und** Marktplatz»;
+      dort stand bisher nur, was als Aufgabe ausgeschrieben war. Ein Aufruf,
+      den man im Marktplatz nicht findet, ist ein halber Aufruf.
 - [ ] 21. **Plattform-Parität** — Schichtenliste und Wischgeste auf iOS,
       Android und im Browser.
 
