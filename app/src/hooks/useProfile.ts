@@ -9,6 +9,10 @@ export interface MyProfile {
   emailPublic: boolean;
   phonePublic: boolean;
   leaderboardOptIn: boolean;
+  /** Konzept §3.1: Adresse und Notfallkontakt – nur für die Person und den Vorstand (0063). */
+  address: string | null;
+  emergencyName: string | null;
+  emergencyPhone: string | null;
 }
 
 /**
@@ -16,7 +20,9 @@ export interface MyProfile {
  *
  * Gelesen wird über `club_directory`: Dieselbe Sicht, die anderen Mitgliedern
  * die verborgenen Felder vorenthält, gibt der Person ihre eigenen heraus – so
- * gibt es nur einen Weg zu den Kontaktangaben.
+ * gibt es nur einen Weg zu den Kontaktangaben. Adresse und Notfallkontakt
+ * stehen nicht im Verzeichnis; sie kommen aus `member_contacts`, deren Policy
+ * die eigene Zeile herausgibt (0013, 0063).
  */
 export function useMyProfile() {
   const { activeMembership } = useClub();
@@ -32,6 +38,13 @@ export function useMyProfile() {
         .single();
       if (error) throw new Error(error.message);
 
+      const { data: card, error: cardError } = await supabase
+        .from('member_contacts')
+        .select('address, emergency_name, emergency_phone')
+        .eq('member_id', activeMembership!.id)
+        .maybeSingle();
+      if (cardError) throw new Error(cardError.message);
+
       const privacy = (activeMembership!.privacy ?? {}) as Record<string, boolean>;
       return {
         displayName: data.display_name ?? '',
@@ -40,6 +53,9 @@ export function useMyProfile() {
         emailPublic: privacy.email === true,
         phonePublic: privacy.phone === true,
         leaderboardOptIn: activeMembership!.leaderboard_opt_in,
+        address: card?.address ?? null,
+        emergencyName: card?.emergency_name ?? null,
+        emergencyPhone: card?.emergency_phone ?? null,
       };
     },
   });
@@ -51,6 +67,10 @@ export interface ProfilePatch {
   phone?: string;
   emailPublic?: boolean;
   phonePublic?: boolean;
+  /** Leer heisst löschen, `undefined` heisst unverändert (0063). */
+  address?: string;
+  emergencyName?: string;
+  emergencyPhone?: string;
 }
 
 /**
@@ -74,11 +94,15 @@ export function useUpdateMyProfile() {
         p_phone: patch.phone,
         p_email_public: patch.emailPublic,
         p_phone_public: patch.phonePublic,
+        p_address: patch.address,
+        p_emergency_name: patch.emergencyName,
+        p_emergency_phone: patch.emergencyPhone,
       });
       if (error) throw new Error(error.message);
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['my-profile'] });
+      await queryClient.invalidateQueries({ queryKey: ['member-contacts'] });
       // Der Anzeigename steckt in der Mitgliedschaft und in jeder Liste.
       await queryClient.invalidateQueries({ queryKey: ['memberships'] });
       await queryClient.invalidateQueries({ queryKey: ['members', activeClub?.id] });

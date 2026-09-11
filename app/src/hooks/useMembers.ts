@@ -133,3 +133,41 @@ export function useCreateTeam() {
     },
   });
 }
+
+/** Was der Vorstand zu einem Mitglied an Kontaktangaben sieht (0013, 0063). */
+export interface MemberContactCard {
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  emergencyName: string | null;
+  emergencyPhone: string | null;
+}
+
+/**
+ * Die Kontaktangaben eines Mitglieds – für den Vorstand.
+ *
+ * Direkt aus `member_contacts`: Die Policy gibt die Zeile der Person selbst
+ * und dem Vorstand heraus, niemandem sonst. Der Client filtert nichts.
+ */
+export function useMemberContacts(memberId: string | null) {
+  return useQuery({
+    queryKey: ['member-contacts', memberId],
+    enabled: Boolean(memberId) && isConfigured,
+    queryFn: async (): Promise<MemberContactCard | null> => {
+      const { data, error } = await supabase
+        .from('member_contacts')
+        .select('email, phone, address, emergency_name, emergency_phone')
+        .eq('member_id', memberId!)
+        .maybeSingle();
+      if (error) throw new Error(error.message);
+      if (!data) return null;
+      return {
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
+        emergencyName: data.emergency_name,
+        emergencyPhone: data.emergency_phone,
+      };
+    },
+  });
+}

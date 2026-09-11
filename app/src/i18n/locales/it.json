@@ -132,7 +132,10 @@
       "event": "Appuntamento",
       "shift": "Turno",
       "task": "Compito"
-    }
+    },
+    "seasonTrend": "Andamento stagione",
+    "seasonTrendHint": "Punti per mese dall’inizio della stagione.",
+    "seasonTrendDescription": "Punti per mese su {{count}} mesi, {{points}} punti in totale in questa stagione"
   },
   "marketplace": {
     "title": "Compiti",
@@ -175,7 +178,12 @@
     "pillar": "Pilastro",
     "allPillars": "Tutti i pilastri",
     "filterHint": "Periodi più brevi mostrano anche chi è arrivato da poco.",
-    "yourRank": "Il tuo rango: {{rank}}"
+    "yourRank": "Il tuo rango: {{rank}}",
+    "teams": "Squadre",
+    "teamAverage": "Ø {{points}} per membro",
+    "teamTotal": "{{points}} punti · {{count}} membri",
+    "teamsHint": "La media per membro, così una squadra grande non è davanti solo per la sua dimensione. Le squadre con meno di due membri visibili non compaiono.",
+    "teamsEmpty": "Nessuna squadra con punti in questo periodo"
   },
   "agenda": {
     "title": "Agenda",
@@ -273,7 +281,13 @@
     "emailVisible": "E-mail visibile ai membri",
     "phoneVisible": "Telefono visibile ai membri",
     "kudos": "Ringraziamenti",
-    "kudosHint": "Che cosa ha scritto il comitato sui tuoi contributi."
+    "kudosHint": "Che cosa ha scritto il comitato sui tuoi contributi.",
+    "address": "Indirizzo",
+    "addressHint": "Solo tu e il comitato vedete l’indirizzo, per posta e fatture.",
+    "emergency": "Contatto di emergenza",
+    "emergencyName": "Nome della persona di contatto",
+    "emergencyPhone": "Telefono della persona di contatto",
+    "emergencyHint": "Visibile solo a te, al comitato e agli allenatori delle tue squadre, nel caso succeda qualcosa il giorno della partita."
   },
   "clubSettings": {
     "title": "Impostazioni della società",
@@ -606,7 +620,9 @@
     "count_one": "{{count}} membro",
     "area": "Settore",
     "areaPlaceholder": "ad es. Juniores – vuoto significa tutte le squadre",
-    "resetFilter": "Azzera il filtro"
+    "resetFilter": "Azzera il filtro",
+    "contact": "Contatto",
+    "emergencyLabel": "Emergenza"
   },
   "pointRules": {
     "title": "Regole dei punti",

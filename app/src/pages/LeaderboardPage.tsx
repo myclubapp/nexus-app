@@ -11,7 +11,7 @@ import {
   IonSelectOption,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
-import { useLeaderboard, useMyTeams } from '../hooks/useGamification';
+import { useLeaderboard, useMyTeams, useTeamRanking } from '../hooks/useGamification';
 import { useClub } from '../hooks/useClub';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
@@ -26,7 +26,7 @@ import {
 } from '../lib/leaderboard';
 import { PILLARS, type Pillar } from '../lib/pointRule';
 
-type Scope = 'club' | 'team';
+type Scope = 'club' | 'team' | 'teams';
 
 export function LeaderboardPage() {
   const { t } = useTranslation();
@@ -50,6 +50,9 @@ export function LeaderboardPage() {
     pillar,
     limit: leaderboardLimit(activeClub?.settings),
   });
+  // Konzept §7.3: Team gegen Team, im Durchschnitt je Mitglied.
+  const teamRanking = useTeamRanking({ period, pillar });
+  const teamRows = teamRanking.data ?? [];
 
   const rows = leaderboard.data ?? [];
   const showGap = hasRankGap(rows);
@@ -59,23 +62,23 @@ export function LeaderboardPage() {
     <AppPage
       title={t('leaderboard.title')}
       subToolbar={
-        hasTeam ? (
-          <IonSegment
-            value={scope}
-            onIonChange={(e) => setScope(e.detail.value as Scope)}
-          >
-            <IonSegmentButton value="club">
-              <IonLabel>{t('leaderboard.club')}</IonLabel>
-            </IonSegmentButton>
+        <IonSegment value={scope} onIonChange={(e) => setScope(e.detail.value as Scope)}>
+          <IonSegmentButton value="club">
+            <IonLabel>{t('leaderboard.club')}</IonLabel>
+          </IonSegmentButton>
+          {hasTeam && (
             <IonSegmentButton value="team">
               <IonLabel>
                 {teams.length === 1 ? teams[0].name : t('leaderboard.team')}
               </IonLabel>
             </IonSegmentButton>
-          </IonSegment>
-        ) : undefined
+          )}
+          <IonSegmentButton value="teams">
+            <IonLabel>{t('leaderboard.teams')}</IonLabel>
+          </IonSegmentButton>
+        </IonSegment>
       }
-      onRefresh={() => leaderboard.refetch()}
+      onRefresh={() => Promise.all([leaderboard.refetch(), teamRanking.refetch()])}
     >
       {activeMembership && !activeMembership.leaderboard_opt_in && (
         <IonNote color="medium" className="app-hint">
@@ -87,9 +90,11 @@ export function LeaderboardPage() {
           Neumitglied nie etwas anderes als die Jahresbesten. */}
       <ListSection
         footnote={
-          myRank !== null
-            ? t('leaderboard.yourRank', { rank: myRank })
-            : t('leaderboard.filterHint')
+          scope === 'teams'
+            ? t('leaderboard.teamsHint')
+            : myRank !== null
+              ? t('leaderboard.yourRank', { rank: myRank })
+              : t('leaderboard.filterHint')
         }
       >
         {/* Wer in mehreren Teams ist, wählt aus – sonst sähe er immer nur das
@@ -144,7 +149,41 @@ export function LeaderboardPage() {
         </IonItem>
       </ListSection>
 
-      {leaderboard.isLoading ? (
+      {scope === 'teams' ? (
+        teamRanking.isLoading ? (
+          <SkeletonList rows={4} />
+        ) : teamRanking.error ? (
+          <ErrorState
+            error={teamRanking.error as Error}
+            onRetry={() => void teamRanking.refetch()}
+          />
+        ) : teamRows.length === 0 ? (
+          <EmptyState
+            message={t('leaderboard.teamsEmpty')}
+            action={{ label: t('agenda.title'), routerLink: '/tabs/agenda' }}
+          />
+        ) : (
+          <IonList inset>
+            {teamRows.map((row) => (
+              <IonItem key={row.teamId} color={row.isMine ? 'light' : undefined}>
+                <IonNote slot="start">{row.rank}</IonNote>
+                <IonLabel className="ion-text-wrap">
+                  <h2>{row.teamName}</h2>
+                  <p>
+                    {t('leaderboard.teamTotal', {
+                      points: row.totalPoints,
+                      count: row.memberCount,
+                    })}
+                  </p>
+                </IonLabel>
+                <IonNote slot="end" color="primary">
+                  {t('leaderboard.teamAverage', { points: row.avgPoints })}
+                </IonNote>
+              </IonItem>
+            ))}
+          </IonList>
+        )
+      ) : leaderboard.isLoading ? (
         <SkeletonList rows={6} />
       ) : leaderboard.error ? (
         <ErrorState

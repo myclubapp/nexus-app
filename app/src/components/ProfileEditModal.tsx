@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { IonInput, IonItem, IonToggle } from '@ionic/react';
+import { IonInput, IonItem, IonTextarea, IonToggle } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { useMyProfile, useUpdateMyProfile } from '../hooks/useProfile';
 import { FormModal } from './FormModal';
@@ -38,6 +38,9 @@ export function ProfileEditForm({
   const [phone, setPhone] = useState('');
   const [emailPublic, setEmailPublic] = useState(false);
   const [phonePublic, setPhonePublic] = useState(false);
+  const [address, setAddress] = useState('');
+  const [emergencyName, setEmergencyName] = useState('');
+  const [emergencyPhone, setEmergencyPhone] = useState('');
 
   // Den Entwurf aus dem geladenen Profil füllen.
   useEffect(() => {
@@ -47,6 +50,9 @@ export function ProfileEditForm({
     setPhone(profile.data.phone ?? '');
     setEmailPublic(profile.data.emailPublic);
     setPhonePublic(profile.data.phonePublic);
+    setAddress(profile.data.address ?? '');
+    setEmergencyName(profile.data.emergencyName ?? '');
+    setEmergencyPhone(profile.data.emergencyPhone ?? '');
   }, [profile.data]);
 
   return (
@@ -60,7 +66,16 @@ export function ProfileEditForm({
       onDismiss={onDismiss}
       onSubmit={() =>
         save.mutate(
-          { displayName, email, phone, emailPublic, phonePublic },
+          {
+            displayName,
+            email,
+            phone,
+            emailPublic,
+            phonePublic,
+            address,
+            emergencyName,
+            emergencyPhone,
+          },
           { onSuccess: onSaved },
         )
       }
@@ -108,6 +123,45 @@ export function ProfileEditForm({
           <IonToggle checked={phonePublic} onIonChange={(e) => setPhonePublic(e.detail.checked)}>
             {t('profile.phoneVisible')}
           </IonToggle>
+        </IonItem>
+      </ListSection>
+
+      {/* Konzept §3.1: Adresse – nur für die Person selbst und den Vorstand.
+          Kein Schalter: Es gibt keine Sichtbarkeit zu wählen. */}
+      <ListSection title={t('profile.address')} footnote={t('profile.addressHint')}>
+        <IonItem>
+          <IonTextarea
+            label={t('profile.address')}
+            labelPlacement="stacked"
+            autoGrow
+            rows={2}
+            value={address}
+            onIonInput={(e) => setAddress(e.detail.value ?? '')}
+          />
+        </IonItem>
+      </ListSection>
+
+      {/* Der Notfallkontakt: Die Fussnote sagt, wer ihn sieht – das ist die
+          Frage, die jemand vor dem Eintragen hat. */}
+      <ListSection title={t('profile.emergency')} footnote={t('profile.emergencyHint')}>
+        <IonItem>
+          <IonInput
+            label={t('profile.emergencyName')}
+            labelPlacement="stacked"
+            autocapitalize="words"
+            value={emergencyName}
+            onIonInput={(e) => setEmergencyName(e.detail.value ?? '')}
+          />
+        </IonItem>
+        <IonItem>
+          <IonInput
+            label={t('profile.emergencyPhone')}
+            labelPlacement="stacked"
+            type="tel"
+            inputmode="tel"
+            value={emergencyPhone}
+            onIonInput={(e) => setEmergencyPhone(e.detail.value ?? '')}
+          />
         </IonItem>
       </ListSection>
     </FormModal>

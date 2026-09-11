@@ -20,6 +20,7 @@ import {
   useRuleLabels,
 } from '../hooks/useGamification';
 import { useAgenda } from '../hooks/useAgenda';
+import { MonthBars } from '../components/MonthBars';
 import { useNews } from '../hooks/useNews';
 import { useNewsSource } from '../hooks/useNewsSources';
 import { useIsNewClub } from '../hooks/useOnboarding';
@@ -34,7 +35,7 @@ import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonList, SkeletonNewsCards, SkeletonStats } from '../components/Skeletons';
 import { formatDate, formatDateTime } from '../lib/format';
 import { canShareNatively } from '../lib/invite';
-import { bookingLabel } from '../lib/points';
+import { bookingLabel, pointsPerMonth } from '../lib/points';
 import { useToast } from '../hooks/useToast';
 import type { News } from '../lib/database.types';
 
@@ -60,6 +61,9 @@ export function DashboardPage() {
 
   const nextEvents = (agenda.data ?? []).slice(0, 3);
   const recent = points.transactions.slice(0, 3);
+  // Konzept §7.1: der Saisonverlauf – Punkte je Monat seit Saisonstart.
+  const months = pointsPerMonth(points.transactions, activeClub?.season_start);
+  const hasTrend = months.some((entry) => entry.points > 0);
   // A1: Wer noch keine Buchung hat, bekommt keinen leeren Stand, sondern eine
   // Begrüssung – und darunter den nächsten erreichbaren Beitrag.
   const isNewcomer = summary.isSuccess && summary.data.bookingCount === 0;
@@ -151,6 +155,22 @@ export function DashboardPage() {
             accent="tertiary"
           />
         </div>
+      )}
+
+      {hasTrend && (
+        <ListSection title={t('dashboard.seasonTrend')} footnote={t('dashboard.seasonTrendHint')}>
+          <IonItem lines="none">
+            <IonLabel>
+              <MonthBars
+                months={months}
+                description={t('dashboard.seasonTrendDescription', {
+                  count: months.length,
+                  points: summary.data?.seasonPoints ?? 0,
+                })}
+              />
+            </IonLabel>
+          </IonItem>
+        </ListSection>
       )}
 
       {isNewcomer && (

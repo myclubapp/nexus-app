@@ -363,6 +363,7 @@ Bestand in `src/components/`. Vor jedem neuen Bauteil hier nachsehen.
 | `MemberAvatar`     | Der Avatar einer Person – Bild aus `avatar_url`, sonst Initialen auf der Vereinsfarbe; in Mitgliederliste, Team und Rangliste dieselbe Zeile |
 | `TeamDetailModal`  | Ein Team als Blatt: Name, Bereich, Mitglieder mit Wischen zum Entfernen, Löschen mit Rückfrage – der Riegel sitzt in `delete_team()` |
 | `FederationTeamSection` | Der Abschnitt «Verbands-Team» in «Team anlegen» und im Team-Blatt: laden, wählen, Zusatz, lösen – und der Hinweis, wenn kein Verband verbunden ist (UC-039) |
+| `MonthBars`        | Der Saisonverlauf als Balken je Monat (Konzept §7.1) – Gegenstück zu `TrendChart`, Rechnung in `lib/points.ts` |
 | `FederationImportModal` | Teams aus dem Verband übernehmen: die Liste mit Vorschlägen (verknüpft, zuordnen, anlegen) und Kontrollkästchen (UC-039 A1) |
 | `AttendanceStatusIcon` | Der eigene Antwortstand als Ampel-Symbol am Zeilenanfang; ein Tippen schaltet um. Nachbau des `app-status-icon` der bestehenden myclub-App |
 | `EventDetailModal` | Termin-Detail als Blatt: Eckdaten mit Symbol je Zeile, «Mein Status», die Listen Zugesagt / Abgesagt / Keine Antwort              |

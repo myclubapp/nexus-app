@@ -1,5 +1,6 @@
 import type { PointRule, PointTransaction } from './database.types';
 import { PILLARS, type Pillar } from './pointRule';
+import { seasonLabel } from './season';
 
 /**
  * Wie eine Buchung überschrieben wird (Schritt 3, FR-041).
@@ -125,4 +126,70 @@ export function sumPoints(
   entries: readonly Pick<PointTransaction, 'points'>[],
 ): number {
   return entries.reduce((total, entry) => total + entry.points, 0);
+}
+
+/** Ein Monat der Saison mit seinen Punkten (Konzept §7.1, «Saisonverlauf»). */
+export interface MonthPoints {
+  /** Der Monatsbeginn als Datum – die Ansicht beschriftet ihn in der Sprache der Person. */
+  month: Date;
+  points: number;
+}
+
+/**
+ * Punkte je Monat der laufenden Saison – vom Saisonstart bis heute.
+ *
+ * Leere Monate stehen mit Null drin: Ein Verlauf, der die stillen Monate
+ * auslässt, zeigt keine Entwicklung, sondern eine Auswahl. Gerechnet wird in
+ * Ortszeit; ein Termin am Monatsersten um 00:30 gehört in den neuen Monat.
+ */
+export function pointsPerMonth(
+  entries: readonly Pick<PointTransaction, 'created_at' | 'points' | 'season'>[],
+  seasonStart: string | null | undefined,
+  today: Date = new Date(),
+): MonthPoints[] {
+  const season = seasonLabel(seasonStart, today);
+  const firstYear = Number(season.slice(0, 4));
+  const start = seasonStart ? new Date(seasonStart) : null;
+  const startMonth = start && !Number.isNaN(start.getTime()) ? start.getMonth() : 0;
+
+  const months: MonthPoints[] = [];
+  const cursor = new Date(firstYear, startMonth, 1);
+  const last = new Date(today.getFullYear(), today.getMonth(), 1);
+  while (cursor <= last && months.length < 12) {
+    months.push({ month: new Date(cursor), points: 0 });
+    cursor.setMonth(cursor.getMonth() + 1);
+  }
+
+  for (const entry of entries) {
+    if (entry.season !== season) continue;
+    const at = new Date(entry.created_at);
+    const slot = months.find(
+      (candidate) =>
+        candidate.month.getFullYear() === at.getFullYear() &&
+        candidate.month.getMonth() === at.getMonth(),
+    );
+    if (slot) slot.points += entry.points;
+  }
+
+  return months;
+}
+
+/**
+ * Die Balken eines Monatsverlaufs auf einer Fläche von 100 × 40.
+ *
+ * Reine Rechnung wie `trendPath()`: prüfbar, und die Ansicht zeichnet nur.
+ * Der höchste Monat füllt die Höhe; ohne Punkte gibt es keine Balken.
+ */
+export function monthBars(
+  months: readonly MonthPoints[],
+): { x: number; width: number; height: number }[] {
+  const max = Math.max(0, ...months.map((entry) => entry.points));
+  if (months.length === 0 || max === 0) return [];
+  const slot = 100 / months.length;
+  const width = slot * 0.6;
+  return months.map((entry, index) => ({
+    x: Math.round((index * slot + (slot - width) / 2) * 100) / 100,
+    width: Math.round(width * 100) / 100,
+    height: Math.round((Math.max(0, entry.points) / max) * 40 * 100) / 100,
+  }));
 }

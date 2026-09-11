@@ -5,6 +5,8 @@ import {
   bookingPillar,
   canCorrect,
   filterBookings,
+  monthBars,
+  pointsPerMonth,
   seasonsOf,
   sumPoints,
   validateManualBooking,
@@ -196,5 +198,47 @@ describe('seasonLabel gegen season_label() (BR-082)', () => {
 
   it('stimmt am Stichtag des laufenden Jahres überein', () => {
     expect(seasonLabel(start, new Date('2026-09-09T12:00:00'))).toBe('2026/27');
+  });
+});
+
+describe('pointsPerMonth (Konzept §7.1)', () => {
+  const today = new Date(2026, 10, 15); // 15.11.2026, Saison ab 1. August
+
+  it('führt jeden Monat vom Saisonstart bis heute, auch die leeren', () => {
+    const months = pointsPerMonth(
+      [
+        { created_at: '2026-08-03T18:00:00', points: 10, season: '2026/27' },
+        { created_at: '2026-08-20T18:00:00', points: 15, season: '2026/27' },
+        { created_at: '2026-10-01T00:30:00', points: 20, season: '2026/27' },
+        // Die Vorsaison zählt nicht mit.
+        { created_at: '2026-07-20T18:00:00', points: 99, season: '2025/26' },
+      ],
+      '2026-08-01',
+      today,
+    );
+    expect(months.map((entry) => entry.month.getMonth())).toEqual([7, 8, 9, 10]);
+    expect(months.map((entry) => entry.points)).toEqual([25, 0, 20, 0]);
+  });
+
+  it('nimmt ohne Saisonstart das Kalenderjahr', () => {
+    const months = pointsPerMonth([], null, new Date(2026, 2, 1));
+    expect(months).toHaveLength(3);
+    expect(months[0].month.getMonth()).toBe(0);
+  });
+});
+
+describe('monthBars', () => {
+  it('skaliert den höchsten Monat auf die volle Höhe und lässt Nullen leer', () => {
+    const bars = monthBars([
+      { month: new Date(2026, 7, 1), points: 20 },
+      { month: new Date(2026, 8, 1), points: 0 },
+      { month: new Date(2026, 9, 1), points: 40 },
+    ]);
+    expect(bars.map((bar) => bar.height)).toEqual([20, 0, 40]);
+    expect(bars[0].x).toBeLessThan(bars[1].x);
+  });
+
+  it('zeichnet nichts ohne Punkte', () => {
+    expect(monthBars([{ month: new Date(2026, 7, 1), points: 0 }])).toEqual([]);
   });
 });

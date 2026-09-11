@@ -132,7 +132,10 @@
       "event": "Termin",
       "shift": "Schicht",
       "task": "Aufgabe"
-    }
+    },
+    "seasonTrend": "Saisonverlauf",
+    "seasonTrendHint": "Punkte je Monat seit Saisonstart.",
+    "seasonTrendDescription": "Punkte je Monat über {{count}} Monate, insgesamt {{points}} Punkte in dieser Saison"
   },
   "marketplace": {
     "title": "Marktplatz",
@@ -175,7 +178,12 @@
     "pillar": "Säule",
     "allPillars": "Alle Säulen",
     "filterHint": "Kürzere Zeiträume zeigen auch, wer neu dabei ist.",
-    "yourRank": "Dein Rang: {{rank}}"
+    "yourRank": "Dein Rang: {{rank}}",
+    "teams": "Teams",
+    "teamAverage": "Ø {{points}} pro Mitglied",
+    "teamTotal": "{{points}} Punkte · {{count}} Mitglieder",
+    "teamsHint": "Der Durchschnitt pro Mitglied – so liegt ein grosses Team nicht allein wegen seiner Grösse vorn. Teams mit weniger als zwei sichtbaren Mitgliedern erscheinen nicht.",
+    "teamsEmpty": "Noch kein Team mit Punkten in diesem Zeitraum"
   },
   "agenda": {
     "title": "Agenda",
@@ -273,7 +281,13 @@
     "emailVisible": "E-Mail für Mitglieder sichtbar",
     "phoneVisible": "Telefonnummer für Mitglieder sichtbar",
     "kudos": "Dank",
-    "kudosHint": "Was der Vorstand zu deinen Beiträgen geschrieben hat."
+    "kudosHint": "Was der Vorstand zu deinen Beiträgen geschrieben hat.",
+    "address": "Adresse",
+    "addressHint": "Nur du und der Vorstand sehen die Adresse – für Post und Rechnungen.",
+    "emergency": "Notfallkontakt",
+    "emergencyName": "Name der Kontaktperson",
+    "emergencyPhone": "Telefon der Kontaktperson",
+    "emergencyHint": "Sehen nur du, der Vorstand und die Trainer:innen deiner Teams – für den Fall, dass am Spieltag etwas passiert."
   },
   "clubSettings": {
     "title": "Vereinseinstellungen",
@@ -606,7 +620,9 @@
     "count_one": "{{count}} Mitglied",
     "area": "Bereich",
     "areaPlaceholder": "z. B. Junioren – leer heisst alle Teams",
-    "resetFilter": "Filter zurücksetzen"
+    "resetFilter": "Filter zurücksetzen",
+    "contact": "Kontakt",
+    "emergencyLabel": "Notfall"
   },
   "pointRules": {
     "title": "Punkteregeln",

@@ -1297,17 +1297,26 @@ export type Database = {
       }
       member_contacts: {
         Row: {
+          address: string | null
           email: string | null
+          emergency_name: string | null
+          emergency_phone: string | null
           member_id: string
           phone: string | null
         }
         Insert: {
+          address?: string | null
           email?: string | null
+          emergency_name?: string | null
+          emergency_phone?: string | null
           member_id: string
           phone?: string | null
         }
         Update: {
+          address?: string | null
           email?: string | null
+          emergency_name?: string | null
+          emergency_phone?: string | null
           member_id?: string
           phone?: string | null
         }
@@ -2250,6 +2259,7 @@ export type Database = {
         Returns: undefined
       }
       auto_release_pulses: { Args: never; Returns: number }
+      award_loyalty: { Args: { p_today?: string }; Returns: number }
       award_points: {
         Args: {
           p_member_id: string
@@ -2430,6 +2440,13 @@ export type Database = {
         Returns: undefined
       }
       drop_sample_content: { Args: { p_club_id: string }; Returns: number }
+      emergency_contact: {
+        Args: { p_member_id: string }
+        Returns: {
+          emergency_name: string
+          emergency_phone: string
+        }[]
+      }
       ensure_demo_club: { Args: never; Returns: string }
       event_in_scope: { Args: { p_event_id: string }; Returns: boolean }
       event_roster: {
@@ -2932,12 +2949,27 @@ export type Database = {
           responses: number
         }[]
       }
+      team_ranking_rows: {
+        Args: { p_club_id: string; p_period?: string; p_pillar?: number }
+        Returns: {
+          avg_points: number
+          is_mine: boolean
+          member_count: number
+          rank: number
+          team_id: string
+          team_name: string
+          total_points: number
+        }[]
+      }
       unlink_team: { Args: { p_team_id: string }; Returns: undefined }
       update_my_profile: {
         Args: {
+          p_address?: string
           p_display_name?: string
           p_email?: string
           p_email_public?: boolean
+          p_emergency_name?: string
+          p_emergency_phone?: string
           p_member_id: string
           p_phone?: string
           p_phone_public?: boolean

@@ -132,7 +132,10 @@
       "event": "Rendez-vous",
       "shift": "Créneau",
       "task": "Tâche"
-    }
+    },
+    "seasonTrend": "Saison en cours",
+    "seasonTrendHint": "Points par mois depuis le début de la saison.",
+    "seasonTrendDescription": "Points par mois sur {{count}} mois, {{points}} points au total cette saison"
   },
   "marketplace": {
     "title": "Missions",
@@ -175,7 +178,12 @@
     "pillar": "Pilier",
     "allPillars": "Tous les piliers",
     "filterHint": "Des périodes plus courtes montrent aussi celles et ceux qui viennent d’arriver.",
-    "yourRank": "Ton rang : {{rank}}"
+    "yourRank": "Ton rang : {{rank}}",
+    "teams": "Équipes",
+    "teamAverage": "Ø {{points}} par membre",
+    "teamTotal": "{{points}} points · {{count}} membres",
+    "teamsHint": "La moyenne par membre, pour qu’une grande équipe ne soit pas devant uniquement par sa taille. Les équipes de moins de deux membres visibles n’apparaissent pas.",
+    "teamsEmpty": "Aucune équipe avec des points sur cette période"
   },
   "agenda": {
     "title": "Agenda",
@@ -273,7 +281,13 @@
     "emailVisible": "E-mail visible pour les membres",
     "phoneVisible": "Téléphone visible pour les membres",
     "kudos": "Remerciements",
-    "kudosHint": "Ce que le comité a écrit sur tes contributions."
+    "kudosHint": "Ce que le comité a écrit sur tes contributions.",
+    "address": "Adresse",
+    "addressHint": "Seuls toi et le comité voient l’adresse, pour le courrier et les factures.",
+    "emergency": "Contact d’urgence",
+    "emergencyName": "Nom de la personne de contact",
+    "emergencyPhone": "Téléphone de la personne de contact",
+    "emergencyHint": "Visible uniquement par toi, le comité et les entraîneur·es de tes équipes, au cas où il arriverait quelque chose un jour de match."
   },
   "clubSettings": {
     "title": "Paramètres du club",
@@ -606,7 +620,9 @@
     "count_one": "{{count}} membre",
     "area": "Secteur",
     "areaPlaceholder": "p. ex. Juniors – vide signifie toutes les équipes",
-    "resetFilter": "Réinitialiser le filtre"
+    "resetFilter": "Réinitialiser le filtre",
+    "contact": "Contact",
+    "emergencyLabel": "Urgence"
   },
   "pointRules": {
     "title": "Règles de points",

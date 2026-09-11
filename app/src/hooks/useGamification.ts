@@ -101,6 +101,51 @@ export function useLeaderboard(options: LeaderboardOptions = {}) {
   });
 }
 
+export interface TeamRankingEntry {
+  teamId: string;
+  teamName: string;
+  memberCount: number;
+  totalPoints: number;
+  avgPoints: number;
+  rank: number;
+  isMine: boolean;
+}
+
+/**
+ * Team gegen Team (Konzept §7.3): der Durchschnitt je Mitglied.
+ *
+ * Wie `useLeaderboard()` aus **einer** Serverfunktion (`0062`): Zeitraum,
+ * Säule, Opt-out und die Regel, dass ein Team aus einer Person nicht
+ * erscheint, stehen dort.
+ */
+export function useTeamRanking(options: Pick<LeaderboardOptions, 'period' | 'pillar'> = {}) {
+  const { activeClub } = useClub();
+  const { period = 'season', pillar = null } = options;
+
+  return useQuery({
+    queryKey: ['team-ranking', activeClub?.id, period, pillar],
+    enabled: Boolean(activeClub) && isConfigured,
+    staleTime: 5 * 60_000,
+    queryFn: async (): Promise<TeamRankingEntry[]> => {
+      const { data, error } = await supabase.rpc('team_ranking_rows', {
+        p_club_id: activeClub!.id,
+        p_period: period,
+        p_pillar: pillar ?? undefined,
+      });
+      if (error) throw new Error(error.message);
+      return (data ?? []).map((row) => ({
+        teamId: row.team_id,
+        teamName: row.team_name,
+        memberCount: row.member_count,
+        totalPoints: row.total_points,
+        avgPoints: Number(row.avg_points),
+        rank: row.rank,
+        isMine: row.is_mine,
+      }));
+    },
+  });
+}
+
 /** Die Teams, denen das angemeldete Mitglied angehört (A4). */
 export function useMyTeams() {
   const { activeMembership } = useClub();

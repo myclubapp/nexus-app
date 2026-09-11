@@ -319,6 +319,35 @@
   margin: var(--app-space-2) 0;
 }
 
+/* Saisonverlauf als Balken je Monat (Konzept §7.1) – Gegenstück zu .app-trend. */
+.app-bars {
+  display: block;
+  margin: var(--app-space-2) 0;
+}
+
+.app-bars__chart {
+  display: block;
+  width: 100%;
+  height: 72px;
+}
+
+.app-bars__grid {
+  stroke: var(--ion-color-step-200, rgba(0, 0, 0, 0.12));
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.app-bars__bar {
+  fill: var(--ion-color-primary);
+}
+
+.app-bars__labels {
+  display: flex;
+  justify-content: space-around;
+  font-size: 0.75rem;
+  color: var(--ion-color-medium);
+}
+
 .app-trend__grid {
   stroke: var(--ion-color-step-200, rgba(0, 0, 0, 0.12));
   stroke-width: 1;

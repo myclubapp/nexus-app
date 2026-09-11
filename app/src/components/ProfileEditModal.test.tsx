@@ -46,6 +46,9 @@ describe('ProfileEditForm', () => {
       emailPublic: true,
       phonePublic: false,
       leaderboardOptIn: true,
+      address: null,
+      emergencyName: null,
+      emergencyPhone: null,
     };
     vi.clearAllMocks();
   });
@@ -64,6 +67,9 @@ describe('ProfileEditForm', () => {
         phone: '079 111 22 33',
         emailPublic: true,
         phonePublic: false,
+        address: '',
+        emergencyName: '',
+        emergencyPhone: '',
       },
       expect.anything(),
     );
@@ -75,8 +81,11 @@ describe('ProfileEditForm', () => {
     );
 
     // Ein Schalter je Angabe – ein gemeinsamer wäre kein Entscheid je Feld.
+    // Adresse und Notfallkontakt (0063) haben bewusst keinen: Es gibt dort
+    // keine Sichtbarkeit zu wählen.
     expect(container.querySelectorAll('ion-toggle')).toHaveLength(2);
-    expect(container.querySelectorAll('ion-input')).toHaveLength(3);
+    expect(container.querySelectorAll('ion-input')).toHaveLength(5);
+    expect(container.querySelectorAll('ion-textarea')).toHaveLength(1);
   });
 
   it('erklärt, dass Verborgenes nicht ausgeliefert wird (BR-030, BR-028)', () => {
@@ -114,6 +123,9 @@ describe('ProfileEditForm', () => {
       emailPublic: false,
       phonePublic: false,
       leaderboardOptIn: true,
+      address: null,
+      emergencyName: null,
+      emergencyPhone: null,
     };
     renderWithProviders(<ProfileEditForm onDismiss={vi.fn()} onSaved={vi.fn()} />);
 
@@ -128,6 +140,9 @@ describe('ProfileEditForm', () => {
         phone: '',
         emailPublic: false,
         phonePublic: false,
+        address: '',
+        emergencyName: '',
+        emergencyPhone: '',
       },
       expect.anything(),
     );

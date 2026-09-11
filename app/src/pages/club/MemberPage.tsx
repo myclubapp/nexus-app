@@ -21,6 +21,7 @@ import {
   useSetMemberTeams,
   useUpdateMember,
   type ClubMemberWithTeams,
+  useMemberContacts,
 } from '../../hooks/useMembers';
 import { useToast } from '../../hooks/useToast';
 import { AppPage } from '../../components/AppPage';
@@ -69,6 +70,7 @@ export function MemberPage() {
 
   const [filter, setFilter] = useState<MemberFilter>(EMPTY_MEMBER_FILTER);
   const [open, setOpen] = useState<ClubMemberWithTeams | null>(null);
+  const contacts = useMemberContacts(open?.id ?? null);
   const [role, setRole] = useState<MemberRole>('member');
   const [status, setStatus] = useState<MemberStatus>('active');
   const [teamIds, setTeamIds] = useState<string[]>([]);
@@ -320,6 +322,27 @@ export function MemberPage() {
                 <IonLabel>{t('profile.memberSinceLabel')}</IonLabel>
                 <IonNote slot="end">{formatDate(open.member_since)}</IonNote>
               </IonItem>
+
+              {/* Konzept §3.1: Kontakt, Adresse, Notfallkontakt – nur der
+                  Vorstand liest die Zeile (0013, 0063). */}
+              {contacts.data && (
+                <IonItem lines="full">
+                  <IonLabel className="ion-text-wrap">
+                    <h2>{t('members.contact')}</h2>
+                    {contacts.data.email && <p>{contacts.data.email}</p>}
+                    {contacts.data.phone && <p>{contacts.data.phone}</p>}
+                    {contacts.data.address && <p>{contacts.data.address}</p>}
+                    {(contacts.data.emergencyName || contacts.data.emergencyPhone) && (
+                      <p>
+                        {t('members.emergencyLabel')}:{' '}
+                        {[contacts.data.emergencyName, contacts.data.emergencyPhone]
+                          .filter(Boolean)
+                          .join(' · ')}
+                      </p>
+                    )}
+                  </IonLabel>
+                </IonItem>
+              )}
 
               <IonItem>
                 <IonSelect

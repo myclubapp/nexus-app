@@ -132,7 +132,10 @@
       "event": "Event",
       "shift": "Shift",
       "task": "Task"
-    }
+    },
+    "seasonTrend": "Season so far",
+    "seasonTrendHint": "Points per month since the season started.",
+    "seasonTrendDescription": "Points per month over {{count}} months, {{points}} points in total this season"
   },
   "marketplace": {
     "title": "Tasks",
@@ -175,7 +178,12 @@
     "pillar": "Pillar",
     "allPillars": "All pillars",
     "filterHint": "Shorter periods also show who has just joined.",
-    "yourRank": "Your rank: {{rank}}"
+    "yourRank": "Your rank: {{rank}}",
+    "teams": "Teams",
+    "teamAverage": "Ø {{points}} per member",
+    "teamTotal": "{{points}} points · {{count}} members",
+    "teamsHint": "The average per member, so a large team is not ahead just because of its size. Teams with fewer than two visible members are not shown.",
+    "teamsEmpty": "No team with points in this period yet"
   },
   "agenda": {
     "title": "Agenda",
@@ -273,7 +281,13 @@
     "emailVisible": "Email visible to members",
     "phoneVisible": "Phone visible to members",
     "kudos": "Thanks",
-    "kudosHint": "What the committee wrote about your contributions."
+    "kudosHint": "What the committee wrote about your contributions.",
+    "address": "Address",
+    "addressHint": "Only you and the board see the address, for mail and invoices.",
+    "emergency": "Emergency contact",
+    "emergencyName": "Name of the contact person",
+    "emergencyPhone": "Phone of the contact person",
+    "emergencyHint": "Seen only by you, the board and the coaches of your teams, in case something happens on match day."
   },
   "clubSettings": {
     "title": "Club settings",
@@ -606,7 +620,9 @@
     "count_one": "{{count}} member",
     "area": "Section",
     "areaPlaceholder": "e.g. Juniors – empty means all teams",
-    "resetFilter": "Reset filter"
+    "resetFilter": "Reset filter",
+    "contact": "Contact",
+    "emergencyLabel": "Emergency"
   },
   "pointRules": {
     "title": "Point rules",

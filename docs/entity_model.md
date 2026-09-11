@@ -150,6 +150,21 @@ Die Mitgliedschaft einer Person in einem Verein samt Rolle und Sichtbarkeitsents
 
 **Constraints:** Je Verein und Anmeldekonto existiert höchstens eine Mitgliedschaft. Ein Konto ohne `user_id` ist eine vom Verein geführte Person ohne eigenen Zugang.
 
+### MEMBER_CONTACT
+
+Die Kontaktangaben einer Mitgliedschaft – in einer eigenen Tabelle, weil `club_members` jedes Vereinsmitglied lesen darf und eine verborgene Nummer dort nicht verborgen wäre (0013, 0063).
+
+| Attribute       | Description                                             | Data Type | Length/Precision | Validation Rules                             |
+| --------------- | ------------------------------------------------------- | --------- | ---------------- | -------------------------------------------- |
+| member_id       | Mitgliedschaft, zu der die Angaben gehören              | UUID      | 36               | Primary Key, Foreign Key (CLUB_MEMBER.id)    |
+| email           | E-Mail-Adresse; Sichtbarkeit über `privacy.email`        | String    | 200              | Optional                                     |
+| phone           | Telefonnummer; Sichtbarkeit über `privacy.phone`         | String    | 40               | Optional                                     |
+| address         | Postadresse (Konzept §3.1)                               | String    | 200              | Optional                                     |
+| emergency_name  | Name der Notfall-Kontaktperson                           | String    | 80               | Optional                                     |
+| emergency_phone | Telefon der Notfall-Kontaktperson                        | String    | 40               | Optional                                     |
+
+**Constraints:** Die Zeile lesen die Person selbst und der Vorstand. Andere Mitglieder sehen E-Mail und Telefon nur über die Sicht `club_directory` und nur, wenn `privacy` sie freigibt (BR-030). Adresse steht in keiner Sicht. Den Notfallkontakt gibt `emergency_contact()` zusätzlich an Trainer:innen eines gemeinsamen Teams heraus – Name und Nummer, sonst nichts. Geschrieben wird ausschliesslich über `update_my_profile()`: `null` heisst unverändert, ein leerer Text löscht.
+
 ### TEAM
 
 Eine Gruppe innerhalb eines Vereins, an der Termine, Ranglisten und Reichweiten hängen.
