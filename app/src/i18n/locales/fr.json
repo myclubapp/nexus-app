@@ -294,6 +294,10 @@
       "health": {
         "title": "Santé du club",
         "body": "Signaux de sollicitude pour les entraîneur·e·s et le comité."
+      },
+      "invoice": {
+        "title": "Factures",
+        "body": "État des factures dans l'app et points pour un paiement dans les délais. Elles restent émises par le service de facturation."
       }
     },
     "dna": "ADN du club",
@@ -1371,6 +1375,21 @@
       "event": "Rendez-vous",
       "task": "Tâche",
       "news": "Actualité"
+    }
+  },
+  "invoice": {
+    "title": "Mes factures",
+    "list": "Factures",
+    "listHint": "Montant, échéance et état. Les détails sont chez le service de facturation – touche une ligne.",
+    "empty": "Aucune facture. Dès que le club t'en adresse une, elle figure ici.",
+    "outstanding": "Ouvert en CHF",
+    "amount": "CHF {{amount}}",
+    "dueOn": "Échéance le {{date}}",
+    "onTime": "Payée dans les délais – les points sont crédités.",
+    "status": {
+      "open": "Ouverte",
+      "paid": "Payée",
+      "overdue": "En retard"
     }
   },
   "noteAnswer": {

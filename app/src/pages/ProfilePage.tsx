@@ -153,6 +153,14 @@ export function ProfilePage() {
           </IonItem>
         )}
 
+        {/* A4: Ohne aktiven Rechnungsdienst wird der Bereich **vollständig**
+            ausgeblendet – nicht als leere Liste gezeigt. */}
+        {isModuleOn(activeClub?.settings, 'invoice') && (
+          <IonItem button routerLink="/tabs/profile/invoices" detail>
+            <IonLabel>{t('invoice.title')}</IonLabel>
+          </IonItem>
+        )}
+
         <IonItem button routerLink="/tabs/profile/notifications" detail>
           <IonLabel>{t('notifications.title')}</IonLabel>
         </IonItem>

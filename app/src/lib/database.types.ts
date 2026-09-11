@@ -66,6 +66,9 @@ export const CLUB_MODULES = [
   'checkin',
   'pulse',
   'health',
+  // Seit UC-036: der Rechnungsdienst. A4 verlangt, dass der Bereich ohne ihn
+  // **vollständig** verschwindet.
+  'invoice',
 ] as const;
 export type ClubModule = (typeof CLUB_MODULES)[number];
 

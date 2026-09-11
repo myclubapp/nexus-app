@@ -294,6 +294,10 @@
       "health": {
         "title": "Club health",
         "body": "Care signals for coaches and the board."
+      },
+      "invoice": {
+        "title": "Invoices",
+        "body": "Invoice state in the app and points for paying on time. They are still issued by the invoicing service."
       }
     },
     "dna": "Club DNA",
@@ -1371,6 +1375,21 @@
       "event": "Event",
       "task": "Task",
       "news": "Post"
+    }
+  },
+  "invoice": {
+    "title": "My invoices",
+    "list": "Invoices",
+    "listHint": "Amount, due date and state. The details sit with the invoicing service – tap a row.",
+    "empty": "No invoices. As soon as the club issues one, it appears here.",
+    "outstanding": "Outstanding in CHF",
+    "amount": "CHF {{amount}}",
+    "dueOn": "Due on {{date}}",
+    "onTime": "Paid on time – the points are credited.",
+    "status": {
+      "open": "Open",
+      "paid": "Paid",
+      "overdue": "Overdue"
     }
   },
   "noteAnswer": {

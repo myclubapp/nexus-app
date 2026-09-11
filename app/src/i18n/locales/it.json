@@ -294,6 +294,10 @@
       "health": {
         "title": "Salute della società",
         "body": "Segnali di attenzione per chi allena e per il comitato."
+      },
+      "invoice": {
+        "title": "Fatture",
+        "body": "Stato delle fatture nell'app e punti per il pagamento puntuale. Vengono emesse sempre dal servizio di fatturazione."
       }
     },
     "dna": "DNA della società",
@@ -1371,6 +1375,21 @@
       "event": "Appuntamento",
       "task": "Compito",
       "news": "Notizia"
+    }
+  },
+  "invoice": {
+    "title": "Le mie fatture",
+    "list": "Fatture",
+    "listHint": "Importo, scadenza e stato. I dettagli stanno presso il servizio di fatturazione – tocca una riga.",
+    "empty": "Nessuna fattura. Appena la società te ne emette una, comparirà qui.",
+    "outstanding": "Aperto in CHF",
+    "amount": "CHF {{amount}}",
+    "dueOn": "Scadenza il {{date}}",
+    "onTime": "Pagata entro il termine – i punti sono accreditati.",
+    "status": {
+      "open": "Aperta",
+      "paid": "Pagata",
+      "overdue": "Scaduta"
     }
   },
   "noteAnswer": {

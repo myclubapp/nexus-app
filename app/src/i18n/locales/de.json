@@ -294,6 +294,10 @@
       "health": {
         "title": "Vereins-Gesundheit",
         "body": "Fürsorge-Hinweise für Trainer:innen und den Vorstand."
+      },
+      "invoice": {
+        "title": "Rechnungen",
+        "body": "Rechnungsstand in der App und Punkte für pünktliche Zahlung. Gestellt werden sie weiterhin im Rechnungsdienst."
       }
     },
     "dna": "Vereins-DNA",
@@ -1371,6 +1375,21 @@
       "event": "Termin",
       "task": "Aufgabe",
       "news": "Beitrag"
+    }
+  },
+  "invoice": {
+    "title": "Meine Rechnungen",
+    "list": "Rechnungen",
+    "listHint": "Betrag, Fälligkeit und Stand. Die Einzelheiten stehen beim Rechnungsdienst – tippe eine Zeile an.",
+    "empty": "Keine Rechnungen. Sobald der Verein dir eine stellt, steht sie hier.",
+    "outstanding": "Offen in CHF",
+    "amount": "CHF {{amount}}",
+    "dueOn": "Fällig am {{date}}",
+    "onTime": "Pünktlich bezahlt – die Punkte sind gutgeschrieben.",
+    "status": {
+      "open": "Offen",
+      "paid": "Bezahlt",
+      "overdue": "Überfällig"
     }
   },
   "noteAnswer": {

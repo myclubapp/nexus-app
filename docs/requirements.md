@@ -195,10 +195,10 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 
 | ID     | Titel                       | User Story                                                                                                                                                     | Priority | Status |
 | ------ | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------ |
-| FR-116 | Billing aktivieren          | Als Kassier:in möchte ich den Rechnungsdienst aus den Vereinseinstellungen aktivieren, damit wir Rechnungen stellen können, ohne die App zu wechseln.            | Medium   | Open   |
-| FR-117 | Mitglieder-Sync ans Billing | Als System möchte ich Änderungen an Mitgliederstammdaten an den Rechnungsdienst übermitteln, damit dessen Debitoren-Spiegel aktuell bleibt.                      | Medium   | Open   |
-| FR-118 | «Meine Rechnungen»          | Als Mitglied möchte ich meine offenen und bezahlten Rechnungen eingebettet in der App sehen, damit ich die App nicht verlassen muss.                             | Medium   | Open   |
-| FR-119 | Punkte bei pünktlicher Zahlung | Als System möchte ich bei einer fristgerecht bezahlten Rechnung Punkte der Säule 6 buchen, damit Verlässlichkeit gewürdigt wird.                              | Medium   | Open   |
+| FR-116 | Billing aktivieren          | Als Kassier:in möchte ich den Rechnungsdienst aus den Vereinseinstellungen aktivieren, damit wir Rechnungen stellen können, ohne die App zu wechseln.            | Medium   | Implemented |
+| FR-117 | Mitglieder-Sync ans Billing | Als System möchte ich Änderungen an Mitgliederstammdaten an den Rechnungsdienst übermitteln, damit dessen Debitoren-Spiegel aktuell bleibt.                      | Medium   | Partial |
+| FR-118 | «Meine Rechnungen»          | Als Mitglied möchte ich meine offenen und bezahlten Rechnungen eingebettet in der App sehen, damit ich die App nicht verlassen muss.                             | Medium   | Implemented |
+| FR-119 | Punkte bei pünktlicher Zahlung | Als System möchte ich bei einer fristgerecht bezahlten Rechnung Punkte der Säule 6 buchen, damit Verlässlichkeit gewürdigt wird.                              | Medium   | Implemented |
 | FR-120 | Verband verbinden           | Als Vorstand möchte ich unseren Verband über einen API-Key verbinden, damit Spielpläne und Resultate automatisch erscheinen.                                     | Low      | Open   |
 | FR-121 | API-Key validieren          | Als System möchte ich den eingegebenen API-Key mit einem Testaufruf prüfen, bevor die Verbindung aktiv wird, damit Fehler sofort sichtbar sind.                  | Low      | Open   |
 

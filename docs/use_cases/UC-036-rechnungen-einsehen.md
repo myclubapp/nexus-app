@@ -6,7 +6,7 @@
 **Use Case Name:** Rechnungen einsehen und Punkte bei pünktlicher Zahlung
 **Primary Actor:** Mitglied
 **Goal:** Den eigenen Rechnungsstand in der App sehen und für pünktliche Zahlung gewürdigt werden
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

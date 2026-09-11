@@ -44,6 +44,7 @@ erDiagram
     CLUB ||--o{ CHECKIN_PROMPT : "stellt"
     CLUB ||--o{ CHECKIN_RESPONSE : "sammelt"
     CLUB ||--o{ INVOICE_REF : "spiegelt"
+    CLUB ||--o{ BILLING_OUTBOX : "meldet"
     CLUB ||--o{ FEDERATION_CONNECTION : "verbindet"
 
     TEAM ||--o{ TEAM_MEMBER : "umfasst"
@@ -63,6 +64,7 @@ erDiagram
     CLUB_MEMBER ||--o{ MEETING_INPUT : "reicht ein"
     CLUB_MEMBER ||--o{ CHECKIN_RESPONSE : "beantwortet"
     CLUB_MEMBER ||--o{ INVOICE_REF : "schuldet"
+    CLUB_MEMBER ||--o{ BILLING_OUTBOX : "steht in"
 
     EVENT_SERIES ||--o{ EVENT : "erzeugt"
     EVENT ||--o{ EVENT_SHIFT : "gliedert sich in"
@@ -660,6 +662,24 @@ Der lesende Spiegel einer Rechnung aus dem eigenständigen Rechnungsdienst.
 | updated_at  | Zeitpunkt der letzten Meldung des Dienstes    | DateTime  | -                | Not Null                                    |
 
 **Constraints:** Die Entität wird ausschliesslich durch Meldungen des Rechnungsdienstes geschrieben. Positionen, Zahlungsreferenzen und Bankdaten liegen nicht in diesem Modell. Eine Punktebuchung der Säule 6 entsteht, wenn `paid_at` nicht nach `due_date` liegt.
+
+### BILLING_OUTBOX
+
+Der Ausgangskorb für den Mitglieder-Sync an den Rechnungsdienst: was sich an den Stammdaten
+geändert hat, wartet hier, bis der Dienst es abholt.
+
+| Attribute  | Description                                  | Data Type | Length/Precision | Validation Rules                        |
+| ---------- | -------------------------------------------- | --------- | ---------------- | --------------------------------------- |
+| id         | Laufende Kennung des Eintrags                | Integer   | 19               | Primary Key, Generated                  |
+| club_id    | Verein der Änderung                          | UUID      | 36               | Not Null, Foreign Key (CLUB.id)         |
+| member_id  | Betroffenes Mitglied                         | UUID      | 36               | Not Null, Foreign Key (CLUB_MEMBER.id)  |
+| operation  | Art der Änderung                             | String    | 20               | Not Null, Values: upsert, remove        |
+| created_at | Zeitpunkt der Änderung                       | DateTime  | -                | Not Null                                |
+| sent_at    | Zeitpunkt der Übermittlung an den Dienst     | DateTime  | -                | Optional                                |
+
+**Constraints:** Einträge entstehen nur, solange der Verein den Rechnungsdienst aktiviert hat – ein
+Korb, den niemand leert, würde sonst nur wachsen. Ein Austritt und eine Löschung erzeugen denselben
+Eintrag `remove`. Angemeldete Konten haben auf die Entität keinen Zugriff; sie gehört dem Dienst.
 
 ### FEDERATION_CONNECTION
 
