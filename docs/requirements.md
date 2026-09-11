@@ -38,7 +38,7 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-008 | Einladung einlösen           | Als Gast möchte ich über einen Einladungslink in unter 60 Sekunden Mitglied werden, damit der Beitritt keine Hürde ist.                                         | High     | Implemented |
 | FR-009 | Beitritts-Anfrage stellen    | Als Gast möchte ich ohne Einladung eine Beitritts-Anfrage an einen Verein stellen, damit ich auch ohne Link dazustossen kann.                                   | Medium   | Implemented |
 | FR-010 | Beitritts-Anfrage entscheiden| Als Vorstand möchte ich Beitritts-Anfragen genehmigen oder ablehnen, damit nur berechtigte Personen Zugang zum Verein erhalten.                                 | High     | Implemented |
-| FR-011 | Mehrere Vereine              | Als Mitglied möchte ich mehreren Vereinen angehören und zwischen ihnen wechseln, damit ich nur ein Konto brauche.                                               | Medium   | Open        |
+| FR-011 | Mehrere Vereine              | Als Mitglied möchte ich mehreren Vereinen angehören und zwischen ihnen wechseln, damit ich nur ein Konto brauche.                                               | Medium   | Implemented |
 | FR-012 | Konto löschen                | Als Mitglied möchte ich mein Konto in der App löschen, damit ich die Kontrolle über meine Daten behalte (Store-Pflicht).                                        | High     | Implemented        |
 
 ### 1.2 Mitglieder & Teams
@@ -184,7 +184,7 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 
 | ID     | Titel                       | User Story                                                                                                                                                | Priority | Status      |
 | ------ | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
-| FR-110 | Sprache wählen              | Als Mitglied möchte ich zwischen Deutsch, Französisch, Italienisch und Englisch wechseln, damit ich die App in meiner Sprache nutze.                       | High     | In Progress |
+| FR-110 | Sprache wählen              | Als Mitglied möchte ich zwischen Deutsch, Französisch, Italienisch und Englisch wechseln, damit ich die App in meiner Sprache nutze.                       | High     | Implemented |
 | FR-111 | Vereinsfarben und Logo      | Als Vorstand möchte ich Farben und Logo des Vereins hinterlegen, damit die App zur Laufzeit im Vereins-Erscheinungsbild erscheint.                         | High     | Partial |
 | FR-112 | Begriffe konfigurieren      | Als Vorstand möchte ich die Bezeichnungen für Termintypen festlegen («Training», «Probe», «Anlass»), damit die App unsere Sprache spricht.                  | High     | Implemented |
 | FR-113 | Saisonbeginn festlegen      | Als Vorstand möchte ich den Saisonbeginn setzen, damit Punkte und Ranglisten auf unsere Saison zugeschnitten sind.                                          | High     | Implemented |

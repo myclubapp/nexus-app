@@ -18,25 +18,25 @@ synchron gehalten werden können.
 | UC | Titel | Primärakteur | Requirements | Status |
 |---|---|---|---|---|
 | [UC-001](UC-001-verein-gruenden.md) | Verein gründen | Vorstand | FR-004, FR-005, FR-006, FR-035, FR-113, FR-134 | Draft |
-| [UC-002](UC-002-per-einladung-beitreten.md) | Per Einladung beitreten | Gast | FR-008, FR-011 | Draft |
-| [UC-003](UC-003-einladung-erstellen.md) | Einladung erstellen | Vorstand | FR-007 | Draft |
-| [UC-004](UC-004-beitritts-anfrage-entscheiden.md) | Beitritts-Anfrage entscheiden | Vorstand | FR-009, FR-010 | Draft |
-| [UC-005](UC-005-anmelden.md) | Anmelden | Mitglied | FR-001, FR-002, FR-003 | Draft |
-| [UC-006](UC-006-konto-loeschen.md) | Konto löschen | Mitglied | FR-012 | Draft |
+| [UC-002](UC-002-per-einladung-beitreten.md) | Per Einladung beitreten | Gast | FR-008, FR-011 | Implemented |
+| [UC-003](UC-003-einladung-erstellen.md) | Einladung erstellen | Vorstand | FR-007 | Implemented |
+| [UC-004](UC-004-beitritts-anfrage-entscheiden.md) | Beitritts-Anfrage entscheiden | Vorstand | FR-009, FR-010 | Implemented |
+| [UC-005](UC-005-anmelden.md) | Anmelden | Mitglied | FR-001, FR-002, FR-003 | Implemented |
+| [UC-006](UC-006-konto-loeschen.md) | Konto löschen | Mitglied | FR-012 | Implemented |
 
 ### Mitglieder & Teams
 
 | UC | Titel | Primärakteur | Requirements | Status |
 |---|---|---|---|---|
-| [UC-007](UC-007-mitglieder-und-teams-verwalten.md) | Mitglieder, Rollen und Teams verwalten | Vorstand | FR-013, FR-014, FR-015, FR-016, FR-017 | Draft |
-| [UC-008](UC-008-profil-und-datenschutz-pflegen.md) | Profil und Datenschutz-Optionen pflegen | Mitglied | FR-018, FR-019, FR-020, FR-110 | Draft |
+| [UC-007](UC-007-mitglieder-und-teams-verwalten.md) | Mitglieder, Rollen und Teams verwalten | Vorstand | FR-013, FR-014, FR-015, FR-016, FR-017 | Implemented |
+| [UC-008](UC-008-profil-und-datenschutz-pflegen.md) | Profil und Datenschutz-Optionen pflegen | Mitglied | FR-018, FR-019, FR-020, FR-110 | Implemented |
 
 ### Agenda
 
 | UC | Titel | Primärakteur | Requirements | Status |
 |---|---|---|---|---|
-| [UC-009](UC-009-termin-erstellen.md) | Termin erstellen | Trainer:in | FR-021, FR-022, FR-023, FR-029, FR-051 | Draft |
-| [UC-010](UC-010-zu-oder-absagen.md) | Auf einen Termin zu- oder absagen | Mitglied | FR-024, FR-025, FR-026 | Draft |
+| [UC-009](UC-009-termin-erstellen.md) | Termin erstellen | Trainer:in | FR-021, FR-022, FR-023, FR-029, FR-051 | Implemented |
+| [UC-010](UC-010-zu-oder-absagen.md) | Auf einen Termin zu- oder absagen | Mitglied | FR-024, FR-025, FR-026 | Implemented |
 | [UC-011](UC-011-helfer-event-ausschreiben.md) | Helfer-Event mit Schichten ausschreiben | Vorstand | FR-030, FR-051, FR-084 | Implemented |
 | [UC-012](UC-012-schicht-uebernehmen.md) | Helfer-Schicht übernehmen | Mitglied | FR-031 | Implemented |
 | [UC-013](UC-013-schicht-bestaetigen.md) | Helfer-Schicht bestätigen | Vorstand | FR-032, FR-039 | Implemented |
@@ -47,7 +47,7 @@ synchron gehalten werden können.
 
 | UC | Titel | Primärakteur | Requirements | Status |
 |---|---|---|---|---|
-| [UC-016](UC-016-punkteregeln-konfigurieren.md) | Punkteregeln konfigurieren | Vorstand | FR-036, FR-037, FR-038, FR-040 | Draft |
+| [UC-016](UC-016-punkteregeln-konfigurieren.md) | Punkteregeln konfigurieren | Vorstand | FR-036, FR-037, FR-038, FR-040 | Implemented |
 | [UC-017](UC-017-aufgabe-ausschreiben.md) | Aufgabe im Marktplatz ausschreiben | Vorstand | FR-050, FR-051, FR-056, FR-059 | Implemented |
 | [UC-018](UC-018-aufgabe-uebernehmen.md) | Aufgabe übernehmen und einreichen | Mitglied | FR-052, FR-053, FR-057 | Implemented |
 | [UC-019](UC-019-aufgabe-bestaetigen.md) | Aufgabe bestätigen und Kudos geben | Vorstand | FR-054, FR-055 | Implemented |
