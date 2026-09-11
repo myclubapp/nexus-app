@@ -150,14 +150,20 @@ Aus `docs/guidelines.md`, verbindlich:
 - [x] 14. **Verdrahtung und Fehlerrückmeldung** — geprüft; kein unbenutzter
       neuer Schlüssel, jeder Fehlschlag zeigt eine Meldung.
 - [ ] 13. **Plattform-Parität** — Wizard und Datumsauswahl auf iOS, Android und
-      im Browser (Testplan TC-009).
+      im Browser (Testplan TC-009). Bleibt offen: Das verlangt ein Gerät, kein
+      weiteres Stück Code – dieselbe offene Zeile wie in zehn anderen Plänen.
+      Das Feld ist `type="date"`; der Fallstrick aus CLAUDE.md betrifft
+      `datetime-local`, nicht diesen Typ.
 - [x] 15. **Beispielinhalte** — Schritt 9 der Spezifikation verlangt
       gekennzeichnete Beispielinhalte. Geliefert von UC-037 am 2026-09-11:
       `create_club()` legt sie mit an, `seed_sample_content()` kennzeichnet sie.
 - [x] 16. **Migrationen gegen eine laufende Datenbank prüfen**
       (`supabase db reset`).
-- [ ] 17. **Statusabgleich** — FR-004, FR-005, FR-006, FR-112, FR-113 nachziehen
-      und `Status` in `UC-001-verein-gruenden.md` setzen. Erst nach 13, 15, 16.
+- [x] 17. **Statusabgleich** — erledigt am 2026-09-11. Verhaltensprüfung gegen
+      die verknüpfte Datenbank: **14 von 14 Prüfungen** – Gründung, Kurzname aus
+      dem Namen, gründende Person als Vorstand, Standard-Punkteregeln und
+      Terminlabels, Beispielinhalte (Schritt 9), A1 (`fc-musterhausen-1`) und
+      alle sechs Vereinsarten.
 
 ---
 
