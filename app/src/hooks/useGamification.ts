@@ -60,6 +60,8 @@ export interface LeaderboardOptions {
   period?: LeaderboardPeriod;
   pillar?: number | null;
   limit?: number;
+  /** Konzept §7.3, Saisonarchiv: eine vergangene Saison; leer heisst die laufende. */
+  season?: string | null;
 }
 
 /**
@@ -72,10 +74,10 @@ export interface LeaderboardOptions {
  */
 export function useLeaderboard(options: LeaderboardOptions = {}) {
   const { activeClub } = useClub();
-  const { teamId = null, period = 'season', pillar = null, limit = 20 } = options;
+  const { teamId = null, period = 'season', pillar = null, limit = 20, season = null } = options;
 
   return useQuery({
-    queryKey: ['leaderboard', activeClub?.id, teamId, period, pillar, limit],
+    queryKey: ['leaderboard', activeClub?.id, teamId, period, pillar, limit, season],
     enabled: Boolean(activeClub) && isConfigured,
     // BR-092: höchstens fünf Minuten alt. Gerechnet wird live, gehalten wird
     // fünf Minuten – die Rangliste ist damit nie älter, als die Regel erlaubt.
@@ -87,6 +89,7 @@ export function useLeaderboard(options: LeaderboardOptions = {}) {
         p_period: period,
         p_pillar: pillar ?? undefined,
         p_limit: limit,
+        p_season: season ?? undefined,
       });
       if (error) throw new Error(error.message);
       return (data ?? []).map((row) => ({
@@ -118,12 +121,14 @@ export interface TeamRankingEntry {
  * Säule, Opt-out und die Regel, dass ein Team aus einer Person nicht
  * erscheint, stehen dort.
  */
-export function useTeamRanking(options: Pick<LeaderboardOptions, 'period' | 'pillar'> = {}) {
+export function useTeamRanking(
+  options: Pick<LeaderboardOptions, 'period' | 'pillar' | 'season'> = {},
+) {
   const { activeClub } = useClub();
-  const { period = 'season', pillar = null } = options;
+  const { period = 'season', pillar = null, season = null } = options;
 
   return useQuery({
-    queryKey: ['team-ranking', activeClub?.id, period, pillar],
+    queryKey: ['team-ranking', activeClub?.id, period, pillar, season],
     enabled: Boolean(activeClub) && isConfigured,
     staleTime: 5 * 60_000,
     queryFn: async (): Promise<TeamRankingEntry[]> => {
@@ -131,6 +136,7 @@ export function useTeamRanking(options: Pick<LeaderboardOptions, 'period' | 'pil
         p_club_id: activeClub!.id,
         p_period: period,
         p_pillar: pillar ?? undefined,
+        p_season: season ?? undefined,
       });
       if (error) throw new Error(error.message);
       return (data ?? []).map((row) => ({
@@ -142,6 +148,49 @@ export function useTeamRanking(options: Pick<LeaderboardOptions, 'period' | 'pil
         rank: row.rank,
         isMine: row.is_mine,
       }));
+    },
+  });
+}
+
+/**
+ * Die Saisons, in denen der Verein gebucht hat – neueste zuerst (Konzept §7.3,
+ * Saisonarchiv). Aus `club_seasons()`: Seit `0037` liest ein Mitglied fremde
+ * Buchungen nicht, die Liste der Saisons darf es aber kennen.
+ */
+export function useClubSeasons() {
+  const { activeClub } = useClub();
+
+  return useQuery({
+    queryKey: ['club-seasons', activeClub?.id],
+    enabled: Boolean(activeClub) && isConfigured,
+    staleTime: 60 * 60_000,
+    queryFn: async (): Promise<string[]> => {
+      const { data, error } = await supabase.rpc('club_seasons', { p_club_id: activeClub!.id });
+      if (error) throw new Error(error.message);
+      return data ?? [];
+    },
+  });
+}
+
+/**
+ * Die eigene Trainingsserie in Wochen (Konzept §4.1, Säule 1; `0064`).
+ *
+ * `training_streak()` gibt für fremde Personen 0 zurück, ausser man ist
+ * Trainer:in oder Vorstand – hier wird nur die eigene gefragt.
+ */
+export function useMyStreak() {
+  const { activeMembership } = useClub();
+
+  return useQuery({
+    queryKey: ['my-streak', activeMembership?.id],
+    enabled: Boolean(activeMembership) && isConfigured,
+    staleTime: 60 * 60_000,
+    queryFn: async (): Promise<number> => {
+      const { data, error } = await supabase.rpc('training_streak', {
+        p_member_id: activeMembership!.id,
+      });
+      if (error) throw new Error(error.message);
+      return data ?? 0;
     },
   });
 }

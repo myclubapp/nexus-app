@@ -335,3 +335,5 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | 3 | Deckel offener Hinweise | Die konkrete Obergrenze gleichzeitig offener Fürsorge-Hinweise pro Team ist offen. | NFR-025 |
 | 4 | Aufbewahrung Sprachmemos | Für nicht-anonyme Memos ist die Aufbewahrungsdauer des Transkripts noch nicht festgelegt. | FR-085, C-019 |
 | 5 | Verfallsfrist Beispielinhalte | Nach welcher Frist Beispielinhalte spätestens verschwinden, ist noch nicht festgelegt (Vorschlag: 30 Tage oder erster eigener Inhalt derselben Art). | FR-137 |
+| 6 | Definition Trainingsserie | Das Konzept (§4.1, Säule 1) nennt «4 Wochen ohne Ausfall», ohne zu sagen, was eine Woche ohne Training des Teams bedeutet. Angenommen in `0064`: Sie zählt weder dafür noch dagegen. | FR-036 |
+| 7 | Zeitpunkt der Werbeprämie | Das Konzept (§4.1, Säule 5) bucht «nach 3 Monaten Mitgliedschaft bestätigt», umgesetzt ist die Buchung beim Beitritt (UC-003). | FR-036 |

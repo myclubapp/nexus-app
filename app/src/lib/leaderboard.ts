@@ -22,6 +22,17 @@ export function leaderboardLimit(settings: ClubSettings | null | undefined): num
   return Math.floor(configured);
 }
 
+/**
+ * Zeigt der Verein Ränge ohne Punktzahl (Konzept §7.2)?
+ *
+ * Eine Anonymisierungsoption, keine Verschleierung: Die Reihenfolge bleibt,
+ * nur die Zahl, an der sich Vergleiche entzünden, fällt weg. Die eigene Zahl
+ * steht weiterhin auf dem Dashboard.
+ */
+export function hidesPoints(settings: ClubSettings | null | undefined): boolean {
+  return settings?.leaderboard?.hidePoints === true;
+}
+
 export interface LeaderboardEntry {
   memberId: string;
   displayName: string;

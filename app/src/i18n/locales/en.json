@@ -114,7 +114,7 @@
     "title": "Home",
     "greeting": "Hello {{name}}",
     "seasonPoints": "Points this season",
-    "streak": "Streak",
+    "streak": "{{count}} weeks of training in a row",
     "streakDays": "{{count}} in a row",
     "nextPoints": "Next points",
     "nextPointsHint": "Concrete contributions open right now – and a fit for you.",
@@ -135,7 +135,8 @@
     },
     "seasonTrend": "Season so far",
     "seasonTrendHint": "Points per month since the season started.",
-    "seasonTrendDescription": "Points per month over {{count}} months, {{points}} points in total this season"
+    "seasonTrendDescription": "Points per month over {{count}} months, {{points}} points in total this season",
+    "streakHint": "{{count}} more weeks until the next streak bonus."
   },
   "marketplace": {
     "title": "Tasks",
@@ -183,7 +184,9 @@
     "teamAverage": "Ø {{points}} per member",
     "teamTotal": "{{points}} points · {{count}} members",
     "teamsHint": "The average per member, so a large team is not ahead just because of its size. Teams with fewer than two visible members are not shown.",
-    "teamsEmpty": "No team with points in this period yet"
+    "teamsEmpty": "No team with points in this period yet",
+    "currentSeason": "Current season",
+    "teamMembers": "{{count}} members"
   },
   "agenda": {
     "title": "Agenda",
@@ -350,7 +353,12 @@
       "values": "Your values",
       "tone": "Address and tone",
       "traditions": "Traditions and own terms"
-    }
+    },
+    "leaderboard": "Leaderboard",
+    "leaderboardHint": "Without a value the leaderboard shows the first 20; your own row always comes along.",
+    "topOnly": "Ranks shown",
+    "hidePoints": "Ranks without points",
+    "hidePointsHint": "The order stays, the number goes. Your own points remain on the home screen."
   },
   "health": {
     "title": "Club health",
@@ -471,7 +479,13 @@
     "successHint": "Two success definitions of the platform: newcomers with three turnouts in their first 90 days – and departures that appeared as a signal before. Counted, never listed.",
     "routingTitle": "Who receives which signal",
     "routingHint": "Without a selection the standard rule applies: coaches for their team and the board. Visibility is unaffected – this is only about the notification.",
-    "routingStandard": "Standard"
+    "routingStandard": "Standard",
+    "symmetryTitle": "How fast we respond",
+    "symmetryHint": "The same yardsticks as for members: response time on proposals, open signals, vacant offices. A signal, not a verdict.",
+    "inputsAvg": "Response time",
+    "inputsOverdue": "Proposals older than 14 days",
+    "signalsOldest": "Oldest open signal (days)",
+    "symmetryDetail": "{{answered}} proposals answered, {{open}} open · {{signals}} signals open · {{vacancies}} offices vacant, on average for {{days}} days"
   },
   "language": {
     "de": "German",

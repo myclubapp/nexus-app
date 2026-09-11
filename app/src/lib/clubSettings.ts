@@ -71,6 +71,8 @@ export function buildClubSettings(
     modules: Partial<Record<ClubModule, boolean>>;
     dna: NonNullable<ClubSettings['dna']>;
     logoUrl: string;
+    /** Konzept §7.2: Ausschnitt und Ränge ohne Punktzahl. */
+    leaderboard?: { topOnly: string; hidePoints: boolean };
   },
 ): ClubSettings {
   const settings: ClubSettings = { ...current };
@@ -116,6 +118,17 @@ export function buildClubSettings(
 
   if (input.logoUrl.trim()) settings.logoUrl = input.logoUrl.trim();
   else delete settings.logoUrl;
+
+  // Rangliste: Ein Ausschnitt unter 1 ist keiner (dann gilt die Vorgabe), und
+  // ein `false` ist dasselbe wie kein Eintrag.
+  if (input.leaderboard) {
+    const topOnly = Math.floor(Number(input.leaderboard.topOnly));
+    const clean: NonNullable<ClubSettings['leaderboard']> = {};
+    if (Number.isFinite(topOnly) && topOnly >= 1) clean.topOnly = topOnly;
+    if (input.leaderboard.hidePoints) clean.hidePoints = true;
+    if (Object.keys(clean).length > 0) settings.leaderboard = clean;
+    else delete settings.leaderboard;
+  }
 
   return settings;
 }

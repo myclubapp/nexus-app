@@ -115,6 +115,8 @@ export type ClubSettings = {
   /** UC-022 A3: Anzeige auf die vorderen Ränge begrenzen. */
   leaderboard?: {
     topOnly?: number;
+    /** Konzept §7.2: Ränge ohne Punktzahl – die Reihenfolge bleibt, die Zahl fällt weg. */
+    hidePoints?: boolean;
   };
 };
 

@@ -2270,6 +2270,20 @@ export type Database = {
         }
         Returns: number
       }
+      award_streaks: { Args: { p_today?: string }; Returns: number }
+      board_response_metrics: {
+        Args: { p_club_id: string }
+        Returns: {
+          inputs_answered: number
+          inputs_avg_hours: number
+          inputs_open: number
+          inputs_overdue: number
+          signals_oldest_days: number
+          signals_open: number
+          vacancies: number
+          vacancy_avg_days: number
+        }[]
+      }
       book_points_manually: {
         Args: {
           p_club_id: string
@@ -2314,6 +2328,7 @@ export type Database = {
           prev_activated: number
         }[]
       }
+      club_seasons: { Args: { p_club_id: string }; Returns: string[] }
       clubs_left_without_admin: {
         Args: { p_user_id: string }
         Returns: {
@@ -2525,6 +2540,7 @@ export type Database = {
           p_limit?: number
           p_period?: string
           p_pillar?: number
+          p_season?: string
           p_team_id?: string
         }
         Returns: {
@@ -2950,7 +2966,12 @@ export type Database = {
         }[]
       }
       team_ranking_rows: {
-        Args: { p_club_id: string; p_period?: string; p_pillar?: number }
+        Args: {
+          p_club_id: string
+          p_period?: string
+          p_pillar?: number
+          p_season?: string
+        }
         Returns: {
           avg_points: number
           is_mine: boolean
@@ -2960,6 +2981,10 @@ export type Database = {
           team_name: string
           total_points: number
         }[]
+      }
+      training_streak: {
+        Args: { p_member_id: string; p_today?: string }
+        Returns: number
       }
       unlink_team: { Args: { p_team_id: string }; Returns: undefined }
       update_my_profile: {

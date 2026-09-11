@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_LEADERBOARD_LIMIT,
   LEADERBOARD_PERIODS,
+  hidesPoints,
   hasRankGap,
   leaderboardLimit,
   ownRank,
@@ -90,5 +91,17 @@ describe('leaderboardLimit', () => {
     expect(leaderboardLimit({ leaderboard: { topOnly: -3 } })).toBe(
       DEFAULT_LEADERBOARD_LIMIT,
     );
+  });
+});
+
+describe('hidesPoints (Konzept §7.2)', () => {
+  it('zeigt Zahlen, solange der Verein nichts anderes sagt', () => {
+    expect(hidesPoints(undefined)).toBe(false);
+    expect(hidesPoints({})).toBe(false);
+    expect(hidesPoints({ leaderboard: { topOnly: 10 } })).toBe(false);
+  });
+
+  it('lässt die Zahl weg, wenn der Verein es so eingestellt hat', () => {
+    expect(hidesPoints({ leaderboard: { hidePoints: true } })).toBe(true);
   });
 });

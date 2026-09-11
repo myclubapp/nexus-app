@@ -18,6 +18,7 @@ import {
   useMyPointsSummary,
   useNextContributions,
   useRuleLabels,
+  useMyStreak,
 } from '../hooks/useGamification';
 import { useAgenda } from '../hooks/useAgenda';
 import { MonthBars } from '../components/MonthBars';
@@ -53,6 +54,7 @@ export function DashboardPage() {
   const isNewClub = useIsNewClub();
   const points = useMyPoints();
   const summary = useMyPointsSummary();
+  const streak = useMyStreak();
   const suggestions = useNextContributions(5);
   const rules = useRuleLabels();
   const agenda = useAgenda('upcoming');
@@ -155,6 +157,21 @@ export function DashboardPage() {
             accent="tertiary"
           />
         </div>
+      )}
+
+      {/* Konzept §4.1 Säule 1 und §10: die Trainingsserie und der Weg zum
+          nächsten Bonus – ein Satz, keine Warnung. */}
+      {(streak.data ?? 0) > 0 && (
+        <ListSection>
+          <IonItem lines="none">
+            <IonLabel className="ion-text-wrap">
+              <h2>{t('dashboard.streak', { count: streak.data ?? 0 })}</h2>
+              <IonNote>
+                {t('dashboard.streakHint', { count: 4 - ((streak.data ?? 0) % 4) })}
+              </IonNote>
+            </IonLabel>
+          </IonItem>
+        </ListSection>
       )}
 
       {hasTrend && (

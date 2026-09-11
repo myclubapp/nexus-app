@@ -11,7 +11,12 @@ import {
   IonSelectOption,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
-import { useLeaderboard, useMyTeams, useTeamRanking } from '../hooks/useGamification';
+import {
+  useClubSeasons,
+  useLeaderboard,
+  useMyTeams,
+  useTeamRanking,
+} from '../hooks/useGamification';
 import { useClub } from '../hooks/useClub';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
@@ -20,6 +25,7 @@ import { SkeletonList } from '../components/Skeletons';
 import {
   LEADERBOARD_PERIODS,
   hasRankGap,
+  hidesPoints,
   leaderboardLimit,
   ownRank,
   type LeaderboardPeriod,
@@ -36,6 +42,10 @@ export function LeaderboardPage() {
   const [scope, setScope] = useState<Scope>('club');
   const [period, setPeriod] = useState<LeaderboardPeriod>('season');
   const [pillar, setPillar] = useState<Pillar | null>(null);
+  // Konzept §7.3, Saisonarchiv: `null` ist die laufende Saison.
+  const [season, setSeason] = useState<string | null>(null);
+  const seasons = useClubSeasons();
+  const hidePoints = hidesPoints(activeClub?.settings);
 
   const teams = myTeams.data ?? [];
   // A4: Wer keinem Team angehört, bekommt die Team-Ansicht gar nicht erst zur
@@ -49,9 +59,14 @@ export function LeaderboardPage() {
     period,
     pillar,
     limit: leaderboardLimit(activeClub?.settings),
+    season: period === 'season' ? season : null,
   });
   // Konzept §7.3: Team gegen Team, im Durchschnitt je Mitglied.
-  const teamRanking = useTeamRanking({ period, pillar });
+  const teamRanking = useTeamRanking({
+    period,
+    pillar,
+    season: period === 'season' ? season : null,
+  });
   const teamRows = teamRanking.data ?? [];
 
   const rows = leaderboard.data ?? [];
@@ -131,6 +146,26 @@ export function LeaderboardPage() {
             ))}
           </IonSelect>
         </IonItem>
+        {/* Saisonarchiv: nur, wenn es mehr als eine Saison gibt – und nur im
+            Zeitraum «Saison», sonst hätte die Wahl keine Wirkung. */}
+        {period === 'season' && (seasons.data ?? []).length > 1 && (
+          <IonItem>
+            <IonSelect
+              label={t('leaderboard.season')}
+              value={season}
+              onIonChange={(e) => setSeason((e.detail.value as string | null) ?? null)}
+              cancelText={t('common.cancel')}
+              okText={t('common.ok')}
+            >
+              <IonSelectOption value={null}>{t('leaderboard.currentSeason')}</IonSelectOption>
+              {(seasons.data ?? []).map((entry) => (
+                <IonSelectOption key={entry} value={entry}>
+                  {entry}
+                </IonSelectOption>
+              ))}
+            </IonSelect>
+          </IonItem>
+        )}
         <IonItem>
           <IonSelect
             label={t('leaderboard.pillar')}
@@ -170,15 +205,19 @@ export function LeaderboardPage() {
                 <IonLabel className="ion-text-wrap">
                   <h2>{row.teamName}</h2>
                   <p>
-                    {t('leaderboard.teamTotal', {
-                      points: row.totalPoints,
-                      count: row.memberCount,
-                    })}
+                    {hidePoints
+                      ? t('leaderboard.teamMembers', { count: row.memberCount })
+                      : t('leaderboard.teamTotal', {
+                          points: row.totalPoints,
+                          count: row.memberCount,
+                        })}
                   </p>
                 </IonLabel>
-                <IonNote slot="end" color="primary">
-                  {t('leaderboard.teamAverage', { points: row.avgPoints })}
-                </IonNote>
+                {!hidePoints && (
+                  <IonNote slot="end" color="primary">
+                    {t('leaderboard.teamAverage', { points: row.avgPoints })}
+                  </IonNote>
+                )}
               </IonItem>
             ))}
           </IonList>
@@ -215,9 +254,12 @@ export function LeaderboardPage() {
                   </IonAvatar>
                 )}
                 <IonLabel>{row.displayName}</IonLabel>
-                <IonNote slot="end" color="primary">
-                  {row.totalPoints}
-                </IonNote>
+                {/* Konzept §7.2: Ränge ohne Punktzahl, wenn der Verein es so will. */}
+                {!hidePoints && (
+                  <IonNote slot="end" color="primary">
+                    {row.totalPoints}
+                  </IonNote>
+                )}
               </IonItem>
             </Fragment>
           ))}

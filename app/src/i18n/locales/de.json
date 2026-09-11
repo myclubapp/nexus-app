@@ -114,7 +114,7 @@
     "title": "Start",
     "greeting": "Hallo {{name}}",
     "seasonPoints": "Punkte diese Saison",
-    "streak": "Serie",
+    "streak": "{{count}} Wochen Trainingsserie",
     "streakDays": "{{count}} in Folge",
     "nextPoints": "Nächste Punkte",
     "nextPointsHint": "Konkrete Beiträge, die gerade offen sind – und zu dir passen.",
@@ -135,7 +135,8 @@
     },
     "seasonTrend": "Saisonverlauf",
     "seasonTrendHint": "Punkte je Monat seit Saisonstart.",
-    "seasonTrendDescription": "Punkte je Monat über {{count}} Monate, insgesamt {{points}} Punkte in dieser Saison"
+    "seasonTrendDescription": "Punkte je Monat über {{count}} Monate, insgesamt {{points}} Punkte in dieser Saison",
+    "streakHint": "Noch {{count}} Wochen bis zum nächsten Serien-Bonus."
   },
   "marketplace": {
     "title": "Marktplatz",
@@ -183,7 +184,9 @@
     "teamAverage": "Ø {{points}} pro Mitglied",
     "teamTotal": "{{points}} Punkte · {{count}} Mitglieder",
     "teamsHint": "Der Durchschnitt pro Mitglied – so liegt ein grosses Team nicht allein wegen seiner Grösse vorn. Teams mit weniger als zwei sichtbaren Mitgliedern erscheinen nicht.",
-    "teamsEmpty": "Noch kein Team mit Punkten in diesem Zeitraum"
+    "teamsEmpty": "Noch kein Team mit Punkten in diesem Zeitraum",
+    "currentSeason": "Laufende Saison",
+    "teamMembers": "{{count}} Mitglieder"
   },
   "agenda": {
     "title": "Agenda",
@@ -350,7 +353,12 @@
       "values": "Eure Werte",
       "tone": "Anrede und Tonalität",
       "traditions": "Traditionen und eigene Begriffe"
-    }
+    },
+    "leaderboard": "Rangliste",
+    "leaderboardHint": "Ohne Angabe zeigt die Rangliste die ersten 20 – die eigene Zeile kommt immer mit.",
+    "topOnly": "Angezeigte Ränge",
+    "hidePoints": "Ränge ohne Punktzahl",
+    "hidePointsHint": "Die Reihenfolge bleibt, die Zahl fällt weg. Die eigenen Punkte stehen weiter auf der Startseite."
   },
   "health": {
     "title": "Vereins-Gesundheit",
@@ -471,7 +479,13 @@
     "successHint": "Zwei Erfolgsdefinitionen der Plattform: Neumitglieder mit drei Teilnahmen in den ersten 90 Tagen – und Austritte, die vorher als Hinweis erschienen sind. Gezählt, nie aufgelistet.",
     "routingTitle": "Wer erhält welchen Hinweis",
     "routingHint": "Ohne Auswahl gilt die Vorgabe: Trainer:innen ihres Teams und der Vorstand. Die Sichtbarkeit bleibt davon unberührt – hier geht es nur um die Meldung.",
-    "routingStandard": "Vorgabe"
+    "routingStandard": "Vorgabe",
+    "symmetryTitle": "Wie schnell wir antworten",
+    "symmetryHint": "Dieselben Massstäbe wie für die Mitglieder: Antwortzeit auf Vorschläge, offene Hinweise, vakante Ämter. Ein Signal, kein Urteil.",
+    "inputsAvg": "Antwortzeit",
+    "inputsOverdue": "Vorschläge älter als 14 Tage",
+    "signalsOldest": "Ältester offener Hinweis (Tage)",
+    "symmetryDetail": "{{answered}} Vorschläge beantwortet, {{open}} offen · {{signals}} Hinweise offen · {{vacancies}} Ämter vakant, im Schnitt seit {{days}} Tagen"
   },
   "language": {
     "de": "Deutsch",

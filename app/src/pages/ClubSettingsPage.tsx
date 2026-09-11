@@ -81,6 +81,8 @@ export function ClubSettingsPage() {
   const [modules, setModules] = useState<Partial<Record<ClubModule, boolean>>>({});
   const [dna, setDna] = useState<NonNullable<ClubSettings['dna']>>({});
   const [logoUrl, setLogoUrl] = useState('');
+  const [topOnly, setTopOnly] = useState('');
+  const [hidePoints, setHidePoints] = useState(false);
   // A4: Die Warnung steht **vor** dem Speichern, nicht als Hinweis danach.
   const [confirmSeason, setConfirmSeason] = useState(false);
   const [confirmDrop, setConfirmDrop] = useState(false);
@@ -95,6 +97,8 @@ export function ClubSettingsPage() {
     setModules(activeClub.settings?.modules ?? {});
     setDna(activeClub.settings?.dna ?? {});
     setLogoUrl(activeClub.settings?.logoUrl ?? '');
+    setTopOnly(activeClub.settings?.leaderboard?.topOnly?.toString() ?? '');
+    setHidePoints(activeClub.settings?.leaderboard?.hidePoints === true);
   }, [activeClub]);
 
   // Farben sofort anwenden, damit die Wirkung sichtbar ist. Beim Verlassen
@@ -136,6 +140,7 @@ export function ClubSettingsPage() {
           modules,
           dna,
           logoUrl,
+          leaderboard: { topOnly, hidePoints },
         }),
       },
       {
@@ -323,6 +328,35 @@ export function ClubSettingsPage() {
                 </IonToggle>
               </IonItem>
             ))}
+          </ListSection>
+
+          {/* Konzept §7.2 und UC-022 A3: der Ausschnitt der Rangliste und
+              Ränge ohne Punktzahl. Beides Wahl des Vereins, beides mit
+              Vorgabe – wer nichts einstellt, bekommt die Top 20 mit Zahl. */}
+          <ListSection
+            title={t('clubSettings.leaderboard')}
+            footnote={t('clubSettings.leaderboardHint')}
+          >
+            <IonItem>
+              <IonInput
+                label={t('clubSettings.topOnly')}
+                labelPlacement="stacked"
+                type="number"
+                inputmode="numeric"
+                min={1}
+                placeholder="20"
+                value={topOnly}
+                onIonInput={(e) => setTopOnly(e.detail.value ?? '')}
+              />
+            </IonItem>
+            <IonItem>
+              <IonToggle checked={hidePoints} onIonChange={(e) => setHidePoints(e.detail.checked)}>
+                <IonLabel className="ion-text-wrap">
+                  <h2>{t('clubSettings.hidePoints')}</h2>
+                  <IonNote>{t('clubSettings.hidePointsHint')}</IonNote>
+                </IonLabel>
+              </IonToggle>
+            </IonItem>
           </ListSection>
 
           {/* A3 und FR-114: die Vereins-DNA. */}

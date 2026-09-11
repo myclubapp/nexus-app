@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase, isConfigured } from '../lib/supabase';
 import { useClub } from './useClub';
 import type {
+  BoardMetrics,
   ClubHealth,
   HealthSignal,
   HealthStatus,
@@ -167,6 +168,37 @@ export function useSetHealthOptOut() {
 // Schutz.
 
 /** Die Vereins-Übersicht (FR-060) – nur für den Vorstand. */
+/**
+ * V5 Symmetrie: Antwortzeit auf Inputs, offene Hinweise, Vakanz-Dauer.
+ * Nur der Vorstand – die Zahlen handeln von ihm selbst.
+ */
+export function useBoardMetrics() {
+  const { activeClub, isAdmin } = useClub();
+
+  return useQuery({
+    queryKey: ['board-metrics', activeClub?.id],
+    enabled: Boolean(activeClub) && isAdmin && isConfigured,
+    queryFn: async (): Promise<BoardMetrics | null> => {
+      const { data, error } = await supabase.rpc('board_response_metrics', {
+        p_club_id: activeClub!.id,
+      });
+      if (error) throw new Error(error.message);
+      const row = data?.[0];
+      if (!row) return null;
+      return {
+        inputsAnswered: row.inputs_answered ?? 0,
+        inputsAvgHours: row.inputs_avg_hours === null ? null : Number(row.inputs_avg_hours),
+        inputsOpen: row.inputs_open ?? 0,
+        inputsOverdue: row.inputs_overdue ?? 0,
+        signalsOpen: row.signals_open ?? 0,
+        signalsOldestDays: row.signals_oldest_days ?? 0,
+        vacancies: row.vacancies ?? 0,
+        vacancyAvgDays: row.vacancy_avg_days === null ? null : Number(row.vacancy_avg_days),
+      };
+    },
+  });
+}
+
 export function useClubHealth() {
   const { activeClub, isAdmin } = useClub();
 

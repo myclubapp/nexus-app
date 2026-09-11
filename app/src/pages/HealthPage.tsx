@@ -18,6 +18,7 @@ import {
   type RoutingRole,
   useSuccessionLead,
   useTeamHealth,
+  useBoardMetrics,
 } from '../hooks/useHealth';
 import { useClub } from '../hooks/useClub';
 import { useToast } from '../hooks/useToast';
@@ -58,6 +59,7 @@ export function HealthPage() {
   const succession = useSuccessionLead();
   const definitions = useHealthDefinitions();
   const routing = useHealthRouting();
+  const board = useBoardMetrics();
   const setRouting = useSetHealthRouting();
   const { isAdmin } = useClub();
   const [openId, setOpenId] = useState<string | null>(null);
@@ -189,6 +191,43 @@ export function HealthPage() {
               </IonLabel>
             </IonItem>
           )}
+        </ListSection>
+      )}
+
+      {/* V5 Symmetrie (MVP-Scope §11.8): Die Führung misst sich mit denselben
+          Instrumenten wie die Mitglieder – Antwortzeit, Offenes, Vakanzen.
+          Signal, kein Urteil (K5). */}
+      {isAdmin && board.data && (
+        <ListSection title={t('health.symmetryTitle')} footnote={t('health.symmetryHint')}>
+          <div className="app-stat-row">
+            <StatCard
+              value={board.data.inputsAvgHours === null ? '–' : `${board.data.inputsAvgHours} h`}
+              label={t('health.inputsAvg')}
+            />
+            <StatCard
+              value={board.data.inputsOverdue}
+              label={t('health.inputsOverdue')}
+              accent={board.data.inputsOverdue > 0 ? 'secondary' : undefined}
+            />
+            <StatCard
+              value={board.data.signalsOldestDays}
+              label={t('health.signalsOldest')}
+              accent="tertiary"
+            />
+          </div>
+          <IonItem lines="none">
+            <IonLabel className="ion-text-wrap">
+              <IonNote>
+                {t('health.symmetryDetail', {
+                  answered: board.data.inputsAnswered,
+                  open: board.data.inputsOpen,
+                  signals: board.data.signalsOpen,
+                  vacancies: board.data.vacancies,
+                  days: board.data.vacancyAvgDays ?? 0,
+                })}
+              </IonNote>
+            </IonLabel>
+          </IonItem>
         </ListSection>
       )}
 

@@ -114,7 +114,7 @@
     "title": "Accueil",
     "greeting": "Bonjour {{name}}",
     "seasonPoints": "Points cette saison",
-    "streak": "Série",
+    "streak": "{{count}} semaines d’entraînement d’affilée",
     "streakDays": "{{count}} d'affilée",
     "nextPoints": "Prochains points",
     "nextPointsHint": "Des contributions concrètes actuellement ouvertes – et qui te correspondent.",
@@ -135,7 +135,8 @@
     },
     "seasonTrend": "Saison en cours",
     "seasonTrendHint": "Points par mois depuis le début de la saison.",
-    "seasonTrendDescription": "Points par mois sur {{count}} mois, {{points}} points au total cette saison"
+    "seasonTrendDescription": "Points par mois sur {{count}} mois, {{points}} points au total cette saison",
+    "streakHint": "Encore {{count}} semaines jusqu’au prochain bonus de série."
   },
   "marketplace": {
     "title": "Missions",
@@ -183,7 +184,9 @@
     "teamAverage": "Ø {{points}} par membre",
     "teamTotal": "{{points}} points · {{count}} membres",
     "teamsHint": "La moyenne par membre, pour qu’une grande équipe ne soit pas devant uniquement par sa taille. Les équipes de moins de deux membres visibles n’apparaissent pas.",
-    "teamsEmpty": "Aucune équipe avec des points sur cette période"
+    "teamsEmpty": "Aucune équipe avec des points sur cette période",
+    "currentSeason": "Saison en cours",
+    "teamMembers": "{{count}} membres"
   },
   "agenda": {
     "title": "Agenda",
@@ -350,7 +353,12 @@
       "values": "Vos valeurs",
       "tone": "Adresse et tonalité",
       "traditions": "Traditions et termes propres"
-    }
+    },
+    "leaderboard": "Classement",
+    "leaderboardHint": "Sans valeur, le classement affiche les 20 premiers ; ta propre ligne apparaît toujours.",
+    "topOnly": "Rangs affichés",
+    "hidePoints": "Rangs sans points",
+    "hidePointsHint": "L’ordre reste, le chiffre disparaît. Tes propres points restent sur l’accueil."
   },
   "health": {
     "title": "Santé de la société",
@@ -471,7 +479,13 @@
     "successHint": "Deux définitions du succès de la plateforme : les nouveaux membres avec trois participations dans les 90 premiers jours – et les départs qui étaient apparus comme signalement. Comptés, jamais listés.",
     "routingTitle": "Qui reçoit quel signalement",
     "routingHint": "Sans sélection, la règle par défaut s’applique : les entraîneur·e·s de leur équipe et le comité. La visibilité n’en est pas affectée – il ne s’agit ici que de la notification.",
-    "routingStandard": "Par défaut"
+    "routingStandard": "Par défaut",
+    "symmetryTitle": "À quelle vitesse nous répondons",
+    "symmetryHint": "Les mêmes mesures que pour les membres : délai de réponse aux propositions, signaux ouverts, postes vacants. Un signal, pas un jugement.",
+    "inputsAvg": "Délai de réponse",
+    "inputsOverdue": "Propositions de plus de 14 jours",
+    "signalsOldest": "Signal ouvert le plus ancien (jours)",
+    "symmetryDetail": "{{answered}} propositions répondues, {{open}} ouvertes · {{signals}} signaux ouverts · {{vacancies}} postes vacants, depuis {{days}} jours en moyenne"
   },
   "language": {
     "de": "Allemand",

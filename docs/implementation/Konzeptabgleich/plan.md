@@ -5,7 +5,7 @@
 | **Primary Actor** | Vorstand, Mitglied                                                  |
 | **Goal**          | Was die drei Konzeptdokumente vorsehen und die Umsetzung noch nicht hat, Schritt für Schritt schliessen – ohne Produktentscheide vorwegzunehmen |
 | **Plan created**  | 2026-09-11                                                          |
-| **Status**        | In Progress                                                         |
+| **Status**        | Done (offen: Plattform-Parität bis zum Gerätetest)                  |
 
 ## Overview
 
@@ -115,14 +115,25 @@ Verbindlich aus `docs/guidelines.md`:
 - [x] 5. **Lizenz**: EUPL v1.2 in `LICENSE` und `package.json`.
 - [x] 6. **Nachweise zu NFRs und Rahmenbedingungen** in `requirements.md`
       nachführen, wo Proben oder Code sie belegen – Belege in `docs/nfr-nachweise.md`.
-- [ ] 7. **Streak-Bonus und Pünktlichkeit** (Säule 1) – Regeln mit Automatik.
-- [ ] 8. **Ränge ohne Punktzahl** (Konzept §7.2) als Vereinseinstellung.
-- [ ] 9. **Saisonarchiv** (Konzept §7.3): vergangene Saison in der Rangliste wählen.
-- [ ] 10. **V5 Symmetrie**: Reaktionszeiten des Vorstands als Kennzahlen im Cockpit.
-- [ ] N-4. i18n-Vollständigkeit — je Schritt geprüft (`npm run i18n:check`)
-- [ ] N-3. Mock- und Vertragsparität — entfällt: kein Mock-Server; die Verträge sind die Migrationen
+- [x] 7. **Streak-Bonus und Pünktlichkeit** (Säule 1): `0064` – `training_streak()`,
+      `award_streaks()` montags per Cron (4/8-Wochen-Bonus, Warnung bei drei),
+      `punctual` in `check_in()` (aus, «optional aktivierbar»); Serie auf dem
+      Dashboard. Probe: 15 von 15. Nachtrag `0066`: Serie nur für sich selbst
+      oder als Trainer:in/Vorstand lesbar.
+- [x] 8. **Ränge ohne Punktzahl** (Konzept §7.2): `settings.leaderboard.hidePoints`,
+      Abschnitt «Rangliste» in den Vereinseinstellungen (mit dem bisher
+      unerreichbaren `topOnly`), `hidesPoints()` in Rangliste und Team-Sicht.
+- [x] 9. **Saisonarchiv** (Konzept §7.3): `0065` – `p_season` in beiden
+      Ranglisten-Funktionen, `club_seasons()`; Saisonwahl in der Rangliste,
+      sobald es mehr als eine Saison gibt.
+- [x] 10. **V5 Symmetrie**: `0066` – `board_response_metrics()` (Antwortzeit auf
+      Inputs, offene und überfällige Inputs, offene Hinweise und ältester,
+      Vakanzen und Dauer); Abschnitt «Wie schnell wir antworten» im Cockpit.
+      Probe: 8 von 8.
+- [x] N-4. i18n-Vollständigkeit — je Schritt geprüft (`npm run i18n:check`)
+- [x] N-3. Mock- und Vertragsparität — entfällt: kein Mock-Server; die Verträge sind die Migrationen
 - [ ] N-2. Plattform-Parität — wie in allen Plänen offen bis zum Gerätetest
-- [ ] N-1. Verdrahtung und Fehlerrückmeldung — je Schritt geprüft
+- [x] N-1. Verdrahtung und Fehlerrückmeldung — je Schritt geprüft
 - [x] N. Statusabgleich — Aufgabe 6
 
 > Ein Häkchen je abgeschlossenem Schritt; der Status wechselt auf `Done`, wenn
@@ -138,6 +149,8 @@ Verbindlich aus `docs/guidelines.md`:
 | 2   | **Notfallkontakt für Trainer:innen** ist serverseitig erreichbar (`emergency_contact()`), aber noch in keiner Trainer-Ansicht eingebaut – die Teamseite gehört dem Vorstand. Ein Ort dafür wäre die Teilnehmerliste im Termin-Blatt. | Medium   | Architect   |
 | 3   | **Treue-Werte**: Das Konzept staffelt 20/50/100/200 nach Jahren. Umgesetzt: `loyalty_year` (bestehender Wert 100) je Jahr plus `loyalty_milestone` (200) bei 5/10/20. Beides pro Verein änderbar.       | Low      | Stakeholder |
 | 4   | **Team-Ranking und Mindestgruppe**: Teams unter zwei sichtbaren Mitgliedern fehlen, damit ein Opt-out nicht über die Teamzeile lesbar wird. Zwei ist die kleinste Zahl, bei der ein Durchschnitt keine Person ist. | Low      | Dev         |
+| 6   | **Was eine Trainingsserie ist**, sagt das Konzept nicht. Angenommen: Wochen mit mindestens einem Training, ohne Unterbruch; eine Woche ohne Training der eigenen Teams zählt weder dafür noch dagegen. Bonus bei jedem Vielfachen von vier, der grosse bei jedem Vielfachen von acht. Gepinnt in der Probe zu `0064`. | Medium   | Stakeholder |
+| 7   | **Vakanz-Dauer** ist eine Näherung über `functionary_roles.created_at` – eine Historie, seit wann ein Amt unbesetzt ist, gibt es nicht (K4 ist auf Nachfolge-Vorlauf beschränkt). | Low      | Architect   |
 | 5   | **Sprachmemo, Push-Versand, Billing-Dienst, Kartendarstellung, Dokumentenablage, Passkeys, Jugendschutz-Einwilligung, Abo-Gate** bleiben offen – jedes braucht einen Entscheid oder einen Dienst, den es nicht gibt. | High     | Stakeholder |
 
 ---
@@ -150,5 +163,7 @@ Verbindlich aus `docs/guidelines.md`:
 | 2026-09-11 | `0061_loyalty.sql`: Probe 13 von 13 – Jubiläum in den letzten sieben Tagen wird gebucht, älteres nicht, Ausgetretene nicht, zweiter Lauf bucht nichts doppelt, Regel aus heisst nichts, kein Client-Weg |
 | 2026-09-11 | `0062_team_ranking.sql`: Probe 6 von 6 – Opt-out zählt nicht, Ein-Personen-Team fehlt, Zeitraum und Säule greifen, fremder Verein abgewiesen |
 | 2026-09-11 | `0063_member_contacts.sql`: Probe 11 von 11 – Trainer:in des Teams sieht den Notfallkontakt und nicht die Adresse, Trainerin eines anderen Teams nichts, `club_directory` führt keine der neuen Spalten |
+| 2026-09-12 | `0064_streaks.sql`: Probe 15 von 15 – Ferienwoche zählt nicht dagegen, verpasste Woche reisst, 8 vor 4, Warnung bei drei, Pünktlichkeit nur mit aktiver Regel und nur vor Beginn. **Befund:** Die erste Fassung hatte `check_in()` aus 0026 statt 0029 kopiert (QR-Token-Tabelle) – die Probe fand es, Migration neu aufgebaut und mit `migration repair` erneut eingespielt |
+| 2026-09-12 | `0065_leaderboard_seasons.sql` und `0066_board_metrics.sql` (Probe 8 von 8); Rangliste mit Saisonwahl und Rängen ohne Zahl, Cockpit mit Reaktionszeiten, Dashboard mit Trainingsserie |
 | 2026-09-12 | `docs/nfr-nachweise.md`: 41 NFRs und Rahmenbedingungen auf `Implemented`, C-004 auf `Partial`, der Rest mit Begründung offen |
 | 2026-09-11 | App: `MonthBars` und Saisonverlauf, Sicht «Teams» in der Rangliste, Adresse und Notfallkontakt im Profil-Blatt, Kontaktkarte im Mitglied-Detail; Lizenz EUPL v1.2 |

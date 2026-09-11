@@ -114,7 +114,7 @@
     "title": "Home",
     "greeting": "Ciao {{name}}",
     "seasonPoints": "Punti in questa stagione",
-    "streak": "Serie",
+    "streak": "{{count}} settimane di allenamento di fila",
     "streakDays": "{{count}} di fila",
     "nextPoints": "Prossimi punti",
     "nextPointsHint": "Contributi concreti attualmente aperti – e adatti a te.",
@@ -135,7 +135,8 @@
     },
     "seasonTrend": "Andamento stagione",
     "seasonTrendHint": "Punti per mese dall’inizio della stagione.",
-    "seasonTrendDescription": "Punti per mese su {{count}} mesi, {{points}} punti in totale in questa stagione"
+    "seasonTrendDescription": "Punti per mese su {{count}} mesi, {{points}} punti in totale in questa stagione",
+    "streakHint": "Ancora {{count}} settimane al prossimo bonus di serie."
   },
   "marketplace": {
     "title": "Compiti",
@@ -183,7 +184,9 @@
     "teamAverage": "Ø {{points}} per membro",
     "teamTotal": "{{points}} punti · {{count}} membri",
     "teamsHint": "La media per membro, così una squadra grande non è davanti solo per la sua dimensione. Le squadre con meno di due membri visibili non compaiono.",
-    "teamsEmpty": "Nessuna squadra con punti in questo periodo"
+    "teamsEmpty": "Nessuna squadra con punti in questo periodo",
+    "currentSeason": "Stagione in corso",
+    "teamMembers": "{{count}} membri"
   },
   "agenda": {
     "title": "Agenda",
@@ -350,7 +353,12 @@
       "values": "I vostri valori",
       "tone": "Forma di rivolgersi e tono",
       "traditions": "Tradizioni e termini propri"
-    }
+    },
+    "leaderboard": "Classifica",
+    "leaderboardHint": "Senza valore la classifica mostra i primi 20; la tua riga compare sempre.",
+    "topOnly": "Posizioni mostrate",
+    "hidePoints": "Posizioni senza punteggio",
+    "hidePointsHint": "L’ordine resta, il numero sparisce. I tuoi punti restano nella pagina iniziale."
   },
   "health": {
     "title": "Salute della società",
@@ -471,7 +479,13 @@
     "successHint": "Due definizioni di successo della piattaforma: nuovi membri con tre partecipazioni nei primi 90 giorni – e uscite apparse prima come segnale. Contate, mai elencate.",
     "routingTitle": "Chi riceve quale segnale",
     "routingHint": "Senza selezione vale l’impostazione predefinita: gli allenatori della propria squadra e il comitato. La visibilità non cambia – qui si tratta solo della notifica.",
-    "routingStandard": "Predefinito"
+    "routingStandard": "Predefinito",
+    "symmetryTitle": "Quanto velocemente rispondiamo",
+    "symmetryHint": "Gli stessi criteri dei membri: tempo di risposta alle proposte, segnali aperti, cariche vacanti. Un segnale, non un giudizio.",
+    "inputsAvg": "Tempo di risposta",
+    "inputsOverdue": "Proposte più vecchie di 14 giorni",
+    "signalsOldest": "Segnale aperto più vecchio (giorni)",
+    "symmetryDetail": "{{answered}} proposte risposte, {{open}} aperte · {{signals}} segnali aperti · {{vacancies}} cariche vacanti, in media da {{days}} giorni"
   },
   "language": {
     "de": "Tedesco",

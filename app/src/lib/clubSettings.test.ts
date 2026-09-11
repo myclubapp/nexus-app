@@ -163,3 +163,21 @@ describe('seasonStartChanged', () => {
     expect(seasonStartChanged(undefined, '')).toBe(false);
   });
 });
+
+describe('buildClubSettings – Rangliste (Konzept §7.2)', () => {
+  it('legt Ausschnitt und Ränge-ohne-Zahl ab und lässt Leeres weg', () => {
+    const settings = buildClubSettings({}, input({ leaderboard: { topOnly: '10', hidePoints: true } }));
+    expect(settings.leaderboard).toEqual({ topOnly: 10, hidePoints: true });
+
+    const none = buildClubSettings(
+      { leaderboard: { topOnly: 10 } },
+      input({ leaderboard: { topOnly: '', hidePoints: false } }),
+    );
+    expect(none.leaderboard).toBeUndefined();
+  });
+
+  it('nimmt einen Ausschnitt unter 1 nicht an – dann gilt die Vorgabe', () => {
+    const settings = buildClubSettings({}, input({ leaderboard: { topOnly: '0', hidePoints: false } }));
+    expect(settings.leaderboard).toBeUndefined();
+  });
+});

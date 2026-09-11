@@ -168,6 +168,18 @@ export function signalAudienceKey(signal: { signalType: string }): string {
 // Deutung steht als reine Funktion, weil sie die eigentliche Entscheidung ist:
 // Eine Quote von 0,62 sagt nichts, «zwei von sieben tragen alles» schon.
 
+/** V5 Symmetrie: die Reaktionszeiten der Führung (`board_response_metrics()`, 0066). */
+export interface BoardMetrics {
+  inputsAnswered: number;
+  inputsAvgHours: number | null;
+  inputsOpen: number;
+  inputsOverdue: number;
+  signalsOpen: number;
+  signalsOldestDays: number;
+  vacancies: number;
+  vacancyAvgDays: number | null;
+}
+
 export interface ClubHealth {
   members: number;
   activated: number;
