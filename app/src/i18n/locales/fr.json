@@ -264,7 +264,46 @@
     "reset": "Réinitialiser",
     "labels": "Termes",
     "labelsHint": "Comment appelez-vous vos rendez-vous ? Vide signifie : terme standard.",
-    "saved": "Enregistré."
+    "saved": "Enregistré.",
+    "logo": "Logo",
+    "logoUrl": "Adresse du logo",
+    "logoHint": "Pour l'instant une adresse : le téléversement demande un stockage que ce projet n'a pas encore mis en place.",
+    "contrastWarning": "{{color}} n'a pas assez de contraste avec le texte posé dessus.",
+    "contrastFix": "Assombrir",
+    "seasonChange": "Changer le début de saison ?",
+    "seasonChangeHint": "Les futures écritures seront rattachées à la nouvelle saison. Les points déjà attribués gardent la leur.",
+    "modules": "Modules",
+    "modulesHint": "Tu n'as rien à activer. L'app te proposera un module lorsque votre club atteindra une taille où il porte.",
+    "module": {
+      "voice": {
+        "title": "Voix",
+        "body": "Dire une demande – à une personne, à une fonction ou anonymement au comité."
+      },
+      "meeting": {
+        "title": "Séances et fonctions",
+        "body": "Propositions à l'organe, réponses documentées, fonctions comme liste de diffusion."
+      },
+      "checkin": {
+        "title": "Ressenti",
+        "body": "Une courte question après un rendez-vous. Facultative, privée, sans points."
+      },
+      "pulse": {
+        "title": "Pouls du club",
+        "body": "Le récapitulatif hebdomadaire : ce qui se passe, ce sur quoi vous travaillez, où l'on peut participer."
+      },
+      "health": {
+        "title": "Santé du club",
+        "body": "Signaux de sollicitude pour les entraîneur·e·s et le comité."
+      }
+    },
+    "dna": "ADN du club",
+    "dnaHint": "Ce que vous représentez. C'est enregistré aujourd'hui ; ce sera utilisé dès qu'il y aura des fonctions d'aide à la rédaction.",
+    "dnaField": {
+      "why": "Pourquoi existez-vous ?",
+      "values": "Vos valeurs",
+      "tone": "Adresse et tonalité",
+      "traditions": "Traditions et termes propres"
+    }
   },
   "health": {
     "title": "Santé de la société",

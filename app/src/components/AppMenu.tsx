@@ -15,7 +15,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { useClub } from '../hooks/useClub';
-import { ClubAdminLinks } from './ClubAdminLinks';
+import { ClubAdminLinks, hasAdminLinks } from './ClubAdminLinks';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ListSection } from './ListSection';
 
@@ -54,6 +54,17 @@ export function AppMenu() {
     <IonMenu contentId={APP_CONTENT_ID} menuId="app" side="start">
       <IonHeader translucent>
         <IonToolbar>
+          {/* FR-111: Das Logo gehört dorthin, wo der Verein sich selbst
+              begegnet – neben seinen Namen. Ohne diese Stelle wäre es eine
+              Einstellung, die nichts bewirkt. */}
+          {activeClub.settings?.logoUrl && (
+            <img
+              slot="start"
+              className="app-club-logo"
+              src={activeClub.settings.logoUrl}
+              alt={activeClub.name}
+            />
+          )}
           <IonTitle>{activeClub.name}</IonTitle>
         </IonToolbar>
       </IonHeader>
@@ -84,6 +95,8 @@ export function AppMenu() {
                 label={t('menu.switchClub')}
                 value={activeMembership?.club_id}
                 onIonChange={(e) => setActiveClub(e.detail.value as string)}
+                cancelText={t('common.cancel')}
+                okText={t('common.ok')}
               >
                 {memberships.map((membership) => (
                   <IonSelectOption key={membership.club_id} value={membership.club_id}>
@@ -99,7 +112,7 @@ export function AppMenu() {
             ihnen für ihr Team (BR-096). Was darin steht, entscheidet
             `ClubAdminLinks` – hier steht nur, ob der Abschnitt überhaupt
             erscheint. */}
-        {(isAdmin || isTrainer) && (
+        {hasAdminLinks(isAdmin, isTrainer, activeClub.settings) && (
           <IonMenuToggle autoHide={false}>
             <ListSection title={t('menu.administration')}>
               <ClubAdminLinks />

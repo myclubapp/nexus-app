@@ -6,7 +6,7 @@
 **Use Case Name:** Vereinsidentität, Begriffe und Module konfigurieren
 **Primary Actor:** Vorstand
 **Goal:** Die App die Sprache und das Erscheinungsbild des eigenen Vereins sprechen lassen
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

@@ -1,0 +1,135 @@
+import type { ClubModule, ClubSettings, EventType } from './database.types';
+import type { Language } from '../i18n';
+import { SUPPORTED_LANGUAGES } from '../i18n';
+
+/** Ein Begriff in bis zu vier Sprachen (BR-148). */
+export type LabelSet = Partial<Record<Language, string>>;
+
+/**
+ * Den Begriff für diese Terminart in dieser Sprache auflösen.
+ *
+ * Drei Stufen, in dieser Reihenfolge:
+ *   1. der Begriff in der gewählten Sprache,
+ *   2. **irgendein** hinterlegter Begriff – wer «Probe» nur auf Deutsch
+ *      eingetragen hat, meint ihn auch auf Französisch; ein Verein, der etwas
+ *      gesagt hat, soll nicht auf die Standardübersetzung zurückfallen,
+ *   3. nichts – dann greift `t('agenda.type.…')` beim Aufrufer.
+ *
+ * Reine Funktion, weil dieselbe Regel im Formular und in der Anzeige gilt
+ * (guidelines.md §9).
+ */
+export function resolveLabel(
+  labels: ClubSettings['labels'],
+  type: EventType,
+  language: string,
+): string | null {
+  const set = labels?.[type];
+  if (!set) return null;
+
+  const own = set[language as Language]?.trim();
+  if (own) return own;
+
+  for (const code of SUPPORTED_LANGUAGES) {
+    const fallback = set[code]?.trim();
+    if (fallback) return fallback;
+  }
+  return null;
+}
+
+/**
+ * Ist ein Modul eingeschaltet?
+ *
+ * **Fehlt der Eintrag, ist es aus.** Das ist der Unterschied zu jeder anderen
+ * Einstellung dieser App: K7 verlangt den Zero-Config-Start, und ein Modul,
+ * das ungefragt da ist, wäre keine progressive Aktivierung (BR-150). Dieselbe
+ * Regel steht als `module_enabled()` in `0052` – hier entscheidet sie nur, ob
+ * ein Weg erscheint.
+ */
+export function isModuleOn(
+  settings: ClubSettings | null | undefined,
+  module: ClubModule,
+): boolean {
+  return settings?.modules?.[module] === true;
+}
+
+/**
+ * Die Einstellungen eines Vereins aus dem Formularstand aufbauen.
+ *
+ * Leere Begriffe, Farben, Module und DNA-Felder werden **nicht** abgelegt:
+ * `eventLabel()` fällt dann auf die Standardübersetzung zurück, und ein Verein
+ * ohne eigene Farbe zeigt wieder die Basisfarben. Bliebe ein leerer Wert
+ * stehen, wäre das eine Einstellung, die etwas verspricht und nichts bewirkt.
+ *
+ * Reine Funktion, weil die Entscheidung sonst in einem Ereignis-Handler
+ * steckte, den kein Test bedienen kann (guidelines.md §9).
+ */
+export function buildClubSettings(
+  current: ClubSettings | null | undefined,
+  input: {
+    labels: Partial<Record<EventType, LabelSet>>;
+    theme: ClubSettings['theme'];
+    modules: Partial<Record<ClubModule, boolean>>;
+    dna: NonNullable<ClubSettings['dna']>;
+    logoUrl: string;
+  },
+): ClubSettings {
+  const settings: ClubSettings = { ...current };
+
+  // Je Terminart bleiben nur die Sprachen stehen, in denen etwas steht – und
+  // eine Terminart ohne einzige Sprache verschwindet ganz.
+  const cleanLabels = Object.fromEntries(
+    Object.entries(input.labels)
+      .map(([type, set]) => [
+        type,
+        Object.fromEntries(
+          Object.entries(set ?? {}).filter(([, value]) => value?.trim()),
+        ),
+      ])
+      .filter(([, set]) => Object.keys(set as object).length > 0),
+  );
+
+  const cleanTheme = Object.fromEntries(
+    Object.entries(input.theme ?? {}).filter(([, value]) => value?.trim()),
+  );
+
+  // Nur eingeschaltete Module werden abgelegt. Ein `false` wäre dasselbe wie
+  // ein fehlender Eintrag und machte die Einstellung nur länger.
+  const cleanModules = Object.fromEntries(
+    Object.entries(input.modules).filter(([, value]) => value === true),
+  );
+
+  const cleanDna = Object.fromEntries(
+    Object.entries(input.dna).filter(([, value]) => value?.trim()),
+  );
+
+  if (Object.keys(cleanLabels).length > 0) settings.labels = cleanLabels;
+  else delete settings.labels;
+
+  if (Object.keys(cleanTheme).length > 0) settings.theme = cleanTheme;
+  else delete settings.theme;
+
+  if (Object.keys(cleanModules).length > 0) settings.modules = cleanModules;
+  else delete settings.modules;
+
+  if (Object.keys(cleanDna).length > 0) settings.dna = cleanDna;
+  else delete settings.dna;
+
+  if (input.logoUrl.trim()) settings.logoUrl = input.logoUrl.trim();
+  else delete settings.logoUrl;
+
+  return settings;
+}
+
+/**
+ * Hat sich der Saisonbeginn geändert (A4)?
+ *
+ * Die Rückfrage hängt nicht daran, ob das Feld angefasst wurde, sondern ob der
+ * Wert ein anderer ist: Wer denselben Tag erneut eingibt, ändert nichts und
+ * soll nicht gefragt werden.
+ */
+export function seasonStartChanged(
+  before: string | null | undefined,
+  after: string,
+): boolean {
+  return (before ?? '') !== after;
+}

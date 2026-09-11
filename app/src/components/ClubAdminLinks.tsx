@@ -1,6 +1,8 @@
 import { IonBadge, IonItem, IonLabel, IonNote } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import { useClub } from "../hooks/useClub";
+import { isModuleOn } from "../lib/clubSettings";
+import type { ClubSettings } from "../lib/database.types";
 import { usePendingJoinRequests } from "../hooks/useJoinRequests";
 
 /**
@@ -14,30 +16,52 @@ import { usePendingJoinRequests } from "../hooks/useJoinRequests";
  * kein Schutz: Die Berechtigung liegt in den RLS-Policies und in
  * `is_club_admin()` (§9).
  */
+/**
+ * Hat diese Person überhaupt einen Verwaltungsweg?
+ *
+ * Die Frage steht hier und nicht bei den beiden Einhängepunkten: Seit UC-034
+ * hängt der einzige Weg, den Trainer:innen haben – die Vereins-Gesundheit – an
+ * einem Modul. Ohne dieses Modul bliebe sonst eine Überschrift «Verwaltung»
+ * über einer leeren Liste stehen.
+ *
+ * Das ist Bequemlichkeit, kein Schutz: Die Berechtigung liegt in den
+ * RLS-Policies und in `is_club_admin()` (guidelines §9).
+ */
+export function hasAdminLinks(
+  isAdmin: boolean,
+  isTrainer: boolean,
+  settings: ClubSettings | null | undefined,
+): boolean {
+  if (isAdmin) return true;
+  // Die Vereins-Gesundheit gehört auch Trainer:innen – für ihr Team (BR-096).
+  return isTrainer && isModuleOn(settings, "health");
+}
+
 export function ClubAdminLinks() {
   const { t } = useTranslation();
   const { activeClub, isAdmin, isTrainer } = useClub();
   const pendingRequests = usePendingJoinRequests();
 
-  // Die Vereins-Gesundheit gehört auch Trainer:innen – für ihr Team (BR-096).
-  // Alles Übrige bleibt dem Vorstand. Beide Flaggen werden gefragt: Heute ist
-  // jede Vorstandsperson auch Trainer:in, aber daran soll dieser Wächter nicht
-  // hängen.
-  if (!isAdmin && !isTrainer) return null;
+  if (!hasAdminLinks(isAdmin, isTrainer, activeClub?.settings)) return null;
 
   const pending = pendingRequests.data?.length ?? 0;
 
   return (
     <>
-      <IonItem button routerLink="/tabs/profile/health" detail>
-        <IonLabel>{t("health.title")}</IonLabel>
-      </IonItem>
+      {/* UC-034: Das Cockpit ist ein Modul – ohne es bleibt der Weg zu. */}
+      {isModuleOn(activeClub?.settings, "health") && (
+        <IonItem button routerLink="/tabs/profile/health" detail>
+          <IonLabel>{t("health.title")}</IonLabel>
+        </IonItem>
+      )}
 
       {!isAdmin ? null : (
         <>
-          <IonItem button routerLink="/tabs/profile/pulse" detail>
-            <IonLabel>{t("pulse.title")}</IonLabel>
-          </IonItem>
+          {isModuleOn(activeClub?.settings, "pulse") && (
+            <IonItem button routerLink="/tabs/profile/pulse" detail>
+              <IonLabel>{t("pulse.title")}</IonLabel>
+            </IonItem>
+          )}
 
           <IonItem button routerLink="/tabs/profile/club" detail>
             <IonLabel>
@@ -50,9 +74,13 @@ export function ClubAdminLinks() {
             <IonLabel>{t("members.title")}</IonLabel>
           </IonItem>
 
-          <IonItem button routerLink="/tabs/profile/offices" detail>
-            <IonLabel>{t("offices.title")}</IonLabel>
-          </IonItem>
+          {/* Die Ämter gehören zum Modul «Sitzungen»: Sie sind der Verteiler,
+              über den ein Gremium definiert wird (BR-133). */}
+          {isModuleOn(activeClub?.settings, "meeting") && (
+            <IonItem button routerLink="/tabs/profile/offices" detail>
+              <IonLabel>{t("offices.title")}</IonLabel>
+            </IonItem>
+          )}
 
           <IonItem button routerLink="/tabs/profile/rules" detail>
             <IonLabel>{t("pointRules.title")}</IonLabel>

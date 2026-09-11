@@ -11,6 +11,7 @@
  * implizite Index-Signatur.
  */
 import type { Tables as Row } from './database.generated';
+import type { Language } from '../i18n';
 
 export type {
   CompositeTypes,
@@ -53,6 +54,21 @@ export type EventType =
   // Einladung, Zu- und Absage –, nur geht ihre Einladung an Ämter (FR-095).
   | 'meeting';
 
+/**
+ * Die zuschaltbaren Module – dieselben Namen wie `module_enabled()` in `0052`.
+ *
+ * Agenda, Einladungen und Punkte fehlen mit Absicht: Sie sind kein Modul,
+ * sondern das, womit ein Verein startet (K7).
+ */
+export const CLUB_MODULES = [
+  'voice',
+  'meeting',
+  'checkin',
+  'pulse',
+  'health',
+] as const;
+export type ClubModule = (typeof CLUB_MODULES)[number];
+
 /** `attendance.status` – Constraint aus `0003_agenda.sql`. */
 export type AttendanceStatus = 'registered' | 'present' | 'excused' | 'absent';
 
@@ -69,8 +85,30 @@ export type ClubSettings = {
     secondary?: string;
     tertiary?: string;
   };
-  /** Vereinseigene Begriffe je Terminart, z.B. «Probe» statt «Training». */
-  labels?: Partial<Record<EventType, string>>;
+  /**
+   * Vereinseigene Begriffe je Terminart, z.B. «Probe» statt «Training» – und
+   * **je Sprache** (BR-148). Ein Verein, der «Probe» sagt, sagt auf
+   * Französisch «répétition»; ein einzelnes Wort für alle vier Sprachen war
+   * die Lücke, die UC-034 geschlossen hat (`0052`).
+   */
+  labels?: Partial<Record<EventType, Partial<Record<Language, string>>>>;
+  /** Die Adresse des Vereinslogos (FR-111). */
+  logoUrl?: string;
+  /**
+   * Die zuschaltbaren Module (FR-115).
+   *
+   * Fehlt ein Eintrag, ist das Modul **aus** – anders als bei jeder anderen
+   * Einstellung dieser App. K7 verlangt den Zero-Config-Start; ein Modul, das
+   * ungefragt da ist, wäre keine progressive Aktivierung (BR-150).
+   */
+  modules?: Partial<Record<ClubModule, boolean>>;
+  /** Die Vereins-DNA (FR-114, K6c). */
+  dna?: {
+    why?: string;
+    values?: string;
+    tone?: string;
+    traditions?: string;
+  };
   /** UC-022 A3: Anzeige auf die vorderen Ränge begrenzen. */
   leaderboard?: {
     topOnly?: number;
@@ -119,6 +157,13 @@ export type NewsSource = Row<'news_sources'>;
 
 /** `news_sources.last_status` – Constraint aus `0022_news_sources.sql`. */
 export type NewsSyncStatus = 'ok' | 'error';
+
+/**
+ * `news_sources.api_style` – Constraint aus `0048_news_source_settings.sql`.
+ * Wie die WordPress-Schnittstelle erreichbar ist: `pretty` unter `/wp-json/`,
+ * `query` über `?rest_route=` für Websites ohne sprechende Adressen.
+ */
+export type ApiStyle = 'pretty' | 'query';
 
 export type Notification = Row<'notifications'>;
 // Die Sicht `leaderboard` ist mit `0039` gewichen: Die Rangfolge steht nur

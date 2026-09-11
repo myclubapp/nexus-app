@@ -12,6 +12,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { useClub } from '../hooks/useClub';
+import { isModuleOn } from '../lib/clubSettings';
 import { useMyPoints, useRuleLabels } from '../hooks/useGamification';
 import { bookingLabel } from '../lib/points';
 import { useMyKudos } from '../hooks/useTasks';
@@ -22,7 +23,7 @@ import { useToast } from '../hooks/useToast';
 import { FormModal } from '../components/FormModal';
 import { DeleteAccountModal } from '../components/DeleteAccountModal';
 import { ProfileEditModal } from '../components/ProfileEditModal';
-import { ClubAdminLinks } from '../components/ClubAdminLinks';
+import { ClubAdminLinks, hasAdminLinks } from '../components/ClubAdminLinks';
 import { PASSWORD_MIN_LENGTH, authErrorKey } from '../lib/authError';
 import { SUPPORTED_LANGUAGES } from '../i18n';
 import { formatDate, formatDateTime } from '../lib/format';
@@ -30,7 +31,8 @@ import { formatDate, formatDateTime } from '../lib/format';
 export function ProfilePage() {
   const { t, i18n } = useTranslation();
   const { signOut, user, setPassword } = useAuth();
-  const { activeMembership, memberships, setActiveClub } = useClub();
+  const { activeClub, activeMembership, memberships, setActiveClub, isAdmin, isTrainer } =
+    useClub();
   const points = useMyPoints();
   const rules = useRuleLabels();
   const kudos = useMyKudos();
@@ -93,6 +95,8 @@ export function ProfilePage() {
               label={t('leaderboard.club')}
               value={activeMembership?.club_id}
               onIonChange={(e) => setActiveClub(e.detail.value as string)}
+              cancelText={t('common.cancel')}
+              okText={t('common.ok')}
             >
               {memberships.map((membership) => (
                 <IonSelectOption key={membership.club_id} value={membership.club_id}>
@@ -117,6 +121,8 @@ export function ProfilePage() {
             label={t('profile.language')}
             value={currentLanguage}
             onIonChange={(e) => void i18n.changeLanguage(e.detail.value as string)}
+            cancelText={t('common.cancel')}
+            okText={t('common.ok')}
           >
             {SUPPORTED_LANGUAGES.map((code) => (
               <IonSelectOption key={code} value={code}>
@@ -126,17 +132,26 @@ export function ProfilePage() {
           </IonSelect>
         </IonItem>
 
-        <IonItem button routerLink="/tabs/profile/voice" detail>
-          <IonLabel>{t('voice.title')}</IonLabel>
-        </IonItem>
+        {/* UC-034: Was ein Modul mitbringt, erscheint erst, wenn der Verein
+            es eingeschaltet hat (FR-115). Das Ausblenden ist Bequemlichkeit;
+            gesperrt ist es am Server (`module_enabled()` in `0052`). */}
+        {isModuleOn(activeClub?.settings, 'voice') && (
+          <IonItem button routerLink="/tabs/profile/voice" detail>
+            <IonLabel>{t('voice.title')}</IonLabel>
+          </IonItem>
+        )}
 
-        <IonItem button routerLink="/tabs/profile/meeting" detail>
-          <IonLabel>{t('meeting.title')}</IonLabel>
-        </IonItem>
+        {isModuleOn(activeClub?.settings, 'meeting') && (
+          <IonItem button routerLink="/tabs/profile/meeting" detail>
+            <IonLabel>{t('meeting.title')}</IonLabel>
+          </IonItem>
+        )}
 
-        <IonItem button routerLink="/tabs/profile/mood" detail>
-          <IonLabel>{t('checkin.pageTitle')}</IonLabel>
-        </IonItem>
+        {isModuleOn(activeClub?.settings, 'checkin') && (
+          <IonItem button routerLink="/tabs/profile/mood" detail>
+            <IonLabel>{t('checkin.pageTitle')}</IonLabel>
+          </IonItem>
+        )}
 
         <IonItem button routerLink="/tabs/profile/notifications" detail>
           <IonLabel>{t('notifications.title')}</IonLabel>
@@ -151,8 +166,6 @@ export function ProfilePage() {
         <IonItem button routerLink="/tabs/profile/transparency" detail>
           <IonLabel>{t('transparency.title')}</IonLabel>
         </IonItem>
-
-        <ClubAdminLinks />
 
         <IonItem
           button
@@ -188,6 +201,21 @@ export function ProfilePage() {
           </IonToggle>
         </IonItem>
       </ListSection>
+
+      {/* FR-148: Die Verwaltungswege stehen in einer eigenen Gruppe, nicht
+          zwischen den persönlichen Einstellungen – sonst liest sich «Mitglieder»
+          wie eine Option des eigenen Kontos. Dieselbe Überschrift wie in
+          `AppMenu`, damit die beiden Einhängepunkte gleich heissen.
+
+          Die Rollenabfrage steht hier **und** in `ClubAdminLinks`: Die Liste
+          rendert ohne Rolle nichts, die Überschrift bliebe aber als leere
+          Gruppe stehen. Beides ist Bequemlichkeit, kein Schutz – der liegt in
+          `is_club_admin()` und den RLS-Policies. */}
+      {hasAdminLinks(isAdmin, isTrainer, activeClub?.settings) && (
+        <ListSection title={t('menu.administration')}>
+          <ClubAdminLinks />
+        </ListSection>
+      )}
 
       {/* UC-019 Schritt 8: das Dankeswort auf dem eigenen Profil. Es steht
           **vor** der Punktehistorie – die Anerkennung kommt vor der Zahl

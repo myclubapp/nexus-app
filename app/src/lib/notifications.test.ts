@@ -61,7 +61,10 @@ describe('PUSH_CATEGORIES', () => {
     // Die Werte stammen aus den `notify()`-Aufrufen der Migrationen. Fehlt
     // einer, liesse er sich nie abwählen.
     expect([...PUSH_CATEGORIES]).toEqual([
-      'event', 'points', 'task', 'news', 'pulse', 'health', 'join_request',
+      'event', 'points', 'task', 'news', 'pulse', 'health',
+      // Seit UC-030 stellt `notify()` unter `input` zu, seit UC-032 unter
+      // `checkin`. Fehlte eine davon hier, liesse sie sich nie abwählen.
+      'input', 'checkin', 'join_request',
     ]);
   });
 });

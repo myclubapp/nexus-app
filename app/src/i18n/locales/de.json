@@ -264,7 +264,46 @@
     "reset": "Zurücksetzen",
     "labels": "Begriffe",
     "labelsHint": "Wie nennt ihr eure Termine? Leer heisst: Standardbegriff.",
-    "saved": "Gespeichert."
+    "saved": "Gespeichert.",
+    "logo": "Logo",
+    "logoUrl": "Adresse des Logos",
+    "logoHint": "Vorläufig eine Adresse: Der Datei-Upload braucht einen Speicher, den dieses Projekt noch nicht eingerichtet hat.",
+    "contrastWarning": "{{color}} hat zu wenig Kontrast zur Schrift darauf.",
+    "contrastFix": "Abdunkeln",
+    "seasonChange": "Saisonbeginn ändern?",
+    "seasonChangeHint": "Künftige Buchungen werden der neuen Saison zugeordnet. Bereits gebuchte Punkte behalten ihre Saison.",
+    "modules": "Module",
+    "modulesHint": "Nichts davon musst du einschalten. Die App schlägt dir ein Modul vor, wenn euer Verein eine Grösse erreicht, ab der es trägt.",
+    "module": {
+      "voice": {
+        "title": "Stimme",
+        "body": "Anliegen sagen – an eine Person, an eine Rolle oder anonym an den Vorstand."
+      },
+      "meeting": {
+        "title": "Sitzungen & Ämter",
+        "body": "Vorschläge ans Gremium, dokumentierte Antworten, Ämter als Verteiler."
+      },
+      "checkin": {
+        "title": "Befinden",
+        "body": "Eine kurze Frage nach einem Termin. Freiwillig, privat, ohne Punkte."
+      },
+      "pulse": {
+        "title": "Vereins-Puls",
+        "body": "Der Wochenrückblick: Was passiert, woran ihr arbeitet, wo man dabei sein kann."
+      },
+      "health": {
+        "title": "Vereins-Gesundheit",
+        "body": "Fürsorge-Hinweise für Trainer:innen und den Vorstand."
+      }
+    },
+    "dna": "Vereins-DNA",
+    "dnaHint": "Wofür ihr steht. Gespeichert wird es heute; verwendet wird es, sobald es textunterstützende Funktionen gibt.",
+    "dnaField": {
+      "why": "Warum gibt es euch?",
+      "values": "Eure Werte",
+      "tone": "Anrede und Tonalität",
+      "traditions": "Traditionen und eigene Begriffe"
+    }
   },
   "health": {
     "title": "Vereins-Gesundheit",

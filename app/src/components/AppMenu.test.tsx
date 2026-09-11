@@ -6,7 +6,11 @@ import { ionProp, renderWithProviders } from '../test/utils';
 const signOut = vi.fn();
 
 interface ClubStub {
-  activeClub: { id: string; name: string } | null;
+  activeClub: {
+    id: string;
+    name: string;
+    settings?: { modules?: Record<string, boolean>; logoUrl?: string };
+  } | null;
   memberships: { club_id: string; club: { name: string } }[];
   isAdmin: boolean;
   isTrainer: boolean;
@@ -53,7 +57,15 @@ describe('AppMenu', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     club = {
-      activeClub: { id: 'c1', name: 'TV Musterhausen' },
+      activeClub: {
+        id: 'c1',
+        name: 'TV Musterhausen',
+        // Alle Module an: Dieser Test prüft die Navigation, nicht die
+        // Modulschalter – die haben ihren eigenen Fall.
+        settings: {
+          modules: { voice: true, meeting: true, checkin: true, pulse: true, health: true },
+        },
+      },
       memberships: [{ club_id: 'c1', club: { name: 'TV Musterhausen' } }],
       isAdmin: false,
       isTrainer: false,
@@ -126,6 +138,48 @@ describe('AppMenu', () => {
       '/tabs/profile',
       '/tabs/profile/health',
     ]);
+  });
+
+  it('zeigt keinen Modulweg, solange das Modul aus ist (UC-034, FR-115)', () => {
+    // Ein neuer Verein startet ohne Module (K7). Was nicht eingeschaltet ist,
+    // hat auch keinen Weg.
+    club.isAdmin = true;
+    club.activeClub = { id: 'c1', name: 'TV Musterhausen', settings: { modules: {} } };
+    const { container } = renderWithProviders(<AppMenu />);
+
+    const links = routerLinks(container);
+    expect(links).not.toContain('/tabs/profile/health');
+    expect(links).not.toContain('/tabs/profile/pulse');
+    expect(links).not.toContain('/tabs/profile/offices');
+    expect(links).toContain('/tabs/profile/members');
+  });
+
+  it('lässt Trainer:innen ohne das Modul «Gesundheit» ganz ohne Abschnitt', () => {
+    club.isTrainer = true;
+    club.activeClub = { id: 'c1', name: 'TV Musterhausen', settings: { modules: {} } };
+    const { container } = renderWithProviders(<AppMenu />);
+
+    expect(routerLinks(container)).toEqual(['/tabs/profile']);
+  });
+
+  it('zeigt das Vereinslogo neben dem Namen (FR-111)', () => {
+    club.activeClub = {
+      id: 'c1',
+      name: 'TV Musterhausen',
+      settings: { logoUrl: 'https://verein.example/logo.svg' },
+    };
+    const { container } = renderWithProviders(<AppMenu />);
+
+    const logo = container.querySelector('img.app-club-logo');
+    expect(logo).not.toBeNull();
+    expect(logo).toHaveAttribute('src', 'https://verein.example/logo.svg');
+    // Ohne Alternativtext wäre das Logo für eine Sprachausgabe nichts.
+    expect(logo).toHaveAttribute('alt', 'TV Musterhausen');
+  });
+
+  it('lässt ohne Logo Platz, statt eine leere Fläche zu zeigen', () => {
+    const { container } = renderWithProviders(<AppMenu />);
+    expect(container.querySelector('img.app-club-logo')).toBeNull();
   });
 
   it('bietet den Vereinswechsel erst ab zwei Mitgliedschaften an', () => {

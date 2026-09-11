@@ -1,15 +1,38 @@
 import { useEffect, useMemo, useState } from 'react';
-import { IonButton, IonInput, IonItem, IonLabel, IonSpinner } from '@ionic/react';
+import {
+  IonAlert,
+  IonButton,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonNote,
+  IonSpinner,
+  IonTextarea,
+  IonToggle,
+} from '@ionic/react';
 import { useTranslation } from 'react-i18next';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../lib/supabase';
 import { useClub } from '../hooks/useClub';
-import { applyClubTheme } from '../lib/theme';
+import { useSaveClubSettings } from '../hooks/useClubSettings';
+import { useToast } from '../hooks/useToast';
+import {
+  applyClubTheme,
+  BASE_THEME,
+  hasEnoughContrast,
+  suggestContrast,
+  type ThemeRole,
+} from '../lib/theme';
+import {
+  buildClubSettings,
+  seasonStartChanged,
+  type LabelSet,
+} from '../lib/clubSettings';
+import { SUPPORTED_LANGUAGES } from '../i18n';
 import { seasonLabel } from '../lib/season';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
-import { EmptyState, InlineError, InlineSuccess } from '../components/StateViews';
-import type { ClubSettings, EventType } from '../lib/database.types';
+import { EmptyState, InlineError } from '../components/StateViews';
+import { CLUB_MODULES } from '../lib/database.types';
+import type { ClubModule, ClubSettings, EventType } from '../lib/database.types';
 
 /** Reihenfolge wie in `events.type` (0003_agenda.sql). */
 const EVENT_TYPES: EventType[] = [
@@ -22,35 +45,32 @@ const EVENT_TYPES: EventType[] = [
   'helper',
 ];
 
-const THEME_ROLES = ['primary', 'secondary', 'tertiary'] as const;
-type ThemeRole = (typeof THEME_ROLES)[number];
-
-/** Basisfarben aus `theme/variables.css` – der Stand ohne Vereins-Theme. */
-const BASE_COLORS: Record<ThemeRole, string> = {
-  primary: '#1d4ed8',
-  secondary: '#0f766e',
-  tertiary: '#b45309',
-};
+const THEME_ROLES = Object.keys(BASE_THEME) as ThemeRole[];
 
 /**
  * Vereinseinstellungen: Name, Saisonstart, Vereinsfarben und die eigenen
  * Begriffe je Terminart (MVP-Scope §6 – die Vereinsart setzt nur Vorlagen,
  * alles bleibt nachträglich änderbar).
  *
- * Geschrieben wird direkt auf `clubs`; die Berechtigung prüft die Policy
- * `clubs_update` über `is_club_admin()`. Das Ausblenden hier ist nur die
- * Bequemlichkeit, nicht der Schutz.
+ * Geschrieben wird über `useSaveClubSettings()`; die Berechtigung prüft die
+ * Policy `clubs_update` über `is_club_admin()`. Das Ausblenden hier ist nur
+ * die Bequemlichkeit, nicht der Schutz.
  */
 export function ClubSettingsPage() {
   const { t } = useTranslation();
   const { activeClub, isAdmin } = useClub();
-  const queryClient = useQueryClient();
+  const save = useSaveClubSettings();
+  const toast = useToast();
 
   const [name, setName] = useState('');
   const [seasonStart, setSeasonStart] = useState('');
   const [theme, setTheme] = useState<ClubSettings['theme']>({});
-  const [labels, setLabels] = useState<Partial<Record<EventType, string>>>({});
-  const [saved, setSaved] = useState(false);
+  const [labels, setLabels] = useState<Partial<Record<EventType, LabelSet>>>({});
+  const [modules, setModules] = useState<Partial<Record<ClubModule, boolean>>>({});
+  const [dna, setDna] = useState<NonNullable<ClubSettings['dna']>>({});
+  const [logoUrl, setLogoUrl] = useState('');
+  // A4: Die Warnung steht **vor** dem Speichern, nicht als Hinweis danach.
+  const [confirmSeason, setConfirmSeason] = useState(false);
 
   // Den Entwurf aus dem Verein füllen, sobald er geladen oder gewechselt ist.
   useEffect(() => {
@@ -59,6 +79,9 @@ export function ClubSettingsPage() {
     setSeasonStart(activeClub.season_start ?? '');
     setTheme(activeClub.settings?.theme ?? {});
     setLabels(activeClub.settings?.labels ?? {});
+    setModules(activeClub.settings?.modules ?? {});
+    setDna(activeClub.settings?.dna ?? {});
+    setLogoUrl(activeClub.settings?.logoUrl ?? '');
   }, [activeClub]);
 
   // Farben sofort anwenden, damit die Wirkung sichtbar ist. Beim Verlassen
@@ -74,45 +97,6 @@ export function ClubSettingsPage() {
     [activeClub?.settings],
   );
 
-  const save = useMutation({
-    mutationFn: async () => {
-      if (!activeClub) return;
-
-      // Leere Begriffe und Farben gar nicht erst ablegen: `eventLabel()` fällt
-      // dann auf die Standardübersetzung zurück.
-      const cleanLabels = Object.fromEntries(
-        Object.entries(labels).filter(([, value]) => value?.trim()),
-      );
-      const cleanTheme = Object.fromEntries(
-        Object.entries(theme ?? {}).filter(([, value]) => value?.trim()),
-      );
-
-      const settings: ClubSettings = { ...activeClub.settings };
-      if (Object.keys(cleanLabels).length > 0) settings.labels = cleanLabels;
-      else delete settings.labels;
-      if (Object.keys(cleanTheme).length > 0) settings.theme = cleanTheme;
-      else delete settings.theme;
-
-      const { error } = await supabase
-        .from('clubs')
-        .update({
-          name: name.trim(),
-          season_start: seasonStart || null,
-          settings,
-        })
-        .eq('id', activeClub.id);
-
-      if (error) throw new Error(error.message);
-    },
-    onSuccess: async () => {
-      setSaved(true);
-      await queryClient.invalidateQueries({ queryKey: ['memberships'] });
-      // Die Saison steckt im Schlüssel der Punkte- und Ranglisten-Abfragen.
-      await queryClient.invalidateQueries({ queryKey: ['points'] });
-      await queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
-    },
-  });
-
   // Vorschau des Saison-Labels: dieselbe Funktion, die auch das Dashboard und
   // die Rangliste benutzen (Gegenstück zu `season_label()` in SQL).
   const seasonPreview = useMemo(
@@ -122,6 +106,42 @@ export function ClubSettingsPage() {
 
   const canSave =
     Boolean(activeClub) && name.trim().length >= 2 && !save.isPending;
+
+  // A5: Farben, deren Kontrast nicht reicht – samt Vorschlag.
+  const weakColors = THEME_ROLES.filter(
+    (role) => theme?.[role] && !hasEnoughContrast(theme[role]!),
+  );
+
+  function persist() {
+    save.mutate(
+      {
+        name,
+        seasonStart: seasonStart || null,
+        settings: buildClubSettings(activeClub?.settings, {
+          labels,
+          theme,
+          modules,
+          dna,
+          logoUrl,
+        }),
+      },
+      {
+        onSuccess: () => toast.success(t('clubSettings.saved')),
+        onError: (cause) => toast.failure(cause.message),
+      },
+    );
+  }
+
+  function submit() {
+    // A4: Ein geänderter Saisonbeginn verschiebt die Zuordnung künftiger
+    // Buchungen. Gebuchte Punkte behalten ihre Saison – aber das muss jemand
+    // sagen, **bevor** gespeichert wird.
+    if (seasonStartChanged(activeClub?.season_start, seasonStart)) {
+      setConfirmSeason(true);
+      return;
+    }
+    persist();
+  }
 
   return (
     <AppPage title={t('clubSettings.title')} backHref="/tabs/profile">
@@ -167,7 +187,7 @@ export function ClubSettingsPage() {
                   className="app-color-swatch"
                   type="color"
                   aria-label={t(`clubSettings.color.${role}`)}
-                  value={theme?.[role] ?? BASE_COLORS[role]}
+                  value={theme?.[role] ?? BASE_THEME[role]}
                   onChange={(e) =>
                     setTheme((current) => ({ ...current, [role]: e.target.value }))
                   }
@@ -189,43 +209,153 @@ export function ClubSettingsPage() {
                 </IonButton>
               </IonItem>
             ))}
+
+            {/* A5: Der Hinweis steht im Abschnitt, nicht in einem Toast – er
+                bezieht sich auf ein Feld, das gerade korrigiert werden soll. */}
+            {weakColors.map((role) => (
+              <IonItem key={`contrast-${role}`} lines="none">
+                <IonLabel className="ion-text-wrap">
+                  <IonNote>
+                    {t('clubSettings.contrastWarning', {
+                      color: t(`clubSettings.color.${role}`),
+                    })}
+                  </IonNote>
+                </IonLabel>
+                <IonButton
+                  slot="end"
+                  fill="clear"
+                  size="small"
+                  onClick={() =>
+                    setTheme((current) => ({
+                      ...current,
+                      [role]: suggestContrast(current?.[role] ?? '') ?? current?.[role],
+                    }))
+                  }
+                >
+                  {t('clubSettings.contrastFix')}
+                </IonButton>
+              </IonItem>
+            ))}
+          </ListSection>
+
+          {/* FR-111: das Logo. Als Adresse, nicht als Upload – dafür fehlt
+              Supabase Storage (offen seit UC-026). */}
+          <ListSection
+            title={t('clubSettings.logo')}
+            footnote={t('clubSettings.logoHint')}
+          >
+            <IonItem>
+              <IonInput
+                type="url"
+                inputmode="url"
+                label={t('clubSettings.logoUrl')}
+                labelPlacement="stacked"
+                value={logoUrl}
+                onIonInput={(e) => setLogoUrl(e.detail.value ?? '')}
+              />
+            </IonItem>
           </ListSection>
 
           <ListSection
             title={t('clubSettings.labels')}
             footnote={t('clubSettings.labelsHint')}
           >
+            {/* BR-148: je Terminart vier Felder – ein Verein, der «Probe»
+                sagt, sagt auf Französisch «répétition». Leer bleibende
+                Sprachen fallen auf eine ausgefüllte zurück, nicht auf die
+                Standardübersetzung (`resolveLabel()`). */}
             {EVENT_TYPES.map((type) => (
               <IonItem key={type}>
-                <IonInput
-                  label={t(`agenda.type.${type}`)}
+                <IonLabel className="ion-text-wrap">
+                  <h2>{t(`agenda.type.${type}`)}</h2>
+                </IonLabel>
+                {SUPPORTED_LANGUAGES.map((code) => (
+                  <IonInput
+                    key={code}
+                    slot="end"
+                    label={t(`language.${code}`)}
+                    labelPlacement="stacked"
+                    placeholder={t(`agenda.type.${type}`)}
+                    value={labels[type]?.[code] ?? ''}
+                    onIonInput={(e) =>
+                      setLabels((current) => ({
+                        ...current,
+                        [type]: { ...current[type], [code]: e.detail.value ?? '' },
+                      }))
+                    }
+                  />
+                ))}
+              </IonItem>
+            ))}
+          </ListSection>
+
+          {/* A1 und FR-115: die Module. Was hier aus ist, gibt es für dieses
+              Mitglied nicht – und der Server sagt dasselbe (`module_enabled()`). */}
+          <ListSection
+            title={t('clubSettings.modules')}
+            footnote={t('clubSettings.modulesHint')}
+          >
+            {CLUB_MODULES.map((module) => (
+              <IonItem key={module}>
+                <IonToggle
+                  checked={modules[module] === true}
+                  onIonChange={(e) =>
+                    setModules((current) => ({ ...current, [module]: e.detail.checked }))
+                  }
+                >
+                  <IonLabel className="ion-text-wrap">
+                    <h2>{t(`clubSettings.module.${module}.title`)}</h2>
+                    <IonNote>{t(`clubSettings.module.${module}.body`)}</IonNote>
+                  </IonLabel>
+                </IonToggle>
+              </IonItem>
+            ))}
+          </ListSection>
+
+          {/* A3 und FR-114: die Vereins-DNA. */}
+          <ListSection
+            title={t('clubSettings.dna')}
+            footnote={t('clubSettings.dnaHint')}
+          >
+            {(['why', 'values', 'tone', 'traditions'] as const).map((field) => (
+              <IonItem key={field}>
+                <IonTextarea
+                  label={t(`clubSettings.dnaField.${field}`)}
                   labelPlacement="stacked"
-                  placeholder={t(`agenda.type.${type}`)}
-                  value={labels[type] ?? ''}
+                  autoGrow
+                  rows={2}
+                  value={dna[field] ?? ''}
                   onIonInput={(e) =>
-                    setLabels((current) => ({ ...current, [type]: e.detail.value ?? '' }))
+                    setDna((current) => ({ ...current, [field]: e.detail.value ?? '' }))
                   }
                 />
               </IonItem>
             ))}
           </ListSection>
 
+          {/* guidelines §2: Die Rückfrage steht **vor** der Aktion, und die
+              Farbe des Knopfs kommt aus seiner Rolle. */}
+          <IonAlert
+            isOpen={confirmSeason}
+            header={t('clubSettings.seasonChange')}
+            message={t('clubSettings.seasonChangeHint')}
+            onDidDismiss={() => setConfirmSeason(false)}
+            buttons={[
+              { text: t('common.cancel'), role: 'cancel' },
+              { text: t('common.save'), handler: persist },
+            ]}
+          />
+
           <div className="app-actions">
             <IonButton
               expand="block"
               disabled={!canSave}
-              onClick={() => {
-                setSaved(false);
-                save.mutate();
-              }}
+              onClick={submit}
             >
               {save.isPending ? <IonSpinner name="crescent" /> : t('common.save')}
             </IonButton>
 
             {save.error && <InlineError message={(save.error as Error).message} />}
-            {saved && !save.isPending && !save.error && (
-              <InlineSuccess message={t('clubSettings.saved')} />
-            )}
           </div>
         </>
       )}

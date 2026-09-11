@@ -264,7 +264,46 @@
     "reset": "Reset",
     "labels": "Wording",
     "labelsHint": "What do you call your events? Empty means: standard wording.",
-    "saved": "Saved."
+    "saved": "Saved.",
+    "logo": "Logo",
+    "logoUrl": "Address of the logo",
+    "logoHint": "An address for now: file upload needs a storage this project has not set up yet.",
+    "contrastWarning": "{{color}} has too little contrast with the text placed on it.",
+    "contrastFix": "Darken",
+    "seasonChange": "Change the season start?",
+    "seasonChangeHint": "Future entries will belong to the new season. Points already awarded keep theirs.",
+    "modules": "Modules",
+    "modulesHint": "You need to switch nothing on. The app suggests a module when your club reaches a size where it carries.",
+    "module": {
+      "voice": {
+        "title": "Voice",
+        "body": "Say a note – to a person, to a role, or anonymously to the board."
+      },
+      "meeting": {
+        "title": "Meetings & offices",
+        "body": "Proposals to the committee, documented answers, offices as a distribution list."
+      },
+      "checkin": {
+        "title": "How you are",
+        "body": "A short question after an event. Voluntary, private, no points."
+      },
+      "pulse": {
+        "title": "Club pulse",
+        "body": "The weekly recap: what is happening, what you are working on, where to join in."
+      },
+      "health": {
+        "title": "Club health",
+        "body": "Care signals for coaches and the board."
+      }
+    },
+    "dna": "Club DNA",
+    "dnaHint": "What you stand for. It is stored today; it will be used once there are writing-support functions.",
+    "dnaField": {
+      "why": "Why do you exist?",
+      "values": "Your values",
+      "tone": "Address and tone",
+      "traditions": "Traditions and own terms"
+    }
   },
   "health": {
     "title": "Club health",

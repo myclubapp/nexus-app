@@ -11,13 +11,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Preferences } from '@capacitor/preferences';
 import { supabase, isConfigured } from '../lib/supabase';
+import { resolveLabel } from '../lib/clubSettings';
 import { applyClubTheme } from '../lib/theme';
 import type { Club, ClubMember, EventType } from '../lib/database.types';
 import { useAuth } from './useAuth';
 
 const ACTIVE_CLUB_KEY = 'myclub.activeClubId';
 
-/** A membership row together with the club it belongs to. */
+/** Eine Mitgliedschaft samt dem Verein, zu dem sie gehört. */
 export interface Membership extends ClubMember {
   club: Club;
 }
@@ -31,12 +32,14 @@ interface ClubContextValue {
   /** Lädt die Mitgliedschaften erneut, nachdem die Abfrage fehlgeschlagen ist. */
   refetch: () => void;
   setActiveClub: (clubId: string) => void;
-  /** True for roles that may confirm shifts, award points and see health signals. */
+  /** Wahr für Rollen, die Schichten bestätigen, Punkte buchen und
+   *  Fürsorge-Hinweise sehen dürfen. */
   isAdmin: boolean;
   isTrainer: boolean;
   /**
-   * Club-specific wording for an event type. A choir calls a training a
-   * rehearsal; the MVP scope requires the vocabulary to stay club-neutral.
+   * Der vereinseigene Begriff für eine Terminart. Ein Chor nennt das
+   * Training eine Probe; der MVP-Schnitt verlangt, dass der Kern ohne
+   * Sportvokabular auskommt.
    */
   eventLabel: (type: EventType) => string;
 }
@@ -62,7 +65,7 @@ async function fetchMemberships(userId: string): Promise<Membership[]> {
 
 export function ClubProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [activeClubId, setActiveClubId] = useState<string | null>(null);
   const [restored, setRestored] = useState(false);
 
@@ -86,8 +89,8 @@ export function ClubProvider({ children }: { children: ReactNode }) {
     void refetch();
   }, [refetch]);
 
-  // Fall back to the first membership when nothing was stored or the stored
-  // club is no longer among the user's memberships.
+  // Auf die erste Mitgliedschaft zurückfallen, wenn nichts gespeichert ist
+  // oder der gespeicherte Verein nicht mehr dazugehört.
   const activeMembership = useMemo(() => {
     if (memberships.length === 0) return null;
     return (
@@ -104,10 +107,15 @@ export function ClubProvider({ children }: { children: ReactNode }) {
     void Preferences.set({ key: ACTIVE_CLUB_KEY, value: clubId });
   }, []);
 
+  // BR-147/BR-148: Der Begriff ist eine Einstellung des Vereins, und sie gilt
+  // je Sprache. `resolveLabel()` fällt auf eine andere hinterlegte Sprache
+  // zurück, bevor es die Standardübersetzung nimmt – wer «Probe» nur auf
+  // Deutsch eingetragen hat, meint sie auch auf Französisch.
   const eventLabel = useCallback(
     (type: EventType) =>
-      activeMembership?.club.settings?.labels?.[type] ?? t(`agenda.type.${type}`),
-    [activeMembership, t],
+      resolveLabel(activeMembership?.club.settings?.labels, type, i18n.language) ??
+      t(`agenda.type.${type}`),
+    [activeMembership, i18n.language, t],
   );
 
   const role = activeMembership?.role;

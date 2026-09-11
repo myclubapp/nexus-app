@@ -1,5 +1,21 @@
 import type { ClubSettings } from './database.types';
 
+/** Die Farbrollen, die ein Verein selbst bestimmen darf. */
+export type ThemeRole = 'primary' | 'secondary' | 'tertiary';
+
+/**
+ * Die Basisfarben aus `src/theme/variables.css` – der Stand ohne eigenes
+ * Vereins-Theme, übernommen aus der bestehenden myclub-App. Sie stehen hier,
+ * weil die Vereinseinstellungen sie als Vorbelegung des Farbwählers brauchen:
+ * ein Hex-Wert in einer Komponente wäre eine dritte Stelle. `theme.test.ts`
+ * hält diese Werte und das Stylesheet zusammen.
+ */
+export const BASE_THEME: Record<ThemeRole, string> = {
+  primary: '#339bde',
+  secondary: '#795deb',
+  tertiary: '#5260ff',
+};
+
 type Rgb = { r: number; g: number; b: number };
 
 function hexToRgb(hex: string): Rgb | null {
@@ -54,11 +70,7 @@ const WHITE: Rgb = { r: 255, g: 255, b: 255 };
  * Schreibt eine Ionic-Farbrolle vollständig (Basis, RGB, Kontrast, Shade,
  * Tint) auf das Wurzelelement.
  */
-function setIonicColor(
-  root: HTMLElement,
-  role: 'primary' | 'secondary' | 'tertiary',
-  hex: string,
-): void {
+function setIonicColor(root: HTMLElement, role: ThemeRole, hex: string): void {
   const rgb = hexToRgb(hex);
   if (!rgb) {
     console.warn(`[theme] "${hex}" ist keine gültige Farbe für ${role}.`);
@@ -79,7 +91,7 @@ function setIonicColor(
   root.style.setProperty(`--ion-color-${role}-tint`, toHex(tint));
 }
 
-const MANAGED_PROPERTIES = (['primary', 'secondary', 'tertiary'] as const).flatMap(
+const MANAGED_PROPERTIES = (Object.keys(BASE_THEME) as ThemeRole[]).flatMap(
   (role) => [
     `--ion-color-${role}`,
     `--ion-color-${role}-rgb`,
@@ -89,6 +101,70 @@ const MANAGED_PROPERTIES = (['primary', 'secondary', 'tertiary'] as const).flatM
     `--ion-color-${role}-tint`,
   ],
 );
+
+/**
+ * Das Kontrastverhältnis zweier Farben nach WCAG.
+ *
+ * Reine Rechnung, damit sie prüfbar ist: 1 heisst «nicht zu unterscheiden»,
+ * 21 ist Schwarz auf Weiss.
+ */
+export function contrastRatio(hex: string, against: string): number | null {
+  const a = hexToRgb(hex);
+  const b = hexToRgb(against);
+  if (!a || !b) return null;
+
+  const light = Math.max(luminance(a), luminance(b));
+  const dark = Math.min(luminance(a), luminance(b));
+  return Math.round(((light + 0.05) / (dark + 0.05)) * 100) / 100;
+}
+
+/**
+ * Der Grenzwert aus A5.
+ *
+ * 4.5:1 ist WCAG AA für gewöhnlichen Text. Die Spezifikation nennt keinen Wert;
+ * dieser ist der, an dem sich Bedienhilfen messen lassen.
+ */
+export const MIN_CONTRAST = 4.5;
+
+/**
+ * Reicht der Kontrast dieser Vereinsfarbe (A5)?
+ *
+ * Gemessen wird gegen die Schrift, die Ionic darauf setzt – dieselbe
+ * Entscheidung wie in `setIonicColor()`. Eine Farbe, auf der weder Schwarz noch
+ * Weiss lesbar ist, gibt es nicht; die Frage ist, ob die **gewählte** reicht.
+ */
+export function hasEnoughContrast(hex: string): boolean {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return true;
+
+  const contrast = luminance(rgb) > 0.45 ? '#000000' : '#ffffff';
+  return (contrastRatio(hex, contrast) ?? MIN_CONTRAST) >= MIN_CONTRAST;
+}
+
+/**
+ * Ein kontrastreicherer Vorschlag zu einer zu blassen Farbe (A5, Schritt 1).
+ *
+ * Abgedunkelt oder aufgehellt in Richtung der Seite, auf der mehr Kontrast
+ * liegt – in Schritten, bis der Grenzwert erreicht ist. Gibt `null` zurück,
+ * wenn die Farbe bereits reicht: Ein Vorschlag ohne Anlass wäre eine
+ * Bevormundung.
+ */
+export function suggestContrast(hex: string): string | null {
+  const rgb = hexToRgb(hex);
+  if (!rgb || hasEnoughContrast(hex)) return null;
+
+  // Helle Töne werden dunkler, dunkle heller – die Richtung, in der die
+  // Schriftfarbe kippt, wäre die falsche.
+  const target = luminance(rgb) > 0.45 ? BLACK : WHITE;
+
+  let current = rgb;
+  for (let step = 0; step < 20; step += 1) {
+    current = mix(current, target, 0.08);
+    const candidate = toHex(current);
+    if (hasEnoughContrast(candidate)) return candidate;
+  }
+  return toHex(current);
+}
 
 /**
  * Wendet das Vereins-Theme zur Laufzeit an. Wird beim Vereinswechsel erneut

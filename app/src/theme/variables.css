@@ -323,3 +323,14 @@
   /* Ohne dies zöge `preserveAspectRatio="none"` die Linie mit in die Breite. */
   vector-effect: non-scaling-stroke;
 }
+
+/* --- Vereinslogo in der Seitenleiste (UC-034) --------------------------------
+   Eine feste Höhe, damit ein hochformatiges Logo die Kopfzeile nicht
+   auseinanderzieht; die Breite folgt dem Seitenverhältnis. */
+.app-club-logo {
+  height: 28px;
+  width: auto;
+  max-width: 96px;
+  margin-inline: var(--app-space-2);
+  object-fit: contain;
+}

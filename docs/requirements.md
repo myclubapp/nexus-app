@@ -185,11 +185,11 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | ID     | Titel                       | User Story                                                                                                                                                | Priority | Status      |
 | ------ | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
 | FR-110 | Sprache wählen              | Als Mitglied möchte ich zwischen Deutsch, Französisch, Italienisch und Englisch wechseln, damit ich die App in meiner Sprache nutze.                       | High     | In Progress |
-| FR-111 | Vereinsfarben und Logo      | Als Vorstand möchte ich Farben und Logo des Vereins hinterlegen, damit die App zur Laufzeit im Vereins-Erscheinungsbild erscheint.                         | High     | In Progress |
-| FR-112 | Begriffe konfigurieren      | Als Vorstand möchte ich die Bezeichnungen für Termintypen festlegen («Training», «Probe», «Anlass»), damit die App unsere Sprache spricht.                  | High     | In Progress |
-| FR-113 | Saisonbeginn festlegen      | Als Vorstand möchte ich den Saisonbeginn setzen, damit Punkte und Ranglisten auf unsere Saison zugeschnitten sind.                                          | High     | In Progress |
-| FR-114 | Vereins-DNA erfassen        | Als Vorstand möchte ich Warum, Werte, Tonalität und Traditionen hinterlegen, damit alle unterstützenden Textfunktionen unsere Sprache verwenden (K6c).      | Medium   | Open        |
-| FR-115 | Progressive Aktivierung     | Als Vorstand möchte ich weitere Module erst vorgeschlagen bekommen, wenn der Verein bereit ist, damit uns die App nicht überfordert (K7).                   | High     | Open        |
+| FR-111 | Vereinsfarben und Logo      | Als Vorstand möchte ich Farben und Logo des Vereins hinterlegen, damit die App zur Laufzeit im Vereins-Erscheinungsbild erscheint.                         | High     | Partial |
+| FR-112 | Begriffe konfigurieren      | Als Vorstand möchte ich die Bezeichnungen für Termintypen festlegen («Training», «Probe», «Anlass»), damit die App unsere Sprache spricht.                  | High     | Implemented |
+| FR-113 | Saisonbeginn festlegen      | Als Vorstand möchte ich den Saisonbeginn setzen, damit Punkte und Ranglisten auf unsere Saison zugeschnitten sind.                                          | High     | Implemented |
+| FR-114 | Vereins-DNA erfassen        | Als Vorstand möchte ich Warum, Werte, Tonalität und Traditionen hinterlegen, damit alle unterstützenden Textfunktionen unsere Sprache verwenden (K6c).      | Medium   | Partial        |
+| FR-115 | Progressive Aktivierung     | Als Vorstand möchte ich weitere Module erst vorgeschlagen bekommen, wenn der Verein bereit ist, damit uns die App nicht überfordert (K7).                   | High     | Implemented        |
 
 ### 1.11 Anschlüsse
 

@@ -264,7 +264,46 @@
     "reset": "Azzerare",
     "labels": "Termini",
     "labelsHint": "Come chiamate i vostri appuntamenti? Vuoto significa: termine standard.",
-    "saved": "Salvato."
+    "saved": "Salvato.",
+    "logo": "Logo",
+    "logoUrl": "Indirizzo del logo",
+    "logoHint": "Per ora un indirizzo: il caricamento di file richiede un archivio che questo progetto non ha ancora predisposto.",
+    "contrastWarning": "{{color}} non ha contrasto sufficiente con il testo che vi si posa sopra.",
+    "contrastFix": "Scurisci",
+    "seasonChange": "Cambiare l'inizio della stagione?",
+    "seasonChangeHint": "Le registrazioni future saranno attribuite alla nuova stagione. I punti già assegnati mantengono la loro.",
+    "modules": "Moduli",
+    "modulesHint": "Non devi attivare nulla. L'app ti proporrà un modulo quando la società raggiungerà una dimensione in cui regge.",
+    "module": {
+      "voice": {
+        "title": "Voce",
+        "body": "Dire una richiesta – a una persona, a una carica o in forma anonima al comitato."
+      },
+      "meeting": {
+        "title": "Sedute e cariche",
+        "body": "Proposte all'organo, risposte documentate, cariche come lista di distribuzione."
+      },
+      "checkin": {
+        "title": "Come stai",
+        "body": "Una domanda breve dopo un appuntamento. Facoltativa, privata, senza punti."
+      },
+      "pulse": {
+        "title": "Polso della società",
+        "body": "Il riepilogo settimanale: che cosa succede, a che cosa lavorate, dove si può partecipare."
+      },
+      "health": {
+        "title": "Salute della società",
+        "body": "Segnali di attenzione per chi allena e per il comitato."
+      }
+    },
+    "dna": "DNA della società",
+    "dnaHint": "Ciò che rappresentate. Oggi viene salvato; verrà usato non appena ci saranno funzioni di supporto alla scrittura.",
+    "dnaField": {
+      "why": "Perché esistete?",
+      "values": "I vostri valori",
+      "tone": "Forma di rivolgersi e tono",
+      "traditions": "Tradizioni e termini propri"
+    }
   },
   "health": {
     "title": "Salute della società",
