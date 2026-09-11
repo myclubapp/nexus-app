@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   IonAlert,
   IonBadge,
@@ -58,6 +58,7 @@ export function FederationPage() {
   const [found, setFound] = useState<FederationTeam[] | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
   const [dropping, setDropping] = useState<Federation | null>(null);
+  const clubIdInput = useRef<HTMLIonInputElement>(null);
 
   const draft = { federation, federationClubId: clubId, apiKey };
   const problems = validateConnection(draft);
@@ -109,7 +110,13 @@ export function FederationPage() {
           onRetry={() => void connections.refetch()}
         />
       ) : (connections.data ?? []).length === 0 ? (
-        <EmptyState message={t('federation.empty')} />
+        <EmptyState
+          message={t('federation.empty')}
+          action={{
+            label: t('federation.startConnect'),
+            onClick: () => void clubIdInput.current?.setFocus(),
+          }}
+        />
       ) : (
         <ListSection title={t('federation.status')}>
           {(connections.data ?? []).map((entry) => (
@@ -180,6 +187,7 @@ export function FederationPage() {
 
         <IonItem>
           <IonInput
+            ref={clubIdInput}
             label={t('federation.clubId')}
             labelPlacement="stacked"
             inputmode="numeric"
@@ -236,7 +244,7 @@ export function FederationPage() {
             </IonItem>
           ))}
           <div className="app-actions">
-            <IonButton expand="block" fill="outline" routerLink="/tabs/profile/members">
+            <IonButton expand="block" fill="outline" routerLink="/tabs/profile/teams">
               {t('federation.toTeams')}
             </IonButton>
           </div>

@@ -104,7 +104,10 @@ export function NewsSourcePage() {
   if (!isAdmin) {
     return (
       <AppPage title={t('newsImport.title')} backHref="/tabs/profile" largeTitle={false}>
-        <EmptyState message={t('newsImport.adminOnly')} />
+        <EmptyState
+          message={t('newsImport.adminOnly')}
+          action={{ label: t('profile.title'), routerLink: '/tabs/profile' }}
+        />
       </AppPage>
     );
   }

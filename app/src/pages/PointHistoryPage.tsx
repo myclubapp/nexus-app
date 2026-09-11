@@ -103,7 +103,10 @@ export function PointHistoryPage() {
             footnote={t('pointHistory.sum', { points: total })}
           >
             {shown.length === 0 ? (
-              <EmptyState message={t('pointHistory.empty')} />
+              <EmptyState
+                message={t('pointHistory.empty')}
+                action={{ label: t('agenda.title'), routerLink: '/tabs/agenda' }}
+              />
             ) : (
               shown.map((entry) => (
                 <IonItem key={entry.id}>

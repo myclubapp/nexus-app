@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isConfigured, supabase } from '../lib/supabase';
 import type { TablesUpdate } from '../lib/database.types';
+import type { Federation } from '../lib/federation';
 import { useClub } from './useClub';
 
 /**
@@ -16,16 +17,28 @@ import { useClub } from './useClub';
  * Knopf (guidelines §9).
  */
 
-/** Name und Bereich eines Teams ändern. */
+/**
+ * Name, Bereich und Zusatz eines Teams ändern.
+ *
+ * Bei einem verknüpften Team greift `name` nicht: Der Trigger in `0060` setzt
+ * ihn aus Grundname und Zusatz zusammen (BR-176). Das Formular zeigt dort
+ * deshalb den Zusatz statt des Namens.
+ */
 export function useUpdateTeam() {
   const queryClient = useQueryClient();
   const { activeClub } = useClub();
 
   return useMutation({
-    mutationFn: async (input: { teamId: string; name?: string; area?: string | null }) => {
+    mutationFn: async (input: {
+      teamId: string;
+      name?: string;
+      area?: string | null;
+      nameAddition?: string | null;
+    }) => {
       const patch: TablesUpdate<'teams'> = {};
       if (input.name !== undefined) patch.name = input.name.trim();
       if (input.area !== undefined) patch.area = input.area?.trim() || null;
+      if (input.nameAddition !== undefined) patch.name_addition = input.nameAddition?.trim() || null;
       if (Object.keys(patch).length === 0) return;
 
       const { error } = await supabase.from('teams').update(patch).eq('id', input.teamId);
@@ -52,6 +65,99 @@ export function useDeleteTeam() {
       await queryClient.invalidateQueries({ queryKey: ['teams', activeClub?.id] });
       await queryClient.invalidateQueries({ queryKey: ['members', activeClub?.id] });
     },
+  });
+}
+
+/** Was `link_team()` und `import_federation_teams()` über ein Verbands-Team wissen wollen. */
+export interface TeamLinkInput {
+  federation: Federation;
+  federationTeamId: string;
+  name: string;
+  league: string | null;
+  nameAddition: string;
+}
+
+function invalidateTeams(
+  queryClient: ReturnType<typeof useQueryClient>,
+  clubId: string | undefined,
+) {
+  void queryClient.invalidateQueries({ queryKey: ['teams', clubId] });
+  void queryClient.invalidateQueries({ queryKey: ['members', clubId] });
+  void queryClient.invalidateQueries({ queryKey: ['areas', clubId] });
+}
+
+/**
+ * UC-039, Schritte 5–8: ein bestehendes Team mit einem Verbands-Team
+ * verknüpfen. Die Regeln – nur Vorstand, nur bei aktiver Verbindung, ein
+ * Verbands-Team je Team (A3) – sitzen in `link_team()`.
+ */
+export function useLinkTeam() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (input: TeamLinkInput & { teamId: string }) => {
+      const { error } = await supabase.rpc('link_team', {
+        p_team_id: input.teamId,
+        p_federation: input.federation,
+        p_federation_team_id: input.federationTeamId,
+        p_name: input.name,
+        p_league: input.league ?? undefined,
+        p_name_addition: input.nameAddition || undefined,
+      });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => invalidateTeams(queryClient, activeClub?.id),
+  });
+}
+
+/** A5: die Verknüpfung lösen. Name und Termine bleiben (BR-181). */
+export function useUnlinkTeam() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (teamId: string) => {
+      const { error } = await supabase.rpc('unlink_team', { p_team_id: teamId });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => invalidateTeams(queryClient, activeClub?.id),
+  });
+}
+
+/**
+ * A1: Teams aus dem Verband übernehmen – und der Weg aus «Team anlegen»,
+ * wenn dort gleich ein Verbands-Team gewählt wurde. Ein Eintrag ohne
+ * `team_id` wird angelegt, einer mit `team_id` verknüpft; alles in einer
+ * Transaktion.
+ */
+export function useImportFederationTeams() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (input: {
+      federation: Federation;
+      items: {
+        federation_team_id: string;
+        name: string;
+        league: string | null;
+        team_id: string | null;
+        name_addition?: string | null;
+      }[];
+    }): Promise<{ created: number; linked: number }> => {
+      if (!activeClub) throw new Error('Kein aktiver Verein');
+
+      const { data, error } = await supabase.rpc('import_federation_teams', {
+        p_club_id: activeClub.id,
+        p_federation: input.federation,
+        p_items: input.items,
+      });
+      if (error) throw new Error(error.message);
+      const row = (data ?? [])[0];
+      return { created: row?.created ?? 0, linked: row?.linked ?? 0 };
+    },
+    onSuccess: () => invalidateTeams(queryClient, activeClub?.id),
   });
 }
 

@@ -13,8 +13,9 @@
 - Die Edge Function ist deployt: `supabase functions deploy sync-federation`.
   **Ohne sie schlägt jeder Testaufruf mit «Der Abgleichdienst antwortet nicht»
   fehl** – das ist der erwartete Zustand, nicht ein Fehler der App.
-- Eine echte Vereinskennung bei Swiss Unihockey (in der Adresse der
-  Vereinsseite des Verbands, etwa `club_id=4231`).
+- Eine echte Vereinskennung bei Swiss Unihockey, etwa `463820` (Ad Astra
+  Obwalden). `GET https://api-v2.swissunihockey.ch/api/clubs` listet alle
+  Vereine mit ihrer Kennung.
 
 ---
 
@@ -29,7 +30,7 @@
 | 3 | Swiss Unihockey wählen | Kein Schlüsselfeld; stattdessen «Dieser Verband verlangt keinen Schlüssel» (A2) | | |
 | 4 | Ohne Kennung auf «Prüfen und verbinden» | Der Knopf ist gesperrt, der Grund steht dabei | | |
 | 5 | Die echte Vereinskennung eintragen und prüfen | Die Teams des Vereins erscheinen mit Namen und Liga | | |
-| 6 | Den Abschnitt darunter lesen | Er sagt, dass Spiele erst mit der Verknüpfung entstehen (UC-039) | | |
+| 6 | Den Abschnitt darunter lesen | Er sagt, dass Spiele erst mit der Verknüpfung entstehen (UC-039); «Zu den Teams» führt zur Teamseite | | |
 | 7 | Den Zustand ansehen | «Noch nicht geprüft» in Grau, nicht in Gelb | | |
 | 8 | Die Seite neu laden | Die Verbindung steht mit Verband, Zustand und «Noch kein Abgleich» | | |
 

@@ -684,12 +684,14 @@ export type Database = {
           created_at: string
           created_by: string | null
           ends_at: string | null
+          external_id: string | null
           id: string
           is_sample: boolean
           location: string | null
           point_rule_code: string | null
           published_at: string | null
           reminded_at: string | null
+          result: string | null
           series_id: string | null
           starts_at: string
           team_id: string | null
@@ -706,12 +708,14 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           ends_at?: string | null
+          external_id?: string | null
           id?: string
           is_sample?: boolean
           location?: string | null
           point_rule_code?: string | null
           published_at?: string | null
           reminded_at?: string | null
+          result?: string | null
           series_id?: string | null
           starts_at: string
           team_id?: string | null
@@ -728,12 +732,14 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           ends_at?: string | null
+          external_id?: string | null
           id?: string
           is_sample?: boolean
           location?: string | null
           point_rule_code?: string | null
           published_at?: string | null
           reminded_at?: string | null
+          result?: string | null
           series_id?: string | null
           starts_at?: string
           team_id?: string | null
@@ -1941,20 +1947,41 @@ export type Database = {
         Row: {
           area: string | null
           club_id: string
+          federation: string | null
+          federation_name: string | null
+          federation_stale_at: string | null
+          federation_synced_at: string | null
+          federation_team_id: string | null
           id: string
+          league: string | null
           name: string
+          name_addition: string | null
         }
         Insert: {
           area?: string | null
           club_id: string
+          federation?: string | null
+          federation_name?: string | null
+          federation_stale_at?: string | null
+          federation_synced_at?: string | null
+          federation_team_id?: string | null
           id?: string
+          league?: string | null
           name: string
+          name_addition?: string | null
         }
         Update: {
           area?: string | null
           club_id?: string
+          federation?: string | null
+          federation_name?: string | null
+          federation_stale_at?: string | null
+          federation_synced_at?: string | null
+          federation_team_id?: string | null
           id?: string
+          league?: string | null
           name?: string
+          name_addition?: string | null
         }
         Relationships: [
           {
@@ -2463,6 +2490,13 @@ export type Database = {
         Args: { p_club_id: string; p_roles: Json }
         Returns: boolean
       }
+      import_federation_teams: {
+        Args: { p_club_id: string; p_federation: string; p_items: Json }
+        Returns: {
+          created: number
+          linked: number
+        }[]
+      }
       is_club_admin: { Args: { p_club_id: string }; Returns: boolean }
       is_club_member: { Args: { p_club_id: string }; Returns: boolean }
       is_club_trainer: { Args: { p_club_id: string }; Returns: boolean }
@@ -2484,6 +2518,17 @@ export type Database = {
           rank: number
           total_points: number
         }[]
+      }
+      link_team: {
+        Args: {
+          p_federation: string
+          p_federation_team_id: string
+          p_league?: string
+          p_name: string
+          p_name_addition?: string
+          p_team_id: string
+        }
+        Returns: undefined
       }
       log_club_message: {
         Args: { p_club_id: string; p_kind: string; p_reference: string }
@@ -2687,6 +2732,15 @@ export type Database = {
         }
         Returns: number
       }
+      report_team_sync: {
+        Args: {
+          p_found: boolean
+          p_league?: string
+          p_name?: string
+          p_team_id: string
+        }
+        Returns: undefined
+      }
       request_join: {
         Args: { p_club_id: string; p_team_id?: string }
         Returns: string
@@ -2878,6 +2932,7 @@ export type Database = {
           responses: number
         }[]
       }
+      unlink_team: { Args: { p_team_id: string }; Returns: undefined }
       update_my_profile: {
         Args: {
           p_display_name?: string
@@ -2888,6 +2943,17 @@ export type Database = {
           p_phone_public?: boolean
         }
         Returns: undefined
+      }
+      upsert_federation_game: {
+        Args: {
+          p_external_id: string
+          p_location?: string
+          p_result?: string
+          p_starts_at: string
+          p_team_id: string
+          p_title: string
+        }
+        Returns: string
       }
       value_dimensions: {
         Args: { p_club_id: string; p_member_id?: string }

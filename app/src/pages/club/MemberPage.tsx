@@ -115,7 +115,10 @@ export function MemberPage() {
   if (!isAdmin) {
     return (
       <AppPage title={t('members.title')} backHref="/tabs/profile">
-        <EmptyState message={t('clubSettings.adminOnly')} />
+        <EmptyState
+          message={t('clubSettings.adminOnly')}
+          action={{ label: t('profile.title'), routerLink: '/tabs/profile' }}
+        />
       </AppPage>
     );
   }
@@ -230,7 +233,10 @@ export function MemberPage() {
           </ListSection>
 
           {visible.length === 0 ? (
-            <EmptyState message={t('members.empty')} />
+            <EmptyState
+              message={t('members.empty')}
+              action={{ label: t('members.resetFilter'), onClick: () => setFilter(EMPTY_MEMBER_FILTER) }}
+            />
           ) : (
             <ListSection
               title={t('members.count', { count: visible.length })}

@@ -106,10 +106,22 @@ export function PointRulePage() {
     );
   }
 
+  /** Eine eigene Regel beginnen – vom FAB und vom Leerzustand aus. */
+  function startNewRule() {
+    setNewLabel('');
+    setNewCode('');
+    setNewPillar(7);
+    setNewPoints('10');
+    setNewOpen(true);
+  }
+
   if (!isAdmin) {
     return (
       <AppPage title={t('pointRules.title')} backHref="/tabs/profile">
-        <EmptyState message={t('clubSettings.adminOnly')} />
+        <EmptyState
+          message={t('clubSettings.adminOnly')}
+          action={{ label: t('profile.title'), routerLink: '/tabs/profile' }}
+        />
       </AppPage>
     );
   }
@@ -118,19 +130,7 @@ export function PointRulePage() {
     <AppPage
       title={t('pointRules.title')}
       backHref="/tabs/profile"
-      createActions={[
-        {
-          icon: addOutline,
-          label: t('pointRules.addRule'),
-          onClick: () => {
-            setNewLabel('');
-            setNewCode('');
-            setNewPillar(7);
-            setNewPoints('10');
-            setNewOpen(true);
-          },
-        },
-      ]}
+      createActions={[{ icon: addOutline, label: t('pointRules.addRule'), onClick: startNewRule }]}
       onRefresh={() => rules.refetch()}
     >
       {rules.isLoading ? (
@@ -138,7 +138,10 @@ export function PointRulePage() {
       ) : rules.error ? (
         <ErrorState error={rules.error as Error} onRetry={() => void rules.refetch()} />
       ) : groups.length === 0 ? (
-        <EmptyState message={t('pointRules.empty')} />
+        <EmptyState
+          message={t('pointRules.empty')}
+          action={{ label: t('pointRules.addRule'), onClick: startNewRule }}
+        />
       ) : (
         groups.map(({ pillar, rules: pillarRules }) => {
           const activeCount = pillarRules.filter((rule) => rule.is_active).length;

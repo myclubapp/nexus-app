@@ -163,15 +163,19 @@ Eine Gruppe innerhalb eines Vereins, an der Termine, Ranglisten und Reichweiten 
 | sort                | Reihenfolge in Auswahllisten                     | Integer   | 10               | Optional                        |
 | federation          | Verband des verknüpften Teams                    | String    | 40               | Optional                        |
 | federation_team_id  | Kennung des Teams beim Verband                   | String    | 60               | Optional                        |
+| federation_name     | Grundname des Teams, wie der Verband ihn führt   | String    | 80               | Optional                        |
 | name_addition       | Zusatz des Vereins zum Namen des Verbands        | String    | 40               | Optional                        |
 | league              | Liga oder Kategorie laut Verband                 | String    | 80               | Optional                        |
 | federation_synced_at| Zeitpunkt des letzten Abgleichs mit dem Verband  | DateTime  | -                | Optional                        |
+| federation_stale_at | Zeitpunkt, seit dem der Verband das Team nicht mehr nennt (A6) | DateTime | - | Optional                  |
 
 **Constraints:** Der Teamname ist innerhalb eines Vereins eindeutig. Eine Verknüpfung besteht nur,
-wenn `federation` und `federation_team_id` beide gesetzt sind; die Kombination aus `club_id`,
-`federation` und `federation_team_id` ist eindeutig (BR-175). Bei einem verknüpften Team pflegt der
-Abgleich `name` und `league`, während `name_addition` erhalten bleibt; angezeigt wird die Verbindung
-aus beidem (BR-176).
+wenn `federation`, `federation_team_id` und `federation_name` gemeinsam gesetzt sind; die Kombination
+aus `club_id`, `federation` und `federation_team_id` ist eindeutig (BR-175). Bei einem verknüpften Team
+pflegt der Abgleich `federation_name` und `league`, während `name_addition` erhalten bleibt; **`name` ist
+dann die Verbindung aus beidem** und wird vom Trigger `teams_federation_guard()` gesetzt (BR-176, `0060`).
+Die Verbandsspalten schreibt kein Client direkt – nur `link_team()`, `unlink_team()` und der Abgleich.
+Eine gelöste Verknüpfung lässt `name` und `league` stehen (A5).
 
 ### TEAM_MEMBER
 
@@ -256,9 +260,11 @@ Ein Termin des Vereins: Training, Wettkampf, Anlass, Helfer-Event, Sitzung oder 
 | cancelled_at     | Zeitpunkt der Absage                                   | DateTime  | -                | Optional                                                                |
 | cancelled_reason | Begründung der Absage                                  | String    | 500              | Optional                                                                |
 | is_sample        | Kennzeichen als Beispielinhalt der Erstbefüllung        | Boolean   | 1                | Not Null                                                                |
+| external_id      | Kennung beim Verband («<Verband>:<Spiel>»), bei importierten Spielen | String | 80          | Optional, Unique je Verein                                              |
+| result           | Resultat laut Verband, als Text («3:4 n.V.»)            | String    | 40               | Optional                                                                |
 | created_by       | Erfassende Person                                      | UUID      | 36               | Not Null, Foreign Key (CLUB_MEMBER.id)                                  |
 
-**Constraints:** `ends_at` liegt nach `starts_at`. Für die Typen helper, gv und social ist `why` nicht leer. Eine Absage verlangt `cancelled_at` und `cancelled_reason`. **Ein Termin mit `team_id` ist nur für dieses Team sichtbar und beantwortbar** – Trainer:innen und Vorstand ausgenommen, weil sie ihn planen; ein Termin ohne `team_id` gilt dem ganzen Verein (C-032). EVENT_SERIES, EVENT_SHIFT, ATTENDANCE und EVENT_QR_TOKEN erben diesen Geltungsbereich vom Termin.
+**Constraints:** `ends_at` liegt nach `starts_at`. Für die Typen helper, gv und social ist `why` nicht leer. Eine Absage verlangt `cancelled_at` und `cancelled_reason`. **Ein Termin mit `team_id` ist nur für dieses Team sichtbar und beantwortbar** – Trainer:innen und Vorstand ausgenommen, weil sie ihn planen; ein Termin ohne `team_id` gilt dem ganzen Verein (C-032). EVENT_SERIES, EVENT_SHIFT, ATTENDANCE und EVENT_QR_TOKEN erben diesen Geltungsbereich vom Termin. Ein Termin mit `external_id` stammt vom Verband: `title`, `starts_at`, `location` und `result` überschreibt der Abgleich, alles andere gehört dem Verein (BR-180); weder das Lösen der Verknüpfung noch das Trennen der Verbindung löscht ihn (BR-181).
 
 ### EVENT_QR_TOKEN
 

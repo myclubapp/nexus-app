@@ -108,7 +108,10 @@ export function InvitePage() {
   if (!isAdmin) {
     return (
       <AppPage title={t('invite.title')} backHref="/tabs/profile">
-        <EmptyState message={t('clubSettings.adminOnly')} />
+        <EmptyState
+          message={t('clubSettings.adminOnly')}
+          action={{ label: t('profile.title'), routerLink: '/tabs/profile' }}
+        />
       </AppPage>
     );
   }
@@ -139,7 +142,16 @@ export function InvitePage() {
           onRetry={() => void invites.refetch()}
         />
       ) : rows.length === 0 ? (
-        <EmptyState message={t('invite.empty')} />
+        <EmptyState
+          message={t('invite.empty')}
+          action={{
+            label: t('invite.create'),
+            onClick: () => {
+              resetForm();
+              setFormOpen(true);
+            },
+          }}
+        />
       ) : (
         <ListSection title={t('invite.listTitle')} footnote={t('invite.listFootnote')}>
           {rows.map((invite) => {

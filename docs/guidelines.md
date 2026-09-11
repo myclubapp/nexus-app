@@ -362,6 +362,8 @@ Bestand in `src/components/`. Vor jedem neuen Bauteil hier nachsehen.
 | `DateField`        | Datum, Uhrzeit oder beides über `IonDatetime` im Karten-Blatt; die Formulare behalten ihre Zeichenketten, übersetzt wird in `lib/dateInput.ts` |
 | `MemberAvatar`     | Der Avatar einer Person – Bild aus `avatar_url`, sonst Initialen auf der Vereinsfarbe; in Mitgliederliste, Team und Rangliste dieselbe Zeile |
 | `TeamDetailModal`  | Ein Team als Blatt: Name, Bereich, Mitglieder mit Wischen zum Entfernen, Löschen mit Rückfrage – der Riegel sitzt in `delete_team()` |
+| `FederationTeamSection` | Der Abschnitt «Verbands-Team» in «Team anlegen» und im Team-Blatt: laden, wählen, Zusatz, lösen – und der Hinweis, wenn kein Verband verbunden ist (UC-039) |
+| `FederationImportModal` | Teams aus dem Verband übernehmen: die Liste mit Vorschlägen (verknüpft, zuordnen, anlegen) und Kontrollkästchen (UC-039 A1) |
 | `AttendanceStatusIcon` | Der eigene Antwortstand als Ampel-Symbol am Zeilenanfang; ein Tippen schaltet um. Nachbau des `app-status-icon` der bestehenden myclub-App |
 | `EventDetailModal` | Termin-Detail als Blatt: Eckdaten mit Symbol je Zeile, «Mein Status», die Listen Zugesagt / Abgesagt / Keine Antwort              |
 | `NewsCard`         | Eine News als Karte: Bild, Datum, Titel, Anriss, Autoren-Chip, Teilen – im Raster der Startseite und im Detail                   |
@@ -389,6 +391,14 @@ verwendet, ist ein Fehler, ausser sie hat nachweislich keine Kopfzeile.
 **Jede datengetriebene Ansicht behandelt drei Zustände**: lädt (Skelett, §4),
 leer (`EmptyState`), Fehler (`ErrorState`). Ein leerer Bildschirm ohne
 Erklärung ist kein Zustand.
+
+**Auf einer Seite trägt jeder `EmptyState` ein `action`** (FR-144): der Knopf,
+der dorthin führt, wo der nächste Schritt geschieht – das Formular öffnen, den
+Filter zurücksetzen, zur Agenda. Steht direkt darüber schon ein Block-Knopf
+für dieselbe Handlung, weicht er im leeren Zustand dem Angebot im
+`EmptyState`, nicht umgekehrt. In einem **Blatt** (`components/`) ist ein
+`EmptyState` ohne Angebot zulässig: Die Unteransicht hat als nächsten Schritt
+nur das Schliessen. `emptyStateAction.test.ts` prüft `pages/`.
 
 ---
 

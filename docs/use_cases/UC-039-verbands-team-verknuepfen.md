@@ -6,7 +6,7 @@
 **Use Case Name:** Verbands-Team verknüpfen oder importieren
 **Primary Actor:** Vorstand
 **Goal:** Die Teams des Vereins mit den Teams des verbundenen Verbands zusammenführen, damit Spielpläne und Verbandsangaben von selbst am richtigen Team landen
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

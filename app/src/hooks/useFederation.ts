@@ -122,6 +122,34 @@ export function useCheckFederation() {
   });
 }
 
+/**
+ * UC-039, Schritte 3–4: die Teams des Verbands zum Verknüpfen.
+ *
+ * Der Schlüssel kommt aus dem Tresor, nicht vom Gerät (BR-178): Der Client
+ * nennt nur Verein und Verband, die Edge Function holt die Liste. Gelingt der
+ * Abruf, gilt die Verbindung als aktiv – deshalb wird sie danach neu gelesen.
+ */
+export function useFederationTeams() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (federation: Federation): Promise<FederationCheck> => {
+      if (!activeClub) throw new Error('Kein aktiver Verein');
+
+      const { data, error } = await supabase.functions.invoke<FederationCheck>(
+        'sync-federation',
+        { body: { mode: 'teams', clubId: activeClub.id, federation } },
+      );
+      if (error) throw new Error(await functionErrorMessage(error));
+      return data ?? { ok: false, error: 'Keine Antwort' };
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ['federation', activeClub?.id] });
+    },
+  });
+}
+
 /** Schritt 6: verbinden. Der Schlüssel geht in den Tresor, nicht in die Zeile. */
 export function useConnectFederation() {
   const queryClient = useQueryClient();

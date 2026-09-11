@@ -174,7 +174,10 @@ export function DashboardPage() {
           />
         ) : (suggestions.data ?? []).length === 0 ? (
           /* A4: sagen, dass gerade nichts ansteht – statt eines leeren Feldes. */
-          <EmptyState message={t('dashboard.nothingOpen')} />
+          <EmptyState
+            message={t('dashboard.nothingOpen')}
+            action={{ label: t('marketplace.title'), routerLink: '/tabs/marketplace' }}
+          />
         ) : (
           (suggestions.data ?? []).map((entry) => (
             <IonItem
@@ -228,7 +231,10 @@ export function DashboardPage() {
 
       <ListSection title={t('dashboard.upcoming')}>
         {nextEvents.length === 0 ? (
-          <EmptyState message={t('agenda.empty')} />
+          <EmptyState
+            message={t('agenda.empty')}
+            action={{ label: t('agenda.title'), routerLink: '/tabs/agenda' }}
+          />
         ) : (
           nextEvents.map((event) => (
             <IonItem key={event.id} button detail onClick={() => navigate('/tabs/agenda')}>
@@ -249,7 +255,17 @@ export function DashboardPage() {
         {news.isLoading ? (
           <SkeletonNewsCards />
         ) : (news.data ?? []).length === 0 ? (
-          <EmptyState message={t('dashboard.noNews')} />
+          <EmptyState
+            message={t('dashboard.noNews')}
+            action={
+              isTrainer
+                ? {
+                    label: t('newsForm.title'),
+                    onClick: () => setNewsForm({ open: true, editing: null }),
+                  }
+                : { label: t('agenda.title'), routerLink: '/tabs/agenda' }
+            }
+          />
         ) : (
           <IonGrid className="app-news-grid">
             <IonRow>

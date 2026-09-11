@@ -1,5 +1,5 @@
 /**
- * Den Verband verbinden und abgleichen (UC-035).
+ * Den Verband verbinden und abgleichen (UC-035, UC-039).
  *
  * Gegenstück zu `syncAssociation.scheduler.ts` im alten Backend
  * (github.com/myclubapp/backend): dieselben Verbände, dieselben Endpunkte –
@@ -7,13 +7,19 @@
  * (BR-152) und schreibt nach Postgres statt nach Firestore.
  *
  * Warum serverseitig: Die Verbandsschnittstellen sprechen kein CORS, der
- * Schlüssel darf das Gerät nie erreichen (BR-153), und der nächtliche Lauf
- * (`0058_federation.sql`) kann im Client gar nicht stattfinden.
+ * Schlüssel darf das Gerät nie erreichen (BR-153, BR-178), und der nächtliche
+ * Lauf (`0058_federation.sql`) kann im Client gar nicht stattfinden.
  *
- * Zwei Betriebsarten:
+ * Drei Betriebsarten:
  *   { mode: 'check', clubId, federation, federationClubId, apiKey? }
- *       – Testaufruf des Vorstands (Schritt 5). **Schreibt nichts.**
- *   { mode: 'all' } – der nächtliche Abgleich, nur für `service_role`.
+ *       – Testaufruf des Vorstands (UC-035, Schritt 5). **Schreibt nichts.**
+ *   { mode: 'teams', clubId, federation }
+ *       – die Teamliste zum Verknüpfen (UC-039, Schritte 3–4), mit dem
+ *         Schlüssel aus dem Tresor. Gelingt der Abruf, gilt die Verbindung
+ *         als aktiv.
+ *   { mode: 'all' } – der nächtliche Abgleich, nur für `service_role`:
+ *         Teams nachführen, Spiele der verknüpften Teams als Termine anlegen
+ *         (UC-039, Schritt 9), verschwundene Teams als veraltet vermerken (A6).
  *
  * **BR-154: Es gibt hier keinen Weg, der an einen Verband schreibt.** Jeder
  * Aufruf nach aussen ist ein `GET`.
@@ -34,24 +40,31 @@ type Federation = 'swissunihockey' | 'swissvolley' | 'swisshandball' | 'swisstur
 /**
  * Was ein Verband anbietet.
  *
- * `teamsUrl` ist der **Testaufruf** aus Schritt 5: Antwortet er mit den Teams
- * des Vereins, stimmt die Kennung – und der Vorstand sieht sofort, dass er den
- * richtigen Verein erwischt hat. Eine Prüfung, die nur «ok» sagt, liesse ihn
- * mit einer fremden Vereinskennung zufrieden zurück.
+ * `teamsUrl` ist der **Testaufruf** aus UC-035, Schritt 5, und zugleich die
+ * Auswahlliste aus UC-039, Schritt 4. `gamesUrl` holt die Spiele eines Teams
+ * der laufenden Saison – die Grundlage für die Termine (UC-039, Schritt 9).
  *
  * Heute trägt nur Swiss Unihockey eine offen dokumentierte Schnittstelle. Die
  * übrigen drei stehen in der Liste, weil das alte Backend sie kennt; ohne
  * Endpunkt bleibt ihr Eintrag `null` und die Verbindung `pending` – das ist
  * ehrlicher als ein Testaufruf, der immer gelingt.
  */
-const ENDPOINTS: Record<Federation, { teamsUrl: ((clubId: string, season: number) => string) | null }> = {
+const ENDPOINTS: Record<
+  Federation,
+  {
+    teamsUrl: ((clubId: string, season: number) => string) | null;
+    gamesUrl: ((teamId: string, season: number) => string) | null;
+  }
+> = {
   swissunihockey: {
     teamsUrl: (clubId, season) =>
       `https://api-v2.swissunihockey.ch/api/teams?mode=by_club&club_id=${encodeURIComponent(clubId)}&season=${season}`,
+    gamesUrl: (teamId, season) =>
+      `https://api-v2.swissunihockey.ch/api/games?mode=team&season=${season}&team_id=${encodeURIComponent(teamId)}&games_per_page=100`,
   },
-  swissvolley: { teamsUrl: null },
-  swisshandball: { teamsUrl: null },
-  swissturnverband: { teamsUrl: null },
+  swissvolley: { teamsUrl: null, gamesUrl: null },
+  swisshandball: { teamsUrl: null, gamesUrl: null },
+  swissturnverband: { teamsUrl: null, gamesUrl: null },
 };
 
 const BROWSER_HEADERS = {
@@ -103,21 +116,45 @@ async function getJson(url: string, apiKey: string | null): Promise<unknown> {
   }
 }
 
-/**
- * Die Teams eines Vereins beim Verband.
- *
- * Swiss Unihockey liefert eine Tabelle mit Zeilen; die Kennung des Teams steht
- * im `set_in_context` der Zeile. Die Form ist bewusst defensiv gelesen: Eine
- * Schnittstelle, die sich ändert, soll einen Fehler geben und nicht eine
- * Verbindung als kaputt melden, die es nicht ist.
- */
+// ---------------------------------------------------------------------------
+// Lesen, was der Verband liefert.
+// ---------------------------------------------------------------------------
+
+/** Ein Team, wie der Verband es kennt. */
 interface FederationTeam {
   id: string;
   name: string;
   league: string | null;
 }
 
+/**
+ * Die Teams eines Vereins beim Verband.
+ *
+ * Swiss Unihockey liefert `by_club` als **Dropdown**: `entries[].text` ist der
+ * Name («Herren NLB»), `entries[].set_in_context.team_id` die Kennung. Eine
+ * Liga steht dort nicht getrennt; sie kommt beim Spielplan (`data.title`)
+ * und wird beim Abgleich nachgetragen (BR-176). Belegt am 2026-09-11 gegen
+ * die echte Schnittstelle (Verein 463820, 12 Teams).
+ *
+ * Die Tabellenform bleibt als zweiter Weg: Sie ist die, die der Website-
+ * Abgleich des alten Backends liest, und eine Schnittstelle, die sich ändert,
+ * soll einen leeren Befund geben und nicht einen Absturz.
+ */
 function readTeams(payload: unknown): FederationTeam[] {
+  const dropdown = payload as {
+    entries?: Array<{ text?: unknown; set_in_context?: { team_id?: unknown } }>;
+  };
+  if (Array.isArray(dropdown?.entries)) {
+    const teams: FederationTeam[] = [];
+    for (const entry of dropdown.entries) {
+      const id = entry?.set_in_context?.team_id;
+      const name = String(entry?.text ?? '').trim();
+      if (id === undefined || id === null || name.length === 0) continue;
+      teams.push({ id: String(id), name, league: null });
+    }
+    return teams;
+  }
+
   const rows = (payload as { data?: { regions?: Array<{ rows?: unknown[] }> } })?.data
     ?.regions?.[0]?.rows;
   if (!Array.isArray(rows)) return [];
@@ -142,6 +179,125 @@ function readTeams(payload: unknown): FederationTeam[] {
   return teams;
 }
 
+/** Ein Spiel, wie es zum Termin wird (BR-180). */
+interface FederationGame {
+  id: string;
+  title: string;
+  startsAt: string;
+  location: string | null;
+  result: string | null;
+}
+
+/**
+ * Der Versatz von Europe/Zurich zur UTC zu einem Zeitpunkt, in Minuten.
+ *
+ * Der Verband nennt Ortszeit ohne Zone. Ein Spiel um 20:00 ist im Winter
+ * 19:00Z und im Sommer 18:00Z – wer das mit einer festen Zahl rechnet, hat
+ * zweimal im Jahr eine Stunde Unterschied in der Agenda.
+ */
+function zurichOffsetMinutes(at: Date): number {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Europe/Zurich',
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).formatToParts(at);
+  const read = (type: string) => Number(parts.find((part) => part.type === type)?.value ?? 0);
+  const local = Date.UTC(read('year'), read('month') - 1, read('day'), read('hour'), read('minute'));
+  return Math.round((local - at.getTime()) / 60_000);
+}
+
+function zurichToIso(year: number, month: number, day: number, hour: number, minute: number): string {
+  const guess = Date.UTC(year, month - 1, day, hour, minute);
+  const offset = zurichOffsetMinutes(new Date(guess));
+  return new Date(guess - offset * 60_000).toISOString();
+}
+
+/**
+ * «28.06.2025» und «20:00» – oder «Heute», «Morgen», «Gestern», wie das alte
+ * Backend sie kennt. Ohne lesbares Datum gibt es keinen Termin: Ein Spiel
+ * ohne Zeit ist in der Agenda ein Fehler, kein Eintrag.
+ */
+function readStartsAt(dateText: string, timeText: string, now: Date = new Date()): string | null {
+  const time = /(\d{1,2}):(\d{2})/.exec(timeText);
+  const hour = time ? Number(time[1]) : 0;
+  const minute = time ? Number(time[2]) : 0;
+
+  const absolute = /(\d{1,2})\.(\d{1,2})\.(\d{4})/.exec(dateText);
+  if (absolute) {
+    return zurichToIso(Number(absolute[3]), Number(absolute[2]), Number(absolute[1]), hour, minute);
+  }
+
+  const relative: Record<string, number> = { heute: 0, morgen: 1, gestern: -1 };
+  const shift = relative[dateText.trim().toLowerCase()];
+  if (shift === undefined) return null;
+
+  const local = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Europe/Zurich',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(now);
+  const read = (type: string) => Number(local.find((part) => part.type === type)?.value ?? 0);
+  const base = new Date(Date.UTC(read('year'), read('month') - 1, read('day') + shift));
+  return zurichToIso(base.getUTCFullYear(), base.getUTCMonth() + 1, base.getUTCDate(), hour, minute);
+}
+
+/**
+ * Der Spielplan eines Teams.
+ *
+ * Belegte Form (2026-09-11, Team 431869): `data.regions[0].rows[]` mit
+ * `link.ids[0]` als Spielkennung und fünf Zellen – Datum/Zeit, Halle/Ort,
+ * Heimteam, Gastteam, Resultat («3:4», «n.V.»). Die Liga steht in
+ * `data.title` nach dem Komma («…, Herren NLB Gr. 1»).
+ */
+function readGames(payload: unknown): { league: string | null; games: FederationGame[] } {
+  const data = (payload as {
+    data?: { title?: unknown; regions?: Array<{ rows?: unknown[] }> };
+  })?.data;
+  const title = typeof data?.title === 'string' ? data.title : '';
+  const comma = title.indexOf(',');
+  const league = comma >= 0 ? title.slice(comma + 1).trim() || null : null;
+
+  const rows = data?.regions?.[0]?.rows;
+  if (!Array.isArray(rows)) return { league, games: [] };
+
+  const text = (cell: { text?: unknown } | undefined): string[] =>
+    Array.isArray(cell?.text) ? cell!.text.map((entry) => String(entry ?? '').trim()) : [];
+
+  const games: FederationGame[] = [];
+  for (const row of rows as Array<{ cells?: Array<{ text?: unknown }>; link?: { ids?: unknown[] } }>) {
+    const id = row?.link?.ids?.[0];
+    if (id === undefined || id === null) continue;
+    const cells = row?.cells ?? [];
+
+    const [dateText = '', timeText = ''] = text(cells[0]);
+    const startsAt = readStartsAt(dateText, timeText);
+    if (!startsAt) continue;
+
+    const [hall = '', city = ''] = text(cells[1]);
+    const home = text(cells[2])[0] ?? '';
+    const away = text(cells[3])[0] ?? '';
+    const result = text(cells[4]).filter((part) => part.length > 0).join(' ');
+
+    games.push({
+      id: String(id),
+      title: `${home} – ${away}`.trim(),
+      startsAt,
+      location: [hall, city].filter((part) => part.length > 0 && part !== '-').join(', ') || null,
+      result: result.length > 0 ? result : null,
+    });
+  }
+  return { league, games };
+}
+
+// ---------------------------------------------------------------------------
+// Der Abgleich.
+// ---------------------------------------------------------------------------
+
 interface Credentials {
   club_id: string;
   federation: Federation;
@@ -149,24 +305,77 @@ interface Credentials {
   api_key: string | null;
 }
 
+interface LinkedTeam {
+  id: string;
+  name: string;
+  federation_team_id: string;
+}
+
+/**
+ * Die Spiele **eines** verknüpften Teams als Termine (UC-039, Schritt 9).
+ *
+ * Gibt die Zahl der Spiele zurück; wirft, wenn der Spielplan nicht lesbar
+ * ist – der Aufrufer entscheidet, was das für die Verbindung heisst.
+ */
+async function syncGames(
+  admin: SupabaseClient,
+  row: Credentials,
+  team: LinkedTeam,
+  remote: FederationTeam,
+): Promise<number> {
+  const endpoint = ENDPOINTS[row.federation].gamesUrl;
+  let league = remote.league;
+  let games: FederationGame[] = [];
+
+  if (endpoint) {
+    const parsed = readGames(await getJson(endpoint(remote.id, federationSeason()), row.api_key));
+    league = parsed.league ?? league;
+    games = parsed.games;
+  }
+
+  // Erst der Name und die Liga (BR-176), dann die Spiele: `report_team_sync`
+  // löscht einen etwaigen Vermerk «veraltet», ohne den kein Spiel entstünde.
+  const { error: teamError } = await admin.rpc('report_team_sync', {
+    p_team_id: team.id,
+    p_found: true,
+    p_name: remote.name,
+    p_league: league,
+  });
+  if (teamError) throw new Error(teamError.message);
+
+  for (const game of games) {
+    const { error } = await admin.rpc('upsert_federation_game', {
+      p_team_id: team.id,
+      p_external_id: `${row.federation}:${game.id}`,
+      p_title: game.title,
+      p_starts_at: game.startsAt,
+      p_location: game.location,
+      p_result: game.result,
+    });
+    if (error) throw new Error(error.message);
+  }
+  return games.length;
+}
+
 /**
  * Ein Verein, ein Verband, ein Lauf.
  *
- * Der Abgleich holt heute die **Teams** – das ist, was UC-035 braucht, damit
- * der Vorstand in UC-039 verknüpfen kann. Spiele entstehen erst dort, weil
- * BR-152 sie an eine bestehende Verknüpfung bindet.
+ * Erst die Teams – sie sind der Testaufruf, der die Verbindung bestätigt –,
+ * dann je verknüpftem Team die Spiele (BR-152: nur, was verknüpft ist). Ein
+ * Team, das der Verband nicht mehr nennt, wird veraltet vermerkt (A6).
  */
 async function syncOne(admin: SupabaseClient, row: Credentials): Promise<{
   club: string;
   federation: string;
   ok: boolean;
   teams?: number;
+  games?: number;
+  stale?: number;
   error?: string;
 }> {
   const endpoint = ENDPOINTS[row.federation]?.teamsUrl;
 
-  if (!endpoint) {
-    const error = 'Für diesen Verband besteht noch keine Schnittstelle';
+  const fail = async (error: string) => {
     await admin.rpc('report_federation_sync', {
       p_club_id: row.club_id,
       p_federation: row.federation,
@@ -174,36 +383,64 @@ async function syncOne(admin: SupabaseClient, row: Credentials): Promise<{
       p_error: error,
     });
     return { club: row.club_id, federation: row.federation, ok: false, error };
-  }
+  };
 
+  if (!endpoint) return fail('Für diesen Verband besteht noch keine Schnittstelle');
+
+  let teams: FederationTeam[];
   try {
-    const payload = await getJson(
-      endpoint(row.federation_club_id, federationSeason()),
-      row.api_key,
-    );
-    const teams = readTeams(payload);
-
+    teams = readTeams(await getJson(endpoint(row.federation_club_id, federationSeason()), row.api_key));
     if (teams.length === 0) {
       throw new Error('Der Verband kennt zu dieser Vereinskennung keine Teams');
     }
-
-    await admin.rpc('report_federation_sync', {
-      p_club_id: row.club_id,
-      p_federation: row.federation,
-      p_ok: true,
-    });
-    return { club: row.club_id, federation: row.federation, ok: true, teams: teams.length };
   } catch (cause) {
-    const error = cause instanceof Error ? cause.message : String(cause);
-    await admin.rpc('report_federation_sync', {
-      p_club_id: row.club_id,
-      p_federation: row.federation,
-      p_ok: false,
-      p_error: error,
-    });
-    return { club: row.club_id, federation: row.federation, ok: false, error };
+    return fail(cause instanceof Error ? cause.message : String(cause));
   }
+
+  const { data: linked, error: linkedError } = await admin
+    .from('teams')
+    .select('id, name, federation_team_id')
+    .eq('club_id', row.club_id)
+    .eq('federation', row.federation)
+    .not('federation_team_id', 'is', null);
+  if (linkedError) return fail(linkedError.message);
+
+  let games = 0;
+  let stale = 0;
+  const problems: string[] = [];
+
+  for (const team of (linked ?? []) as LinkedTeam[]) {
+    const remote = teams.find((entry) => entry.id === team.federation_team_id);
+    if (!remote) {
+      stale += 1;
+      await admin.rpc('report_team_sync', { p_team_id: team.id, p_found: false });
+      continue;
+    }
+    try {
+      games += await syncGames(admin, row, team, remote);
+    } catch (cause) {
+      // Ein Spielplan, der nicht lesbar ist, hält die anderen nicht auf – aber
+      // er steht am Ende in der Meldung, damit jemand hinsieht.
+      problems.push(`${team.name}: ${cause instanceof Error ? cause.message : String(cause)}`);
+    }
+  }
+
+  if (problems.length > 0) {
+    const result = await fail(problems.join(' · '));
+    return { ...result, teams: teams.length, games, stale };
+  }
+
+  await admin.rpc('report_federation_sync', {
+    p_club_id: row.club_id,
+    p_federation: row.federation,
+    p_ok: true,
+  });
+  return { club: row.club_id, federation: row.federation, ok: true, teams: teams.length, games, stale };
 }
+
+// ---------------------------------------------------------------------------
+// Einstieg.
+// ---------------------------------------------------------------------------
 
 Deno.serve(async (request) => {
   if (request.method === 'OPTIONS') {
@@ -252,13 +489,12 @@ Deno.serve(async (request) => {
     return json({ synced: results.length, results });
   }
 
-  // --- Schritt 5: der Testaufruf des Vorstands -----------------------------
+  // --- Die Aufrufe des Vorstands ------------------------------------------
   const clubId = body.clubId?.trim();
   const federation = body.federation as Federation | undefined;
-  const federationClubId = body.federationClubId?.trim();
 
-  if (!clubId || !federation || !federationClubId) {
-    return json({ error: 'clubId, federation und federationClubId sind nötig' }, 400);
+  if (!clubId || !federation) {
+    return json({ error: 'clubId und federation sind nötig' }, 400);
   }
   if (!(federation in ENDPOINTS)) {
     return json({ error: 'Unbekannter Verband' }, 400);
@@ -284,6 +520,49 @@ Deno.serve(async (request) => {
   const endpoint = ENDPOINTS[federation].teamsUrl;
   if (!endpoint) {
     return json({ error: 'Für diesen Verband besteht noch keine Schnittstelle' }, 400);
+  }
+
+  // --- UC-039, Schritte 3–4: die Teamliste zum Verknüpfen ------------------
+  if (body.mode === 'teams') {
+    // BR-178: Der Schlüssel kommt aus dem Tresor; der Client hat ihn nie.
+    const { data, error } = await admin.rpc('federation_credentials', { p_club_id: clubId });
+    if (error) return json({ error: error.message }, 500);
+    const row = ((data ?? []) as Credentials[]).find((entry) => entry.federation === federation);
+    if (!row) {
+      return json({ ok: false, error: 'Dieser Verband ist nicht verbunden' });
+    }
+
+    try {
+      const teams = readTeams(await getJson(endpoint(row.federation_club_id, federationSeason()), row.api_key));
+      if (teams.length === 0) {
+        throw new Error('Der Verband kennt zu dieser Vereinskennung keine Teams');
+      }
+      // Ein gelungener Abruf mit dem hinterlegten Schlüssel **ist** ein
+      // Abgleich: Die Verbindung gilt ab jetzt als aktiv (Vorbedingung von
+      // UC-039) – ohne auf die Nacht zu warten.
+      await admin.rpc('report_federation_sync', {
+        p_club_id: clubId,
+        p_federation: federation,
+        p_ok: true,
+      });
+      return json({ ok: true, teams });
+    } catch (cause) {
+      // A4: Die Meldung des Verbands, wörtlich – das Formular bleibt bedienbar.
+      const message = cause instanceof Error ? cause.message : String(cause);
+      await admin.rpc('report_federation_sync', {
+        p_club_id: clubId,
+        p_federation: federation,
+        p_ok: false,
+        p_error: message,
+      });
+      return json({ ok: false, error: message });
+    }
+  }
+
+  // --- UC-035, Schritt 5: der Testaufruf des Vorstands ---------------------
+  const federationClubId = body.federationClubId?.trim();
+  if (!federationClubId) {
+    return json({ error: 'federationClubId ist nötig' }, 400);
   }
 
   try {

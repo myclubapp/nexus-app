@@ -159,7 +159,10 @@ export function ClubSettingsPage() {
   return (
     <AppPage title={t('clubSettings.title')} backHref="/tabs/profile">
       {!isAdmin ? (
-        <EmptyState message={t('clubSettings.adminOnly')} />
+        <EmptyState
+          message={t('clubSettings.adminOnly')}
+          action={{ label: t('profile.title'), routerLink: '/tabs/profile' }}
+        />
       ) : (
         <>
           <ListSection

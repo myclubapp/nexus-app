@@ -38,7 +38,10 @@ export function InboxPage() {
       ) : inbox.error ? (
         <ErrorState error={inbox.error as Error} onRetry={() => void inbox.refetch()} />
       ) : entries.length === 0 ? (
-        <EmptyState message={t('inbox.empty')} />
+        <EmptyState
+          message={t('inbox.empty')}
+          action={{ label: t('dashboard.title'), routerLink: '/tabs/dashboard' }}
+        />
       ) : (
         <ListSection
           title={unread > 0 ? t('inbox.unread', { count: unread }) : t('inbox.all')}

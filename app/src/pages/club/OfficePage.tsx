@@ -74,11 +74,15 @@ export function OfficePage() {
       backHref="/tabs/profile"
       onRefresh={() => offices.refetch()}
     >
-      <div className="app-actions">
-        <IonButton expand="block" onClick={() => start(null)}>
-          {t('offices.add')}
-        </IonButton>
-      </div>
+      {/* FR-144: Ist noch nichts da, trägt der Leerzustand den Knopf – nicht
+          beide. */}
+      {rows.length > 0 && (
+        <div className="app-actions">
+          <IonButton expand="block" onClick={() => start(null)}>
+            {t('offices.add')}
+          </IonButton>
+        </div>
+      )}
 
       {offices.isLoading ? (
         <SkeletonList />
@@ -88,7 +92,10 @@ export function OfficePage() {
           onRetry={() => void offices.refetch()}
         />
       ) : rows.length === 0 ? (
-        <EmptyState message={t('offices.empty')} />
+        <EmptyState
+          message={t('offices.empty')}
+          action={{ label: t('offices.add'), onClick: () => start(null) }}
+        />
       ) : (
         <ListSection title={t('offices.list')} footnote={t('offices.hint')}>
           {rows.map((office) => (

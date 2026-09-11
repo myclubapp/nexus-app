@@ -15,15 +15,16 @@ import {
 import { personRemoveOutline } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { useSetMemberTeams, type ClubMemberWithTeams } from '../hooks/useMembers';
-import { useDeleteTeam, useUpdateTeam } from '../hooks/useTeamAdmin';
+import { useDeleteTeam, useLinkTeam, useUpdateTeam } from '../hooks/useTeamAdmin';
 import { useSheetProps } from '../hooks/useSheetProps';
 import { useToast } from '../hooks/useToast';
+import { FederationTeamSection, type FederationPick } from './FederationTeamSection';
 import { FormModal } from './FormModal';
 import { ListSection } from './ListSection';
 import { MemberAvatar } from './MemberAvatar';
 import { InlineError } from './StateViews';
 import type { Team } from '../lib/database.types';
-import { validateTeamName } from '../lib/team';
+import { composeTeamName, isLinked, validateNameAddition, validateTeamName } from '../lib/team';
 
 interface TeamDetailProps {
   team: Team;
@@ -31,7 +32,10 @@ interface TeamDetailProps {
   members: readonly ClubMemberWithTeams[];
   /** Bereiche, die der Verein schon verwendet – als Hinweis unter dem Feld. */
   areas: readonly string[];
-  onDone: (outcome: 'saved' | 'deleted') => void;
+  /** Alle Teams des Vereins – für die Frage, welches Verbands-Team schon vergeben ist. */
+  teams: readonly Team[];
+  /** `silent`: Das Blatt hat selbst gesagt, was geschehen ist. */
+  onDone: (outcome: 'saved' | 'deleted' | 'silent') => void;
   onDismiss: () => void;
   isOpen?: boolean;
 }
@@ -47,11 +51,16 @@ interface TeamDetailProps {
  * Löschen geht nur über die Rückfrage, und der Riegel dagegen sitzt in
  * `delete_team()`: Ein Team mit Terminen bleibt, und die Meldung sagt, was
  * noch dranhängt.
+ *
+ * **UC-039:** Der Abschnitt «Verbands-Team» ist `FederationTeamSection`. Bei
+ * einem verknüpften Team weicht das Namensfeld dem Zusatz – der Grundname
+ * gehört dem Verband (BR-176), und der Trigger in `0060` setzt beides zusammen.
  */
 export function TeamDetail({
   team,
   members,
   areas,
+  teams,
   onDone,
   onDismiss,
   isOpen = true,
@@ -60,20 +69,56 @@ export function TeamDetail({
   const toast = useToast();
   const update = useUpdateTeam();
   const remove = useDeleteTeam();
+  const link = useLinkTeam();
   const setMemberTeams = useSetMemberTeams();
 
   const [name, setName] = useState(team.name);
   const [area, setArea] = useState(team.area ?? '');
   const [askDelete, setAskDelete] = useState(false);
+  const [pick, setPick] = useState<FederationPick | null>(null);
+  const [addition, setAddition] = useState(team.name_addition ?? '');
 
-  const problems = validateTeamName(name);
+  const linked = isLinked(team);
+  const problems = [
+    ...(linked ? [] : validateTeamName(name)),
+    ...(linked || pick ? validateNameAddition(addition) : []),
+  ];
   const inTeam = members.filter((member) => member.teamIds.includes(team.id));
-  const isBusy = update.isPending || remove.isPending || setMemberTeams.isPending;
+  const isBusy =
+    update.isPending || remove.isPending || link.isPending || setMemberTeams.isPending;
   const error =
     (update.error as Error | null)?.message ??
     (remove.error as Error | null)?.message ??
+    (link.error as Error | null)?.message ??
     (setMemberTeams.error as Error | null)?.message ??
     null;
+
+  /**
+   * Erst Bereich und Name (oder Zusatz), dann die Verknüpfung: `link_team()`
+   * setzt den Namen aus Grundname und Zusatz neu zusammen (BR-176). Schlägt
+   * ein Schritt fehl, steht seine Meldung über `error` im Blatt.
+   */
+  async function save() {
+    await update.mutateAsync({
+      teamId: team.id,
+      area,
+      ...(linked ? { nameAddition: addition } : { name }),
+    });
+    if (pick) {
+      await link.mutateAsync({
+        teamId: team.id,
+        federation: pick.federation,
+        federationTeamId: pick.remote.id,
+        name: pick.remote.name,
+        league: pick.remote.league,
+        nameAddition: addition,
+      });
+      toast.success(t('teams.linked', { name: composeTeamName(pick.remote.name, addition) }));
+      onDone('silent');
+      return;
+    }
+    onDone('saved');
+  }
 
   return (
     <FormModal
@@ -84,22 +129,20 @@ export function TeamDetail({
       isSubmitting={isBusy}
       error={error}
       onDismiss={onDismiss}
-      onSubmit={() =>
-        update.mutate(
-          { teamId: team.id, name, area },
-          { onSuccess: () => onDone('saved') },
-        )
-      }
+      // Die Meldung eines Fehlschlags kommt über `error` aus dem Mutationszustand.
+      onSubmit={() => void save().catch(() => undefined)}
     >
       <ListSection footnote={t('teams.areaHint')}>
-        <IonItem>
-          <IonInput
-            label={t('members.teamName')}
-            labelPlacement="stacked"
-            value={name}
-            onIonInput={(e) => setName(e.detail.value ?? '')}
-          />
-        </IonItem>
+        {!linked && (
+          <IonItem>
+            <IonInput
+              label={t('members.teamName')}
+              labelPlacement="stacked"
+              value={name}
+              onIonInput={(e) => setName(e.detail.value ?? '')}
+            />
+          </IonItem>
+        )}
         <IonItem>
           <IonInput
             label={t('teams.area')}
@@ -112,6 +155,18 @@ export function TeamDetail({
       </ListSection>
 
       {problems.includes('nameMissing') && <InlineError message={t('teams.problem.nameMissing')} />}
+
+      {/* UC-039, Schritte 2–7 und A2/A4/A5. */}
+      <FederationTeamSection
+        team={team}
+        teams={teams}
+        pick={pick}
+        onPick={setPick}
+        addition={addition}
+        onAddition={setAddition}
+        onLeave={onDismiss}
+        onUnlinked={() => onDone('silent')}
+      />
 
       {/* Die Mitglieder des Teams – dieselbe Zeile wie in der Mitgliederliste.
           Wischen nach links nimmt aus dem Team; in den Verein greift das nicht. */}

@@ -242,7 +242,9 @@
     "undercovered_one": "Manca ancora {{count}} conferma",
     "undercovered_other": "Mancano ancora {{count}} conferme",
     "teamFilter": "Squadra",
-    "allTeams": "Tutte le squadre"
+    "allTeams": "Tutte le squadre",
+    "result": "Risultato {{result}}",
+    "fromFederation": "Dalla federazione"
   },
   "profile": {
     "title": "Profilo",
@@ -603,7 +605,8 @@
     "lastAdminHint": "Questa persona è l’unico comitato. Nomina prima qualcun altro prima di cambiarne ruolo o stato.",
     "count_one": "{{count}} membro",
     "area": "Settore",
-    "areaPlaceholder": "ad es. Juniores – vuoto significa tutte le squadre"
+    "areaPlaceholder": "ad es. Juniores – vuoto significa tutte le squadre",
+    "resetFilter": "Azzera il filtro"
   },
   "pointRules": {
     "title": "Regole dei punti",
@@ -1610,7 +1613,8 @@
       "swissvolley": "Swiss Volley",
       "swisshandball": "Swiss Handball",
       "swissturnverband": "Federazione svizzera di ginnastica"
-    }
+    },
+    "startConnect": "Collegare una federazione"
   },
   "teams": {
     "title": "Squadre",
@@ -1629,7 +1633,38 @@
     "deleted": "Squadra eliminata.",
     "createHint": "Settore e membri si aggiungono poi nella squadra.",
     "problem": {
-      "nameMissing": "Il nome di una squadra richiede almeno due caratteri."
-    }
+      "nameMissing": "Il nome di una squadra richiede almeno due caratteri.",
+      "additionTooLong": "L’aggiunta è troppo lunga (al massimo 40 caratteri)"
+    },
+    "federationSection": "Squadra della federazione",
+    "federationNone": "Nessuna federazione collegata. Collega prima la federazione, poi la squadra potrà essere abbinata alla sua squadra federale.",
+    "loadRemote": "Caricare le squadre della federazione",
+    "loadingRemote": "Caricamento delle squadre …",
+    "remoteChoose": "Scegliere la squadra federale",
+    "remoteNone": "Non abbinare",
+    "alreadyLinked": "già abbinata",
+    "nameAddition": "Aggiunta della società",
+    "nameAdditionHint": "La federazione gestisce il nome base «{{name}}», l’aggiunta è vostra. Visualizzato: {{full}}",
+    "linkedWith": "{{federation}} · {{name}}",
+    "league": "Lega: {{league}}",
+    "syncedAt": "Ultima sincronizzazione: {{when}}",
+    "neverSynced": "Non ancora sincronizzato: le partite arrivano con la prossima esecuzione.",
+    "stale": "La federazione non elenca più questa squadra, ad esempio dopo un cambio di stagione. Abbinala di nuovo o rimuovi l’abbinamento.",
+    "unlink": "Rimuovere l’abbinamento",
+    "unlinkConfirm": "La squadra mantiene il suo nome, gli eventi importati restano. Solo le nuove partite non verranno più recuperate.",
+    "unlinked": "Abbinamento rimosso",
+    "linked": "Abbinata a «{{name}}»",
+    "remoteFailed": "La federazione non risponde: {{message}}",
+    "remoteFailedHint": "Salva la squadra senza abbinamento e aggiungilo più tardi.",
+    "remoteEmpty": "La federazione non elenca squadre per la vostra società.",
+    "import": "Riprendere le squadre dalla federazione",
+    "importHint": "Scegli quali squadre riprendere. Le squadre con lo stesso nome vengono abbinate, le altre create.",
+    "importStatus": {
+      "linked": "Già abbinata",
+      "match": "Abbinare a «{{name}}»",
+      "new": "Creare"
+    },
+    "importSubmit": "Riprendere",
+    "imported": "{{created}} create, {{linked}} abbinate"
   }
 }

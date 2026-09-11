@@ -242,7 +242,9 @@
     "undercovered_one": "Noch {{count}} Zusage fehlt",
     "undercovered_other": "Noch {{count}} Zusagen fehlen",
     "teamFilter": "Team",
-    "allTeams": "Alle Teams"
+    "allTeams": "Alle Teams",
+    "result": "Resultat {{result}}",
+    "fromFederation": "Vom Verband"
   },
   "profile": {
     "title": "Profil",
@@ -603,7 +605,8 @@
     "lastAdminHint": "Diese Person ist der einzige Vorstand. Bestimme zuerst jemand anderen, bevor du Rolle oder Status änderst.",
     "count_one": "{{count}} Mitglied",
     "area": "Bereich",
-    "areaPlaceholder": "z. B. Junioren – leer heisst alle Teams"
+    "areaPlaceholder": "z. B. Junioren – leer heisst alle Teams",
+    "resetFilter": "Filter zurücksetzen"
   },
   "pointRules": {
     "title": "Punkteregeln",
@@ -1610,7 +1613,8 @@
       "swissvolley": "Swiss Volley",
       "swisshandball": "Swiss Handball",
       "swissturnverband": "Schweizerischer Turnverband"
-    }
+    },
+    "startConnect": "Verband verbinden"
   },
   "teams": {
     "title": "Teams",
@@ -1629,7 +1633,38 @@
     "deleted": "Team gelöscht.",
     "createHint": "Bereich und Mitglieder kommen danach im Team dazu.",
     "problem": {
-      "nameMissing": "Ein Teamname braucht mindestens zwei Zeichen."
-    }
+      "nameMissing": "Ein Teamname braucht mindestens zwei Zeichen.",
+      "additionTooLong": "Der Zusatz ist zu lang (höchstens 40 Zeichen)"
+    },
+    "federationSection": "Verbands-Team",
+    "federationNone": "Kein Verband verbunden. Verbinde zuerst den Verband, dann lässt sich das Team mit seinem Verbands-Team verknüpfen.",
+    "loadRemote": "Teams des Verbands laden",
+    "loadingRemote": "Teams werden geladen …",
+    "remoteChoose": "Verbands-Team wählen",
+    "remoteNone": "Nicht verknüpfen",
+    "alreadyLinked": "schon verknüpft",
+    "nameAddition": "Zusatz des Vereins",
+    "nameAdditionHint": "Der Verband pflegt den Grundnamen «{{name}}», der Zusatz gehört euch. Angezeigt wird: {{full}}",
+    "linkedWith": "{{federation}} · {{name}}",
+    "league": "Liga: {{league}}",
+    "syncedAt": "Letzter Abgleich: {{when}}",
+    "neverSynced": "Noch kein Abgleich – die Spiele kommen mit dem nächsten Lauf.",
+    "stale": "Der Verband führt dieses Team nicht mehr, etwa nach einem Saisonwechsel. Verknüpfe es neu oder löse die Verknüpfung.",
+    "unlink": "Verknüpfung lösen",
+    "unlinkConfirm": "Das Team bleibt mit seinem Namen bestehen, importierte Termine ebenso. Es werden nur keine neuen Spiele mehr geholt.",
+    "unlinked": "Verknüpfung gelöst",
+    "linked": "Mit «{{name}}» verknüpft",
+    "remoteFailed": "Der Verband antwortet nicht: {{message}}",
+    "remoteFailedHint": "Speichere das Team ohne Verknüpfung und trage sie später nach.",
+    "remoteEmpty": "Der Verband nennt keine Teams für euren Verein.",
+    "import": "Teams aus dem Verband übernehmen",
+    "importHint": "Wähle, welche Teams übernommen werden. Gleichnamige Teams werden zugeordnet, die übrigen angelegt.",
+    "importStatus": {
+      "linked": "Schon verknüpft",
+      "match": "Zuordnen zu «{{name}}»",
+      "new": "Neu anlegen"
+    },
+    "importSubmit": "Übernehmen",
+    "imported": "{{created}} angelegt, {{linked}} verknüpft"
   }
 }

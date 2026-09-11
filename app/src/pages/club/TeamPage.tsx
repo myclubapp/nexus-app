@@ -1,20 +1,31 @@
 import { useState } from 'react';
 import { IonBadge, IonInput, IonItem, IonLabel, IonNote } from '@ionic/react';
-import { peopleOutline } from 'ionicons/icons';
+import { cloudDownloadOutline, peopleOutline } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { AppPage } from '../../components/AppPage';
+import { FederationImportModal } from '../../components/FederationImportModal';
+import {
+  FederationTeamSection,
+  type FederationPick,
+} from '../../components/FederationTeamSection';
 import { FormModal } from '../../components/FormModal';
 import { ListSection } from '../../components/ListSection';
 import { SkeletonList } from '../../components/Skeletons';
 import { EmptyState, ErrorState, InlineError } from '../../components/StateViews';
 import { TeamDetailModal } from '../../components/TeamDetailModal';
+import { useFederationConnections } from '../../hooks/useFederation';
 import { useTeams } from '../../hooks/useInvites';
 import { useCreateTeam, useMembers } from '../../hooks/useMembers';
-import { useAreas } from '../../hooks/useTeamAdmin';
+import { useAreas, useImportFederationTeams } from '../../hooks/useTeamAdmin';
 import { useSheetProps } from '../../hooks/useSheetProps';
 import { useToast } from '../../hooks/useToast';
 import type { Team } from '../../lib/database.types';
-import { groupTeamsByArea, validateTeamName } from '../../lib/team';
+import {
+  composeTeamName,
+  groupTeamsByArea,
+  validateNameAddition,
+  validateTeamName,
+} from '../../lib/team';
 
 /**
  * Die Teams des Vereins (UC-007 A1; S2 der Prüfung vom 2026-09-11).
@@ -25,6 +36,10 @@ import { groupTeamsByArea, validateTeamName } from '../../lib/team';
  *
  * Gruppiert nach Bereich: Der Bereich ist das, was die Sportchef:in führt
  * (Vision §4), und die Liste soll sich wie ein Organigramm lesen.
+ *
+ * **UC-039 A1:** Besteht eine Verbandsverbindung, bietet der FAB zusätzlich
+ * «Teams aus dem Verband übernehmen» – die Liste mit Vorschlägen, aus der in
+ * einem Zug angelegt und verknüpft wird.
  */
 export function TeamPage() {
   const { t } = useTranslation();
@@ -32,10 +47,15 @@ export function TeamPage() {
   const teams = useTeams();
   const members = useMembers();
   const areas = useAreas();
+  const connections = useFederationConnections();
   const createTeam = useCreateTeam();
+  const importTeams = useImportFederationTeams();
 
   const [creating, setCreating] = useState(false);
+  const [importing, setImporting] = useState(false);
   const [openTeam, setOpenTeam] = useState<Team | null>(null);
+
+  const hasFederation = (connections.data ?? []).length > 0;
 
   const groups = groupTeamsByArea(teams.data ?? []);
   const memberCount = (teamId: string) =>
@@ -48,6 +68,9 @@ export function TeamPage() {
       onRefresh={() => Promise.all([teams.refetch(), members.refetch()])}
       createActions={[
         { icon: peopleOutline, label: t('members.addTeam'), onClick: () => setCreating(true) },
+        ...(hasFederation
+          ? [{ icon: cloudDownloadOutline, label: t('teams.import'), onClick: () => setImporting(true) }]
+          : []),
       ]}
     >
       {teams.isLoading ? (
@@ -84,44 +107,106 @@ export function TeamPage() {
         team={openTeam}
         members={members.data ?? []}
         areas={areas.data ?? []}
+        teams={teams.data ?? []}
         onDismiss={() => setOpenTeam(null)}
         onDone={(outcome) => {
           setOpenTeam(null);
-          toast.success(t(outcome === 'deleted' ? 'teams.deleted' : 'common.saved'));
+          if (outcome !== 'silent') {
+            toast.success(t(outcome === 'deleted' ? 'teams.deleted' : 'common.saved'));
+          }
         }}
       />
 
       <TeamCreateModal
         isOpen={creating}
-        isSubmitting={createTeam.isPending}
-        error={createTeam.error ? (createTeam.error as Error).message : null}
-        onDismiss={() => setCreating(false)}
-        onSubmit={(name) =>
-          createTeam.mutate(name, {
-            onSuccess: () => {
-              setCreating(false);
-              toast.success(t('members.teamCreated'));
-            },
-          })
+        teams={teams.data ?? []}
+        isSubmitting={createTeam.isPending || importTeams.isPending}
+        error={
+          (createTeam.error as Error | null)?.message ??
+          (importTeams.error as Error | null)?.message ??
+          null
         }
+        onDismiss={() => setCreating(false)}
+        onSubmit={({ name, pick, addition }) => {
+          const done = (message: string) => {
+            setCreating(false);
+            toast.success(message);
+          };
+          if (pick) {
+            // Schritt 8 aus «Team anlegen»: anlegen und verknüpfen in einem Zug.
+            importTeams.mutate(
+              {
+                federation: pick.federation,
+                items: [
+                  {
+                    federation_team_id: pick.remote.id,
+                    name: pick.remote.name,
+                    league: pick.remote.league,
+                    team_id: null,
+                    name_addition: addition || null,
+                  },
+                ],
+              },
+              {
+                onSuccess: () =>
+                  done(t('teams.linked', { name: composeTeamName(pick.remote.name, addition) })),
+              },
+            );
+            return;
+          }
+          createTeam.mutate(name, { onSuccess: () => done(t('members.teamCreated')) });
+        }}
+      />
+
+      {/* A1: mehrere Teams auf einmal. */}
+      <FederationImportModal
+        isOpen={importing}
+        teams={teams.data ?? []}
+        onDismiss={() => setImporting(false)}
+        onDone={(result) => {
+          setImporting(false);
+          toast.success(t('teams.imported', result));
+        }}
       />
     </AppPage>
   );
 }
 
+/** Was «Team anlegen» abgibt: ein Name – oder ein Verbands-Team samt Zusatz (UC-039). */
+export interface TeamCreateInput {
+  name: string;
+  pick: FederationPick | null;
+  addition: string;
+}
+
 interface TeamCreateProps {
+  teams: readonly Team[];
   isSubmitting: boolean;
   error: string | null;
-  onSubmit: (name: string) => void;
+  onSubmit: (input: TeamCreateInput) => void;
   onDismiss: () => void;
   isOpen?: boolean;
 }
 
-/** UC-007 A1: ein neues Team – ein Name genügt, der Bereich kommt im Detail. */
-export function TeamCreate({ isSubmitting, error, onSubmit, onDismiss, isOpen = true }: TeamCreateProps) {
+/**
+ * UC-007 A1: ein neues Team – ein Name genügt, der Bereich kommt im Detail.
+ *
+ * UC-039, Schritte 2–7: Mit gewähltem Verbands-Team kommt der Name vom
+ * Verband; das Namensfeld weicht dem Zusatz (BR-176).
+ */
+export function TeamCreate({
+  teams,
+  isSubmitting,
+  error,
+  onSubmit,
+  onDismiss,
+  isOpen = true,
+}: TeamCreateProps) {
   const { t } = useTranslation();
   const [name, setName] = useState('');
-  const problems = validateTeamName(name);
+  const [pick, setPick] = useState<FederationPick | null>(null);
+  const [addition, setAddition] = useState('');
+  const problems = pick ? validateNameAddition(addition) : validateTeamName(name);
 
   return (
     <FormModal
@@ -132,21 +217,34 @@ export function TeamCreate({ isSubmitting, error, onSubmit, onDismiss, isOpen = 
       isSubmitting={isSubmitting}
       error={error}
       onDismiss={onDismiss}
-      onSubmit={() => onSubmit(name)}
+      onSubmit={() => onSubmit({ name, pick, addition })}
     >
-      <ListSection footnote={t('members.addTeamHint')}>
-        <IonItem>
-          <IonInput
-            label={t('members.teamName')}
-            labelPlacement="stacked"
-            value={name}
-            onIonInput={(e) => setName(e.detail.value ?? '')}
-          />
-        </IonItem>
-      </ListSection>
-      {name.length > 0 && problems.includes('nameMissing') && (
+      {!pick && (
+        <ListSection footnote={t('members.addTeamHint')}>
+          <IonItem>
+            <IonInput
+              label={t('members.teamName')}
+              labelPlacement="stacked"
+              value={name}
+              onIonInput={(e) => setName(e.detail.value ?? '')}
+            />
+          </IonItem>
+        </ListSection>
+      )}
+      {!pick && name.length > 0 && problems.includes('nameMissing') && (
         <InlineError message={t('teams.problem.nameMissing')} />
       )}
+
+      <FederationTeamSection
+        team={null}
+        teams={teams}
+        pick={pick}
+        onPick={setPick}
+        addition={addition}
+        onAddition={setAddition}
+        onLeave={onDismiss}
+      />
+
       <IonNote className="app-footnote">{t('teams.createHint')}</IonNote>
     </FormModal>
   );

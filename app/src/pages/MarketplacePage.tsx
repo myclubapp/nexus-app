@@ -256,7 +256,14 @@ export function MarketplacePage() {
       ) : tasks.error ? (
         <ErrorState error={tasks.error as Error} onRetry={() => void tasks.refetch()} />
       ) : isEmpty ? (
-        <EmptyState message={t('marketplace.empty')} />
+        <EmptyState
+          message={t('marketplace.empty')}
+          action={
+            isTrainer
+              ? { label: t('taskForm.title'), onClick: () => setFormOpen(true) }
+              : { label: t('agenda.title'), routerLink: '/tabs/agenda' }
+          }
+        />
       ) : (
         <>
           {/* FR-057/BR-076: Die eigene Zahl macht die Verteilung sichtbar,

@@ -203,10 +203,10 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-119 | Punkte bei pünktlicher Zahlung | Als System möchte ich bei einer fristgerecht bezahlten Rechnung Punkte der Säule 6 buchen, damit Verlässlichkeit gewürdigt wird.                              | Medium   | Implemented |
 | FR-120 | Verband verbinden           | Als Vorstand möchte ich unseren Verband über einen API-Key verbinden, damit Spielpläne und Resultate automatisch erscheinen.                                     | Low      | Implemented |
 | FR-121 | API-Key validieren          | Als System möchte ich den eingegebenen API-Key mit einem Testaufruf prüfen, bevor die Verbindung aktiv wird, damit Fehler sofort sichtbar sind.                  | Low      | Partial |
-| FR-150 | Verbands-Teams übernehmen   | Als Vorstand möchte ich die Teams unseres Vereins aus dem verbundenen Verband übernehmen, damit ich sie nicht von Hand erfasse.                                  | Low      | Open   |
-| FR-151 | Team mit Verbands-Team verknüpfen | Als Vorstand möchte ich beim Anlegen oder Bearbeiten eines Teams das passende Verbands-Team aus einer Auswahlliste wählen, damit unser bestehendes Team dessen Spielplan erhält. | Low      | Open   |
-| FR-152 | Namenshoheit am Teamnamen   | Als Vorstand möchte ich, dass der Verband nur den Grundnamen eines verknüpften Teams pflegt und unser Zusatz erhalten bleibt, damit der Abgleich unsere Bezeichnung nicht überschreibt. | Low      | Open   |
-| FR-153 | Verknüpfung lösen           | Als Vorstand möchte ich die Verknüpfung eines Teams zum Verband lösen, damit das Team wieder allein von uns gepflegt wird und bereits importierte Termine bestehen bleiben.          | Low      | Open   |
+| FR-150 | Verbands-Teams übernehmen   | Als Vorstand möchte ich die Teams unseres Vereins aus dem verbundenen Verband übernehmen, damit ich sie nicht von Hand erfasse.                                  | Low      | Implemented   |
+| FR-151 | Team mit Verbands-Team verknüpfen | Als Vorstand möchte ich beim Anlegen oder Bearbeiten eines Teams das passende Verbands-Team aus einer Auswahlliste wählen, damit unser bestehendes Team dessen Spielplan erhält. | Low      | Implemented   |
+| FR-152 | Namenshoheit am Teamnamen   | Als Vorstand möchte ich, dass der Verband nur den Grundnamen eines verknüpften Teams pflegt und unser Zusatz erhalten bleibt, damit der Abgleich unsere Bezeichnung nicht überschreibt. | Low      | Implemented   |
+| FR-153 | Verknüpfung lösen           | Als Vorstand möchte ich die Verknüpfung eines Teams zum Verband lösen, damit das Team wieder allein von uns gepflegt wird und bereits importierte Termine bestehen bleiben.          | Low      | Implemented   |
 
 ### 1.12 Erstbefüllung, leere Zustände & Einführung
 

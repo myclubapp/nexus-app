@@ -146,3 +146,4 @@ Verbindlich aus `docs/guidelines.md`:
 | 2026-09-11 | Recherche im Altbestand: vier Verbände, `api-v2.swissunihockey.ch` als einzige offen dokumentierte Schnittstelle |
 | 2026-09-11 | Migration `0058_federation.sql` eingespielt; Verhaltensprüfung: **27 von 27 Prüfungen bestanden** – darunter: Der Schlüssel steht nur im Tresor, der Vorstand kommt nicht an ihn heran, ein einzelner Fehlschlag kippt die Verbindung nicht, und gemeldet wird einmal statt täglich |
 | 2026-09-11 | Edge Function `sync-federation`, `lib/federation.ts`, `hooks/useFederation.ts`, `FederationPage`, vier Sprachen, 8 Tests |
+| 2026-09-11 | **Befund aus UC-039:** Die Teamliste von Swiss Unihockey ist ein **Dropdown** (`entries[].set_in_context.team_id`), keine Tabelle – `readTeams()` hätte immer «keine Teams» gemeldet. Liest jetzt beide Formen; belegt gegen Verein 463820. «Zu den Teams» führt jetzt zur Teamseite, wo verknüpft wird |

@@ -121,7 +121,12 @@ export function MoodPage() {
               </IonItem>
             </ListSection>
           ) : (
-            rows.length === 0 && <EmptyState message={t('checkin.empty')} />
+            rows.length === 0 && (
+              <EmptyState
+                message={t('checkin.empty')}
+                action={{ label: t('agenda.title'), routerLink: '/tabs/agenda' }}
+              />
+            )
           )}
 
           {/* A5: eine bereits gegebene Antwort nachträglich zeigen.

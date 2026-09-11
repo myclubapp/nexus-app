@@ -242,7 +242,9 @@
     "undercovered_one": "Il manque encore {{count}} réponse",
     "undercovered_other": "Il manque encore {{count}} réponses",
     "teamFilter": "Équipe",
-    "allTeams": "Toutes les équipes"
+    "allTeams": "Toutes les équipes",
+    "result": "Résultat {{result}}",
+    "fromFederation": "De la fédération"
   },
   "profile": {
     "title": "Profil",
@@ -603,7 +605,8 @@
     "lastAdminHint": "Cette personne est le seul comité. Désignez d’abord quelqu’un d’autre avant de changer son rôle ou son statut.",
     "count_one": "{{count}} membre",
     "area": "Secteur",
-    "areaPlaceholder": "p. ex. Juniors – vide signifie toutes les équipes"
+    "areaPlaceholder": "p. ex. Juniors – vide signifie toutes les équipes",
+    "resetFilter": "Réinitialiser le filtre"
   },
   "pointRules": {
     "title": "Règles de points",
@@ -1610,7 +1613,8 @@
       "swissvolley": "Swiss Volley",
       "swisshandball": "Swiss Handball",
       "swissturnverband": "Fédération suisse de gymnastique"
-    }
+    },
+    "startConnect": "Connecter une fédération"
   },
   "teams": {
     "title": "Équipes",
@@ -1629,7 +1633,38 @@
     "deleted": "Équipe supprimée.",
     "createHint": "Le secteur et les membres s’ajoutent ensuite dans l’équipe.",
     "problem": {
-      "nameMissing": "Un nom d’équipe demande au moins deux caractères."
-    }
+      "nameMissing": "Un nom d’équipe demande au moins deux caractères.",
+      "additionTooLong": "Le complément est trop long (40 caractères au plus)"
+    },
+    "federationSection": "Équipe de la fédération",
+    "federationNone": "Aucune fédération connectée. Connectez d’abord la fédération, puis l’équipe pourra être liée à son équipe fédérale.",
+    "loadRemote": "Charger les équipes de la fédération",
+    "loadingRemote": "Chargement des équipes …",
+    "remoteChoose": "Choisir l’équipe fédérale",
+    "remoteNone": "Ne pas lier",
+    "alreadyLinked": "déjà liée",
+    "nameAddition": "Complément du club",
+    "nameAdditionHint": "La fédération gère le nom de base « {{name}} », le complément vous appartient. Affiché : {{full}}",
+    "linkedWith": "{{federation}} · {{name}}",
+    "league": "Ligue : {{league}}",
+    "syncedAt": "Dernière synchronisation : {{when}}",
+    "neverSynced": "Pas encore synchronisé – les matchs arrivent avec la prochaine exécution.",
+    "stale": "La fédération ne liste plus cette équipe, p. ex. après un changement de saison. Liez-la à nouveau ou supprimez le lien.",
+    "unlink": "Supprimer le lien",
+    "unlinkConfirm": "L’équipe garde son nom, les événements importés restent. Seuls les nouveaux matchs ne seront plus récupérés.",
+    "unlinked": "Lien supprimé",
+    "linked": "Liée à « {{name}} »",
+    "remoteFailed": "La fédération ne répond pas : {{message}}",
+    "remoteFailedHint": "Enregistrez l’équipe sans lien et ajoutez-le plus tard.",
+    "remoteEmpty": "La fédération ne liste aucune équipe pour votre club.",
+    "import": "Reprendre les équipes de la fédération",
+    "importHint": "Choisissez les équipes à reprendre. Les équipes de même nom sont associées, les autres créées.",
+    "importStatus": {
+      "linked": "Déjà liée",
+      "match": "Associer à « {{name}} »",
+      "new": "Créer"
+    },
+    "importSubmit": "Reprendre",
+    "imported": "{{created}} créée(s), {{linked}} liée(s)"
   }
 }

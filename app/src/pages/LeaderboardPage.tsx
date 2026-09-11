@@ -152,7 +152,10 @@ export function LeaderboardPage() {
           onRetry={() => void leaderboard.refetch()}
         />
       ) : rows.length === 0 ? (
-        <EmptyState message={t('leaderboard.empty')} />
+        <EmptyState
+          message={t('leaderboard.empty')}
+          action={{ label: t('agenda.title'), routerLink: '/tabs/agenda' }}
+        />
       ) : (
         <IonList inset>
           {rows.map((row, index) => (

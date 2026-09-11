@@ -242,7 +242,9 @@
     "undercovered_one": "{{count}} reply still missing",
     "undercovered_other": "{{count}} replies still missing",
     "teamFilter": "Team",
-    "allTeams": "All teams"
+    "allTeams": "All teams",
+    "result": "Result {{result}}",
+    "fromFederation": "From the federation"
   },
   "profile": {
     "title": "Profile",
@@ -603,7 +605,8 @@
     "lastAdminHint": "This person is the only board member. Appoint someone else before changing their role or status.",
     "count_one": "{{count}} member",
     "area": "Section",
-    "areaPlaceholder": "e.g. Juniors – empty means all teams"
+    "areaPlaceholder": "e.g. Juniors – empty means all teams",
+    "resetFilter": "Reset filter"
   },
   "pointRules": {
     "title": "Point rules",
@@ -1610,7 +1613,8 @@
       "swissvolley": "Swiss Volley",
       "swisshandball": "Swiss Handball",
       "swissturnverband": "Swiss Gymnastics Federation"
-    }
+    },
+    "startConnect": "Connect a federation"
   },
   "teams": {
     "title": "Teams",
@@ -1629,7 +1633,38 @@
     "deleted": "Team deleted.",
     "createHint": "Section and members are added on the team afterwards.",
     "problem": {
-      "nameMissing": "A team name needs at least two characters."
-    }
+      "nameMissing": "A team name needs at least two characters.",
+      "additionTooLong": "The addition is too long (40 characters at most)"
+    },
+    "federationSection": "Federation team",
+    "federationNone": "No federation connected. Connect the federation first, then the team can be linked to its federation team.",
+    "loadRemote": "Load federation teams",
+    "loadingRemote": "Loading teams …",
+    "remoteChoose": "Choose federation team",
+    "remoteNone": "Do not link",
+    "alreadyLinked": "already linked",
+    "nameAddition": "Club addition",
+    "nameAdditionHint": "The federation maintains the base name “{{name}}”, the addition is yours. Shown as: {{full}}",
+    "linkedWith": "{{federation}} · {{name}}",
+    "league": "League: {{league}}",
+    "syncedAt": "Last sync: {{when}}",
+    "neverSynced": "Not synced yet – the games arrive with the next run.",
+    "stale": "The federation no longer lists this team, e.g. after a season change. Link it again or remove the link.",
+    "unlink": "Remove link",
+    "unlinkConfirm": "The team keeps its name, imported events stay. Only no new games will be fetched.",
+    "unlinked": "Link removed",
+    "linked": "Linked with “{{name}}”",
+    "remoteFailed": "The federation does not respond: {{message}}",
+    "remoteFailedHint": "Save the team without a link and add it later.",
+    "remoteEmpty": "The federation lists no teams for your club.",
+    "import": "Take over teams from the federation",
+    "importHint": "Choose which teams to take over. Teams with the same name are matched, the others are created.",
+    "importStatus": {
+      "linked": "Already linked",
+      "match": "Match with “{{name}}”",
+      "new": "Create"
+    },
+    "importSubmit": "Take over",
+    "imported": "{{created}} created, {{linked}} linked"
   }
 }

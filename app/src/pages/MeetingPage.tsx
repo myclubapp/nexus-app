@@ -67,11 +67,15 @@ export function MeetingPage() {
         Promise.all([inputs.refetch(), meetings.refetch(), anonymous.refetch()])
       }
     >
-      <div className="app-actions">
-        <IonButton expand="block" onClick={() => setWriting(true)}>
-          {t('meeting.submitTitle')}
-        </IonButton>
-      </div>
+      {/* FR-144: Ist noch nichts da, trägt der Leerzustand den Knopf – nicht
+          beide. */}
+      {!empty && (
+        <div className="app-actions">
+          <IonButton expand="block" onClick={() => setWriting(true)}>
+            {t('meeting.submitTitle')}
+          </IonButton>
+        </div>
+      )}
 
       {inputs.isLoading || meetings.isLoading ? (
         <SkeletonList />
@@ -81,7 +85,10 @@ export function MeetingPage() {
           onRetry={() => void inputs.refetch()}
         />
       ) : empty ? (
-        <EmptyState message={t('meeting.empty')} />
+        <EmptyState
+          message={t('meeting.empty')}
+          action={{ label: t('meeting.submitTitle'), onClick: () => setWriting(true) }}
+        />
       ) : (
         <>
           {/* Schritte 2–3 der Vorstandsseite: der Eingangskorb. */}

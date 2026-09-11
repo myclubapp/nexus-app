@@ -90,6 +90,7 @@ export function VoicePage() {
   const quotaLeft = quota.data ?? 0;
   const problems = validateVoiceNote(draft, quotaLeft);
   const rows = notes.data ?? [];
+  const isEmpty = rows.length === 0 && (threads.data ?? []).length === 0;
   // Drei Körbe aus **einer** Abfrage: Was überhaupt sichtbar ist, entscheidet
   // die Policy; hier wird nur sortiert. Ein gemeldetes Anliegen (A6) gehört in
   // keinen der beiden ersten – es unter «Deine» zu führen wäre eine falsche
@@ -172,22 +173,31 @@ export function VoicePage() {
         </IonItem>
       </ListSection>
 
-      <div className="app-actions">
-        <IonButton
-          expand="block"
-          disabled={quotaLeft <= 0}
-          onClick={() => setOpen(true)}
-        >
-          {t('voice.write')}
-        </IonButton>
-      </div>
+      {/* FR-144: Ist noch nichts da, trägt der Leerzustand den Knopf – nicht
+          beide. */}
+      {!isEmpty && (
+        <div className="app-actions">
+          <IonButton
+            expand="block"
+            disabled={quotaLeft <= 0}
+            onClick={() => setOpen(true)}
+          >
+            {t('voice.write')}
+          </IonButton>
+        </div>
+      )}
 
       {notes.isLoading ? (
         <SkeletonList />
       ) : notes.error ? (
         <ErrorState error={notes.error as Error} onRetry={() => void notes.refetch()} />
-      ) : rows.length === 0 && (threads.data ?? []).length === 0 ? (
-        <EmptyState message={t('voice.empty')} />
+      ) : isEmpty ? (
+        <EmptyState
+          message={t('voice.empty')}
+          action={
+            quotaLeft > 0 ? { label: t('voice.write'), onClick: () => setOpen(true) } : undefined
+          }
+        />
       ) : (
         <>
           {/* UC-030, Schritte 2–3: der Eingang. Er steht zuoberst, weil ein

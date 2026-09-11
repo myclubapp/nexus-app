@@ -24,6 +24,7 @@ import {
   checkmarkCircle,
   closeCircle,
   locationOutline,
+  trophyOutline,
   peopleOutline,
   pricetagOutline,
 } from 'ionicons/icons';
@@ -226,7 +227,14 @@ export function AgendaPage() {
       ) : agenda.error ? (
         <ErrorState error={agenda.error as Error} onRetry={() => void agenda.refetch()} />
       ) : events.length === 0 ? (
-        <EmptyState message={t('agenda.empty')} />
+        <EmptyState
+          message={t('agenda.empty')}
+          action={
+            isTrainer
+              ? { label: t('eventForm.title'), onClick: () => setFormOpen(true) }
+              : { label: t('marketplace.title'), routerLink: '/tabs/marketplace' }
+          }
+        />
       ) : (
         <IonList inset>
           {/* Die Spaltenköpfe der bestehenden myclub-App: links der eigene
@@ -336,9 +344,18 @@ export function AgendaPage() {
                         {event.location}
                       </h3>
                     )}
+                    {/* UC-039/BR-180: Das Resultat kommt vom Verband – gezeigt,
+                        nicht gerechnet; Tabellen bleiben FR-128. */}
+                    {event.result && (
+                      <h3>
+                        <IonIcon className="app-inline-icon" icon={trophyOutline} />
+                        {t('agenda.result', { result: event.result })}
+                      </h3>
+                    )}
                     <h3>
                       <IonIcon className="app-inline-icon" icon={pricetagOutline} />
                       {eventLabel(event.type)}
+                      {event.external_id ? ` · ${t('agenda.fromFederation')}` : ''}
                     </h3>
 
                     {/* A3: Ein abgesagter Termin zeigt den Grund und sperrt. */}

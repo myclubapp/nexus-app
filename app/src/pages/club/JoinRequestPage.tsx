@@ -73,7 +73,10 @@ export function JoinRequestPage() {
   if (!isAdmin) {
     return (
       <AppPage title={t('joinRequest.title')} backHref="/tabs/profile">
-        <EmptyState message={t('clubSettings.adminOnly')} />
+        <EmptyState
+          message={t('clubSettings.adminOnly')}
+          action={{ label: t('profile.title'), routerLink: '/tabs/profile' }}
+        />
       </AppPage>
     );
   }
@@ -94,7 +97,10 @@ export function JoinRequestPage() {
           onRetry={() => void requests.refetch()}
         />
       ) : rows.length === 0 ? (
-        <EmptyState message={t('joinRequest.empty')} />
+        <EmptyState
+          message={t('joinRequest.empty')}
+          action={{ label: t('invite.title'), routerLink: '/tabs/profile/invite' }}
+        />
       ) : (
         <ListSection
           title={t('joinRequest.listTitle')}

@@ -139,6 +139,10 @@
 | 2 | Prüfen, ob ein nächster Schritt angeboten wird | Ja, als Knopf unter der Erklärung | | |
 | 3 | Dasselbe im Marktplatz und im Feed | Ebenso | | |
 | 4 | Den Knopf antippen | Er führt dorthin, wo der Schritt geschieht | | |
+| 4a | Als Trainer:in die leere Agenda und den leeren Marktplatz prüfen | Der Knopf öffnet das Formular; als Mitglied führt er zum Marktplatz bzw. zur Agenda | | |
+| 4b | Mitglieder so filtern, dass niemand passt | «Filter zurücksetzen» stellt die Liste wieder her | | |
+| 4c | Als Mitglied eine Vorstandsseite öffnen (Einladungen, Regeln, Anfragen) | «Nur der Vorstand …» mit dem Knopf «Profil» | | |
+| 4d | Vorschläge, Anliegen und Ämter ohne Inhalt öffnen | Der Block-Knopf fehlt; das Angebot steht im Leerzustand | | |
 | 5 | Mit einer Sprachausgabe prüfen | Erklärung und Knopf sind erreichbar | | |
 | 6 | In allen vier Sprachen prüfen | Kein abgeschnittener Text | | |
 
