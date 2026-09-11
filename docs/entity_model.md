@@ -743,12 +743,17 @@ Demo-Verein ist ein eigener CLUB und teilt keine Daten mit produktiven Vereinen.
 ## Abgeleitete Sichten
 
 Diese Auswertungen speichern keine eigenen Daten, sondern lesen ausschliesslich auf den obigen
-Entitäten. Sie sind hier aufgeführt, weil die Anforderungen sie voraussetzen.
+Entitäten. Sie sind hier aufgeführt, weil die Anforderungen sie voraussetzen. Dass keine von ihnen
+schreibt, ist bei den Kennzahlen der Vereins-Gesundheit die Regel selbst: BR-097 schliesst eine
+Historie aus, und was nie gespeichert wird, kann keine werden.
 
 | Sicht | Grundlage | Zweck |
 |---|---|---|
 | `member_points` | POINT_TRANSACTION | Saison- und Karrierestand je Mitglied; Grundlage der Ranglisten |
 | `member_value_dimensions` | POINT_TRANSACTION, POINT_RULE, CLUB_MEMBER | Die fünf Wertdimensionen für die Spider-Ansicht, normalisiert auf 0 bis 100 |
 | `team_mood` | CHECKIN_RESPONSE | Team-Stimmung, ausgewiesen erst ab fünf Antworten im Zeitfenster |
-| `responsibility_concentration` | POINT_TRANSACTION, POINT_RULE | Anteil der Mitglieder, die 80 Prozent der Einsätze tragen |
-| `connection_ratio` | CLUB_MESSAGE_LOG | Verhältnis von Verbindungs-Nachrichten zu Aufrufen, rollend über sechs Wochen |
+| `club_health` | CLUB_MEMBER, POINT_TRANSACTION, ATTENDANCE | Mitgliederzahl, Angekommene der Saison samt Vorsaisonwert und Aktive im Zeitfenster |
+| `team_health` | TEAM_MEMBER, EVENT, ATTENDANCE | Antwortquote und Beteiligung je Team über neunzig Tage; unter der Mindestgrösse entsteht keine Zeile |
+| `responsibility_concentration` | POINT_TRANSACTION, POINT_RULE | Anteil der Mitglieder, die 80 Prozent der Einsätze tragen – gezählt werden die Säulen 3 und 7, zurückgegeben wird eine Zahl und nie eine Namensliste |
+| `succession_lead` | FUNCTIONARY_ROLE | Ämter, die vakant sind oder länger als die Schwelle von derselben Person gehalten werden |
+| `connection_ratio` | CLUB_MESSAGE_LOG | Verhältnis von Verbindungs-Nachrichten zu Aufrufen, rollend über acht Wochen |

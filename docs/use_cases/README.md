@@ -59,7 +59,7 @@ synchron gehalten werden können.
 
 | UC | Titel | Primärakteur | Requirements | Status |
 |---|---|---|---|---|
-| [UC-023](UC-023-fuersorge-hinweis-triagieren.md) | Fürsorge-Hinweis triagieren | Trainer:in | FR-062, FR-063, FR-064, FR-065, FR-066, FR-067 | In Progress |
+| [UC-023](UC-023-fuersorge-hinweis-triagieren.md) | Fürsorge-Hinweis triagieren | Trainer:in | FR-060 bis FR-069, FR-075 | Implemented |
 | [UC-024](UC-024-wertdimensionen-einsehen.md) | Eigene Wertdimensionen einsehen | Mitglied | FR-071, FR-072 | Implemented |
 | [UC-025](UC-025-transparenz-seite.md) | Transparenz-Seite und Health-Opt-out | Mitglied | FR-073, FR-074, FR-075 | Implemented |
 
@@ -119,7 +119,8 @@ Diese Anforderungen sind bewusst nach dem MVP eingeplant und tragen im Katalog d
 | Kalender-Publishing | FR-133 |
 
 Ebenfalls ohne eigene Spezifikation, weil vollständig systemseitig: FR-060, FR-061, FR-068, FR-069
-(Kennzahlen der Vereins-Gesundheit) – sie sind Anzeigeflächen der in UC-023 beschriebenen Signale.
+(Kennzahlen der Vereins-Gesundheit) – sie sind Anzeigeflächen der in UC-023 beschriebenen Signale und
+werden seit dem 11.09.2026 im Plan zu UC-023 mitgeführt.
 
 ---
 

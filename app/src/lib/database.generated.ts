@@ -100,6 +100,55 @@ export type Database = {
           },
         ]
       }
+      billing_outbox: {
+        Row: {
+          club_id: string
+          created_at: string
+          id: number
+          member_id: string
+          operation: string
+          sent_at: string | null
+        }
+        Insert: {
+          club_id: string
+          created_at?: string
+          id?: number
+          member_id: string
+          operation: string
+          sent_at?: string | null
+        }
+        Update: {
+          club_id?: string
+          created_at?: string
+          id?: number
+          member_id?: string
+          operation?: string
+          sent_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "billing_outbox_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "billing_outbox_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "billing_outbox_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       checkin_invitations: {
         Row: {
           answered_at: string | null
@@ -899,6 +948,64 @@ export type Database = {
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_refs: {
+        Row: {
+          amount: number
+          club_id: string
+          detail_url: string | null
+          due_date: string
+          id: string
+          member_id: string
+          paid_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          club_id: string
+          detail_url?: string | null
+          due_date: string
+          id: string
+          member_id: string
+          paid_at?: string | null
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          club_id?: string
+          detail_url?: string | null
+          due_date?: string
+          id?: string
+          member_id?: string
+          paid_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_refs_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_refs_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "invoice_refs_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "club_members"
             referencedColumns: ["id"]
           },
         ]
@@ -1803,6 +1910,7 @@ export type Database = {
           flagged_at: string | null
           id: string
           kind: string
+          published_news_id: string | null
           response: string | null
           status: string
           target_member_id: string | null
@@ -1823,6 +1931,7 @@ export type Database = {
           flagged_at?: string | null
           id?: string
           kind: string
+          published_news_id?: string | null
           response?: string | null
           status?: string
           target_member_id?: string | null
@@ -1843,6 +1952,7 @@ export type Database = {
           flagged_at?: string | null
           id?: string
           kind?: string
+          published_news_id?: string | null
           response?: string | null
           status?: string
           target_member_id?: string | null
@@ -1891,6 +2001,13 @@ export type Database = {
             columns: ["converted_task_id"]
             isOneToOne: false
             referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voice_notes_published_news_id_fkey"
+            columns: ["published_news_id"]
+            isOneToOne: false
+            referencedRelation: "news"
             referencedColumns: ["id"]
           },
           {
@@ -1976,11 +2093,21 @@ export type Database = {
         }[]
       }
       answer_meeting_input: {
-        Args: { p_answer: string; p_decline?: boolean; p_input_id: string }
+        Args: {
+          p_answer: string
+          p_decline?: boolean
+          p_input_id: string
+          p_news_title?: string
+        }
         Returns: undefined
       }
       answer_voice_note: {
-        Args: { p_answer: string; p_decline?: boolean; p_note_id: string }
+        Args: {
+          p_answer: string
+          p_decline?: boolean
+          p_news_title?: string
+          p_note_id: string
+        }
         Returns: undefined
       }
       ask_contribution_profiles: { Args: never; Returns: number }
@@ -2030,6 +2157,16 @@ export type Database = {
         Returns: string
       }
       claim_task: { Args: { p_task_id: string }; Returns: string }
+      club_health: {
+        Args: { p_club_id: string }
+        Returns: {
+          activated: number
+          active: number
+          active_days: number
+          members: number
+          prev_activated: number
+        }[]
+      }
       clubs_left_without_admin: {
         Args: { p_user_id: string }
         Returns: {
@@ -2138,6 +2275,7 @@ export type Database = {
       delete_my_account: { Args: never; Returns: undefined }
       detect_checkins: { Args: never; Returns: number }
       detect_health_signals: { Args: { p_club_id?: string }; Returns: number }
+      detect_succession_gaps: { Args: { p_club_id?: string }; Returns: number }
       dimension_of_pillar: { Args: { p_pillar: number }; Returns: string }
       discard_pulse: { Args: { p_pulse_id: string }; Returns: undefined }
       drop_sample_content: { Args: { p_club_id: string }; Returns: number }
@@ -2161,6 +2299,7 @@ export type Database = {
         }[]
       }
       flag_note: { Args: { p_note_id: string }; Returns: undefined }
+      flag_overdue_invoices: { Args: never; Returns: number }
       flag_unanswered_notes: { Args: never; Returns: number }
       follow_up_anon: {
         Args: { p_body: string; p_token_hash: string }
@@ -2170,6 +2309,13 @@ export type Database = {
       forward_input: {
         Args: { p_input_id: string; p_roles: Json }
         Returns: undefined
+      }
+      health_definitions: {
+        Args: { p_club_id: string }
+        Returns: {
+          key: string
+          value: number
+        }[]
       }
       health_signal_in_reach: {
         Args: { p_signal_id: string }
@@ -2370,6 +2516,7 @@ export type Database = {
         }[]
       }
       release_task: { Args: { p_task_id: string }; Returns: boolean }
+      remind_due_invoices: { Args: never; Returns: number }
       remind_undecided: {
         Args: { p_event_id: string }
         Returns: {
@@ -2384,6 +2531,19 @@ export type Database = {
           notified: number
         }[]
       }
+      report_invoice: {
+        Args: {
+          p_amount: number
+          p_club_id: string
+          p_detail_url?: string
+          p_due_date: string
+          p_invoice_id: string
+          p_member_id: string
+          p_paid_at?: string
+          p_status: string
+        }
+        Returns: number
+      }
       request_join: {
         Args: { p_club_id: string; p_team_id?: string }
         Returns: string
@@ -2394,6 +2554,15 @@ export type Database = {
         Returns: {
           is_early: boolean
           points_awarded: number
+        }[]
+      }
+      responsibility_concentration: {
+        Args: { p_club_id: string }
+        Returns: {
+          carriers: number
+          contributors: number
+          efforts: number
+          members: number
         }[]
       }
       retract_news: { Args: { p_news_id: string }; Returns: undefined }
@@ -2510,6 +2679,15 @@ export type Database = {
         }
         Returns: string
       }
+      succession_lead: {
+        Args: { p_club_id: string }
+        Returns: {
+          is_vacant: boolean
+          role_id: string
+          title: string
+          years: number
+        }[]
+      }
       suggest_modules: { Args: never; Returns: number }
       suggest_task: { Args: { p_task_id: string }; Returns: number }
       sync_news_sources: { Args: never; Returns: number }
@@ -2532,6 +2710,17 @@ export type Database = {
           member_id: string
           proof_url: string
           submitted_at: string
+        }[]
+      }
+      team_health: {
+        Args: { p_club_id: string }
+        Returns: {
+          answered: number
+          attended: number
+          invitations: number
+          members: number
+          team_id: string
+          team_name: string
         }[]
       }
       team_mood: {

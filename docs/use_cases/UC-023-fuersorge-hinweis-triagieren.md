@@ -6,7 +6,7 @@
 **Use Case Name:** Fürsorge-Hinweis triagieren
 **Primary Actor:** Trainer:in
 **Goal:** Auf ein Frühwarnsignal reagieren, ohne dass sich mehrere Verantwortliche doppelt melden
-**Status:** In Progress
+**Status:** Implemented
 
 ## Preconditions
 

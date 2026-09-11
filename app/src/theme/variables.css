@@ -137,12 +137,17 @@
 /* --- Punkte-Kachel -------------------------------------------------------- */
 .app-stat-row {
   display: flex;
+  /* Seit der Vereins-Gesundheit stehen drei Kennzahlen nebeneinander. Auf
+     320 px teilen sie sich in zwei plus eine, statt auf je 90 px zu schrumpfen
+     – zusammen mit der Mindestbreite unten. */
+  flex-wrap: wrap;
   gap: var(--app-space-2);
   padding: 0 var(--app-space-2);
 }
 
 .app-stat {
   flex: 1;
+  min-width: 7rem;
   margin: var(--app-space-2);
 }
 

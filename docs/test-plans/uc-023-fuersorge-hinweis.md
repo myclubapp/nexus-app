@@ -1,10 +1,11 @@
 # Manual Test Plan: UC-023 — Fürsorge-Hinweis triagieren
 
 **Use Case:** [UC-023](../use_cases/UC-023-fuersorge-hinweis-triagieren.md)
-**Geltungsbereich:** Erzeugung, Zustellung, Reichweite, Triage, Verfall, Deckel, Opt-out
-**Anforderungen:** FR-062 bis FR-067
+**Geltungsbereich:** Erzeugung, Zustellung, Reichweite, Triage, Verfall, Deckel, Opt-out, Kennzahlen
+**Anforderungen:** FR-060 bis FR-069, FR-075
 **Regeln:** BR-094 bis BR-099
 **Erstellt:** 2026-09-09
+**Ergänzt:** 2026-09-11 (Nachtrag `0056`: die Kennzahlen und `succession_gap`)
 
 ## Vorbereitung
 
@@ -121,8 +122,105 @@
 
 ---
 
+## TC-008: Die Vereins-Übersicht (FR-060)
+
+**Priority:** High
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als **V** die Vereins-Gesundheit öffnen | Unter den Hinweisen stehen Mitglieder, Aktiv und Angekommen | | |
+| 2 | Die Reihenfolge prüfen | Die offenen Hinweise stehen **oben** – die Triage bleibt in Reichweite (BR-099) | | |
+| 3 | Den Fusstext lesen | Er sagt, was «aktiv» heisst, und nennt das Zeitfenster | | |
+| 4 | Eine Absage erfassen und neu laden | Die absagende Person zählt als aktiv – wer absagt, ist da | | |
+| 5 | Als **TA** dieselbe Seite öffnen | **Keine** Vereinszahlen – nur die Hinweise und die Teamzahlen (BR-096) | | |
+| 6 | Als **TA** `club_health()` direkt aufrufen | Abgewiesen | | |
+| 7 | Im ersten Vereinsjahr hinsehen | **Kein** Trendsatz – es gibt keine Vorsaison | | |
+| 8 | Punkte in der Vorsaison anlegen und neu laden | Der Trend nennt die Differenz in Mitgliedern | | |
+
+---
+
+## TC-009: Die Teamzahlen und die Mindestgrösse (FR-061)
+
+**Priority:** High
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Ein Team mit sieben Mitgliedern und Terminen anlegen | Vorbereitung | | |
+| 2 | Als dessen Trainer:in die Seite öffnen | Antwortquote und Beteiligung stehen da | | |
+| 3 | Ein zweites Team mit drei Mitgliedern anlegen | Vorbereitung | | |
+| 4 | Erneut hinsehen | Das kleine Team steht **nicht** da – auch nicht mit «–» oder «0 %» | | |
+| 5 | Als **V** hinsehen | Auch für den Vorstand nicht: Die Schwelle schützt die Person, nicht die Rolle | | |
+| 6 | Die Mindestgrösse in den Vereinseinstellungen auf 3 setzen | Das kleine Team erscheint | | |
+| 7 | Als **TB** hinsehen | Nur das eigene Team (BR-096) | | |
+| 8 | Ein Team ohne Termine prüfen | Quoten von 0 %, kein Absturz | | |
+
+---
+
+## TC-010: Verantwortungsverteilung (FR-068, K4)
+
+**Priority:** High
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Drei Helfereinsätze für **eine** Person und einen für eine zweite bestätigen | Vorbereitung | | |
+| 2 | Als **V** die Seite öffnen | «2 von N tragen vier Fünftel» | | |
+| 3 | Nach Namen suchen | **Keiner** – weder der Tragenden noch der anderen (BR-095) | | |
+| 4 | Ein besuchtes Training buchen | Die Zahl ändert sich nicht – Teilnahme ist kein Einsatz | | |
+| 5 | Bei starker Konzentration den Fusstext lesen | Er fragt nach der Ausschreibung, nicht nach den Säumigen | | |
+| 6 | Am Saisonanfang ohne Einsätze hinsehen | Der Abschnitt fehlt ganz – «0 tragen alles» wäre falsch | | |
+| 7 | Als Trainer:in aufrufen | Abgewiesen | | |
+
+---
+
+## TC-011: Nachfolge-Vorlauf und sein Signal (FR-069, FR-062, FR-067)
+
+**Priority:** High
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Ein Amt vakant lassen, eines seit fünf Jahren halten, eines seit einem halben Jahr | Vorbereitung | | |
+| 2 | Als **V** die Seite öffnen | Zwei Ämter – das vakante zuoberst, das frische fehlt | | |
+| 3 | Ein Amt antippen | Es führt in die Ämterliste | | |
+| 4 | `select detect_succession_gaps();` aufrufen | Ein Signal `succession_gap`, Schwere `info` | | |
+| 5 | Den Wortlaut lesen | Er fragt nach Entlastung, nicht nach Schuld (BR-095) | | |
+| 6 | Die Inbox von **V** und **Q** prüfen | Nur der Vorstand wurde benachrichtigt (A3) | | |
+| 7 | Den Aufruf wiederholen | Kein zweites Signal | | |
+| 8 | Das Modul «Sitzungen» ausschalten und erneut aufrufen | Kein Signal – ohne Ämter nichts zu melden | | |
+| 9 | Die Schwelle auf zwei Jahre senken | Das Amt seit einem halben Jahr bleibt draussen | | |
+
+---
+
+## TC-012: Der Definitionskatalog (FR-075)
+
+**Priority:** Medium
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als **TA** die Seite ganz nach unten scrollen | «Wie wir rechnen» mit sieben Sätzen | | |
+| 2 | Jeden Satz lesen | Jede Zahl der Seite ist damit erklärt | | |
+| 3 | Eine Schwelle in `clubs.settings.health.thresholds` ändern | Der Satz nennt den neuen Wert | | |
+| 4 | Dieselbe Kennzahl prüfen | Sie rechnet mit dem neuen Wert | | |
+| 5 | Als Mitglied ohne Rolle aufrufen | Abgewiesen | | |
+
+---
+
 ## Vier Sprachen
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
 | 1 | Sprache auf Französisch, Italienisch und Englisch stellen | Anlässe, Gesprächsimpulse und Handlungsfragen sind übersetzt – und tragen auch dort kein Urteil (BR-095) | | |
+| 2 | Die Kennzahlen in jeder Sprache prüfen | Überschriften, Fusstexte und der Definitionskatalog sind übersetzt | | |
+| 3 | Auf 320 px hinsehen | Die drei Kennzahlen brechen um, statt zu schrumpfen | | |
+
+---
+
+## Offen
+
+- **FR-063 (rollenbasiertes Routing) bleibt offen.** Die Bereichsrolle
+  «Sportchef:in» kennt `club_members.role` nicht; sie zu erfinden wäre eine
+  Rollenreform. Das steht als offener Punkt 1 im Anforderungskatalog.
+- **Die Schwellen sind nur über die Datenbank änderbar.** Der Katalog ist
+  lesbar (FR-075), eine Oberfläche zum Ändern gibt es nicht – sie wäre die
+  Einstellung, die K7 zufolge kein Verein beim Start braucht.
+- **«Aktiv», «Aktivierung» und die Konzentrationsschwelle** sind Annahmen
+  dieses Plans und mit den Stakeholdern zu bestätigen (offener Punkt 2).

@@ -5,7 +5,7 @@
 | **Primary Actor** | Trainer:in (Vereinssignale: Vorstand)                               |
 | **Goal**          | Auf ein Frühwarnsignal reagieren, ohne dass sich mehrere Verantwortliche doppelt melden |
 | **Plan created**  | 2026-09-09                                                          |
-| **Status**        | Done (der Use Case; drei Anforderungen bleiben bewusst `In Progress`) |
+| **Status**        | Done (Triage am 2026-09-09, Kennzahlen im Nachtrag vom 2026-09-11)   |
 
 ## Overview
 
@@ -22,10 +22,10 @@ und wird **von niemandem gelesen**; im Übersetzungskatalog liegt ein Block
 Beides sind Vorbereitungen, die nie eingelöst wurden.
 
 Dieser Use Case liefert die Erzeugung der Signale, ihre Zustellung an die
-richtige Rolle, die Triage in drei Tippern und den Verfall. Er liefert
-**nicht** die Übersichten (FR-060, FR-061, FR-068 bis FR-070): Die sind laut
+richtige Rolle, die Triage in drei Tippern und den Verfall. Die Übersichten
+(FR-060, FR-061, FR-068, FR-069) blieben zunächst aussen vor: Sie sind laut
 `use_cases/README.md` Anzeigeflächen derselben Signale und haben keine eigene
-Spezifikation.
+Spezifikation. **Der Nachtrag vom 2026-09-11 holt sie nach** – siehe unten.
 
 ## Related Use Cases
 
@@ -243,6 +243,85 @@ durch eine Prüfung festgehalten.
 
 ---
 
+## Nachtrag vom 2026-09-11: die Kennzahlen
+
+Vier Anforderungen standen seit Beginn auf `Open` und hatten keinen Ort:
+FR-060, FR-061, FR-068 und FR-069. `use_cases/README.md` verweist sie
+ausdrücklich hierher – «Anzeigeflächen der in UC-023 beschriebenen Signale».
+Mit ihnen kommen zwei Signaltypen zu ihrer Datengrundlage.
+
+**Der Massstab ist derselbe wie oben, nur schärfer: BR-095.** Eine Kennzahl
+ist gefährlicher als ein Hinweis, weil sie eine Zahl an eine Gruppe oder an
+eine Person heftet. Jede der vier wurde daran gemessen, ob sie einen Anlass
+zum Handeln **des Vereins** benennt oder ein Zeugnis über Mitglieder
+ausstellt. Deshalb gibt keine von ihnen Namen zurück: Die Versuchung bei
+FR-068 wäre eine Liste derer, die alles tragen – und sie wäre die Liste derer,
+die nichts tragen, gleich mit.
+
+### Statusänderungen
+
+| ID     | Titel                    | Status vorher | Ziel        | Notizen                                                            |
+| ------ | ------------------------ | ------------- | ----------- | ------------------------------------------------------------------ |
+| FR-060 | Vereins-Health-Übersicht | Open          | Implemented | Mitglieder, Angekommene, Aktive und der Trend zur Vorsaison         |
+| FR-061 | Team-Health              | Open          | Implemented | Antwortquote und Beteiligung je Team – **keine Zeile** unter der Mindestgrösse |
+| FR-068 | Verantwortungsverteilung | Open          | Implemented | Wie viele tragen vier Fünftel der Einsätze (Säulen 3 und 7)          |
+| FR-069 | Nachfolge-Vorlauf        | Open          | Implemented | Vakante und lange gehaltene Ämter                                   |
+| FR-062 | Frühwarn-Signale         | **Partial**   | Implemented | `succession_gap` bekommt mit den Ämtern aus UC-031 seine Grundlage   |
+| FR-067 | Vorstands-Signale        | **Partial**   | Implemented | Derselbe Typ war der letzte fehlende dieser Anforderung              |
+| FR-075 | Definitionskatalog       | In Progress   | Implemented | Die Schwellen aus `0040` werden **lesbar**                          |
+| FR-063 | Rollenbasiertes Routing  | **Partial**   | *unverändert* | «Sportchef:in» fehlt dem Datenmodell weiterhin (offener Punkt 1)    |
+
+### Aufgaben des Nachtrags
+
+- [x] 12. Migration `0056_health_metrics.sql`: `health_definitions()`,
+      `club_health()`, `team_health()`, `responsibility_concentration()`,
+      `succession_lead()`, `detect_succession_gaps()` samt Auftrag
+- [x] 13. `lib/health.ts`: die Deutungen als reine Funktionen
+- [x] 14. `hooks/useHealth.ts`: fünf Abfragen, Reichweite am Hook
+- [x] 15. `HealthPage`: vier Abschnitte **unter** den offenen Hinweisen (BR-099)
+- [x] 16. Der Definitionskatalog wird lesbar (FR-075)
+- [x] 17. Vier Sprachen, inklusive der Impulse zu `succession_gap`
+- [x] 18. Verhaltensprüfung, Durchsicht, Vitest, Testplan, Statusabgleich
+
+### Verhaltensprüfung
+
+**37 von 37 Prüfungen bestanden.** Die drei, auf die es ankommt:
+
+| #     | Prüfung                                                     | Ergebnis                        |
+| ----- | ----------------------------------------------------------- | ------------------------------- |
+| 4–8   | Mitglied und Trainer:in rufen die Vereinszahlen auf          | abgewiesen (BR-096)              |
+| 11–12 | Team mit drei Personen                                       | **keine Zeile** – auch für den Vorstand |
+| 19–21 | Rückgabe der Verteilung und der Übersicht                    | ohne jeden Personenbezug (NFR-013) |
+| 26–31 | `succession_gap`: Signal, Schwere, Empfänger, zweiter Lauf, Modul | 1 / `info` / nur Vorstand / 0 / 0 |
+
+### Befunde der Durchsicht
+
+| # | Befund                                                                          | Behoben durch |
+| - | ------------------------------------------------------------------------------- | ------------- |
+| 1 | `open_signals` doppelte die Überschrift der Hinweisliste – ein Feld, das niemand las | aus der Rückgabe von `club_health()` entfernt |
+| 2 | `held_since` wurde nirgends angezeigt; `years` ist daraus gerechnet               | aus der Rückgabe von `succession_lead()` entfernt |
+| 3 | Der leere Zustand «Keine Hinweise» hatte kein Angebot (BR-165)                    | führt in die Agenda |
+| 4 | Drei Kennzahlen nebeneinander schrumpften auf 320 px auf je 90 px                 | `.app-stat-row` bricht um, `.app-stat` bekommt eine Mindestbreite – zentral im CSS |
+
+### Annahmen des Nachtrags
+
+Vier weitere Spec Gaps, alle in `health_threshold()` und damit je Verein
+änderbar:
+
+| #   | Frage                                                                                                                | Annahme                                        | Owner       |
+| --- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ----------- |
+| 6   | **Was heisst «aktiv»?** (offener Punkt 2)                                                                            | Eine Spur in 60 Tagen: Teilnahme, Antwort oder Buchung. Eine **Absage zählt dazu** – wer absagt, ist da. | Stakeholder |
+| 7   | **Was heisst «Aktivierung»?**                                                                                        | Mindestens eine Buchung in der Saison: die Frage ist, wer angekommen ist, nicht wer fleissig war. | Stakeholder |
+| 8   | **Ab wann ist Verantwortung konzentriert?**                                                                          | Wenn weniger als ein Fünftel der Mitglieder vier Fünftel der Einsätze trägt. | Stakeholder |
+| 9   | **Ab wann wird ein Amt «lange» gehalten?**                                                                           | Nach drei Jahren. Ein vakantes Amt ist unabhängig davon immer ein Fall. | Stakeholder |
+| 10  | **Ab welcher Gruppengrösse gibt es eine Teamzahl?**                                                                  | Ab fünf – dieselbe Schwelle wie `team_mood()` in UC-032, und wie dort **keine Zeile** statt einer Null. | Stakeholder |
+
+Offen bleibt ausserdem: Die Schwellen sind **lesbar**, aber nur über die
+Datenbank änderbar. Eine Oberfläche dafür wäre die Einstellung, die laut K7
+kein Verein beim Start braucht.
+
+---
+
 ## Progress Log
 
 | Datum      | Eintrag       |
@@ -251,3 +330,8 @@ durch eine Prüfung festgehalten.
 | 2026-09-09 | `0040` eingespielt, 40 Prüfungen gegen die laufende Datenbank |
 | 2026-09-09 | Code-Review: vier Befunde, behoben – darunter der fehlende Schritt 1 |
 | 2026-09-09 | Tests, manueller Testplan, Statusabgleich – Plan abgeschlossen |
+| 2026-09-11 | Nachtrag begonnen: die vier Kennzahlen aus FR-060, FR-061, FR-068 und FR-069 hatten bis heute keinen Ort |
+| 2026-09-11 | Migration `0056_health_metrics.sql` eingespielt; Verhaltensprüfung: **37 von 37 Prüfungen bestanden** |
+| 2026-09-11 | App: sechs reine Funktionen, fünf Abfragen, vier Abschnitte auf der `HealthPage`; `succession_gap` in `LIVE_SIGNAL_TYPES` samt Impulsen in vier Sprachen |
+| 2026-09-11 | Durchsicht: zwei Felder ohne Verwendung entfernt, ein leerer Zustand mit Angebot versehen, `.app-stat-row` bricht um |
+| 2026-09-11 | Testsuite 777 Tests grün, Testplan um TC-008 bis TC-012 ergänzt, Statusabgleich – Nachtrag abgeschlossen |

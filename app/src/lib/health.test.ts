@@ -4,13 +4,21 @@ import {
   COLLECTED_DATA,
   LIVE_SIGNAL_TYPES,
   NOT_COLLECTED,
+  attendanceRate,
   canTakeOver,
   isClubSignal,
+  isConcentrated,
+  percent,
+  responseRate,
+  seasonTrend,
   severityColor,
   signalAudienceKey,
   signalKey,
   sortSignals,
+  sortSuccession,
   type HealthSignal,
+  type Responsibility,
+  type TeamHealth,
 } from './health';
 
 function signal(overrides: Partial<HealthSignal> = {}): HealthSignal {
@@ -87,11 +95,17 @@ describe('signalKey', () => {
     expect(signalKey('no_response', 'title')).toBe('health.signal.no_response.title');
   });
 
+  it('führt auch zum Signal aus den Ämtern (seit `0056`)', () => {
+    expect(signalKey('succession_gap', 'title')).toBe(
+      'health.signal.succession_gap.title',
+    );
+  });
+
   it('fällt bei einem Typ ohne Texte auf eine neutrale Beschreibung zurück', () => {
-    // Vier Typen stehen im Constraint, haben aber noch keine Datenquelle.
+    // Drei Typen stehen im Constraint, haben aber noch keine Datenquelle.
     // Erzeugt ein späteres Modul einen davon, steht auf dem Bildschirm ein
     // Satz und nicht ein roher Schlüssel.
-    expect(signalKey('succession_gap', 'title')).toBe('health.signal.unknown.title');
+    expect(signalKey('invoice_overdue', 'title')).toBe('health.signal.unknown.title');
   });
 });
 
@@ -203,5 +217,83 @@ describe('BR-108: die Nicht-Erhebung steht ausdrücklich da', () => {
     for (const type of LIVE_SIGNAL_TYPES) {
       expect(data.health.signal[type]?.definition, type).toBeTruthy();
     }
+  });
+});
+
+describe('Kennzahlen (UC-023)', () => {
+  function team(overrides: Partial<TeamHealth> = {}): TeamHealth {
+    return {
+      teamId: 't-1',
+      teamName: 'Erste',
+      members: 8,
+      invitations: 40,
+      answered: 30,
+      attended: 20,
+      ...overrides,
+    };
+  }
+
+  function load(overrides: Partial<Responsibility> = {}): Responsibility {
+    return { contributors: 6, carriers: 2, members: 20, efforts: 40, ...overrides };
+  }
+
+  it('rechnet Anteile auf ganze Prozent', () => {
+    expect(responseRate(team())).toBe(75);
+    expect(attendanceRate(team())).toBe(50);
+  });
+
+  it('gibt ohne Grundgesamtheit keinen Anteil zurück, sondern `null`', () => {
+    // Ein Team ohne Einladungen hat keine Antwortquote von 0 % – es hat
+    // keine. Der Unterschied entscheidet, ob auf dem Bildschirm «0 %» oder
+    // gar nichts steht (BR-095).
+    expect(responseRate(team({ invitations: 0, answered: 0 }))).toBeNull();
+    expect(percent(3, 0)).toBeNull();
+  });
+
+  it('vergleicht den Trend in Anzahlen und schweigt ohne Vorsaison', () => {
+    expect(seasonTrend({ activated: 30, prevActivated: 24 })).toBe(6);
+    expect(seasonTrend({ activated: 18, prevActivated: 24 })).toBe(-6);
+    // Ein Verein im ersten Jahr bekommt keinen Pfeil: «plus 30» wäre eine
+    // Erfolgsmeldung über eine Zahl, mit der es nichts zu vergleichen gibt.
+    expect(seasonTrend({ activated: 30, prevActivated: 0 })).toBeNull();
+  });
+
+  it('nennt eine Konzentration erst unter einem Fünftel der Mitglieder', () => {
+    // Zwei von zwanzig tragen vier Fünftel: ein Anlass.
+    expect(isConcentrated(load())).toBe(true);
+    // Fünf von zwanzig sind ein Viertel: normal für einen Verein.
+    expect(isConcentrated(load({ carriers: 5 }))).toBe(false);
+  });
+
+  it('nennt ohne Einsätze keine Konzentration', () => {
+    // Am Saisonanfang hat noch niemand etwas geleistet. «Null tragen alles»
+    // wäre die erste Zahl, die ein Vorstand sieht – und sie wäre falsch.
+    expect(isConcentrated(load({ efforts: 0, carriers: 0, contributors: 0 }))).toBe(
+      false,
+    );
+  });
+
+  it('stellt vakante Ämter vor die lange gehaltenen', () => {
+    const sorted = sortSuccession([
+      { roleId: 'a', title: 'Präsidium', isVacant: false, years: 6 },
+      { roleId: 'b', title: 'Material', isVacant: true, years: null },
+      { roleId: 'c', title: 'Kasse', isVacant: false, years: 4 },
+    ]);
+    expect(sorted.map((entry) => entry.title)).toEqual([
+      'Material',
+      'Präsidium',
+      'Kasse',
+    ]);
+  });
+
+  it('hält `succession_gap` beim Vorstand (A3)', () => {
+    // Ein Amt ohne Nachfolge betrifft den Verein, nicht ein Team – und geht
+    // deshalb an den Vorstand, wie die Kommunikationspause.
+    expect(signalAudienceKey({ signalType: 'succession_gap' })).toBe(
+      'transparency.audience.board',
+    );
+    expect(signalAudienceKey({ signalType: 'silent_churn' })).toBe(
+      'transparency.audience.trainers',
+    );
   });
 });
