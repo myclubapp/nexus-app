@@ -107,3 +107,30 @@ export function isStale(
   const days = (now.getTime() - new Date(connection.lastSyncAt).getTime()) / 86_400_000;
   return days > 3;
 }
+
+/** Was der Abgleich einer Verbindung zurückgibt (`sync-federation`, Betriebsart `sync`). */
+export interface FederationSyncResult {
+  ok: boolean;
+  teams?: number;
+  games?: number;
+  stale?: number;
+  error?: string;
+}
+
+/**
+ * UC-039, Schritt 9: Wie viele Spiele der Abgleich brachte – oder warum keine.
+ *
+ * Die Verknüpfung steht in beiden Fällen; der Unterschied ist nur, was die
+ * Meldung sagt: die Zahl der Spiele, oder dass sie mit dem nächsten Lauf
+ * kommen und weshalb nicht jetzt. Deshalb kein Fehler, sondern eine
+ * Beschreibung (A7).
+ */
+export type GamesSync = { games: number; error: null } | { games: null; error: string };
+
+export function readGamesSync(
+  result: FederationSyncResult | null | undefined,
+  fallback = 'Keine Antwort',
+): GamesSync {
+  if (result?.ok) return { games: result.games ?? 0, error: null };
+  return { games: null, error: result?.error?.trim() || fallback };
+}

@@ -6,6 +6,7 @@ import {
   statusTone,
   validateConnection,
   type Federation,
+  readGamesSync,
 } from './federation';
 
 function draft(overrides: Partial<{ federation: Federation; federationClubId: string; apiKey: string }> = {}) {
@@ -73,5 +74,30 @@ describe('isStale (A3, BR-155)', () => {
     // Zustand zwischen Verbinden und dem ersten nächtlichen Lauf.
     expect(isStale({ status: 'pending', lastSyncAt: null }, now)).toBe(false);
     expect(isStale({ status: 'active', lastSyncAt: null }, now)).toBe(false);
+  });
+});
+
+describe('readGamesSync (UC-039, Schritt 9 und A7)', () => {
+  it('nennt die Zahl der Spiele, wenn der Abgleich gelang', () => {
+    expect(readGamesSync({ ok: true, teams: 7, games: 18, stale: 0 })).toEqual({
+      games: 18,
+      error: null,
+    });
+  });
+
+  it('zählt null Spiele als gelungen – ein leerer Spielplan ist kein Fehler', () => {
+    expect(readGamesSync({ ok: true })).toEqual({ games: 0, error: null });
+  });
+
+  it('gibt die Meldung des Verbands weiter, wenn er nicht antwortet (A7)', () => {
+    expect(readGamesSync({ ok: false, error: ' Der Verband antwortet nicht ' })).toEqual({
+      games: null,
+      error: 'Der Verband antwortet nicht',
+    });
+  });
+
+  it('hat auch ohne Antwort und ohne Text eine Begründung', () => {
+    expect(readGamesSync(null)).toEqual({ games: null, error: 'Keine Antwort' });
+    expect(readGamesSync({ ok: false, error: '' })).toEqual({ games: null, error: 'Keine Antwort' });
   });
 });

@@ -1683,7 +1683,9 @@
     "unlink": "Verknüpfung lösen",
     "unlinkConfirm": "Das Team bleibt mit seinem Namen bestehen, importierte Termine ebenso. Es werden nur keine neuen Spiele mehr geholt.",
     "unlinked": "Verknüpfung gelöst",
-    "linked": "Mit «{{name}}» verknüpft",
+    "linkedGames_one": "Mit «{{name}}» verknüpft – {{count}} Spiel in der Agenda",
+    "linkedGames_other": "Mit «{{name}}» verknüpft – {{count}} Spiele in der Agenda",
+    "linkedPending": "Mit «{{name}}» verknüpft. Die Spiele kommen mit dem nächsten Abgleich: {{reason}}",
     "remoteFailed": "Der Verband antwortet nicht: {{message}}",
     "remoteFailedHint": "Speichere das Team ohne Verknüpfung und trage sie später nach.",
     "remoteEmpty": "Der Verband nennt keine Teams für euren Verein.",
@@ -1695,6 +1697,8 @@
       "new": "Neu anlegen"
     },
     "importSubmit": "Übernehmen",
-    "imported": "{{created}} angelegt, {{linked}} verknüpft"
+    "importedGames_one": "{{created}} angelegt, {{linked}} verknüpft – {{count}} Spiel in der Agenda",
+    "importedGames_other": "{{created}} angelegt, {{linked}} verknüpft – {{count}} Spiele in der Agenda",
+    "importedPending": "{{created}} angelegt, {{linked}} verknüpft. Die Spiele kommen mit dem nächsten Abgleich: {{reason}}"
   }
 }

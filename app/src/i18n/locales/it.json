@@ -1683,7 +1683,9 @@
     "unlink": "Rimuovere l’abbinamento",
     "unlinkConfirm": "La squadra mantiene il suo nome, gli eventi importati restano. Solo le nuove partite non verranno più recuperate.",
     "unlinked": "Abbinamento rimosso",
-    "linked": "Abbinata a «{{name}}»",
+    "linkedGames_one": "Abbinata a «{{name}}»: {{count}} partita in agenda",
+    "linkedGames_other": "Abbinata a «{{name}}»: {{count}} partite in agenda",
+    "linkedPending": "Abbinata a «{{name}}». Le partite arrivano con la prossima sincronizzazione: {{reason}}",
     "remoteFailed": "La federazione non risponde: {{message}}",
     "remoteFailedHint": "Salva la squadra senza abbinamento e aggiungilo più tardi.",
     "remoteEmpty": "La federazione non elenca squadre per la vostra società.",
@@ -1695,6 +1697,8 @@
       "new": "Creare"
     },
     "importSubmit": "Riprendere",
-    "imported": "{{created}} create, {{linked}} abbinate"
+    "importedGames_one": "{{created}} create, {{linked}} abbinate: {{count}} partita in agenda",
+    "importedGames_other": "{{created}} create, {{linked}} abbinate: {{count}} partite in agenda",
+    "importedPending": "{{created}} create, {{linked}} abbinate. Le partite arrivano con la prossima sincronizzazione: {{reason}}"
   }
 }

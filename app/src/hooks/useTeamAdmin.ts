@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isConfigured, supabase } from '../lib/supabase';
 import type { TablesUpdate } from '../lib/database.types';
-import type { Federation } from '../lib/federation';
+import type { Federation, GamesSync } from '../lib/federation';
 import { useClub } from './useClub';
+import { syncFederationNow } from './useFederation';
 
 /**
  * Teams verwalten (UC-007 A1 und S2 der Prüfung vom 2026-09-11).
@@ -87,16 +88,32 @@ function invalidateTeams(
 }
 
 /**
- * UC-039, Schritte 5–8: ein bestehendes Team mit einem Verbands-Team
- * verknüpfen. Die Regeln – nur Vorstand, nur bei aktiver Verbindung, ein
- * Verbands-Team je Team (A3) – sitzen in `link_team()`.
+ * Nach dem Verknüpfen: Teams neu lesen **und** die Agenda – der Abgleich hat
+ * eben Spiele angelegt (Schritt 9), und ein Zeitpunkt am Team gesetzt.
+ */
+function invalidateTeamsAndAgenda(
+  queryClient: ReturnType<typeof useQueryClient>,
+  clubId: string | undefined,
+) {
+  invalidateTeams(queryClient, clubId);
+  void queryClient.invalidateQueries({ queryKey: ['agenda', clubId] });
+}
+
+/**
+ * UC-039, Schritte 5–9: ein bestehendes Team mit einem Verbands-Team
+ * verknüpfen und gleich die Spiele holen. Die Regeln – nur Vorstand, nur bei
+ * aktiver Verbindung, ein Verbands-Team je Team (A3) – sitzen in
+ * `link_team()`. Der Abgleich danach wirft nicht: Steht die Verknüpfung,
+ * ist die Mutation gelungen; was die Spiele machten, sagt das Ergebnis (A7).
  */
 export function useLinkTeam() {
   const queryClient = useQueryClient();
   const { activeClub } = useClub();
 
   return useMutation({
-    mutationFn: async (input: TeamLinkInput & { teamId: string }) => {
+    mutationFn: async (input: TeamLinkInput & { teamId: string }): Promise<GamesSync> => {
+      if (!activeClub) throw new Error('Kein aktiver Verein');
+
       const { error } = await supabase.rpc('link_team', {
         p_team_id: input.teamId,
         p_federation: input.federation,
@@ -106,8 +123,10 @@ export function useLinkTeam() {
         p_name_addition: input.nameAddition || undefined,
       });
       if (error) throw new Error(error.message);
+
+      return syncFederationNow(activeClub.id, input.federation);
     },
-    onSuccess: () => invalidateTeams(queryClient, activeClub?.id),
+    onSuccess: () => invalidateTeamsAndAgenda(queryClient, activeClub?.id),
   });
 }
 
@@ -125,11 +144,18 @@ export function useUnlinkTeam() {
   });
 }
 
+/** Was A1 zurückgibt: die Zahlen der Übernahme und was der Abgleich brachte. */
+export interface ImportOutcome {
+  created: number;
+  linked: number;
+  sync: GamesSync;
+}
+
 /**
  * A1: Teams aus dem Verband übernehmen – und der Weg aus «Team anlegen»,
  * wenn dort gleich ein Verbands-Team gewählt wurde. Ein Eintrag ohne
  * `team_id` wird angelegt, einer mit `team_id` verknüpft; alles in einer
- * Transaktion.
+ * Transaktion. Danach holt der Abgleich die Spiele (Schritt 9).
  */
 export function useImportFederationTeams() {
   const queryClient = useQueryClient();
@@ -145,7 +171,7 @@ export function useImportFederationTeams() {
         team_id: string | null;
         name_addition?: string | null;
       }[];
-    }): Promise<{ created: number; linked: number }> => {
+    }): Promise<ImportOutcome> => {
       if (!activeClub) throw new Error('Kein aktiver Verein');
 
       const { data, error } = await supabase.rpc('import_federation_teams', {
@@ -155,9 +181,11 @@ export function useImportFederationTeams() {
       });
       if (error) throw new Error(error.message);
       const row = (data ?? [])[0];
-      return { created: row?.created ?? 0, linked: row?.linked ?? 0 };
+
+      const sync = await syncFederationNow(activeClub.id, input.federation);
+      return { created: row?.created ?? 0, linked: row?.linked ?? 0, sync };
     },
-    onSuccess: () => invalidateTeams(queryClient, activeClub?.id),
+    onSuccess: () => invalidateTeamsAndAgenda(queryClient, activeClub?.id),
   });
 }
 

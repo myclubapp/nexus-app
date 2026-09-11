@@ -1683,7 +1683,9 @@
     "unlink": "Remove link",
     "unlinkConfirm": "The team keeps its name, imported events stay. Only no new games will be fetched.",
     "unlinked": "Link removed",
-    "linked": "Linked with “{{name}}”",
+    "linkedGames_one": "Linked with “{{name}}” – {{count}} game in the agenda",
+    "linkedGames_other": "Linked with “{{name}}” – {{count}} games in the agenda",
+    "linkedPending": "Linked with “{{name}}”. The games arrive with the next sync: {{reason}}",
     "remoteFailed": "The federation does not respond: {{message}}",
     "remoteFailedHint": "Save the team without a link and add it later.",
     "remoteEmpty": "The federation lists no teams for your club.",
@@ -1695,6 +1697,8 @@
       "new": "Create"
     },
     "importSubmit": "Take over",
-    "imported": "{{created}} created, {{linked}} linked"
+    "importedGames_one": "{{created}} created, {{linked}} linked – {{count}} game in the agenda",
+    "importedGames_other": "{{created}} created, {{linked}} linked – {{count}} games in the agenda",
+    "importedPending": "{{created}} created, {{linked}} linked. The games arrive with the next sync: {{reason}}"
   }
 }

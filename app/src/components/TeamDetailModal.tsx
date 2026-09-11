@@ -105,7 +105,7 @@ export function TeamDetail({
       ...(linked ? { nameAddition: addition } : { name }),
     });
     if (pick) {
-      await link.mutateAsync({
+      const sync = await link.mutateAsync({
         teamId: team.id,
         federation: pick.federation,
         federationTeamId: pick.remote.id,
@@ -113,7 +113,14 @@ export function TeamDetail({
         league: pick.remote.league,
         nameAddition: addition,
       });
-      toast.success(t('teams.linked', { name: composeTeamName(pick.remote.name, addition) }));
+      // Schritt 9: Die Spiele sind schon da – oder die Meldung sagt, warum
+      // noch nicht (A7). Die Verknüpfung steht in beiden Fällen.
+      const name = composeTeamName(pick.remote.name, addition);
+      toast.success(
+        sync.games === null
+          ? t('teams.linkedPending', { name, reason: sync.error })
+          : t('teams.linkedGames', { name, count: sync.games }),
+      );
       onDone('silent');
       return;
     }

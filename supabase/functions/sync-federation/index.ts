@@ -10,13 +10,18 @@
  * Schlüssel darf das Gerät nie erreichen (BR-153, BR-178), und der nächtliche
  * Lauf (`0058_federation.sql`) kann im Client gar nicht stattfinden.
  *
- * Drei Betriebsarten:
+ * Vier Betriebsarten:
  *   { mode: 'check', clubId, federation, federationClubId, apiKey? }
  *       – Testaufruf des Vorstands (UC-035, Schritt 5). **Schreibt nichts.**
  *   { mode: 'teams', clubId, federation }
  *       – die Teamliste zum Verknüpfen (UC-039, Schritte 3–4), mit dem
  *         Schlüssel aus dem Tresor. Gelingt der Abruf, gilt die Verbindung
  *         als aktiv.
+ *   { mode: 'sync', clubId, federation }
+ *       – der Abgleich **eines** Verbands sofort, vom Vorstand angestossen
+ *         (UC-039, Schritt 9): derselbe Lauf wie in der Nacht, nur für diese
+ *         Verbindung. Ohne ihn stünden die Spiele eines eben verknüpften
+ *         Teams erst am nächsten Morgen in der Agenda.
  *   { mode: 'all' } – der nächtliche Abgleich, nur für `service_role`:
  *         Teams nachführen, Spiele der verknüpften Teams als Termine anlegen
  *         (UC-039, Schritt 9), verschwundene Teams als veraltet vermerken (A6).
@@ -515,6 +520,21 @@ Deno.serve(async (request) => {
   if (adminError) return json({ error: adminError.message }, 400);
   if (isAdmin !== true) {
     return json({ error: 'Nur der Vorstand verbindet den Verband' }, 403);
+  }
+
+  // --- UC-039, Schritt 9: den Abgleich dieser Verbindung sofort ------------
+  if (body.mode === 'sync') {
+    // Wie in der Nacht: der Schlüssel aus dem Tresor (BR-178), `syncOne` für
+    // genau diese Verbindung. Ein Verband ohne Schnittstelle oder ohne
+    // Verbindung ist eine Antwort mit `ok: false`, kein Fehlerstatus – die
+    // Verknüpfung ist da, nur die Spiele fehlen noch.
+    const { data, error } = await admin.rpc('federation_credentials', { p_club_id: clubId });
+    if (error) return json({ error: error.message }, 500);
+    const row = ((data ?? []) as Credentials[]).find((entry) => entry.federation === federation);
+    if (!row) {
+      return json({ ok: false, error: 'Dieser Verband ist nicht verbunden' });
+    }
+    return json(await syncOne(admin, row));
   }
 
   const endpoint = ENDPOINTS[federation].teamsUrl;

@@ -1683,7 +1683,9 @@
     "unlink": "Supprimer le lien",
     "unlinkConfirm": "L’équipe garde son nom, les événements importés restent. Seuls les nouveaux matchs ne seront plus récupérés.",
     "unlinked": "Lien supprimé",
-    "linked": "Liée à « {{name}} »",
+    "linkedGames_one": "Liée à « {{name}} » – {{count}} match dans l’agenda",
+    "linkedGames_other": "Liée à « {{name}} » – {{count}} matchs dans l’agenda",
+    "linkedPending": "Liée à « {{name}} ». Les matchs arrivent avec la prochaine synchronisation : {{reason}}",
     "remoteFailed": "La fédération ne répond pas : {{message}}",
     "remoteFailedHint": "Enregistrez l’équipe sans lien et ajoutez-le plus tard.",
     "remoteEmpty": "La fédération ne liste aucune équipe pour votre club.",
@@ -1695,6 +1697,8 @@
       "new": "Créer"
     },
     "importSubmit": "Reprendre",
-    "imported": "{{created}} créée(s), {{linked}} liée(s)"
+    "importedGames_one": "{{created}} créée(s), {{linked}} liée(s) – {{count}} match dans l’agenda",
+    "importedGames_other": "{{created}} créée(s), {{linked}} liée(s) – {{count}} matchs dans l’agenda",
+    "importedPending": "{{created}} créée(s), {{linked}} liée(s). Les matchs arrivent avec la prochaine synchronisation : {{reason}}"
   }
 }

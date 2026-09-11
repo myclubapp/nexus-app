@@ -1,10 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isConfigured, supabase } from '../lib/supabase';
 import { useClub } from './useClub';
-import type {
-  Federation,
-  FederationConnection,
-  FederationStatus,
+import {
+  readGamesSync,
+  type Federation,
+  type FederationConnection,
+  type FederationStatus,
+  type FederationSyncResult,
+  type GamesSync,
 } from '../lib/federation';
 
 /** Ein Team, wie der Verband es kennt (Schritt 7, Grundlage für UC-039). */
@@ -148,6 +151,32 @@ export function useFederationTeams() {
       void queryClient.invalidateQueries({ queryKey: ['federation', activeClub?.id] });
     },
   });
+}
+
+/**
+ * UC-039, Schritt 9: den Abgleich dieser Verbindung sofort anstossen.
+ *
+ * Aufgerufen, nachdem `link_team()` oder `import_federation_teams()` gelungen
+ * ist – sonst stünden die Spiele erst nach dem nächtlichen Lauf in der
+ * Agenda, und wer eben verknüpft hat, sähe eine leere Agenda ohne Erklärung.
+ *
+ * Wirft nie: Die Verknüpfung ist da, ein misslungener Abgleich darf nicht wie
+ * ein misslungenes Verknüpfen aussehen (A7). Was er brachte, sagt `GamesSync`.
+ */
+export async function syncFederationNow(
+  clubId: string,
+  federation: Federation,
+): Promise<GamesSync> {
+  try {
+    const { data, error } = await supabase.functions.invoke<FederationSyncResult>(
+      'sync-federation',
+      { body: { mode: 'sync', clubId, federation } },
+    );
+    if (error) return { games: null, error: await functionErrorMessage(error) };
+    return readGamesSync(data);
+  } catch (cause) {
+    return { games: null, error: cause instanceof Error ? cause.message : String(cause) };
+  }
 }
 
 /** Schritt 6: verbinden. Der Schlüssel geht in den Tresor, nicht in die Zeile. */

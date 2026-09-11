@@ -24,7 +24,7 @@
 6. System übernimmt Grundname und Liga in das Formular und stellt ein Feld für den vereinseigenen Zusatz bereit.
 7. Vorstand ergänzt den Zusatz, wenn das Team bei ihm anders heisst, und speichert.
 8. System legt das Team an oder aktualisiert es, hält Verband, Verbands-Kennung des Teams und den Zeitpunkt der Verknüpfung fest und meldet, welches Verbands-Team nun am Team hängt.
-9. Der nächste Abgleich holt die Spiele dieses Verbands-Teams und legt sie als Termine vom Typ «Spiel» in der Agenda an, dem verknüpften Team zugeordnet.
+9. System holt sofort die Spiele dieses Verbands-Teams beim Verband und legt sie als Termine vom Typ «Spiel» in der Agenda an, dem verknüpften Team zugeordnet, und meldet, wie viele Spiele in der Agenda stehen. Der turnusgemässe Abgleich führt sie danach nach.
 
 ## Alternative Flows
 
@@ -83,13 +83,23 @@
 3. Vorstand verknüpft das Team mit dem Team der neuen Saison oder löst die Verknüpfung (A5).
 4. Use case ends.
 
+### A7: Spielplan nach dem Verknüpfen nicht abrufbar
+
+**Trigger:** Der Abruf der Spiele schlägt unmittelbar nach dem Verknüpfen fehl, etwa weil der Verband nicht antwortet (Schritt 9)
+**Flow:**
+
+1. System behält die Verknüpfung – sie ist gespeichert, nur die Spiele fehlen noch.
+2. System meldet, dass die Spiele mit dem nächsten Abgleich kommen, und nennt die Meldung des Verbands. Am Team steht bis dahin «Noch kein Abgleich».
+3. Der turnusgemässe Abgleich holt die Spiele nach.
+4. Use case ends.
+
 ## Postconditions
 
 ### Success Postconditions
 
 - Das Team trägt Verband und Verbands-Kennung; ein Verbands-Team ist im Verein höchstens einem Team zugeordnet.
 - Der Teamname besteht aus dem Grundnamen des Verbands und dem Zusatz des Vereins.
-- Der turnusgemässe Abgleich holt die Spiele dieses Teams in die Agenda.
+- Die Spiele dieses Teams stehen in der Agenda; der turnusgemässe Abgleich führt sie nach. Der Zeitpunkt «Letzter Abgleich» am Team stammt vom Abruf der Spiele, nicht vom Verknüpfen.
 
 ### Failure Postconditions
 

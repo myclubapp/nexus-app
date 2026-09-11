@@ -9,7 +9,7 @@ import {
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { useFederationConnections, useFederationTeams } from '../hooks/useFederation';
-import { useImportFederationTeams } from '../hooks/useTeamAdmin';
+import { useImportFederationTeams, type ImportOutcome } from '../hooks/useTeamAdmin';
 import { useSheetProps } from '../hooks/useSheetProps';
 import type { Team } from '../lib/database.types';
 import type { Federation } from '../lib/federation';
@@ -21,7 +21,7 @@ import { EmptyState, InlineError } from './StateViews';
 
 interface ImportProps {
   teams: readonly Team[];
-  onDone: (result: { created: number; linked: number }) => void;
+  onDone: (result: ImportOutcome) => void;
   onDismiss: () => void;
   isOpen?: boolean;
 }

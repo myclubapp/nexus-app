@@ -148,8 +148,15 @@ export function TeamPage() {
                 ],
               },
               {
-                onSuccess: () =>
-                  done(t('teams.linked', { name: composeTeamName(pick.remote.name, addition) })),
+                // Schritt 9: Die Spiele sind da – oder die Meldung sagt, warum noch nicht (A7).
+                onSuccess: ({ sync }) => {
+                  const name = composeTeamName(pick.remote.name, addition);
+                  done(
+                    sync.games === null
+                      ? t('teams.linkedPending', { name, reason: sync.error })
+                      : t('teams.linkedGames', { name, count: sync.games }),
+                  );
+                },
               },
             );
             return;
@@ -163,9 +170,13 @@ export function TeamPage() {
         isOpen={importing}
         teams={teams.data ?? []}
         onDismiss={() => setImporting(false)}
-        onDone={(result) => {
+        onDone={({ created, linked, sync }) => {
           setImporting(false);
-          toast.success(t('teams.imported', result));
+          toast.success(
+            sync.games === null
+              ? t('teams.importedPending', { created, linked, reason: sync.error })
+              : t('teams.importedGames', { created, linked, count: sync.games }),
+          );
         }}
       />
     </AppPage>

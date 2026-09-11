@@ -31,7 +31,7 @@
 | 4 | «Herren NLB» wählen | Das Namensfeld verschwindet; stattdessen «Zusatz des Vereins» mit dem Satz, was angezeigt wird | | |
 | 5 | Zusatz «Sarnen» eintragen | Der Satz zeigt «Herren NLB Sarnen» | | |
 | 6 | 41 Zeichen als Zusatz eintragen | Speichern gesperrt, «Der Zusatz ist zu lang» | | |
-| 7 | Zusatz korrigieren, Speichern | Toast «Mit «Herren NLB Sarnen» verknüpft»; die Liste zeigt den neuen Namen | | |
+| 7 | Zusatz korrigieren, Speichern | Toast «Mit «Herren NLB Sarnen» verknüpft – 18 Spiele in der Agenda» (die Zahl des Spielplans); die Liste zeigt den neuen Namen | | |
 | 8 | Das Blatt erneut öffnen | Verband, Grundname, «Letzter Abgleich», Zusatzfeld, «Verknüpfung lösen»; kein Namensfeld | | |
 | 9 | Die Verbindung unter Vereinseinstellungen → Verband prüfen | Zustand «Aktiv» – der Abruf hat sie bestätigt | | |
 
@@ -70,7 +70,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | `select public.sync_federations();` (Vault-Einträge vorhanden) oder die Edge Function mit `{"mode":"all"}` als `service_role` aufrufen | Die Antwort nennt `games > 0` für den Verein | | |
+| 1 | Ein Team verknüpfen (TC-001) – oder für den nächtlichen Weg `select public.sync_federations();` (Vault-Einträge vorhanden) | Der Toast nennt die Zahl der Spiele; beim nächtlichen Weg nennt die Antwort `games > 0` für den Verein | | |
 | 2 | Als **T** die Agenda öffnen | Die Spiele der Saison stehen da: «Heimteam – Gastteam», Halle und Ort, Typ «Spiel · Vom Verband» | | |
 | 3 | Ein vergangenes Spiel ansehen | Die Zeile zeigt «Resultat 2:6» (oder «3:4 n.V.») | | |
 | 4 | Die Uhrzeit eines Spiels prüfen | Die Ortszeit des Verbands, im Winter wie im Sommer | | |
@@ -78,6 +78,23 @@
 | 6 | Als **V** ein Spiel bearbeiten und «Treffpunkt 16:30» als Sinn eintragen | Gespeichert | | |
 | 7 | Den Lauf wiederholen | Kein Duplikat; Zeit, Ort und Resultat vom Verband, der Treffpunkt steht noch | | |
 | 8 | Als **T** dem Spiel zusagen, den QR-Check-in prüfen | Beides funktioniert wie bei jedem Termin | | |
+
+---
+
+## TC-012: Spiele sofort nach dem Verknüpfen, und wenn der Verband schweigt (Schritt 9, A7)
+
+**Priority:** High
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als **V** ein Team verknüpfen (TC-001) und **sofort** die Agenda öffnen | Die Spiele der Saison stehen da – ohne Neuladen, ohne auf die Nacht zu warten | | |
+| 2 | Das Team-Blatt öffnen | «Letzter Abgleich: eben» – der Zeitpunkt des Spielabrufs | | |
+| 3 | Unter «Team anlegen» ein Verbands-Team wählen und speichern | Toast «Mit «…» verknüpft – n Spiele in der Agenda»; die Agenda zeigt sie | | |
+| 4 | «Teams aus dem Verband übernehmen» mit zwei Teams | Toast «2 angelegt, 0 verknüpft – n Spiele in der Agenda» (Summe beider Spielpläne) | | |
+| 5 | Netz trennen (Flugmodus nach dem Laden der Teamliste) und verknüpfen | `link_team` schlägt fehl, keine Verknüpfung – wie bisher | | |
+| 6 | Verbands-Schnittstelle unerreichbar machen (z. B. `federation_club_id` in der Verbindung per SQL auf `0` setzen) und verknüpfen | Toast «Mit «…» verknüpft. Die Spiele kommen mit dem nächsten Abgleich: …» mit der Meldung des Verbands; das Blatt zeigt «Noch kein Abgleich» | | |
+| 7 | `federation_club_id` zurücksetzen, `select public.sync_federations();` | Die Spiele kommen nach; das Blatt zeigt «Letzter Abgleich» | | |
+| 8 | Ohne Anmeldung `POST /functions/v1/sync-federation` mit `{"mode":"sync",…}` | 401; als Mitglied ohne Vorstandsrolle 403 | | |
 
 ---
 

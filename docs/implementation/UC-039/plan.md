@@ -149,6 +149,12 @@ Verbindlich aus `docs/guidelines.md`:
       und `entity_model.md`
 - [x] 14. **Edge Function deployen** – am 2026-09-12 deployt, Vault-Einträge
       gesetzt; der nächtliche Lauf holt Spiele, sobald ein Team verknüpft ist.
+- [x] 15. **Spiele sofort nach dem Verknüpfen (Schritt 9, A7).** Betriebsart
+      `sync` in `sync-federation` (ein Verband, vom Vorstand angestossen,
+      derselbe `syncOne` wie in der Nacht); `syncFederationNow()` nach
+      `link_team()` und `import_federation_teams()`, Agenda wird neu gelesen;
+      Migration `0067`: `link_team()` setzt `federation_synced_at` nicht mehr –
+      «Letzter Abgleich» stammt vom Spielabruf, bis dahin «Noch kein Abgleich».
 
 ---
 
@@ -174,3 +180,4 @@ Verbindlich aus `docs/guidelines.md`:
 | 2026-09-11 | Migration `0060_federation_teams.sql` eingespielt; Verhaltensprüfung: **32 von 32 Prüfungen bestanden** – darunter: Client kann die Verbandsspalten nicht direkt setzen, A3 nennt das Team, BR-180 lässt die Ergänzung stehen, A6 meldet einmal, A1 ist ganz oder gar nicht, A5 und Trennen löschen nichts |
 | 2026-09-11 | Edge Function `sync-federation` mit Betriebsart `teams`, Spielimport, Ortszeit; `lib/team.ts`, Hooks, `FederationTeamSection`, `FederationImportModal`, Agenda-Zeile; vier Sprachen |
 | 2026-09-11 | Statusabgleich: FR-150 bis FR-153 auf `Implemented`; UC-039 auf `Implemented`. Offen bleibt das Deployment der Edge Function (Aufgabe 14) |
+| 2026-09-12 | **Befund aus dem Gebrauch:** Team verknüpft, Agenda leer. Ursache: Schritt 9 lief nur im nächtlichen Lauf (04:25 UTC), und das Blatt zeigte «Letzter Abgleich: eben», obwohl nichts geholt war. Behoben mit Aufgabe 15; Probe gegen die verknüpfte Datenbank: `link_team()` lässt `federation_synced_at` leer, die 18 Termine bleiben, `report_team_sync()` setzt den Zeitpunkt; Betriebsart `sync` ohne Anmeldung 401. Der Erfolgsweg der Betriebsart `sync` ist mit dem Gerät zu prüfen (TC-012) – eine Anmeldung als Vorstand lässt sich aus der Sitzung nicht erzeugen. |
