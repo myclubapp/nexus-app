@@ -14,7 +14,7 @@ import { FormModal } from './FormModal';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import { formatDate } from '../lib/format';
-import { isSample } from '../lib/sample';
+import { canActOn, isSample } from '../lib/sample';
 import {
   isProofUsable,
   taskAction,
@@ -53,7 +53,9 @@ export function TaskDetail({ task, onDone, onDismiss }: TaskDetailProps) {
   // ohnehin ab (`claim_task()` seit `0053`); ein Knopf, der in eine
   // Fehlermeldung führt, wäre ein Versprechen, das die App bricht.
   const sample = isSample(task);
-  const action = sample ? 'none' : taskAction(task, activeMembership?.id ?? null);
+  const action = canActOn(task)
+    ? taskAction(task, activeMembership?.id ?? null)
+    : 'none';
   const capacity = taskCapacity(task);
   const urgency = taskUrgency(task.due_at);
   const proofUsable = isProofUsable(proof);

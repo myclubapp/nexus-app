@@ -47,7 +47,7 @@ import { ShiftRosterModal } from '../components/ShiftRosterModal';
 import { EventQrModal } from '../components/EventQrModal';
 import { canRespond, coverageGap, tallyAttendance } from '../lib/attendance';
 import { EventEdit } from '../components/EventEditModal';
-import { isSample } from '../lib/sample';
+import { canActOn, isSample } from '../lib/sample';
 import { isCheckInOpen } from '../lib/checkInWindow';
 import { canRemind, reminderMessage } from '../lib/reminder';
 import { shiftCoverage } from '../lib/shift';
@@ -370,7 +370,7 @@ export function AgendaPage() {
                         Termin liess sich anlegen und danach nie wieder
                         anfassen. Nur für die planende Seite, und nicht an
                         einem Beispielinhalt. */}
-                    {isTrainer && !isSample(event) && (
+                    {isTrainer && canActOn(event) && (
                       <IonButtons onClick={stopBubbling}>
                         <IonButton
                           size="small"
