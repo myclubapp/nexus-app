@@ -130,9 +130,8 @@
 
 ## Offen
 
-- **Die Edge Function ist nicht deployt.** Ohne
-  `supabase functions deploy sync-federation` meldet der Testaufruf, dass der
-  Dienst nicht antwortet. **FR-121 bleibt deshalb `Partial`.**
+- **Deployt am 2026-09-12**, Vault-Einträge gesetzt. TC-001 und TC-005 sind
+  damit am laufenden Projekt ausführbar.
 - **Drei der vier Verbände haben keine offen dokumentierte Schnittstelle.**
   Ihre Verbindung lässt sich anlegen, bleibt aber `pending`, und der Lauf
   meldet «Für diesen Verband besteht noch keine Schnittstelle».

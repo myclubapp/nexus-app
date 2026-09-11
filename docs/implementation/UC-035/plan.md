@@ -45,7 +45,7 @@ erwischt hat.
 | ID     | Titel               | Status vorher | Ziel        | Notizen                                                               |
 | ------ | ------------------- | ------------- | ----------- | --------------------------------------------------------------------- |
 | FR-120 | Verband verbinden   | Open          | Implemented | Auswahl, Kennung, Schlüssel im Tresor, Zustand, Trennen                |
-| FR-121 | API-Key validieren  | Open          | **Partial** | Der Testaufruf ist gebaut (`sync-federation`, Betriebsart `check`); er läuft erst, wenn die Edge Function **deployt** ist |
+| FR-121 | API-Key validieren  | Open          | Implemented | Der Testaufruf (`sync-federation`, Betriebsart `check`) ist deployt; Parser gegen die echte Schnittstelle belegt |
 
 ### Business Rules
 
@@ -119,10 +119,10 @@ Verbindlich aus `docs/guidelines.md`:
 - [x] 10. Manueller Testplan `docs/test-plans/uc-035-verband-verbinden.md`
 - [x] 11. Statusabgleich in `requirements.md`, UC-Dokument, `use_cases/README.md`
       und `entity_model.md`
-- [ ] 12. **Edge Function deployen** (`supabase functions deploy sync-federation`)
-      – eine Handlung am laufenden Projekt und deshalb nicht ungefragt
-      ausgeführt. Bis dahin bleibt FR-121 `Partial`: Die Verbindung entsteht,
-      der Testaufruf meldet «Der Abgleichdienst antwortet nicht».
+- [x] 12. **Edge Function deployen** – am 2026-09-12 auf Sandros Anweisung
+      deployt; Vault-Einträge `project_url` und `service_role_key` angelegt.
+      Aufruf mit Dienst-Token: `{"synced":0,"results":[]}` – der Weg steht,
+      Verbindungen gibt es noch keine.
 
 ---
 
@@ -146,4 +146,5 @@ Verbindlich aus `docs/guidelines.md`:
 | 2026-09-11 | Recherche im Altbestand: vier Verbände, `api-v2.swissunihockey.ch` als einzige offen dokumentierte Schnittstelle |
 | 2026-09-11 | Migration `0058_federation.sql` eingespielt; Verhaltensprüfung: **27 von 27 Prüfungen bestanden** – darunter: Der Schlüssel steht nur im Tresor, der Vorstand kommt nicht an ihn heran, ein einzelner Fehlschlag kippt die Verbindung nicht, und gemeldet wird einmal statt täglich |
 | 2026-09-11 | Edge Function `sync-federation`, `lib/federation.ts`, `hooks/useFederation.ts`, `FederationPage`, vier Sprachen, 8 Tests |
+| 2026-09-12 | Deployt, Vault-Einträge gesetzt, `sync_federations()` läuft (noch ohne Verbindung); FR-121 auf `Implemented` |
 | 2026-09-11 | **Befund aus UC-039:** Die Teamliste von Swiss Unihockey ist ein **Dropdown** (`entries[].set_in_context.team_id`), keine Tabelle – `readTeams()` hätte immer «keine Teams» gemeldet. Liest jetzt beide Formen; belegt gegen Verein 463820. «Zu den Teams» führt jetzt zur Teamseite, wo verknüpft wird |

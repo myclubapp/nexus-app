@@ -187,12 +187,9 @@
 
 ## Offen
 
-- **Die Edge Function ist nicht deployt.** Ohne
-  `supabase functions deploy sync-federation` meldet jede Teamliste, dass der
-  Dienst nicht antwortet (A4). Die Datenbankseite ist geprüft (32 von 32);
-  TC-001 bis TC-006 setzen den Dienst voraus.
-- **Die Vault-Einträge** `project_url` und `service_role_key` fehlen; ohne sie
-  läuft der nächtliche Abgleich nicht (TC-004, Schritt 1).
+- **Deployt am 2026-09-12**, Vault-Einträge gesetzt. TC-001 bis TC-006 sind
+  damit am laufenden Projekt ausführbar; die Datenbankseite ist geprüft
+  (32 von 32).
 - **Drei der vier Verbände** haben keine Schnittstelle; für sie zeigt der
   Abschnitt A4.
 - **Tabellen und Resultatsicht je Team** bleiben FR-128 (`Deferred`).

@@ -51,6 +51,7 @@ sagt, warum der Status offen bleibt. **Ein Status wechselt nur mit Beleg.**
 | C-028   | Kein Chat, kein öffentlicher Bereich, keine Buchhaltung; jeder Verbandsaufruf ist ein `GET` (BR-154).                                                 |
 | C-031   | `is_sample` sperrt Zustellung, Signal, Punkte (0015, 0033, 0053); UC-037-Probe.                                                                       |
 | C-032   | `task_in_scope()` (0034), `event_in_scope()` (0057); Probe 0057 und 0060.                                                                             |
+| C-025   | Das verknüpfte Projekt `nexus-backend` läuft in `eu-central-2` (Zürich), Managed Supabase; Self-Hosting bleibt möglich (NFR-031).                    |
 
 ## Teilweise (`Partial`)
 
@@ -64,7 +65,7 @@ sagt, warum der Status offen bleibt. **Ein Status wechselt nur mit Beleg.**
 | --------------- | -------------------------------------------------------------------------------------------------------------- |
 | NFR-001 … 007   | Leistungs- und Skalierungsziele sind nicht gemessen; es gibt weder Lasttest noch Messung auf einem Gerät.       |
 | NFR-008         | Betriebszusage von Supabase; nichts zu bauen, aber nichts belegt.                                                |
-| NFR-023         | Die Region des verknüpften Projekts ist eine Projekteinstellung; Audio gibt es noch nicht (FR-085).             |
+| NFR-023         | Region Zürich ist belegt (C-025); der Audio-Teil bleibt offen, weil es noch keine Sprachmemos gibt (FR-085).    |
 | NFR-024         | Gründungsdauer nicht gemessen.                                                                                  |
 | NFR-025         | Der Deckel offener Hinweise je Team ist nicht beziffert (offener Punkt 3).                                       |
 | NFR-026         | Ein Check-in je Tag (`asked_on`) steht; die 10 Sekunden sind nicht gemessen.                                     |
@@ -74,7 +75,6 @@ sagt, warum der Status offen bleibt. **Ein Status wechselt nur mit Beleg.**
 | C-006           | Keine Karten.                                                                                                   |
 | C-018           | Keine Transkription.                                                                                            |
 | C-019 … C-022   | Rechtliche Nachweise (DSG, DSFA, KI-Register, Einwilligung unter 16) sind Dokumente, die es noch nicht gibt.     |
-| C-025           | Projekteinstellung, nicht im Repo prüfbar.                                                                       |
 | C-027           | Der Entlastungs-Test ist ein Prozess ohne Vorlage im Repo.                                                       |
 | C-029           | Bleibt `In Progress`, solange M4 läuft.                                                                          |
 | C-030           | Kalender-Publishing ist zurückgestellt (FR-133).                                                                 |

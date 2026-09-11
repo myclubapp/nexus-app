@@ -147,10 +147,8 @@ Verbindlich aus `docs/guidelines.md`:
 - [x] 12. Manueller Testplan `docs/test-plans/uc-039-verbands-team.md`
 - [x] 13. Statusabgleich in `requirements.md`, UC-Dokument, `use_cases/README.md`
       und `entity_model.md`
-- [ ] 14. **Edge Function deployen** (`supabase functions deploy sync-federation`)
-      – eine Handlung am laufenden Projekt und deshalb nicht ungefragt
-      ausgeführt. Bis dahin meldet «Teams des Verbands laden», dass der Dienst
-      nicht antwortet (A4), und der nächtliche Lauf holt keine Spiele.
+- [x] 14. **Edge Function deployen** – am 2026-09-12 deployt, Vault-Einträge
+      gesetzt; der nächtliche Lauf holt Spiele, sobald ein Team verknüpft ist.
 
 ---
 
