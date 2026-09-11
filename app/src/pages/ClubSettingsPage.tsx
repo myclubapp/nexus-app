@@ -38,6 +38,7 @@ import { SUPPORTED_LANGUAGES } from '../i18n';
 import { seasonLabel } from '../lib/season';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
+import { DateField } from '../components/DateField';
 import { EmptyState, InlineError } from '../components/StateViews';
 import { CLUB_MODULES } from '../lib/database.types';
 import type { ClubModule, ClubSettings, EventType } from '../lib/database.types';
@@ -174,15 +175,12 @@ export function ClubSettingsPage() {
               />
             </IonItem>
 
-            <IonItem>
-              <IonInput
-                type="date"
-                label={t('clubSettings.seasonStart')}
-                labelPlacement="stacked"
-                value={seasonStart}
-                onIonInput={(e) => setSeasonStart(e.detail.value ?? '')}
-              />
-            </IonItem>
+            <DateField
+              label={t('clubSettings.seasonStart')}
+              presentation="date"
+              value={seasonStart}
+              onChange={setSeasonStart}
+            />
           </ListSection>
 
           <ListSection

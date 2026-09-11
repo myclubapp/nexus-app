@@ -28,8 +28,10 @@ import { ListSection } from '../../components/ListSection';
 import { FormModal } from '../../components/FormModal';
 import { SkeletonList } from '../../components/Skeletons';
 import { EmptyState, ErrorState } from '../../components/StateViews';
+import { MemberAvatar } from '../../components/MemberAvatar';
 import {
   ASSIGNABLE_ROLES,
+  hasArea,
   EMPTY_MEMBER_FILTER,
   MEMBER_STATUSES,
   filterMembers,
@@ -70,6 +72,7 @@ export function MemberPage() {
   const [role, setRole] = useState<MemberRole>('member');
   const [status, setStatus] = useState<MemberStatus>('active');
   const [teamIds, setTeamIds] = useState<string[]>([]);
+  const [area, setArea] = useState('');
 
   const [isTeamFormOpen, setTeamFormOpen] = useState(false);
   const [teamName, setTeamName] = useState('');
@@ -88,12 +91,18 @@ export function MemberPage() {
     setRole(member.role);
     setStatus(member.status);
     setTeamIds(member.teamIds);
+    setArea(member.area ?? '');
   }
 
   async function save() {
     if (!open) return;
     try {
-      await updateMember.mutateAsync({ memberId: open.id, role, status });
+      await updateMember.mutateAsync({
+        memberId: open.id,
+        role,
+        status,
+        area: hasArea(role) ? area : null,
+      });
       await setMemberTeams.mutateAsync({ memberId: open.id, teamIds });
       setOpen(null);
       toast.success(t('common.saved'));
@@ -229,14 +238,22 @@ export function MemberPage() {
             >
               {visible.map((member) => (
                 <IonItem key={member.id} button detail onClick={() => openMember(member)}>
+                  {/* Wie in der bestehenden myclub-App: links der Avatar,
+                      die Rolle als Abzeichen, nicht als Nebensatz. */}
+                  <MemberAvatar displayName={member.display_name} avatarUrl={member.avatar_url} />
                   <IonLabel className="ion-text-wrap">
                     <h2>{member.display_name}</h2>
-                    <IonNote>
-                      {t(`invite.role.${member.role === 'superadmin' ? 'admin' : member.role}`)}
-                      {member.teamNames.length > 0
-                        ? ` · ${member.teamNames.join(', ')}`
-                        : ''}
-                    </IonNote>
+                    {member.teamNames.length > 0 && (
+                      <IonNote>{member.teamNames.join(', ')}</IonNote>
+                    )}
+                    {member.role !== 'member' && (
+                      <p>
+                        <IonBadge color="primary">
+                          {t(`invite.role.${member.role === 'superadmin' ? 'admin' : member.role}`)}
+                          {hasArea(member.role) && member.area ? ` · ${member.area}` : ''}
+                        </IonBadge>
+                      </p>
+                    )}
                   </IonLabel>
                   {member.status !== 'active' && (
                     <IonBadge slot="end" color="medium">
@@ -313,6 +330,20 @@ export function MemberPage() {
                   ))}
                 </IonSelect>
               </IonItem>
+
+              {/* Vision §4: Die Sportchef:in führt einen Bereich. Ein Wort,
+                  frei gewählt; leer heisst «alle Teams». */}
+              {hasArea(role) && (
+                <IonItem>
+                  <IonInput
+                    label={t('members.area')}
+                    labelPlacement="stacked"
+                    placeholder={t('members.areaPlaceholder')}
+                    value={area}
+                    onIonInput={(e) => setArea(e.detail.value ?? '')}
+                  />
+                </IonItem>
+              )}
 
               <IonItem>
                 <IonSelect

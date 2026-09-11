@@ -74,6 +74,12 @@ export function ClubAdminLinks() {
             <IonLabel>{t("members.title")}</IonLabel>
           </IonItem>
 
+          {/* Teams sind eine eigene Seite (UC-007 A1, UC-039 Schritt 1) –
+              wie in der bestehenden myclub-App. */}
+          <IonItem button routerLink="/tabs/profile/teams" detail>
+            <IonLabel>{t("teams.title")}</IonLabel>
+          </IonItem>
+
           {/* Die Ämter gehören zum Modul «Sitzungen»: Sie sind der Verteiler,
               über den ein Gremium definiert wird (BR-133). */}
           {isModuleOn(activeClub?.settings, "meeting") && (

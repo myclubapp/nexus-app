@@ -118,6 +118,7 @@ describe('AppMenu', () => {
       '/tabs/profile/pulse',
       '/tabs/profile/club',
       '/tabs/profile/members',
+      '/tabs/profile/teams',
       // Seit UC-031: die Ämter – der Verteiler hinter jedem Gremium (BR-133).
       '/tabs/profile/offices',
       '/tabs/profile/rules',

@@ -322,6 +322,21 @@ kein Verein beim Start braucht.
 
 ---
 
+## Nachtrag vom 2026-09-11 (spät): FR-063 und die Erfolgskennzahlen
+
+- **Rollenbasiertes Routing (FR-063) steht.** `health_alert_routing` – im
+  Entitätsmodell seit Beginn, als Tabelle seit `0059`. Je Signaltyp wählt der
+  Vorstand die Rollen, die den Hinweis erhalten; ohne Auswahl gilt die
+  Vorgabe. Die **Reichweite** bleibt BR-096 – das Routing sagt nur, wer eine
+  Meldung bekommt.
+- **Sportchef:in** ist die Bereichsrolle aus Vision §4: ein Bereich ist ein
+  Wort an Team und Person (`area`), kein Objekt. Ohne Bereich führt sie alle
+  Teams. Offener Punkt 1 des Katalogs ist damit beantwortet.
+- **90-Tage-Aktivierung** und **Silent-Churn-Erkennung** (Vision §12) stehen
+  in `club_health()` – die zweite als anonymer Zähler `club_churn_stats`, der
+  beim Austritt zählt und keinen Namen kennt (BR-097).
+- Verhaltensprüfung `0059`: **20 von 20**.
+
 ## Progress Log
 
 | Datum      | Eintrag       |

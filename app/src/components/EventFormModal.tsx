@@ -15,6 +15,7 @@ import { useTeams } from '../hooks/useInvites';
 import { usePointRules } from '../hooks/useGamification';
 import { useAnnounceEvent, useCreateEvent } from '../hooks/useEvents';
 import { FormModal } from './FormModal';
+import { DateField } from './DateField';
 import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import {
@@ -186,25 +187,21 @@ export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) 
           />
         </IonItem>
 
-        <IonItem>
-          <IonInput
-            type="datetime-local"
-            label={t('eventForm.startsAt')}
-            labelPlacement="stacked"
-            value={startsAt}
-            onIonInput={(e) => setStartsAt(e.detail.value ?? '')}
-          />
-        </IonItem>
+        <DateField
+          label={t('eventForm.startsAt')}
+          presentation="date-time"
+          value={startsAt}
+          onChange={setStartsAt}
+        />
 
-        <IonItem>
-          <IonInput
-            type="datetime-local"
-            label={t('eventForm.endsAt')}
-            labelPlacement="stacked"
-            value={endsAt}
-            onIonInput={(e) => setEndsAt(e.detail.value ?? '')}
-          />
-        </IonItem>
+        <DateField
+          label={t('eventForm.endsAt')}
+          presentation="date-time"
+          value={endsAt}
+          onChange={setEndsAt}
+          min={startsAt}
+          clearable
+        />
 
         <IonItem>
           <IonInput
@@ -321,15 +318,13 @@ export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) 
                 ))}
               </IonSelect>
             </IonItem>
-            <IonItem>
-              <IonInput
-                type="date"
-                label={t('eventForm.until')}
-                labelPlacement="stacked"
-                value={until}
-                onIonInput={(e) => setUntil(e.detail.value ?? '')}
-              />
-            </IonItem>
+            <DateField
+              label={t('eventForm.until')}
+              presentation="date"
+              value={until}
+              onChange={setUntil}
+              clearable
+            />
           </>
         )}
       </ListSection>

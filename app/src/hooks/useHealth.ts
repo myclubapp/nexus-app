@@ -187,6 +187,10 @@ export function useClubHealth() {
         prevActivated: row.prev_activated ?? 0,
         active: row.active ?? 0,
         activeDays: row.active_days ?? 0,
+        newcomers: row.newcomers ?? 0,
+        newcomersActivated: row.newcomers_activated ?? 0,
+        leftCount: row.left_count ?? 0,
+        leftSignalled: row.left_signalled ?? 0,
       };
     },
   });
@@ -294,6 +298,55 @@ export function useHealthDefinitions() {
         key: row.key as string,
         value: Number(row.value ?? 0),
       }));
+    },
+  });
+}
+
+
+// --- Routing je Signaltyp (FR-063) -----------------------------------------
+
+export type RoutingRole = 'trainer' | 'sportchef' | 'admin';
+export const ROUTING_ROLES: readonly RoutingRole[] = ['trainer', 'sportchef', 'admin'];
+
+/** Welche Rollen je Signaltyp den Hinweis erhalten – leer heisst «Vorgabe». */
+export function useHealthRouting() {
+  const { activeClub, isTrainer } = useClub();
+
+  return useQuery({
+    queryKey: ['health-routing', activeClub?.id],
+    enabled: Boolean(activeClub) && isTrainer && isConfigured,
+    queryFn: async (): Promise<Record<string, RoutingRole[]>> => {
+      const { data, error } = await supabase
+        .from('health_alert_routing')
+        .select('signal_type, recipient_role')
+        .eq('club_id', activeClub!.id);
+      if (error) throw new Error(error.message);
+
+      const routing: Record<string, RoutingRole[]> = {};
+      for (const row of data ?? []) {
+        (routing[row.signal_type] ??= []).push(row.recipient_role as RoutingRole);
+      }
+      return routing;
+    },
+  });
+}
+
+/** FR-063: das Routing eines Signaltyps setzen – nur der Vorstand, geprüft am Server. */
+export function useSetHealthRouting() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (input: { signalType: string; roles: RoutingRole[] }) => {
+      const { error } = await supabase.rpc('set_health_routing', {
+        p_club_id: activeClub!.id,
+        p_signal_type: input.signalType,
+        p_roles: input.roles,
+      });
+      if (error) throw new Error(error.message);
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ['health-routing', activeClub?.id] });
     },
   });
 }

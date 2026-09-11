@@ -23,7 +23,8 @@
     "discardChanges": "Ignora modifiche",
     "keepEditing": "Continua a modificare",
     "details": "Dettagli",
-    "more": "Altro"
+    "more": "Altro",
+    "clear": "Cancella"
   },
   "auth": {
     "title": "Benvenuto",
@@ -239,7 +240,9 @@
       "notAffected": "Non ti riguarda"
     },
     "undercovered_one": "Manca ancora {{count}} conferma",
-    "undercovered_other": "Mancano ancora {{count}} conferme"
+    "undercovered_other": "Mancano ancora {{count}} conferme",
+    "teamFilter": "Squadra",
+    "allTeams": "Tutte le squadre"
   },
   "profile": {
     "title": "Profilo",
@@ -446,7 +449,13 @@
       "attendanceDropTo": "Vale come calo una partecipazione inferiore a {{value}}.",
       "longTenureYears": "Una carica si considera tenuta a lungo dopo {{value}} anni.",
       "minGroup": "Sotto {{value}} persone non viene indicato alcun valore di gruppo."
-    }
+    },
+    "activation90": "Presenti dopo 90 giorni",
+    "churnSeen": "Uscite, viste prima",
+    "successHint": "Due definizioni di successo della piattaforma: nuovi membri con tre partecipazioni nei primi 90 giorni – e uscite apparse prima come segnale. Contate, mai elencate.",
+    "routingTitle": "Chi riceve quale segnale",
+    "routingHint": "Senza selezione vale l’impostazione predefinita: gli allenatori della propria squadra e il comitato. La visibilità non cambia – qui si tratta solo della notifica.",
+    "routingStandard": "Predefinito"
   },
   "language": {
     "de": "Tedesco",
@@ -488,7 +497,8 @@
     "role": {
       "member": "Membro",
       "trainer": "Allenatore/trice",
-      "admin": "Comitato"
+      "admin": "Comitato",
+      "sportchef": "Responsabile di settore"
     },
     "adminConfirm": "Sì, concedere tutti i diritti",
     "adminConfirmed": "Confermato",
@@ -591,7 +601,9 @@
     "teamName": "Nome della squadra",
     "teamCreated": "Squadra creata",
     "lastAdminHint": "Questa persona è l’unico comitato. Nomina prima qualcun altro prima di cambiarne ruolo o stato.",
-    "count_one": "{{count}} membro"
+    "count_one": "{{count}} membro",
+    "area": "Settore",
+    "areaPlaceholder": "ad es. Juniores – vuoto significa tutte le squadre"
   },
   "pointRules": {
     "title": "Regole dei punti",
@@ -1598,6 +1610,26 @@
       "swissvolley": "Swiss Volley",
       "swisshandball": "Swiss Handball",
       "swissturnverband": "Federazione svizzera di ginnastica"
+    }
+  },
+  "teams": {
+    "title": "Squadre",
+    "empty": "Ancora nessuna squadra. Una squadra è un nome – il resto viene da sé.",
+    "noArea": "Senza settore",
+    "noAreaHint": "Un settore assegna le squadre a un responsabile di settore. Indicalo nella squadra.",
+    "area": "Settore",
+    "areaHint": "Il settore è una parola, ad esempio «Juniores» o «Attivi». Le squadre dello stesso settore hanno lo stesso responsabile.",
+    "memberCount_one": "{{count}} membro",
+    "memberCount_other": "{{count}} membri",
+    "membersHint": "Scorrere a sinistra toglie dalla squadra – non dalla società. L’assegnazione si fa nel membro.",
+    "noMembers": "Ancora nessuno in questa squadra.",
+    "memberRemoved": "Tolto dalla squadra.",
+    "delete": "Elimina squadra",
+    "deleteConfirm": "«{{name}}» verrà eliminata. Una squadra con appuntamenti, compiti o notizie resta – saprai allora cosa vi è ancora collegato.",
+    "deleted": "Squadra eliminata.",
+    "createHint": "Settore e membri si aggiungono poi nella squadra.",
+    "problem": {
+      "nameMissing": "Il nome di una squadra richiede almeno due caratteri."
     }
   }
 }

@@ -15,6 +15,7 @@ import { usePointRules } from '../hooks/useGamification';
 import { useTeams } from '../hooks/useInvites';
 import { useCreateTask, usePublishTask } from '../hooks/useTasks';
 import { FormModal } from './FormModal';
+import { DateField } from './DateField';
 import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
@@ -180,15 +181,13 @@ export function TaskForm({ onDone, onDismiss, isOpen = true }: TaskFormProps) {
             }}
           />
         </IonItem>
-        <IonItem>
-          <IonInput
-            type="datetime-local"
-            label={t('taskForm.dueAt')}
-            labelPlacement="stacked"
-            value={dueAt}
-            onIonInput={(e) => setDueAt(e.detail.value ?? '')}
-          />
-        </IonItem>
+        <DateField
+          label={t('taskForm.dueAt')}
+          presentation="date-time"
+          value={dueAt}
+          onChange={setDueAt}
+          clearable
+        />
         <IonItem>
           <IonInput
             type="number"

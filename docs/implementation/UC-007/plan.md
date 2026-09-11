@@ -133,6 +133,18 @@ REST-API greift (BR-027).
 
 ---
 
+## Nachtrag vom 2026-09-11: die Teamseite
+
+Die Spezifikation verlangt Teams nur als Zuordnung (Schritt 6, A1); die
+bestehende myclub-App hat drei Seiten dafür, und UC-039 setzt in Schritt 1 ein
+Teamformular voraus, das es nicht gab. Jetzt: `TeamPage` (nach Bereich
+gruppiert, Plus unten rechts), `TeamDetailModal` (Name, Bereich, Mitglieder
+mit Wischen zum Entfernen, Löschen mit Rückfrage) und `delete_team()` als
+Riegel gegen ein Team mit Terminen – `events.team_id` kaskadiert, und niemand
+will mit einem Team dessen Vergangenheit löschen. Dazu in der Mitgliederliste
+der Avatar am Zeilenanfang und die Rolle als Abzeichen, wie im `user-list-item`
+der alten App.
+
 ## Progress Log
 
 | Datum      | Update                                                                                                                                    |

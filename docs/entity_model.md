@@ -139,7 +139,8 @@ Die Mitgliedschaft einer Person in einem Verein samt Rolle und Sichtbarkeitsents
 | user_id            | Anmeldekonto der Person                                  | UUID      | 36               | Optional, Foreign Key (USER_ACCOUNT.id)      |
 | display_name       | Im Verein angezeigter Name                               | String    | 80               | Not Null                                     |
 | avatar_url         | Verweis auf das Profilbild                               | String    | 500              | Optional                                     |
-| role               | Rolle im Verein                                          | String    | 20               | Not Null, Values: member, trainer, admin, superadmin |
+| role               | Rolle im Verein                                          | String    | 20               | Not Null, Values: member, trainer, sportchef, admin, superadmin |
+| area               | Bereich der Sportchef:in; leer heisst alle Teams (0059)  | String    | 40               | Optional                                          |
 | status             | Zustand der Mitgliedschaft                               | String    | 20               | Not Null, Values: active, passive, honorary, left |
 | member_since       | Eintrittsdatum, Grundlage der Treue-Dimension            | Date      | -                | Not Null                                     |
 | leaderboard_opt_in | Zustimmung zur Anzeige in Ranglisten                     | Boolean   | 1                | Not Null                                     |
@@ -158,6 +159,7 @@ Eine Gruppe innerhalb eines Vereins, an der Termine, Ranglisten und Reichweiten 
 | id                  | Eindeutige Kennung des Teams                     | UUID      | 36               | Primary Key, Generated          |
 | club_id             | Verein des Teams                                 | UUID      | 36               | Not Null, Foreign Key (CLUB.id) |
 | name                | Bezeichnung des Teams                            | String    | 80               | Not Null                        |
+| area                | Bereich, den eine Sportchef:in führt – ein Wort, kein Objekt (0059) | String | 40 | Optional |
 | sort                | Reihenfolge in Auswahllisten                     | Integer   | 10               | Optional                        |
 | federation          | Verband des verknüpften Teams                    | String    | 40               | Optional                        |
 | federation_team_id  | Kennung des Teams beim Verband                   | String    | 60               | Optional                        |
@@ -435,6 +437,22 @@ Ein befristeter Frühwarnhinweis aus Teilnahmedaten; gelöste und abgelaufene Hi
 | expires_at  | Zeitpunkt des automatischen Verfalls                       | DateTime  | -                | Not Null                                                                                                                  |
 
 **Constraints:** Zu einem Mitglied mit `health_opt_out = true` entsteht kein personenbezogener Hinweis. Gelöste und abgelaufene Hinweise werden physisch gelöscht, nicht archiviert. Es existiert kein Export dieser Entität und keine Sortierung von Mitgliedern nach Schweregrad.
+
+### CLUB_CHURN_STATS
+
+Der anonyme Zähler hinter der Silent-Churn-Erkennung (Vision §12): wie viele Mitglieder in einer Saison
+ausgetreten sind, und wie viele davon vorher als Hinweis erschienen waren.
+
+| Attribute       | Description                                   | Data Type | Length/Precision | Validation Rules                   |
+| --------------- | --------------------------------------------- | --------- | ---------------- | ---------------------------------- |
+| club_id         | Verein                                        | UUID      | 36               | Not Null, Foreign Key (CLUB.id)    |
+| season          | Saison                                        | String    | 20               | Not Null                           |
+| left_count      | Austritte in dieser Saison                    | Integer   | 10               | Not Null                           |
+| signalled_count | davon mit einem Hinweis in den 90 Tagen davor | Integer   | 10               | Not Null                           |
+
+**Constraints:** Primärschlüssel ist die Kombination aus `club_id` und `season`. Die Zeile trägt **keinen
+Personenbezug** – sie ist eine Kennzahl, keine Liste (BR-097). Gezählt wird beim Wechsel von
+CLUB_MEMBER.status auf `left`, einmal je Mitglied.
 
 ### HEALTH_ALERT_ROUTING
 

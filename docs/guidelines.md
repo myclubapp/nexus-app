@@ -65,6 +65,8 @@ Daraus folgen die Muster:
 | **Etwas Neues anlegen**       | **`AppPage createActions=…`** – Plus unten rechts, nie ein Symbol in der Kopfzeile |
 | Auswahl zwischen Sichten      | `IonSegment` in `AppPage subToolbar=…`                                  |
 | Auswahl aus einer Liste       | `IonSelect` **mit `cancelText`/`okText`** – sonst «Cancel»/«OK» (§8)    |
+| **Datum oder Uhrzeit**        | **`DateField`** – `IonDatetimeButton` + `IonModal` + `IonDatetime`, nie ein rohes `<input type="date">`/`datetime-local` (§8; Fallstrick in `CLAUDE.md`) |
+| Eine Person in einer Zeile    | `MemberAvatar` am Zeilenanfang (Bild, sonst Initialen), die Rolle als `IonBadge` – der Schnitt des `user-list-item` der bestehenden myclub-App |
 | **Inhalt lädt**               | **Skelett in der Form des Inhalts** (§4), nicht ein Spinner             |
 | **Eine Aktion läuft**         | **`IonSpinner` im auslösenden Knopf** (§4)                              |
 | Rückfrage **vor** einer Aktion | `IonAlert` bzw. `IonActionSheet`, nie ein eigener Dialog                |
@@ -357,6 +359,9 @@ Bestand in `src/components/`. Vor jedem neuen Bauteil hier nachsehen.
 | `AppMenu`          | Seitenleiste im `IonSplitPane`: Konto, Vereinswechsel, Verwaltung, Sprache, Abmelden – Spalte ab `lg`, sonst Overlay              |
 | `ClubAdminLinks`   | Die Verwaltungswege des Vorstands als Listeneinträge; einmal definiert, in `AppMenu` und auf der Profilseite eingehängt            |
 | `LanguageSwitcher` | Sprachwahl über `IonSelect`                                                                                                       |
+| `DateField`        | Datum, Uhrzeit oder beides über `IonDatetime` im Karten-Blatt; die Formulare behalten ihre Zeichenketten, übersetzt wird in `lib/dateInput.ts` |
+| `MemberAvatar`     | Der Avatar einer Person – Bild aus `avatar_url`, sonst Initialen auf der Vereinsfarbe; in Mitgliederliste, Team und Rangliste dieselbe Zeile |
+| `TeamDetailModal`  | Ein Team als Blatt: Name, Bereich, Mitglieder mit Wischen zum Entfernen, Löschen mit Rückfrage – der Riegel sitzt in `delete_team()` |
 | `AttendanceStatusIcon` | Der eigene Antwortstand als Ampel-Symbol am Zeilenanfang; ein Tippen schaltet um. Nachbau des `app-status-icon` der bestehenden myclub-App |
 | `EventDetailModal` | Termin-Detail als Blatt: Eckdaten mit Symbol je Zeile, «Mein Status», die Listen Zugesagt / Abgesagt / Keine Antwort              |
 | `NewsCard`         | Eine News als Karte: Bild, Datum, Titel, Anriss, Autoren-Chip, Teilen – im Raster der Startseite und im Detail                   |
@@ -701,6 +706,12 @@ Für die Auswahl heisst das an **jeder** Stelle:
 - **Berechtigungen** in RLS-Policies bzw. in der Datenbankfunktion, nie nur
   durch ein ausgeblendetes Bedienelement (C-011, NFR-011). Das Ausblenden im UI
   ist Bequemlichkeit, nicht Schutz.
+- **Geltungsbereich nach Team, lesend und schreibend** (C-032, `CLAUDE.md`):
+  Trägt eine Tabelle einen `team_id`, liest und schreibt sie nur, wer in
+  diesem Team ist – plus Trainer:innen, Sportchef:in ihres Bereichs und
+  Vorstand. Vorlage `event_in_scope()` (`0057`); was an einer solchen Entität
+  hängt, erbt den Geltungsbereich, statt ihn selbst zu formulieren. Ein
+  `is_club_member(club_id)` allein ist in einer Policy ein Befund.
 - **Jede neue `security definer`-Funktion** braucht im selben Schritt ein
   `revoke execute … from public, anon` (Vorlage `0007_function_grants.sql`).
 - **Fehler sind sichtbar.** Jede fehlgeschlagene Aktion zeigt eine Rückmeldung
@@ -833,3 +844,9 @@ je Use Case:
 3. **Vitest-Tests** für die Logik und die neuen Komponenten (`/ai-vitest`).
 4. **Statusabgleich**: FR-Status in `docs/requirements.md` und `Status` im
    Use-Case-Dokument nachziehen – im selben Schritt wie die Umsetzung.
+5. **Von welcher Seite kommt eine Person dorthin?** Für jeden neuen Hook,
+   jede neue Funktion und jedes neue Blatt den Einstieg benennen. Dreimal in
+   einer Woche war etwas gebaut und von keiner Ansicht aus erreichbar –
+   Termin absagen, Gerät für Push anmelden, Helfereinsätze im Marktplatz –,
+   und der Katalog führte es trotzdem als `Implemented`. Ein Hook ohne
+   Aufrufer ist kein Fortschritt, sondern ein Befund.

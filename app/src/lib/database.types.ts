@@ -146,7 +146,11 @@ export type Invite = Row<'invites'>;
 export type InviteRole = 'member' | 'trainer' | 'admin';
 
 /** `club_members.role` – Constraint aus `0001_core.sql`. */
-export type MemberRole = InviteRole | 'superadmin';
+/**
+ * Seit `0059` auch `sportchef` (Vision §4): führt einen **Bereich**, nicht den
+ * Verein. Nicht über eine Einladung vergeben, sondern im Mitglied-Detail.
+ */
+export type MemberRole = InviteRole | 'sportchef' | 'superadmin';
 
 export type Team = Row<'teams'>;
 export type PointRule = Row<'point_rules'>;

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   IonButton,
-  IonInput,
   IonItem,
   IonLabel,
   IonNote,
@@ -10,6 +9,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { AppPage } from "../components/AppPage";
 import { ListSection } from "../components/ListSection";
+import { DateField } from '../components/DateField';
 import { ErrorState, InlineError } from "../components/StateViews";
 import { SkeletonList } from "../components/Skeletons";
 import {
@@ -153,34 +153,20 @@ export function NotificationsPage() {
 
             {hasQuietHours(draft) && (
               <>
-                <IonItem>
-                  <IonInput
-                    type="time"
-                    label={t("notifications.quietFrom")}
-                    labelPlacement="stacked"
-                    value={draft.quietFrom ?? ""}
-                    onIonInput={(e) =>
-                      setDraft((current) => ({
-                        ...current,
-                        quietFrom: e.detail.value || null,
-                      }))
-                    }
-                  />
-                </IonItem>
-                <IonItem>
-                  <IonInput
-                    type="time"
-                    label={t("notifications.quietTo")}
-                    labelPlacement="stacked"
-                    value={draft.quietTo ?? ""}
-                    onIonInput={(e) =>
-                      setDraft((current) => ({
-                        ...current,
-                        quietTo: e.detail.value || null,
-                      }))
-                    }
-                  />
-                </IonItem>
+                <DateField
+                  label={t("notifications.quietFrom")}
+                  presentation="time"
+                  value={draft.quietFrom ?? ""}
+                  onChange={(value) => setDraft((current) => ({ ...current, quietFrom: value || null }))}
+                  clearable
+                />
+                <DateField
+                  label={t("notifications.quietTo")}
+                  presentation="time"
+                  value={draft.quietTo ?? ""}
+                  onChange={(value) => setDraft((current) => ({ ...current, quietTo: value || null }))}
+                  clearable
+                />
               </>
             )}
           </ListSection>

@@ -25,6 +25,7 @@ import {
 } from '../../hooks/useJoinRequests';
 import { AppPage } from '../../components/AppPage';
 import { ListSection } from '../../components/ListSection';
+import { DateField } from '../../components/DateField';
 import { InlineError } from '../../components/StateViews';
 import { Wizard, type WizardStep } from '../../components/Wizard';
 import { CLUB_KINDS, defaultSeasonStart } from '../../lib/clubKind';
@@ -141,15 +142,12 @@ export function OnboardingPage() {
       isComplete: Boolean(effectiveSeasonStart),
       content: (
         <ListSection footnote={t('onboarding.seasonStartFootnote')}>
-          <IonItem>
-            <IonInput
-              type="date"
-              label={t('clubSettings.seasonStart')}
-              labelPlacement="stacked"
-              value={effectiveSeasonStart}
-              onIonInput={(e) => setSeasonStart(e.detail.value ?? '')}
-            />
-          </IonItem>
+          <DateField
+            label={t('clubSettings.seasonStart')}
+            presentation="date"
+            value={effectiveSeasonStart}
+            onChange={setSeasonStart}
+          />
         </ListSection>
       ),
     },

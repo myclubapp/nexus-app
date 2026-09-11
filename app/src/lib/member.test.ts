@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   ASSIGNABLE_ROLES,
   EMPTY_MEMBER_FILTER,
+  initials,
   MEMBER_STATUSES,
   filterMembers,
   isLastAdmin,
@@ -123,11 +124,36 @@ describe('isLastAdmin', () => {
 });
 
 describe('Auswahllisten', () => {
-  it('bietet superadmin nicht zur Vergabe an', () => {
-    expect(ASSIGNABLE_ROLES).toEqual(['member', 'trainer', 'admin']);
+  it('bietet superadmin nicht zur Vergabe an – die Bereichsrolle aber schon', () => {
+    // `sportchef` seit 0059 (Vision §4); `superadmin` bleibt eine Rolle, die
+    // niemand vergibt.
+    expect(ASSIGNABLE_ROLES).toEqual(['member', 'trainer', 'sportchef', 'admin']);
   });
 
   it('kennt alle vier Zustände aus dem Constraint', () => {
     expect(MEMBER_STATUSES).toEqual(['active', 'passive', 'honorary', 'left']);
+  });
+});
+
+describe('initials', () => {
+  it('nimmt den ersten und den letzten Namensteil', () => {
+    expect(initials('Anna Meier')).toBe('AM');
+    expect(initials('Jean-Luc von Arx')).toBe('JA');
+  });
+
+  it('kommt mit einem Wort aus', () => {
+    expect(initials('Cla')).toBe('C');
+  });
+
+  it('zeigt ein Fragezeichen statt eines leeren Kreises', () => {
+    // Ein leerer Avatar sähe aus wie ein Fehler; ein Fragezeichen sagt, dass
+    // der Name fehlt.
+    expect(initials('')).toBe('?');
+    expect(initials('   ')).toBe('?');
+    expect(initials(null)).toBe('?');
+  });
+
+  it('schreibt gross, auch wenn der Name klein geschrieben ist', () => {
+    expect(initials('mira keller')).toBe('MK');
   });
 });

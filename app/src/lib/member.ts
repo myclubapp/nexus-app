@@ -6,8 +6,18 @@ export type MemberStatus = 'active' | 'passive' | 'honorary' | 'left';
 /** Rollen, die der Vorstand vergeben kann. `superadmin` ist keine davon. */
 export const ASSIGNABLE_ROLES: readonly Extract<
   MemberRole,
-  'member' | 'trainer' | 'admin'
->[] = ['member', 'trainer', 'admin'];
+  'member' | 'trainer' | 'sportchef' | 'admin'
+>[] = ['member', 'trainer', 'sportchef', 'admin'];
+
+/**
+ * Trägt diese Rolle einen Bereich (Vision §4)?
+ *
+ * Nur die Sportchef:in. Ein Bereich ist ein Wort an Team und Person – kein
+ * Objekt, das jemand verwalten müsste (0059).
+ */
+export function hasArea(role: MemberRole | null | undefined): boolean {
+  return role === 'sportchef';
+}
 
 export const MEMBER_STATUSES: readonly MemberStatus[] = [
   'active',
@@ -77,4 +87,21 @@ export function isLastAdmin(
       member.status !== 'left',
   );
   return admins.length === 1 && admins[0]?.id === memberId;
+}
+
+/**
+ * Initialen für den Avatar ohne Bild (S1 der Prüfung vom 2026-09-11).
+ *
+ * Die bestehende myclub-App zeigt in jeder Personenzeile einen Avatar; ohne
+ * Bild stand dort eine graue Silhouette. Initialen sagen mehr: Zwei Buchstaben
+ * unterscheiden zwei Personen, eine Silhouette nicht. Erster und letzter
+ * Namensteil, höchstens zwei Zeichen, Grossbuchstaben – und bei einem leeren
+ * Namen ein Fragezeichen statt eines leeren Kreises.
+ */
+export function initials(displayName: string | null | undefined): string {
+  const parts = (displayName ?? '').trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '?';
+  const first = parts[0][0] ?? '';
+  const last = parts.length > 1 ? (parts[parts.length - 1][0] ?? '') : '';
+  return (first + last).toUpperCase();
 }

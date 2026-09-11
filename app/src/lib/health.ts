@@ -174,6 +174,14 @@ export interface ClubHealth {
   prevActivated: number;
   active: number;
   activeDays: number;
+  /** Vision §12: Neumitglieder des letzten Jahres, deren erste 90 Tage vorbei sind … */
+  newcomers: number;
+  /** … und wie viele davon mindestens drei Teilnahmen in diesen 90 Tagen hatten. */
+  newcomersActivated: number;
+  /** Vision §12: Austritte dieser Saison … */
+  leftCount: number;
+  /** … und wie viele davon vorher als Signal erschienen sind. Ein Zähler, keine Liste (BR-097). */
+  leftSignalled: number;
 }
 
 export interface TeamHealth {

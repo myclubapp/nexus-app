@@ -334,8 +334,38 @@ export type Database = {
           },
         ]
       }
+      club_churn_stats: {
+        Row: {
+          club_id: string
+          left_count: number
+          season: string
+          signalled_count: number
+        }
+        Insert: {
+          club_id: string
+          left_count?: number
+          season: string
+          signalled_count?: number
+        }
+        Update: {
+          club_id?: string
+          left_count?: number
+          season?: string
+          signalled_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "club_churn_stats_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       club_members: {
         Row: {
+          area: string | null
           avatar_url: string | null
           club_id: string
           display_name: string
@@ -350,6 +380,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          area?: string | null
           avatar_url?: string | null
           club_id: string
           display_name: string
@@ -364,6 +395,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          area?: string | null
           avatar_url?: string | null
           club_id?: string
           display_name?: string
@@ -833,6 +865,32 @@ export type Database = {
             columns: ["holder_member_id"]
             isOneToOne: false
             referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      health_alert_routing: {
+        Row: {
+          club_id: string
+          recipient_role: string
+          signal_type: string
+        }
+        Insert: {
+          club_id: string
+          recipient_role: string
+          signal_type: string
+        }
+        Update: {
+          club_id?: string
+          recipient_role?: string
+          signal_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "health_alert_routing_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
             referencedColumns: ["id"]
           },
         ]
@@ -1881,16 +1939,19 @@ export type Database = {
       }
       teams: {
         Row: {
+          area: string | null
           club_id: string
           id: string
           name: string
         }
         Insert: {
+          area?: string | null
           club_id: string
           id?: string
           name: string
         }
         Update: {
+          area?: string | null
           club_id?: string
           id?: string
           name?: string
@@ -2151,6 +2212,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      area_covers_team: {
+        Args: { p_member_id: string; p_team_id: string }
+        Returns: boolean
+      }
       ask_contribution_profiles: { Args: never; Returns: number }
       ask_office_load: { Args: never; Returns: number }
       assign_input: {
@@ -2204,7 +2269,11 @@ export type Database = {
           activated: number
           active: number
           active_days: number
+          left_count: number
+          left_signalled: number
           members: number
+          newcomers: number
+          newcomers_activated: number
           prev_activated: number
         }[]
       }
@@ -2323,6 +2392,7 @@ export type Database = {
       default_event_labels: { Args: { p_club_kind: string }; Returns: Json }
       default_season_start: { Args: { p_club_kind: string }; Returns: string }
       delete_my_account: { Args: never; Returns: undefined }
+      delete_team: { Args: { p_team_id: string }; Returns: undefined }
       detect_checkins: { Args: never; Returns: number }
       detect_health_signals: { Args: { p_club_id?: string }; Returns: number }
       detect_succession_gaps: { Args: { p_club_id?: string }; Returns: number }
@@ -2673,6 +2743,10 @@ export type Database = {
       set_health_opt_out: {
         Args: { p_club_id: string; p_opt_out: boolean }
         Returns: number
+      }
+      set_health_routing: {
+        Args: { p_club_id: string; p_roles: string[]; p_signal_type: string }
+        Returns: undefined
       }
       set_member_teams: {
         Args: { p_member_id: string; p_team_ids: string[] }

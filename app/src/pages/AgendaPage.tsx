@@ -13,6 +13,8 @@ import {
   IonLabel,
   IonList,
   IonNote,
+  IonSelect,
+  IonSelectOption,
   IonSegment,
   IonSegmentButton,
 } from '@ionic/react';
@@ -32,8 +34,10 @@ import { useRemindUndecided } from '../hooks/useReminders';
 import { useClub } from '../hooks/useClub';
 import { useMembers } from '../hooks/useMembers';
 import { AppPage } from '../components/AppPage';
+import { ListSection } from '../components/ListSection';
 import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
+import { useTeams } from '../hooks/useInvites';
 import { useToast } from '../hooks/useToast';
 import { formatDateTime, formatTime } from '../lib/format';
 import { AttendanceStatusIcon } from '../components/AttendanceStatusIcon';
@@ -76,6 +80,7 @@ export function AgendaPage() {
   // UC-012 Schritt 1: Der Aufruf öffnet sich aus der Agenda heraus.
   const [shiftEventId, setShiftEventId] = useState<string | null>(null);
   const [editEventId, setEditEventId] = useState<string | null>(null);
+  const [teamFilter, setTeamFilter] = useState<string | null>(null);
   // UC-013 Schritt 1: der vergangene Aufruf, dessen Einsätze zu bestätigen sind.
   const [rosterEventId, setRosterEventId] = useState<string | null>(null);
   // UC-014 Schritt 1: Die Trainer:in zeigt den Code und erfasst, wer da ist.
@@ -115,7 +120,13 @@ export function AgendaPage() {
     id: string;
     undecided: number;
   } | null>(null);
-  const events = agenda.data ?? [];
+  // Team-Filter für die, die alle Teams sehen (Trainer:innen, Vorstand) – wie
+  // der Chip in der Trainingsliste der bestehenden myclub-App. Mitglieder
+  // sehen seit C-032 ohnehin nur ihre Teams und den Verein.
+  const teams = useTeams();
+  const events = (agenda.data ?? []).filter(
+    (event) => teamFilter === null || event.team_id === teamFilter || event.team_id === null,
+  );
   const shiftEvent = events.find((entry) => entry.id === shiftEventId);
   const rosterEvent = events.find((entry) => entry.id === rosterEventId);
   const editEvent = events.find((entry) => entry.id === editEventId);
@@ -189,6 +200,27 @@ export function AgendaPage() {
       }
       onRefresh={() => agenda.refetch()}
     >
+      {isTrainer && (teams.data ?? []).length > 1 && (
+        <ListSection>
+          <IonItem>
+            <IonSelect
+              label={t('agenda.teamFilter')}
+              value={teamFilter}
+              cancelText={t('common.cancel')}
+              okText={t('common.ok')}
+              onIonChange={(e) => setTeamFilter((e.detail.value as string | null) ?? null)}
+            >
+              <IonSelectOption value={null}>{t('agenda.allTeams')}</IonSelectOption>
+              {(teams.data ?? []).map((team) => (
+                <IonSelectOption key={team.id} value={team.id}>
+                  {team.name}
+                </IonSelectOption>
+              ))}
+            </IonSelect>
+          </IonItem>
+        </ListSection>
+      )}
+
       {agenda.isLoading ? (
         <SkeletonList />
       ) : agenda.error ? (
@@ -339,49 +371,6 @@ export function AgendaPage() {
                       </p>
                     )}
 
-                    {/* UC-012 Schritt 1: der Weg zu den Schichten. Ein Entwurf
-                        hat noch keinen, in ihn trägt sich niemand ein. */}
-                    {shiftsNeeded > 0 && !isDraft && !isCancelled && (
-                      <IonButtons onClick={stopBubbling}>
-                        <IonButton
-                          size="small"
-                          fill="outline"
-                          onClick={() => setShiftEventId(event.id)}
-                        >
-                          {t('shifts.open')}
-                        </IonButton>
-
-                        {/* UC-013 Schritt 1: bestätigt wird, was stattgefunden
-                            hat – deshalb erst im vergangenen Bereich. */}
-                        {isAdmin && range === 'past' && (
-                          <IonButton
-                            size="small"
-                            fill="outline"
-                            onClick={() => setRosterEventId(event.id)}
-                          >
-                            {t('roster.open')}
-                          </IonButton>
-                        )}
-                      </IonButtons>
-                    )}
-
-                    {/* UC-009 A2 und FR-023: ändern und absagen. Beides war
-                        gebaut und von keiner Ansicht aus erreichbar – ein
-                        Termin liess sich anlegen und danach nie wieder
-                        anfassen. Nur für die planende Seite, und nicht an
-                        einem Beispielinhalt. */}
-                    {isTrainer && canActOn(event) && (
-                      <IonButtons onClick={stopBubbling}>
-                        <IonButton
-                          size="small"
-                          fill="clear"
-                          onClick={() => setEditEventId(event.id)}
-                        >
-                          {t('eventEdit.open')}
-                        </IonButton>
-                      </IonButtons>
-                    )}
-
                     {/* FR-027: der Stand in Zahlen – für die, die damit planen.
                         Alle anderen sehen die Zusagen rechts und die Namen im
                         Detail. */}
@@ -496,6 +485,48 @@ export function AgendaPage() {
                     </IonBadge>
                   )}
                 </IonItem>
+
+                {/* Zeilenaktionen nach links gewischt – der Schnitt der
+                    bestehenden myclub-App und guidelines §2: kein dritter
+                    Knopf in der Zeile. Schichten und Einsätze gehören zum
+                    Termin, Bearbeiten der planenden Seite. */}
+                {(shiftsNeeded > 0 || (isTrainer && canActOn(event))) && !isDraft && (
+                  <IonItemOptions side="end">
+                    {shiftsNeeded > 0 && !isCancelled && (
+                      <IonItemOption
+                        color="tertiary"
+                        onClick={(e) => {
+                          closeSliding(e);
+                          setShiftEventId(event.id);
+                        }}
+                      >
+                        {t('shifts.open')}
+                      </IonItemOption>
+                    )}
+                    {shiftsNeeded > 0 && isAdmin && range === 'past' && (
+                      <IonItemOption
+                        color="secondary"
+                        onClick={(e) => {
+                          closeSliding(e);
+                          setRosterEventId(event.id);
+                        }}
+                      >
+                        {t('roster.open')}
+                      </IonItemOption>
+                    )}
+                    {isTrainer && canActOn(event) && (
+                      <IonItemOption
+                        color="medium"
+                        onClick={(e) => {
+                          closeSliding(e);
+                          setEditEventId(event.id);
+                        }}
+                      >
+                        {t('eventEdit.open')}
+                      </IonItemOption>
+                    )}
+                  </IonItemOptions>
+                )}
 
                 {/* Zu- und Absagen durch Wischen nach rechts: grün der Haken,
                     rot das Kreuz – nur die Gegenantwort zum aktuellen Stand. */}

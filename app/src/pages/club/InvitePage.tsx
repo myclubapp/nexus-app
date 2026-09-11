@@ -39,6 +39,7 @@ import {
 import { AppPage } from '../../components/AppPage';
 import { ListSection } from '../../components/ListSection';
 import { FormModal } from '../../components/FormModal';
+import { DateField } from '../../components/DateField';
 import { QrCode } from '../../components/QrCode';
 import { EmptyState, ErrorState } from '../../components/StateViews';
 import { SkeletonList } from '../../components/Skeletons';
@@ -268,15 +269,12 @@ export function InvitePage() {
         )}
 
         <ListSection footnote={t('invite.limitsHint')}>
-          <IonItem>
-            <IonInput
-              type="date"
-              label={t('invite.expiresLabel')}
-              labelPlacement="stacked"
-              value={expiresOn}
-              onIonInput={(e) => setExpiresOn(e.detail.value ?? '')}
-            />
-          </IonItem>
+          <DateField
+            label={t('invite.expiresLabel')}
+            presentation="date"
+            value={expiresOn}
+            onChange={setExpiresOn}
+          />
           <IonItem>
             <IonInput
               type="number"

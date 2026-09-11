@@ -432,3 +432,22 @@
 .app-state__action {
   margin-top: var(--app-space-3);
 }
+
+/* --- Avatar einer Person (MemberAvatar) --------------------------------------
+   Nachbau des Avatars aus jeder Personenzeile der bestehenden myclub-App. Ohne
+   Bild stehen Initialen auf der Vereinsfarbe – zwei Buchstaben unterscheiden
+   zwei Personen, eine Silhouette nicht. */
+.app-avatar {
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.app-avatar__initials {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}

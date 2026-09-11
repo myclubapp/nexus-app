@@ -62,6 +62,8 @@ export function useUpdateMember() {
       role?: MemberRole;
       status?: MemberStatus;
       displayName?: string;
+      /** Bereich der Sportchef:in; `null` löscht ihn (0059). */
+      area?: string | null;
     }) => {
       // Ein typisiertes Teil-Update statt eines Record<string, string>: Sonst
       // akzeptiert supabase-js jeden Spaltennamen, auch einen falsch
@@ -70,6 +72,7 @@ export function useUpdateMember() {
       if (input.role) patch.role = input.role;
       if (input.status) patch.status = input.status;
       if (input.displayName) patch.display_name = input.displayName.trim();
+      if (input.area !== undefined) patch.area = input.area?.trim() || null;
 
       if (Object.keys(patch).length === 0) return;
 

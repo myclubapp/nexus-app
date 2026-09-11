@@ -23,7 +23,8 @@
     "discardChanges": "Discard changes",
     "keepEditing": "Keep editing",
     "details": "Details",
-    "more": "More"
+    "more": "More",
+    "clear": "Clear"
   },
   "auth": {
     "title": "Welcome",
@@ -239,7 +240,9 @@
       "notAffected": "Not for you"
     },
     "undercovered_one": "{{count}} reply still missing",
-    "undercovered_other": "{{count}} replies still missing"
+    "undercovered_other": "{{count}} replies still missing",
+    "teamFilter": "Team",
+    "allTeams": "All teams"
   },
   "profile": {
     "title": "Profile",
@@ -446,7 +449,13 @@
       "attendanceDropTo": "A drop means a turnout below {{value}}.",
       "longTenureYears": "An office counts as long held after {{value}} years.",
       "minGroup": "Below {{value}} people no group figure is shown."
-    }
+    },
+    "activation90": "Still there after 90 days",
+    "churnSeen": "Departures seen beforehand",
+    "successHint": "Two success definitions of the platform: newcomers with three turnouts in their first 90 days – and departures that appeared as a signal before. Counted, never listed.",
+    "routingTitle": "Who receives which signal",
+    "routingHint": "Without a selection the standard rule applies: coaches for their team and the board. Visibility is unaffected – this is only about the notification.",
+    "routingStandard": "Standard"
   },
   "language": {
     "de": "German",
@@ -488,7 +497,8 @@
     "role": {
       "member": "Member",
       "trainer": "Coach",
-      "admin": "Board"
+      "admin": "Board",
+      "sportchef": "Section head"
     },
     "adminConfirm": "Yes, grant full club rights",
     "adminConfirmed": "Confirmed",
@@ -591,7 +601,9 @@
     "teamName": "Team name",
     "teamCreated": "Team created",
     "lastAdminHint": "This person is the only board member. Appoint someone else before changing their role or status.",
-    "count_one": "{{count}} member"
+    "count_one": "{{count}} member",
+    "area": "Section",
+    "areaPlaceholder": "e.g. Juniors – empty means all teams"
   },
   "pointRules": {
     "title": "Point rules",
@@ -1598,6 +1610,26 @@
       "swissvolley": "Swiss Volley",
       "swisshandball": "Swiss Handball",
       "swissturnverband": "Swiss Gymnastics Federation"
+    }
+  },
+  "teams": {
+    "title": "Teams",
+    "empty": "No team yet. A team is a name – the rest follows.",
+    "noArea": "No section",
+    "noAreaHint": "A section assigns teams to a section head. Set it on the team.",
+    "area": "Section",
+    "areaHint": "The section is one word, like “Juniors” or “Seniors”. Teams in the same section share a section head.",
+    "memberCount_one": "{{count}} member",
+    "memberCount_other": "{{count}} members",
+    "membersHint": "Swipe left removes from the team – not from the club. Assigning happens on the member.",
+    "noMembers": "Nobody in this team yet.",
+    "memberRemoved": "Removed from the team.",
+    "delete": "Delete team",
+    "deleteConfirm": "“{{name}}” will be deleted. A team with events, tasks or news stays – you will be told what still hangs on it.",
+    "deleted": "Team deleted.",
+    "createHint": "Section and members are added on the team afterwards.",
+    "problem": {
+      "nameMissing": "A team name needs at least two characters."
     }
   }
 }

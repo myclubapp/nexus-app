@@ -14,6 +14,7 @@ import { addOutline } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { useCreateHelperEvent, usePublishEvent } from '../hooks/useHelperEvents';
 import { FormModal } from './FormModal';
+import { DateField } from './DateField';
 import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
@@ -130,24 +131,20 @@ export function HelperEventForm({ onDone, onDismiss, isOpen = true }: HelperEven
             onIonInput={(e) => setTitle(e.detail.value ?? '')}
           />
         </IonItem>
-        <IonItem>
-          <IonInput
-            type="datetime-local"
-            label={t('eventForm.startsAt')}
-            labelPlacement="stacked"
-            value={startsAt}
-            onIonInput={(e) => setStartsAt(e.detail.value ?? '')}
-          />
-        </IonItem>
-        <IonItem>
-          <IonInput
-            type="datetime-local"
-            label={t('eventForm.endsAt')}
-            labelPlacement="stacked"
-            value={endsAt}
-            onIonInput={(e) => setEndsAt(e.detail.value ?? '')}
-          />
-        </IonItem>
+        <DateField
+          label={t('eventForm.startsAt')}
+          presentation="date-time"
+          value={startsAt}
+          onChange={setStartsAt}
+        />
+        <DateField
+          label={t('eventForm.endsAt')}
+          presentation="date-time"
+          value={endsAt}
+          onChange={setEndsAt}
+          min={startsAt}
+          clearable
+        />
         <IonItem>
           <IonInput
             label={t('eventForm.location')}
@@ -218,24 +215,20 @@ export function HelperEventForm({ onDone, onDismiss, isOpen = true }: HelperEven
             onIonInput={(e) => setDraft((d) => ({ ...d, title: e.detail.value ?? '' }))}
           />
         </IonItem>
-        <IonItem>
-          <IonInput
-            type="datetime-local"
-            label={t('eventForm.startsAt')}
-            labelPlacement="stacked"
-            value={draft.startsAt}
-            onIonInput={(e) => setDraft((d) => ({ ...d, startsAt: e.detail.value ?? '' }))}
-          />
-        </IonItem>
-        <IonItem>
-          <IonInput
-            type="datetime-local"
-            label={t('eventForm.endsAt')}
-            labelPlacement="stacked"
-            value={draft.endsAt}
-            onIonInput={(e) => setDraft((d) => ({ ...d, endsAt: e.detail.value ?? '' }))}
-          />
-        </IonItem>
+        <DateField
+          label={t('eventForm.startsAt')}
+          presentation="date-time"
+          value={draft.startsAt}
+          onChange={(value) => setDraft((d) => ({ ...d, startsAt: value }))}
+        />
+        <DateField
+          label={t('eventForm.endsAt')}
+          presentation="date-time"
+          value={draft.endsAt}
+          onChange={(value) => setDraft((d) => ({ ...d, endsAt: value }))}
+          min={draft.startsAt}
+          clearable
+        />
         <IonItem>
           <IonInput
             type="number"

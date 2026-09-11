@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IonBadge, IonItem, IonLabel, IonNote } from '@ionic/react';
+import { IonBadge, IonItem, IonLabel, IonNote, IonSelect, IonSelectOption } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
@@ -10,17 +10,24 @@ import { HealthSignalModal } from '../components/HealthSignalModal';
 import {
   useClubHealth,
   useHealthDefinitions,
+  useHealthRouting,
   useHealthSignals,
   useResponsibility,
+  useSetHealthRouting,
+  ROUTING_ROLES,
+  type RoutingRole,
   useSuccessionLead,
   useTeamHealth,
 } from '../hooks/useHealth';
+import { useClub } from '../hooks/useClub';
 import { useToast } from '../hooks/useToast';
 import { formatDate } from '../lib/format';
 import {
+  LIVE_SIGNAL_TYPES,
   attendanceRate,
   isClubSignal,
   isConcentrated,
+  percent,
   responseRate,
   seasonTrend,
   severityColor,
@@ -50,6 +57,9 @@ export function HealthPage() {
   const responsibility = useResponsibility();
   const succession = useSuccessionLead();
   const definitions = useHealthDefinitions();
+  const routing = useHealthRouting();
+  const setRouting = useSetHealthRouting();
+  const { isAdmin } = useClub();
   const [openId, setOpenId] = useState<string | null>(null);
 
   const rows = sortSignals(signals.data ?? []);
@@ -152,6 +162,67 @@ export function HealthPage() {
               </IonLabel>
             </IonItem>
           )}
+
+          {/* Vision §12: die zwei Erfolgskennzahlen, die bisher fehlten.
+              Beide sind Anteile – und ohne Grundgesamtheit kein Anteil. */}
+          {(club.data.newcomers > 0 || club.data.leftCount > 0) && (
+            <div className="app-stat-row">
+              {club.data.newcomers > 0 && (
+                <StatCard
+                  value={`${percent(club.data.newcomersActivated, club.data.newcomers) ?? 0} %`}
+                  label={t('health.activation90')}
+                />
+              )}
+              {club.data.leftCount > 0 && (
+                <StatCard
+                  value={`${club.data.leftSignalled}/${club.data.leftCount}`}
+                  label={t('health.churnSeen')}
+                  accent="secondary"
+                />
+              )}
+            </div>
+          )}
+          {(club.data.newcomers > 0 || club.data.leftCount > 0) && (
+            <IonItem lines="none">
+              <IonLabel className="ion-text-wrap">
+                <IonNote>{t('health.successHint')}</IonNote>
+              </IonLabel>
+            </IonItem>
+          )}
+        </ListSection>
+      )}
+
+      {/* FR-063: Wer erhält welchen Hinweis. Nur der Vorstand stellt es ein;
+          ohne Eintrag gilt die Vorgabe – ein Verein, der nichts einstellt,
+          verliert nichts. Die **Reichweite** bleibt BR-096; hier steht nur,
+          wer eine Meldung bekommt. */}
+      {isAdmin && routing.data && (
+        <ListSection title={t('health.routingTitle')} footnote={t('health.routingHint')}>
+          {LIVE_SIGNAL_TYPES.map((type) => (
+            <IonItem key={type}>
+              <IonSelect
+                multiple
+                label={t(signalKey(type, 'title'))}
+                labelPlacement="stacked"
+                placeholder={t('health.routingStandard')}
+                value={routing.data?.[type] ?? []}
+                cancelText={t('common.cancel')}
+                okText={t('common.ok')}
+                onIonChange={(e) =>
+                  setRouting.mutate(
+                    { signalType: type, roles: e.detail.value as RoutingRole[] },
+                    { onError: (cause) => toast.failure(cause.message) },
+                  )
+                }
+              >
+                {ROUTING_ROLES.map((role) => (
+                  <IonSelectOption key={role} value={role}>
+                    {t(`invite.role.${role}`)}
+                  </IonSelectOption>
+                ))}
+              </IonSelect>
+            </IonItem>
+          ))}
         </ListSection>
       )}
 

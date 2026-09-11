@@ -23,7 +23,8 @@
     "discardChanges": "Änderungen verwerfen",
     "keepEditing": "Weiter bearbeiten",
     "details": "Details",
-    "more": "Mehr"
+    "more": "Mehr",
+    "clear": "Löschen"
   },
   "auth": {
     "title": "Willkommen",
@@ -239,7 +240,9 @@
       "notAffected": "Nicht für dich"
     },
     "undercovered_one": "Noch {{count}} Zusage fehlt",
-    "undercovered_other": "Noch {{count}} Zusagen fehlen"
+    "undercovered_other": "Noch {{count}} Zusagen fehlen",
+    "teamFilter": "Team",
+    "allTeams": "Alle Teams"
   },
   "profile": {
     "title": "Profil",
@@ -446,7 +449,13 @@
       "attendanceDropTo": "Als Rückgang gilt eine Beteiligung unter {{value}}.",
       "longTenureYears": "Ein Amt gilt nach {{value}} Jahren als lange gehalten.",
       "minGroup": "Unter {{value}} Personen wird keine Gruppenzahl ausgewiesen."
-    }
+    },
+    "activation90": "Nach 90 Tagen dabei",
+    "churnSeen": "Austritte, vorher gesehen",
+    "successHint": "Zwei Erfolgsdefinitionen der Plattform: Neumitglieder mit drei Teilnahmen in den ersten 90 Tagen – und Austritte, die vorher als Hinweis erschienen sind. Gezählt, nie aufgelistet.",
+    "routingTitle": "Wer erhält welchen Hinweis",
+    "routingHint": "Ohne Auswahl gilt die Vorgabe: Trainer:innen ihres Teams und der Vorstand. Die Sichtbarkeit bleibt davon unberührt – hier geht es nur um die Meldung.",
+    "routingStandard": "Vorgabe"
   },
   "language": {
     "de": "Deutsch",
@@ -488,7 +497,8 @@
     "role": {
       "member": "Mitglied",
       "trainer": "Trainer:in",
-      "admin": "Vorstand"
+      "admin": "Vorstand",
+      "sportchef": "Sportchef:in"
     },
     "adminConfirm": "Ja, volle Vereinsrechte vergeben",
     "adminConfirmed": "Bestätigt",
@@ -591,7 +601,9 @@
     "teamName": "Name des Teams",
     "teamCreated": "Team angelegt",
     "lastAdminHint": "Diese Person ist der einzige Vorstand. Bestimme zuerst jemand anderen, bevor du Rolle oder Status änderst.",
-    "count_one": "{{count}} Mitglied"
+    "count_one": "{{count}} Mitglied",
+    "area": "Bereich",
+    "areaPlaceholder": "z. B. Junioren – leer heisst alle Teams"
   },
   "pointRules": {
     "title": "Punkteregeln",
@@ -1598,6 +1610,26 @@
       "swissvolley": "Swiss Volley",
       "swisshandball": "Swiss Handball",
       "swissturnverband": "Schweizerischer Turnverband"
+    }
+  },
+  "teams": {
+    "title": "Teams",
+    "empty": "Noch kein Team. Ein Team ist ein Name – der Rest kommt von selbst.",
+    "noArea": "Ohne Bereich",
+    "noAreaHint": "Ein Bereich ordnet Teams einer Sportchef:in zu. Trage ihn im Team ein.",
+    "area": "Bereich",
+    "areaHint": "Der Bereich ist ein Wort, etwa «Junioren» oder «Aktive». Teams desselben Bereichs führt dieselbe Sportchef:in.",
+    "memberCount_one": "{{count}} Mitglied",
+    "memberCount_other": "{{count}} Mitglieder",
+    "membersHint": "Nach links wischen nimmt aus dem Team – nicht aus dem Verein. Zuordnen geht im Mitglied.",
+    "noMembers": "Noch niemand in diesem Team.",
+    "memberRemoved": "Aus dem Team genommen.",
+    "delete": "Team löschen",
+    "deleteConfirm": "«{{name}}» wird gelöscht. Ein Team mit Terminen, Aufgaben oder News bleibt – du erfährst dann, was noch dranhängt.",
+    "deleted": "Team gelöscht.",
+    "createHint": "Bereich und Mitglieder kommen danach im Team dazu.",
+    "problem": {
+      "nameMissing": "Ein Teamname braucht mindestens zwei Zeichen."
     }
   }
 }
