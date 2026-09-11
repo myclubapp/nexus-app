@@ -6,7 +6,7 @@
 **Use Case Name:** Benachrichtigungen einstellen
 **Primary Actor:** Mitglied
 **Goal:** Selbst bestimmen, was einen auf welchem Kanal erreicht
-**Status:** In Progress
+**Status:** Implemented
 
 ## Preconditions
 

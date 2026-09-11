@@ -1176,6 +1176,14 @@
         "title": "Connections",
         "body": "Technical notices, such as when the federation link falters."
       }
+    },
+    "registerDevice": "Register this device",
+    "deviceRegistered": "Registered. Push will reach you once sending is running.",
+    "pushState": {
+      "unsupported": "This device does not know push notifications. The inbox still holds everything.",
+      "notConfigured": "Push is not set up in this installation yet. The inbox holds everything.",
+      "denied": "Push is blocked for this app. You can change that in the system settings – the inbox still holds everything.",
+      "ready": "Ready."
     }
   },
   "voice": {

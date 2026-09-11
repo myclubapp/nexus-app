@@ -18,6 +18,10 @@ import {
   usePushDevices,
   useSaveNotificationSettings,
 } from "../hooks/useNotificationSettings";
+import {
+  readPushReadiness,
+  useRegisterPush,
+} from "../hooks/usePushRegistration";
 import { useToast } from "../hooks/useToast";
 import { formatDate } from "../lib/format";
 import {
@@ -48,6 +52,10 @@ export function NotificationsPage() {
   const save = useSaveNotificationSettings();
   const devices = usePushDevices();
   const forget = useForgetDevice();
+  const registerPush = useRegisterPush();
+  // A1/A2: Wie weit dieses Gerät überhaupt kann. Einmal beim Aufbau gelesen –
+  // die Antwort des Browsers ändert sich nicht, während die Seite offen ist.
+  const readiness = readPushReadiness();
 
   // Der Entwurf entsteht **während des Renderns** aus dem Serverstand, solange
   // niemand etwas angefasst hat. Ein Effekt, der den Stand in den Zustand
@@ -200,11 +208,42 @@ export function NotificationsPage() {
             </IonButton>
           </div>
 
-          {/* A4: die registrierten Geräte. */}
+          {/* A1: das Gerät anmelden. Bis heute konnte die App Geräte
+              auflisten und abmelden – anmelden konnte sie keines, und die
+              Liste blieb deshalb immer leer. */}
           <ListSection
             title={t("notifications.devices")}
             footnote={t("notifications.devicesHint")}
           >
+            {readiness !== "ready" ? (
+              <IonItem lines="none">
+                <IonLabel className="ion-text-wrap">
+                  {/* A2 und die drei anderen Gründe. Kein Fehler, sondern eine
+                      Auskunft: Die Inbox enthält weiterhin alles (BR-117). */}
+                  <p>{t(`notifications.pushState.${readiness}`)}</p>
+                </IonLabel>
+              </IonItem>
+            ) : (
+              <div className="app-actions">
+                <IonButton
+                  expand="block"
+                  fill="outline"
+                  disabled={registerPush.isPending}
+                  onClick={() =>
+                    registerPush.mutate(undefined, {
+                      onSuccess: (outcome) =>
+                        outcome === "registered"
+                          ? toast.success(t("notifications.deviceRegistered"))
+                          : toast.failure(t("notifications.pushState.denied")),
+                      onError: (cause) => toast.failure(cause.message),
+                    })
+                  }
+                >
+                  {t("notifications.registerDevice")}
+                </IonButton>
+              </div>
+            )}
+
             {(devices.data ?? []).length === 0 ? (
               <IonItem>
                 <IonNote>{t("notifications.noDevices")}</IonNote>

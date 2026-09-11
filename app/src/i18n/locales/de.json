@@ -1176,6 +1176,14 @@
         "title": "Anschlüsse",
         "body": "Technische Meldungen, etwa wenn die Verbandsverbindung stockt."
       }
+    },
+    "registerDevice": "Dieses Gerät anmelden",
+    "deviceRegistered": "Angemeldet. Push erreicht dich, sobald der Versand läuft.",
+    "pushState": {
+      "unsupported": "Dieses Gerät kennt keine Push-Nachrichten. Die Inbox enthält trotzdem alles.",
+      "notConfigured": "Push ist in dieser Installation noch nicht eingerichtet. Die Inbox enthält alles.",
+      "denied": "Push ist für diese App gesperrt. Du kannst das in den Systemeinstellungen ändern – die Inbox enthält weiterhin alles.",
+      "ready": "Bereit."
     }
   },
   "voice": {

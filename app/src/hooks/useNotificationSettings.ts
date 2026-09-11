@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase, isConfigured } from '../lib/supabase';
 import { useAuth } from './useAuth';
+import type { PushPlatform } from '../lib/push';
 import {
   EMPTY_SETTINGS,
   type NotificationSettings,
@@ -68,7 +69,7 @@ export function useSaveNotificationSettings() {
 
 export interface PushDevice {
   id: string;
-  platform: string;
+  platform: PushPlatform;
   createdAt: string;
 }
 
@@ -88,7 +89,7 @@ export function usePushDevices() {
       if (error) throw new Error(error.message);
       return (data ?? []).map((row) => ({
         id: row.id,
-        platform: row.platform,
+        platform: row.platform as PushPlatform,
         createdAt: row.created_at,
       }));
     },

@@ -39,7 +39,7 @@ auch wenn der Versand selbst noch fehlt.
 
 | ID     | Titel                  | Status vorher | Ziel        | Notizen                                                       |
 | ------ | ---------------------- | ------------- | ----------- | ------------------------------------------------------------- |
-| FR-079 | Push-Benachrichtigung  | Open          | **Open**    | Bleibt offen. Der Transport verlangt APNs-Schlüssel, einen ntfy-Dienst und VAPID – nichts davon liegt im Repository |
+| FR-079 | Push-Benachrichtigung  | Open          | **Partial** | Die **Anmeldung** des Geräts steht seit dem Nachtrag vom 2026-09-11 (Web Push/VAPID). Der **Versand** verlangt APNs-Schlüssel, einen ntfy-Dienst und den privaten VAPID-Schlüssel – nichts davon liegt im Repository |
 | FR-080 | Granulare Einstellungen | Open         | Implemented | Matrix aus Kategorie und Kanal, wirksam ab der nächsten Zustellung |
 | FR-081 | Stille Zeiten          | Open          | Implemented | Tägliches Fenster; die Inbox füllt sich weiter                 |
 
@@ -101,6 +101,28 @@ Es gibt weder Einstellungen noch eine Geräteliste noch stille Zeiten.
 - [x] 8. Vitest
 - [x] 9. Manueller Testplan `docs/test-plans/uc-028-benachrichtigungen.md`
 - [x] 10. Statusabgleich, inklusive `entity_model.md`
+
+### Nachtrag vom 2026-09-11: das Gerät anmelden (A1, A2)
+
+Ein Befund derselben Klasse wie bei UC-009 und UC-011: `usePushDevices()`
+listete registrierte Geräte, `useForgetDevice()` meldete sie ab – **registrieren
+konnte die App keines**. Die Liste war deshalb immer leer, und A1 Schritt 2
+(«registriert das System das Gerät für den zur Plattform passenden Push-Kanal»)
+fand nirgends statt.
+
+- [x] 11. `lib/push.ts`: Bereitschaft, VAPID-Schlüssel, Anmeldung als Kennung
+- [x] 12. `hooks/usePushRegistration.ts`: Erlaubnis holen, abonnieren, speichern
+- [x] 13. `NotificationsPage`: der Knopf – und die vier Gründe, aus denen es
+      nicht geht, als **Auskunft** statt als Fehlermeldung (A2)
+- [x] 14. `VITE_VAPID_PUBLIC_KEY` in `.env.example`; ohne ihn sagt die Ansicht,
+      dass Push in dieser Installation nicht eingerichtet ist
+- [x] 15. Vier Sprachen und Vitest (9 Tests)
+
+**FR-079 bleibt trotzdem nicht `Implemented`, sondern `Partial`:** Der
+**Versand** fehlt weiterhin. Was jetzt steht, ist die Hälfte, ohne die er
+nichts ausrichten könnte – eine Anmeldung, die er abholen kann. Der private
+VAPID-Schlüssel gehört dem Versanddienst und kommt in dieser App nirgends vor
+(CLAUDE.md: kein Google, also Web Push, APNs und ntfy).
 
 ---
 

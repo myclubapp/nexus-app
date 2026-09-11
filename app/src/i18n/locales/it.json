@@ -1176,6 +1176,14 @@
         "title": "Collegamenti",
         "body": "Messaggi tecnici, per esempio quando il collegamento con la federazione si inceppa."
       }
+    },
+    "registerDevice": "Registra questo dispositivo",
+    "deviceRegistered": "Registrato. I push ti raggiungeranno appena l’invio sarà attivo.",
+    "pushState": {
+      "unsupported": "Questo dispositivo non conosce le notifiche push. La posta contiene comunque tutto.",
+      "notConfigured": "Il push non è ancora configurato in questa installazione. La posta contiene tutto.",
+      "denied": "Il push è bloccato per questa app. Puoi cambiarlo nelle impostazioni di sistema – la posta contiene sempre tutto.",
+      "ready": "Pronto."
     }
   },
   "voice": {

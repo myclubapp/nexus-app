@@ -1176,6 +1176,14 @@
         "title": "Raccordements",
         "body": "Messages techniques, par exemple lorsque la liaison avec la fédération faiblit."
       }
+    },
+    "registerDevice": "Enregistrer cet appareil",
+    "deviceRegistered": "Enregistré. Les push t’atteindront dès que l’envoi fonctionnera.",
+    "pushState": {
+      "unsupported": "Cet appareil ne connaît pas les notifications push. La boîte contient tout de même tout.",
+      "notConfigured": "Le push n’est pas encore configuré dans cette installation. La boîte contient tout.",
+      "denied": "Le push est bloqué pour cette app. Tu peux le changer dans les réglages du système – la boîte contient toujours tout.",
+      "ready": "Prêt."
     }
   },
   "voice": {

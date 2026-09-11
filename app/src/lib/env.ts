@@ -9,6 +9,14 @@ type AppEnv = {
   appScheme: string;
   /** Web-Adresse für den Rücksprung des Anmeldelinks im Browser und in der PWA. */
   webRedirectUrl: string;
+  /**
+   * Öffentlicher VAPID-Schlüssel für Web Push (UC-028, A1).
+   *
+   * Leer heisst: Das Gerät lässt sich nicht anmelden, und die Ansicht sagt das.
+   * Der **private** Teil gehört dem Versanddienst und kommt in dieser App
+   * nirgends vor.
+   */
+  vapidPublicKey: string;
 };
 
 function required(name: string, value: string | undefined): string {
@@ -33,6 +41,7 @@ export const env: AppEnv = {
   webRedirectUrl:
     import.meta.env.VITE_WEB_REDIRECT_URL ??
     (typeof window !== 'undefined' ? window.location.origin : ''),
+  vapidPublicKey: import.meta.env.VITE_VAPID_PUBLIC_KEY ?? '',
 };
 
 export const isConfigured = Boolean(env.supabaseUrl && env.supabaseAnonKey);
