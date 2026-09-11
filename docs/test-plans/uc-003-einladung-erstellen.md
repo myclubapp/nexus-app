@@ -27,7 +27,7 @@
 | ---- | ------ | --------------- | --------- | ----- |
 | 1 | Tab «Profil» öffnen | Eintrag «Einladungen» ist sichtbar | | |
 | 2 | «Einladungen» antippen | Die Seite öffnet sich; ohne Einladungen steht dort ein erklärender Hinweis | | |
-| 3 | Das Pluszeichen oben rechts antippen | Das Erfassungsblatt öffnet sich | | |
+| 3 | Das Pluszeichen unten rechts antippen | Das Erfassungsblatt öffnet sich | | |
 | 4 | Vorbelegung ablesen | Geltungsbereich «Ganzer Verein», Rolle «Mitglied», Ablauf **in 14 Tagen**, Höchstzahl leer (unbegrenzt) | | |
 | 5 | «Erstellen» antippen | Blatt schliesst sich, das Teilen-Blatt öffnet sich, Toast **oben** «Einladung erstellt» | | |
 | 6 | Teilen-Blatt ansehen | QR-Code und der vollständige Link, darunter ein Knopf | | |
@@ -185,7 +185,7 @@
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
 | 1 | Liste öffnen und scrollen | Der grosse Titel klappt in die Kopfzeile zusammen | | |
-| 2 | Das Pluszeichen ansehen | Trefferfläche mindestens 44 × 44 px, mit einer Hand erreichbar | | |
+| 2 | Das Pluszeichen unten rechts ansehen | Trefferfläche mindestens 44 × 44 px, in Daumenreichweite | | |
 | 3 | Auf dem Desktop mit der Maus wischen | Die Aktion «Zurückziehen» ist auch dort erreichbar | | |
 | 4 | Zeile mit langem Teamnamen ansehen | Text bricht um, wird nicht abgeschnitten | | |
 | 5 | Erfassungsblatt bei eingeblendeter Tastatur | Alle Felder bleiben erreichbar | | |

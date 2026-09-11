@@ -53,6 +53,7 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-018 | Eigenes Profil pflegen    | Als Mitglied möchte ich Anzeigename, Avatar und Kontaktdaten selbst pflegen, damit meine Angaben aktuell bleiben.                                              | High     | Implemented |
 | FR-019 | Datenschutz-Optionen      | Als Mitglied möchte ich einzeln festlegen, ob E-Mail und Telefonnummer für andere Mitglieder sichtbar sind, damit ich meine Daten kontrolliere.                | High     | Implemented        |
 | FR-020 | Leaderboard-Opt-in        | Als Mitglied möchte ich entscheiden, ob ich in Ranglisten erscheine, damit die Teilnahme freiwillig bleibt.                                                    | High     | Implemented        |
+| FR-148 | Verwaltung als eigene Gruppe | Als Vorstand möchte ich die Verwaltungswege auf der Profilseite in einem eigenen, mit «Verwaltung» überschriebenen Abschnitt finden, damit ich sie von meinen persönlichen Einstellungen unterscheide.        | Medium   | Implemented |
 
 ### 1.3 Agenda
 
@@ -136,6 +137,7 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-081 | Stille Zeiten             | Als Mitglied möchte ich Zeitfenster definieren, in denen mich kein Push erreicht, damit meine Ruhezeiten respektiert werden.                           | Low      | Implemented |
 | FR-146 | Website-News übernehmen   | Als Vorstand möchte ich beim Aufsetzen des Vereins die bestehenden Beiträge unserer Website übernehmen, damit der Feed ab dem ersten Tag echte Meldungen zeigt. | High | In Progress |
 | FR-147 | Website-News aktuell halten | Als Vorstand möchte ich, dass neue Beiträge unserer Website von selbst im Feed erscheinen, damit ich nichts zweimal schreiben muss. | High | In Progress |
+| FR-149 | Umfang des Website-Imports einstellen | Als Vorstand möchte ich vor dem Verbinden prüfen lassen, ob unsere Website eine WordPress-Schnittstelle hat, und einstellen, wie viele Beiträge und welche Kategorien übernommen werden, damit im Feed steht, was wir wollen, und nicht, was zufällig kommt. | Medium | In Progress |
 | FR-082 | Vereins-Puls komponieren  | Als System möchte ich wöchentlich einen Entwurf mit «Was passiert · Woran arbeiten wir · Wo kannst du dabei sein» erzeugen, damit Verbindung Routine wird (K2). | High | Implemented |
 | FR-083 | Vereins-Puls freigeben    | Als Vorstand möchte ich den Puls-Entwurf in zwei Minuten prüfen und freigeben, damit der Versand wenig Zeit kostet.                                    | High     | Implemented |
 | FR-084 | Symmetrie-Hinweis         | Als Vorstand möchte ich gewarnt werden, wenn seit Wochen nur Aufrufe und keine Verbindungs-Nachrichten ausgingen, damit wir das Muster korrigieren (K1). | High   | Implemented |
@@ -201,23 +203,27 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-119 | Punkte bei pünktlicher Zahlung | Als System möchte ich bei einer fristgerecht bezahlten Rechnung Punkte der Säule 6 buchen, damit Verlässlichkeit gewürdigt wird.                              | Medium   | Implemented |
 | FR-120 | Verband verbinden           | Als Vorstand möchte ich unseren Verband über einen API-Key verbinden, damit Spielpläne und Resultate automatisch erscheinen.                                     | Low      | Open   |
 | FR-121 | API-Key validieren          | Als System möchte ich den eingegebenen API-Key mit einem Testaufruf prüfen, bevor die Verbindung aktiv wird, damit Fehler sofort sichtbar sind.                  | Low      | Open   |
+| FR-150 | Verbands-Teams übernehmen   | Als Vorstand möchte ich die Teams unseres Vereins aus dem verbundenen Verband übernehmen, damit ich sie nicht von Hand erfasse.                                  | Low      | Open   |
+| FR-151 | Team mit Verbands-Team verknüpfen | Als Vorstand möchte ich beim Anlegen oder Bearbeiten eines Teams das passende Verbands-Team aus einer Auswahlliste wählen, damit unser bestehendes Team dessen Spielplan erhält. | Low      | Open   |
+| FR-152 | Namenshoheit am Teamnamen   | Als Vorstand möchte ich, dass der Verband nur den Grundnamen eines verknüpften Teams pflegt und unser Zusatz erhalten bleibt, damit der Abgleich unsere Bezeichnung nicht überschreibt. | Low      | Open   |
+| FR-153 | Verknüpfung lösen           | Als Vorstand möchte ich die Verknüpfung eines Teams zum Verband lösen, damit das Team wieder allein von uns gepflegt wird und bereits importierte Termine bestehen bleiben.          | Low      | Open   |
 
 ### 1.12 Erstbefüllung, leere Zustände & Einführung
 
 | ID     | Titel                          | User Story                                                                                                                                                          | Priority | Status |
 | ------ | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------ |
-| FR-134 | Beispielinhalte bei Gründung   | Als Vorstand möchte ich, dass mein neu gegründeter Verein mit Beispielinhalten startet, damit ich die App nicht leer vor mir habe und sofort sehe, wie sie gemeint ist. | High     | Implemented   |
-| FR-135 | Beispielinhalte sind erkennbar | Als Vorstand möchte ich Beispielinhalte auf jedem Bildschirm eindeutig als solche erkennen, damit ich sie nie mit echten Vereinsdaten verwechsle.                      | High     | Implemented   |
-| FR-136 | Beispielinhalte entfernen      | Als Vorstand möchte ich alle Beispielinhalte mit einer Aktion entfernen, damit der Verein sauber startet, sobald echte Daten vorliegen.                                | High     | Implemented   |
-| FR-137 | Beispielinhalte verfallen      | Als System möchte ich Beispielinhalte selbsttätig entfernen, sobald der Verein eigene Inhalte derselben Art hat oder eine Frist abgelaufen ist, damit niemand aufräumen muss. | High | Implemented   |
-| FR-138 | Beispielinhalte ohne Punkte    | Als Mitglied möchte ich, dass Beispielinhalte keine Punkte erzeugen, damit der Ledger ausschliesslich echte Beiträge enthält.                                          | High     | Implemented   |
-| FR-139 | Beispiel-Aufgaben              | Als Vorstand möchte ich im Marktplatz Beispielaufgaben passend zu unserer Vereinsart vorfinden, damit ich sehe, wie eine gute Ausschreibung aussieht.                  | High     | Implemented   |
-| FR-140 | Beispiel-Helfer-Event          | Als Vorstand möchte ich ein Beispiel-Helfer-Event mit Schichten vorfinden, damit ich das Schichtmodell verstehe, bevor ich unseren ersten Anlass ausschreibe.          | Medium   | Implemented   |
-| FR-141 | Beispiel-Termine               | Als Vorstand möchte ich Beispieltermine in der Agenda vorfinden, damit Agenda, Zu-/Absage und Check-in nicht ohne Inhalt dastehen.                                     | Medium   | Implemented   |
-| FR-142 | Einführungs-News               | Als Mitglied möchte ich beim ersten Öffnen erklärende Beiträge darüber vorfinden, wie myclub nexus funktioniert, damit ich die App ohne Schulung verstehe.             | High     | Implemented   |
-| FR-143 | Beiträge zur Orientierung      | Als Mitglied möchte ich lesen, was Punkte bedeuten, wo ich beitragen kann und was mein Verein über mich sieht, damit ich das System einordnen kann.                    | High     | Implemented   |
-| FR-144 | Leere Zustände mit Angebot     | Als Mitglied möchte ich auf jedem Bildschirm ohne Inhalte eine Erklärung und mindestens ein Handlungsangebot sehen, damit ich nie vor einer leeren Fläche stehe.       | High     | Implemented   |
-| FR-145 | Demo-Verein zum Ausprobieren   | Als Interessent möchte ich einen vollständig befüllten Demo-Verein betreten, damit ich die App beurteilen kann, ohne einen echten Verein anzulegen.                    | Medium   | Partial   |
+| FR-134 | Beispielinhalte bei Gründung   | Als Vorstand möchte ich, dass mein neu gegründeter Verein mit Beispielinhalten startet, damit ich die App nicht leer vor mir habe und sofort sehe, wie sie gemeint ist. | High     | Open   |
+| FR-135 | Beispielinhalte sind erkennbar | Als Vorstand möchte ich Beispielinhalte auf jedem Bildschirm eindeutig als solche erkennen, damit ich sie nie mit echten Vereinsdaten verwechsle.                      | High     | Open   |
+| FR-136 | Beispielinhalte entfernen      | Als Vorstand möchte ich alle Beispielinhalte mit einer Aktion entfernen, damit der Verein sauber startet, sobald echte Daten vorliegen.                                | High     | Open   |
+| FR-137 | Beispielinhalte verfallen      | Als System möchte ich Beispielinhalte selbsttätig entfernen, sobald der Verein eigene Inhalte derselben Art hat oder eine Frist abgelaufen ist, damit niemand aufräumen muss. | High | Open   |
+| FR-138 | Beispielinhalte ohne Punkte    | Als Mitglied möchte ich, dass Beispielinhalte keine Punkte erzeugen, damit der Ledger ausschliesslich echte Beiträge enthält.                                          | High     | Open   |
+| FR-139 | Beispiel-Aufgaben              | Als Vorstand möchte ich im Marktplatz Beispielaufgaben passend zu unserer Vereinsart vorfinden, damit ich sehe, wie eine gute Ausschreibung aussieht.                  | High     | Open   |
+| FR-140 | Beispiel-Helfer-Event          | Als Vorstand möchte ich ein Beispiel-Helfer-Event mit Schichten vorfinden, damit ich das Schichtmodell verstehe, bevor ich unseren ersten Anlass ausschreibe.          | Medium   | Open   |
+| FR-141 | Beispiel-Termine               | Als Vorstand möchte ich Beispieltermine in der Agenda vorfinden, damit Agenda, Zu-/Absage und Check-in nicht ohne Inhalt dastehen.                                     | Medium   | Open   |
+| FR-142 | Einführungs-News               | Als Mitglied möchte ich beim ersten Öffnen erklärende Beiträge darüber vorfinden, wie myclub nexus funktioniert, damit ich die App ohne Schulung verstehe.             | High     | Open   |
+| FR-143 | Beiträge zur Orientierung      | Als Mitglied möchte ich lesen, was Punkte bedeuten, wo ich beitragen kann und was mein Verein über mich sieht, damit ich das System einordnen kann.                    | High     | Open   |
+| FR-144 | Leere Zustände mit Angebot     | Als Mitglied möchte ich auf jedem Bildschirm ohne Inhalte eine Erklärung und mindestens ein Handlungsangebot sehen, damit ich nie vor einer leeren Fläche stehe.       | High     | Open   |
+| FR-145 | Demo-Verein zum Ausprobieren   | Als Interessent möchte ich einen vollständig befüllten Demo-Verein betreten, damit ich die App beurteilen kann, ohne einen echten Verein anzulegen.                    | Medium   | Open   |
 
 ### 1.13 Bewusst verschoben (Post-MVP)
 

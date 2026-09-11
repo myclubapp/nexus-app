@@ -2,9 +2,7 @@ import { useMemo, useState } from 'react';
 import {
   IonBadge,
   IonButton,
-  IonButtons,
   IonCheckbox,
-  IonIcon,
   IonInput,
   IonItem,
   IonLabel,
@@ -13,7 +11,7 @@ import {
   IonSelect,
   IonSelectOption,
 } from '@ionic/react';
-import { addOutline, sparklesOutline } from 'ionicons/icons';
+import { peopleOutline, sparklesOutline } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { useClub } from '../../hooks/useClub';
 import { useTeams } from '../../hooks/useInvites';
@@ -117,28 +115,22 @@ export function MemberPage() {
     <AppPage
       title={t('members.title')}
       backHref="/tabs/profile"
-      toolbarEnd={
-        <IonButtons slot="end">
-          {/* A3: für mehrere Mitglieder auf einmal. */}
-          {isAdmin && (
-            <IonButton onClick={() => setBookFor([])}>
-              <IonIcon
-                slot="icon-only"
-                icon={sparklesOutline}
-                aria-label={t('bookPoints.title')}
-              />
-            </IonButton>
-          )}
-          <IonButton
-            onClick={() => {
-              setTeamName('');
-              setTeamFormOpen(true);
-            }}
-          >
-            <IonIcon slot="icon-only" icon={addOutline} aria-label={t('members.addTeam')} />
-          </IonButton>
-        </IonButtons>
-      }
+      createActions={[
+        {
+          icon: peopleOutline,
+          label: t('members.addTeam'),
+          onClick: () => {
+            setTeamName('');
+            setTeamFormOpen(true);
+          },
+        },
+        /* A3: für mehrere Mitglieder auf einmal. */
+        {
+          icon: sparklesOutline,
+          label: t('bookPoints.title'),
+          onClick: () => setBookFor([]),
+        },
+      ]}
       subToolbar={
         <IonSearchbar
           value={filter.search}
@@ -171,6 +163,8 @@ export function MemberPage() {
                     teamId: (e.detail.value as string | null) ?? null,
                   }))
                 }
+                cancelText={t('common.cancel')}
+                okText={t('common.ok')}
               >
                 <IonSelectOption value={null}>{t('members.filterAll')}</IonSelectOption>
                 {(teams.data ?? []).map((team) => (
@@ -191,6 +185,8 @@ export function MemberPage() {
                     role: (e.detail.value as MemberRole | null) ?? null,
                   }))
                 }
+                cancelText={t('common.cancel')}
+                okText={t('common.ok')}
               >
                 <IonSelectOption value={null}>{t('members.filterAll')}</IonSelectOption>
                 {ASSIGNABLE_ROLES.map((entry) => (
@@ -211,6 +207,8 @@ export function MemberPage() {
                     status: (e.detail.value as MemberStatus | null) ?? null,
                   }))
                 }
+                cancelText={t('common.cancel')}
+                okText={t('common.ok')}
               >
                 <IonSelectOption value={null}>{t('members.filterAll')}</IonSelectOption>
                 {MEMBER_STATUSES.map((entry) => (
@@ -305,6 +303,8 @@ export function MemberPage() {
                   label={t('invite.roleLabel')}
                   value={role}
                   onIonChange={(e) => setRole(e.detail.value as MemberRole)}
+                  cancelText={t('common.cancel')}
+                  okText={t('common.ok')}
                 >
                   {ASSIGNABLE_ROLES.map((entry) => (
                     <IonSelectOption key={entry} value={entry}>
@@ -319,6 +319,8 @@ export function MemberPage() {
                   label={t('members.status')}
                   value={status}
                   onIonChange={(e) => setStatus(e.detail.value as MemberStatus)}
+                  cancelText={t('common.cancel')}
+                  okText={t('common.ok')}
                 >
                   {MEMBER_STATUSES.map((entry) => (
                     <IonSelectOption key={entry} value={entry}>

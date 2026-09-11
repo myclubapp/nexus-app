@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
 import { FormModal } from '../components/FormModal';
-import { NoteAnswer } from '../components/NoteAnswerModal';
+import { NoteAnswerModal } from '../components/NoteAnswerModal';
 import { EmptyState, ErrorState, InlineError } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
 import { useClub } from '../hooks/useClub';
@@ -441,16 +441,14 @@ export function VoicePage() {
         ))}
       </FormModal>
 
-      {handled && (
-        <NoteAnswer
-          note={handled}
-          onDismiss={() => setHandledId(null)}
-          onDone={(outcome) => {
-            setHandledId(null);
-            toast.success(t(`voice.done.${outcome}`));
-          }}
-        />
-      )}
+      <NoteAnswerModal
+        note={handled}
+        onDismiss={() => setHandledId(null)}
+        onDone={(outcome) => {
+          setHandledId(null);
+          toast.success(t(`voice.done.${outcome}`));
+        }}
+      />
     </AppPage>
   );
 }

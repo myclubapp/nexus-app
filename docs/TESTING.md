@@ -70,6 +70,8 @@ kennt. Sie sind ausgemessen, nicht vermutet:
    | `ion-select`        | `label`      | `undefined`                         |
    | `ion-input`         | `value`      | `undefined`                         |
    | `ion-menu-toggle`   | `autoHide`   | **`true`, obwohl `false` übergeben** |
+   | `ion-fab`           | `vertical`   | `undefined`                         |
+   | `ion-fab-list`      | `side`       | **`bottom`, obwohl `top` übergeben** |
 
    Die letzte Zeile ist die gefährliche: Kommt eine Eigenschaft nicht an, liest
    `ionProp()` **Stencils Vorgabe** – und die sieht aus wie ein echter Wert.
@@ -80,6 +82,16 @@ kennt. Sie sind ausgemessen, nicht vermutet:
    nachmessen, ob sie ankommt. Kommt sie nicht an, wird stattdessen die
    **Quelle** geprüft – so wie `AppMenu.test.tsx` es für `autoHide={false}`
    und für die gemeinsame Kennung von Menü und `IonSplitPane` tut.
+
+   Die beiden `ion-fab`-Zeilen haben einen benennbaren Grund: Ionic 9 baut
+   einen Teil seiner React-Hüllen über `@lit/react`, und dessen Node-Variante
+   – die Vite unter Vitest auflöst – setzt die Eigenschaften gar nicht erst
+   (`NODE_MODE`, kein `useLayoutEffect`). Betroffen ist alles aus
+   `createComponent`, nicht die handgeschriebenen Hüllen: an `ion-fab-button`
+   (`createRoutingComponent`) kommen `color` und `aria-label` an, an `ion-fab`
+   und `ion-fab-list` kommt nichts an. Im Browser läuft der Effekt und die
+   Eigenschaften sitzen – ein Testartefakt, kein Fehler der App.
+   `CreateFab.test.tsx` prüft Lage und Ausrichtung deshalb an der Quelle.
 
 2. **Stencil rendert nicht, also wirkt nichts.** Ein `disabled` Knopf ruft
    seinen `onClick` trotzdem auf, ein `IonModal` mit `isOpen={false}` hat

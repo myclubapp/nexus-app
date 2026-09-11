@@ -4,11 +4,13 @@ import {
   IonItem,
   IonLabel,
   IonNote,
+  IonSpinner,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { useClub } from '../hooks/useClub';
 import { useSetSignalStatus } from '../hooks/useHealth';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { formatDate } from '../lib/format';
 import {
@@ -24,6 +26,8 @@ interface HealthSignalProps {
   signal: HealthSignal;
   onDone: (outcome: string) => void;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }
 
 /**
@@ -37,7 +41,7 @@ interface HealthSignalProps {
  * Was hier **nicht** steht: eine Historie, eine Anwesenheitsliste, eine Zahl
  * über die Person. Der Hinweis ist ein Anlass für ein Gespräch, keine Akte.
  */
-export function HealthSignalDetail({ signal, onDone, onDismiss }: HealthSignalProps) {
+export function HealthSignalDetail({ signal, onDone, onDismiss, isOpen = true }: HealthSignalProps) {
   const { t } = useTranslation();
   const { activeMembership } = useClub();
   const setStatus = useSetSignalStatus();
@@ -49,15 +53,13 @@ export function HealthSignalDetail({ signal, onDone, onDismiss }: HealthSignalPr
   ).filter((prompt) => prompt.length > 0);
 
   return (
+    // Ein Blatt, das anzeigt: «Schliessen» steht einmal in der Kopfzeile; was
+    // etwas tut, steht unten als Knopf, der es sagt (guidelines.md §2).
     <FormModal
-      isOpen
+      isOpen={isOpen}
       title={isClub ? t('health.club') : (signal.memberName ?? t('health.member'))}
-      submitLabel={t('common.close')}
-      canSubmit={!setStatus.isPending}
-      isSubmitting={setStatus.isPending}
       error={setStatus.error ? (setStatus.error as Error).message : null}
       onDismiss={onDismiss}
-      onSubmit={onDismiss}
     >
       {/* Schritt 3 und 5: der Anlass, fürsorglich formuliert. */}
       <ListSection>
@@ -112,7 +114,11 @@ export function HealthSignalDetail({ signal, onDone, onDismiss }: HealthSignalPr
               )
             }
           >
-            {t('health.markInContact')}
+            {setStatus.isPending && setStatus.variables?.status === 'in_contact' ? (
+              <IonSpinner name="crescent" />
+            ) : (
+              t('health.markInContact')
+            )}
           </IonButton>
         )}
 
@@ -129,7 +135,11 @@ export function HealthSignalDetail({ signal, onDone, onDismiss }: HealthSignalPr
             )
           }
         >
-          {t('health.resolve')}
+          {setStatus.isPending && setStatus.variables?.status === 'resolved' ? (
+            <IonSpinner name="crescent" />
+          ) : (
+            t('health.resolve')
+          )}
         </IonButton>
         <IonNote>{t('health.resolveHint')}</IonNote>
       </div>
@@ -137,11 +147,12 @@ export function HealthSignalDetail({ signal, onDone, onDismiss }: HealthSignalPr
   );
 }
 
-/** Blatt-Hülle; der Inhalt entsteht erst beim Öffnen. */
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
 export function HealthSignalModal({
   signal,
   ...props
 }: Omit<HealthSignalProps, 'signal'> & { signal: HealthSignal | null }) {
-  if (!signal) return null;
-  return <HealthSignalDetail signal={signal} {...props} />;
+  const sheet = useSheetProps(signal ? { signal, ...props } : null);
+  return sheet && <HealthSignalDetail {...sheet} />;
 }

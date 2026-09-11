@@ -17,7 +17,7 @@ import { authErrorFromUrl } from '../lib/authError';
 interface AuthContextValue {
   session: Session | null;
   user: User | null;
-  /** True until the persisted session has been read once. */
+  /** Wahr, bis die gespeicherte Sitzung einmal gelesen wurde. */
   initialising: boolean;
   /**
    * Meldung des zuletzt abgelehnten Anmeldelinks (UC-005 A1). Sie entsteht
@@ -36,9 +36,9 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 /**
- * Turns the magic-link deep link into a session. The link arrives as
- * `<scheme>://auth/callback?code=…` on device and as a normal URL on the web;
- * both carry a PKCE code that has to be exchanged exactly once.
+ * Macht aus dem Anmeldelink eine Sitzung. Er kommt auf dem Gerät als
+ * `<scheme>://auth/callback?code=…` und im Browser als gewöhnliche URL;
+ * beide tragen einen PKCE-Code, der genau einmal getauscht werden darf.
  *
  * Gibt die Fehlermeldung zurück, statt sie zu verschlucken: Ein abgelaufener
  * Link führte sonst wortlos zurück auf den Anmeldebildschirm (A1).
@@ -104,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  // Deep link handling for the native apps.
+  // Deep Links der nativen Apps.
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
 

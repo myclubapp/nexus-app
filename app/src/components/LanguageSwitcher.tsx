@@ -12,6 +12,8 @@ export function LanguageSwitcher() {
       labelPlacement="stacked"
       value={current}
       onIonChange={(e) => void i18n.changeLanguage(e.detail.value as string)}
+      cancelText={t('common.cancel')}
+      okText={t('common.ok')}
     >
       {SUPPORTED_LANGUAGES.map((code) => (
         <IonSelectOption key={code} value={code}>

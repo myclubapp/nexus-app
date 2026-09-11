@@ -60,7 +60,7 @@ export function useEventQrToken(eventId: string | null) {
   const { isTrainer } = useClub();
 
   return useQuery({
-    queryKey: ['eventQrToken', eventId],
+    queryKey: ['event-qr-token', eventId],
     enabled: Boolean(eventId) && isTrainer && isConfigured,
     queryFn: async (): Promise<string> => {
       const { data, error } = await supabase
@@ -85,7 +85,7 @@ export function useEventRoster(eventId: string | null) {
   const { isTrainer } = useClub();
 
   return useQuery({
-    queryKey: ['eventRoster', eventId],
+    queryKey: ['event-roster', eventId],
     enabled: Boolean(eventId) && isTrainer && isConfigured,
     queryFn: async (): Promise<EventRosterEntry[]> => {
       const { data, error } = await supabase.rpc('event_roster', {
@@ -125,7 +125,7 @@ export function useMarkAttendance(eventId: string | null) {
       return data ?? 0;
     },
     onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: ['eventRoster', eventId] });
+      void queryClient.invalidateQueries({ queryKey: ['event-roster', eventId] });
       void queryClient.invalidateQueries({ queryKey: ['agenda', activeClub?.id] });
     },
   });

@@ -24,7 +24,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Tab «Marktplatz» öffnen | Grosser Titel, der «+»-Knopf oben rechts ist da (Schritt 1) | | |
+| 1 | Tab «Marktplatz» öffnen | Grosser Titel, der «+»-Knopf unten rechts ist da (Schritt 1) | | |
 | 2 | «+» antippen | Das Blatt öffnet sich als Karte über der Seite, nicht als Vollbild | | |
 | 3 | Die Felder ansehen | Titel, Beschreibung, Kategorie, Warum, Punkte, Frist, Anzahl Übernehmende, Geltungsbereich, Wiederholung (Schritt 2) | | |
 | 4 | Punktwert prüfen, **ohne** ihn anzufassen | Er entspricht der Vereinsregel `task_done` | | |
@@ -146,7 +146,7 @@ lässt er sich mit `select public.expire_tasks();` auslösen.
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **M1** den Marktplatz öffnen | **Kein** «+»-Knopf | | |
+| 1 | Als **M1** den Marktplatz öffnen | **Kein** «+»-Knopf unten rechts | | |
 | 2 | Als **TR** den Marktplatz öffnen | Der «+»-Knopf ist da, das Ausschreiben gelingt | | |
 | 3 | Als **M1** `create_task` direkt aufrufen (REST) | Abgewiesen: «Nur Trainer:innen und der Vorstand schreiben Aufgaben aus» | | |
 | 4 | Prüfen, ob sich einem Mitglied eine Aufgabe **zuweisen** lässt | Es gibt keinen solchen Weg – eine Aufgabe ist immer ein Angebot | | |

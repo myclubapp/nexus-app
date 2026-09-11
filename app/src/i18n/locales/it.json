@@ -16,9 +16,14 @@
     "points_other": "{{count}} punti",
     "notConfigured": "L'app non è ancora collegata a un progetto Supabase. Inserisci i valori in .env.local.",
     "confirm": "Conferma",
+    "create": "Crea",
     "stepOf": "Passo {{current}} di {{total}}",
     "saveFailed": "Non ha funzionato. Riprova.",
-    "saved": "Salvato"
+    "saved": "Salvato",
+    "discardChanges": "Ignora modifiche",
+    "keepEditing": "Continua a modificare",
+    "details": "Dettagli",
+    "more": "Altro"
   },
   "auth": {
     "title": "Benvenuto",
@@ -216,6 +221,23 @@
     "tally": "{{yes}} sì · {{no}} no · {{open}} senza risposta",
     "cancelledWithReason": "Annullato: {{reason}}",
     "draft": "Bozza",
+    "statusColumn": "Stato",
+    "participantsColumn": "Partecipanti",
+    "myStatus": "Il mio stato",
+    "attendances": "Presenze e assenze",
+    "listRegistered": "Iscritti: {{count}}",
+    "listExcused": "Assenti: {{count}}",
+    "listUndecided": "Senza risposta: {{count}}",
+    "statusLabel": {
+      "open": "In sospeso – tocca per partecipare",
+      "registered": "Iscritto – tocca per disdire",
+      "present": "Presente",
+      "excused": "Assente – tocca per partecipare",
+      "absent": "Non venuto",
+      "cancelled": "Appuntamento annullato",
+      "locked": "L’appuntamento è iniziato",
+      "notAffected": "Non ti riguarda"
+    },
     "undercovered_one": "Manca ancora {{count}} conferma",
     "undercovered_other": "Mancano ancora {{count}} conferme"
   },
@@ -675,8 +697,24 @@
     "title": "Notizie dal sito web",
     "adminOnly": "Solo il comitato può collegare il sito web.",
     "url": "Indirizzo del vostro sito web",
-    "urlHint": "Se il vostro sito usa WordPress, riprendiamo gli ultimi articoli nel feed – e ogni notte quelli nuovi. Basta «societa.ch».",
+    "urlHint": "Serve un sito con WordPress – riprendiamo gli articoli tramite la sua interfaccia. La verifica vi dirà se il vostro sito ne ha una. Basta «societa.ch».",
     "willFetch": "Verrà interrogato {{url}}",
+    "check": "Verifica il sito",
+    "checkFailedHint": "O il sito non usa WordPress, oppure la sua interfaccia è bloccata. Nel dubbio chiedete a chi cura il vostro sito.",
+    "found": "Trovato",
+    "foundWordpress": "WordPress riconosciuto",
+    "foundPosts_one": "WordPress riconosciuto · {{count}} articolo pubblicato",
+    "foundPosts_other": "WordPress riconosciuto · {{count}} articoli pubblicati",
+    "foundEndpoint": "Interfaccia: {{url}}",
+    "scope": "Estensione",
+    "postLimit": "Articoli per sincronizzazione",
+    "postLimitValue_one": "{{count}} articolo",
+    "postLimitValue_other": "{{count}} articoli",
+    "categories": "Categorie",
+    "categoriesAll": "Tutte le categorie",
+    "categoriesHint": "Senza selezione vengono ripresi gli articoli di tutte le categorie. L'interfaccia non fornisce più di 100 articoli per sincronizzazione.",
+    "categoriesUnknown": "Verificate il sito: qui appariranno le sue categorie. Senza selezione vengono ripresi gli articoli di tutte le categorie.",
+    "categoryOption": "{{name}} ({{count}})",
     "connect": "Recupera gli articoli",
     "refresh": "Aggiorna ora",
     "imported_one": "{{count}} articolo ripreso",
@@ -685,11 +723,13 @@
     "lastSync_one": "{{when}} · {{count}} articolo",
     "lastSync_other": "{{when}} · {{count}} articoli",
     "neverSynced": "Nessuna sincronizzazione finora",
+    "savedScope_one": "Salvato: {{count}} articolo per sincronizzazione · {{categories}}",
+    "savedScope_other": "Salvato: {{count}} articoli per sincronizzazione · {{categories}}",
     "lastError": "Ultima sincronizzazione non riuscita",
     "disconnect": "Scollega il sito",
     "disconnectConfirm": "I nuovi articoli del sito non appariranno più nel feed. Le notizie già importate restano.",
     "disconnected": "Sito scollegato. Gli articoli ripresi restano.",
-    "scheduleHint": "La sincronizzazione avviene poi automaticamente ogni notte. Gli articoli ripresi restano nel feed anche dopo lo scollegamento."
+    "scheduleHint": "La sincronizzazione avviene poi automaticamente ogni notte. Le modifiche a estensione e categorie si salvano con «Aggiorna ora»."
   },
   "shifts": {
     "title": "Turni",
@@ -1483,6 +1523,10 @@
       "taskWhyMissing": "Il compito ha bisogno del suo perché."
     },
     "followHintAdmin": "Da una richiesta nasce al massimo un compito. «Pubblica come notizia» rende la tua risposta visibile a tutta la società."
+  },
+  "news": {
+    "share": "Condividi",
+    "linkCopied": "Link copiato"
   },
   "eventEdit": {
     "title": "Modifica appuntamento",

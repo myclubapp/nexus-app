@@ -15,6 +15,7 @@ import { usePointRules } from '../hooks/useGamification';
 import { useTeams } from '../hooks/useInvites';
 import { useCreateTask, usePublishTask } from '../hooks/useTasks';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import {
@@ -28,6 +29,8 @@ import {
 interface TaskFormProps {
   onDone: (published: boolean, muted: boolean) => void;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }
 
 const DEFAULT_RECURRENCE_DAYS = 14;
@@ -42,7 +45,7 @@ const DEFAULT_RECURRENCE_DAYS = 14;
  * Eigene Komponente, weil `IonModal` seinen Inhalt im Test nicht rendert
  * (docs/TESTING.md).
  */
-export function TaskForm({ onDone, onDismiss }: TaskFormProps) {
+export function TaskForm({ onDone, onDismiss, isOpen = true }: TaskFormProps) {
   const { t } = useTranslation();
   const teams = useTeams();
   const rules = usePointRules();
@@ -102,7 +105,7 @@ export function TaskForm({ onDone, onDismiss }: TaskFormProps) {
 
   return (
     <FormModal
-      isOpen
+      isOpen={isOpen}
       title={t('taskForm.title')}
       submitLabel={t('taskForm.publish')}
       canSubmit={publishProblems.length === 0 && !isBusy}
@@ -135,6 +138,8 @@ export function TaskForm({ onDone, onDismiss }: TaskFormProps) {
             labelPlacement="stacked"
             value={category}
             onIonChange={(e) => setCategory(e.detail.value as TaskCategory)}
+            cancelText={t('common.cancel')}
+            okText={t('common.ok')}
           >
             {TASK_CATEGORIES.map((code) => (
               <IonSelectOption key={code} value={code}>
@@ -205,6 +210,8 @@ export function TaskForm({ onDone, onDismiss }: TaskFormProps) {
             labelPlacement="stacked"
             value={teamId}
             onIonChange={(e) => setTeamId((e.detail.value as string | null) ?? null)}
+            cancelText={t('common.cancel')}
+            okText={t('common.ok')}
           >
             <IonSelectOption value={null}>{t('taskForm.wholeClub')}</IonSelectOption>
             {(teams.data ?? []).map((team) => (
@@ -265,11 +272,12 @@ export function TaskForm({ onDone, onDismiss }: TaskFormProps) {
   );
 }
 
-/** Blatt-Hülle; der Inhalt entsteht erst beim Öffnen. */
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
 export function TaskFormModal({
   isOpen,
   ...props
 }: TaskFormProps & { isOpen: boolean }) {
-  if (!isOpen) return null;
-  return <TaskForm {...props} />;
+  const sheet = useSheetProps(isOpen ? props : null);
+  return sheet && <TaskForm {...sheet} />;
 }

@@ -80,7 +80,7 @@ dass bereits erteilte Mitgliedschaften davon berührt werden.
 
 ## Implementation Guidelines
 
-- **UI-Komponenten:** `AppPage` (mit `toolbarEnd` für das Pluszeichen),
+- **UI-Komponenten:** `AppPage` (mit `createActions` für das Pluszeichen unten rechts),
   `ListSection`, `FormModal` fürs Erfassen, `IonModal` fürs Teilen-Blatt (dort
   wird nichts erfasst), `IonItemSliding` für den Widerruf, `SkeletonList`,
   `useToast()` für die Rückmeldung. Neu nur `QrCode` – es gab kein Bauteil dafür.

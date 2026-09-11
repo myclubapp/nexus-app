@@ -126,6 +126,12 @@
   --background: var(--ion-color-light, #f4f5f8);
 }
 
+/* --- Platz für den Erstellen-Fab ------------------------------------------ */
+/* 56 px Knopf, sein eigener Abstand zum Rand und eine Handbreit Luft. */
+.app-content--fab {
+  --padding-bottom: 88px;
+}
+
 /* --- Fussnote unter einem Listenabschnitt --------------------------------- */
 .app-footnote {
   display: block;
@@ -338,6 +344,86 @@
   max-width: 96px;
   margin-inline: var(--app-space-2);
   object-fit: contain;
+}
+
+/* --- Zu-/Absage-Status (Schnitt der bestehenden myclub-App) ----------------
+   Das gefüllte Ampel-Symbol am Zeilenanfang: 28 px wie das `app-status-icon`
+   der alten App, als Knopf mit voller Trefferfläche. */
+.app-status-icon {
+  font-size: 28px;
+}
+
+.app-status-icon--small {
+  font-size: 20px;
+}
+
+.app-status-button {
+  --padding-start: 0;
+  --padding-end: 0;
+  margin: 0;
+  margin-inline-end: var(--app-space-2);
+  height: 44px;
+  width: 44px;
+}
+
+/* «Mein Status» im Termin-Detail: der runde Knopf bekommt Luft nach oben und unten. */
+.app-status-row {
+  --padding-top: var(--app-space-2);
+  --padding-bottom: var(--app-space-2);
+}
+
+/* Symbol vor einer Textzeile (Kalender, Ort, Art) in der Agenda-Zeile. */
+.app-inline-icon {
+  vertical-align: -0.125em;
+  margin-inline-end: var(--app-space-1);
+}
+
+/* --- News-Karten (Schnitt der bestehenden myclub-App) ---------------------- */
+.app-news-grid {
+  padding: 0 var(--app-space-2);
+}
+
+.app-news-grid ion-col {
+  display: flex;
+}
+
+/* Im Raster füllt die Karte ihre Zelle; die Ränder trägt das Raster. */
+.app-news-grid .app-news-card {
+  width: 100%;
+  margin: var(--app-space-2);
+  display: flex;
+  flex-direction: column;
+}
+
+.app-news-card ion-img {
+  min-width: 100%;
+}
+
+/* Bildplatzhalter des Skeletts – so hoch wie ein typisches Titelbild. */
+.app-news-card__image-skeleton {
+  display: block;
+  width: 100%;
+  height: 180px;
+  margin: 0;
+}
+
+/* Anriss in der Liste: drei Zeilen, dann Auslassung. */
+.app-news-card__lead {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Volltext im Detail behält seine Absätze. */
+.app-news-card__body {
+  white-space: pre-line;
+}
+
+/* Im Detail-Blatt liegt die Karte bündig, wie in der alten App. */
+.app-news-card--detail {
+  margin-top: 0;
+  margin-inline: 0;
 }
 
 /* --- Handlungsangebot im leeren Zustand (UC-037, BR-165) --------------------

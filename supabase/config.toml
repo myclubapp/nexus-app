@@ -34,3 +34,9 @@ double_confirm_changes = true
 enable_confirmations = true
 
 # Kein Google-/Apple-Login: Magic Link ist der Standardweg (Architektur §3.2).
+
+# Der Import der Website-News prüft den Aufrufer selbst: `is_club_admin()` für
+# den Vorstand, die Rolle `service_role` für den nächtlichen Abgleich. Das
+# geprüfte JWT ist die Voraussetzung dafür und bleibt deshalb Pflicht.
+[functions.import-wordpress-news]
+verify_jwt = true

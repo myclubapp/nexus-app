@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import {
+  IonAlert,
   IonButton,
   IonInput,
   IonItem,
@@ -67,6 +68,8 @@ export function OnboardingPage() {
   const [clubSlug, setClubSlug] = useState('');
   const [foundClub, setFoundClub] = useState<ClubLookup | null>(null);
   const [lookupFailed, setLookupFailed] = useState(false);
+  // §5: Das Zurückziehen ist ein Widerruf und wird vorher gefragt.
+  const [isWithdrawing, setWithdrawing] = useState(false);
 
   const suggestedSeasonStart = useMemo(
     () => defaultSeasonStart(clubKind),
@@ -228,7 +231,7 @@ export function OnboardingPage() {
                   fill="outline"
                   color="medium"
                   disabled={withdrawRequest.isPending}
-                  onClick={() => withdrawRequest.mutate(myRequest.data!.id)}
+                  onClick={() => setWithdrawing(true)}
                 >
                   {withdrawRequest.isPending ? (
                     <IonSpinner name="crescent" />
@@ -237,6 +240,21 @@ export function OnboardingPage() {
                   )}
                 </IonButton>
               </div>
+
+              <IonAlert
+                isOpen={isWithdrawing}
+                header={t('onboarding.withdrawRequest')}
+                message={t('onboarding.withdrawConfirm')}
+                onDidDismiss={() => setWithdrawing(false)}
+                buttons={[
+                  { text: t('common.cancel'), role: 'cancel' },
+                  {
+                    text: t('onboarding.withdrawRequest'),
+                    role: 'destructive',
+                    handler: () => withdrawRequest.mutate(myRequest.data!.id),
+                  },
+                ]}
+              />
             </>
           ) : (
             <>

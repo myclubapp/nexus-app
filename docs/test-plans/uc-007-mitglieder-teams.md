@@ -94,7 +94,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Das Pluszeichen oben rechts antippen | Ein Blatt «Team anlegen» | | |
+| 1 | Das Pluszeichen unten rechts antippen, dann den Personen-Knopf | Ein Blatt «Team anlegen» | | |
 | 2 | Ein Zeichen eingeben | «Speichern» bleibt ausgegraut | | |
 | 3 | «Senioren» eingeben und speichern | Toast «Team angelegt» | | |
 | 4 | Ein Mitglied öffnen | Der Abschnitt «Teams» listet alle Teams als Kästchen | | |

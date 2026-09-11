@@ -6,7 +6,13 @@ import { useClub } from '../hooks/useClub';
 import { ErrorState, LoadingState } from './StateViews';
 import { peekPendingInvite } from '../lib/invite';
 
-/** Ionic expects every routed element to be a page, including this one. */
+/**
+ * Ionic erwartet zu jeder Route eine Seite – auch für diese Zwischenanzeige.
+ *
+ * Der Spinner bleibt für die Weichen, bei denen wirklich offen ist, was folgt:
+ * Anmeldung oder App, Onboarding oder Tabs (guidelines §4). Wo der Ausgang
+ * feststeht, reicht die Route stattdessen ein `pending`-Skelett herein.
+ */
 function LoadingPage() {
   return (
     <IonPage>
@@ -15,6 +21,17 @@ function LoadingPage() {
       </IonContent>
     </IonPage>
   );
+}
+
+/**
+ * `pending` ist das Zwischenbild, solange die Weiche noch nicht entschieden
+ * hat. Es kommt von der Route und nicht aus dem Guard, weil nur die Route
+ * weiss, wohin der Weg führt: Vor den Tabs steht ein Skelett in der Form der
+ * folgenden Seite, vor Anmeldung und Onboarding der Spinner.
+ */
+interface GuardProps {
+  children: ReactNode;
+  pending?: ReactNode;
 }
 
 function ErrorPage({ error, onRetry }: { error: Error; onRetry: () => void }) {
@@ -27,9 +44,9 @@ function ErrorPage({ error, onRetry }: { error: Error; onRetry: () => void }) {
   );
 }
 
-export function RequireAuth({ children }: { children: ReactNode }) {
+export function RequireAuth({ children, pending }: GuardProps) {
   const { session, initialising } = useAuth();
-  if (initialising) return <LoadingPage />;
+  if (initialising) return <>{pending ?? <LoadingPage />}</>;
   if (!session) return <Navigate to="/login" replace />;
   return <>{children}</>;
 }
@@ -38,9 +55,9 @@ export function RequireAuth({ children }: { children: ReactNode }) {
  * A signed-in user without a membership has not finished onboarding yet –
  * they either start a club or redeem an invitation (MVP-Scope §6).
  */
-export function RequireClub({ children }: { children: ReactNode }) {
+export function RequireClub({ children, pending }: GuardProps) {
   const { memberships, isLoading, error, refetch } = useClub();
-  if (isLoading) return <LoadingPage />;
+  if (isLoading) return <>{pending ?? <LoadingPage />}</>;
   // Eine gescheiterte Abfrage ist keine leere Mitgliederliste. Ohne diese
   // Unterscheidung landet ein Mitglied bei jedem Netzfehler im Gründungs-
   // Wizard und legt seinen Verein ein zweites Mal an.

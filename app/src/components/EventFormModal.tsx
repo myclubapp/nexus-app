@@ -15,6 +15,7 @@ import { useTeams } from '../hooks/useInvites';
 import { usePointRules } from '../hooks/useGamification';
 import { useAnnounceEvent, useCreateEvent } from '../hooks/useEvents';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import {
   MAX_SERIES_EVENTS,
@@ -51,6 +52,8 @@ const EVENT_TYPES: EventType[] = [
 interface EventFormProps {
   onDone: () => void;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }
 
 /**
@@ -60,7 +63,7 @@ interface EventFormProps {
  * (docs/TESTING.md). Die Prüfung des Entwurfs liegt in
  * `validateEventDraft()` – auch das, damit sie prüfbar bleibt.
  */
-export function EventForm({ onDone, onDismiss }: EventFormProps) {
+export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) {
   const { t } = useTranslation();
   const { eventLabel } = useClub();
   const teams = useTeams();
@@ -147,7 +150,7 @@ export function EventForm({ onDone, onDismiss }: EventFormProps) {
 
   return (
     <FormModal
-      isOpen
+      isOpen={isOpen}
       title={t('eventForm.title')}
       submitLabel={t('eventForm.create')}
       canSubmit={canSubmit}
@@ -162,6 +165,8 @@ export function EventForm({ onDone, onDismiss }: EventFormProps) {
             label={t('eventForm.type')}
             value={type}
             onIonChange={(e) => setType(e.detail.value as EventType)}
+            cancelText={t('common.cancel')}
+            okText={t('common.ok')}
           >
             {EVENT_TYPES.map((entry) => (
               <IonSelectOption key={entry} value={entry}>
@@ -255,6 +260,8 @@ export function EventForm({ onDone, onDismiss }: EventFormProps) {
             label={t('invite.scope')}
             value={teamId}
             onIonChange={(e) => setTeamId((e.detail.value as string | null) ?? null)}
+            cancelText={t('common.cancel')}
+            okText={t('common.ok')}
           >
             <IonSelectOption value={null}>{t('eventForm.wholeClub')}</IonSelectOption>
             {(teams.data ?? []).map((team) => (
@@ -276,6 +283,8 @@ export function EventForm({ onDone, onDismiss }: EventFormProps) {
               setRuleTouched(true);
               setRuleCode((e.detail.value as string | null) ?? null);
             }}
+            cancelText={t('common.cancel')}
+            okText={t('common.ok')}
           >
             <IonSelectOption value={null}>{t('eventForm.noRule')}</IonSelectOption>
             {(rules.data ?? []).map((rule) => (
@@ -302,6 +311,8 @@ export function EventForm({ onDone, onDismiss }: EventFormProps) {
                 label={t('eventForm.rhythm')}
                 value={rhythm}
                 onIonChange={(e) => setRhythm(e.detail.value as SeriesRhythm)}
+                cancelText={t('common.cancel')}
+                okText={t('common.ok')}
               >
                 {SERIES_RHYTHMS.map((entry) => (
                   <IonSelectOption key={entry} value={entry}>
@@ -351,16 +362,12 @@ export function EventForm({ onDone, onDismiss }: EventFormProps) {
   );
 }
 
-/** Blatt-Hülle; der Inhalt entsteht erst beim Öffnen. */
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
 export function EventFormModal({
   isOpen,
-  onDone,
-  onDismiss,
-}: {
-  isOpen: boolean;
-  onDone: () => void;
-  onDismiss: () => void;
-}) {
-  if (!isOpen) return null;
-  return <EventForm onDone={onDone} onDismiss={onDismiss} />;
+  ...props
+}: EventFormProps & { isOpen: boolean }) {
+  const sheet = useSheetProps(isOpen ? props : null);
+  return sheet && <EventForm {...sheet} />;
 }

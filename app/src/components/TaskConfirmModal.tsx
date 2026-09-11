@@ -5,6 +5,7 @@ import {
   IonItem,
   IonLabel,
   IonNote,
+  IonSpinner,
   IonTextarea,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +17,7 @@ import {
   type TaskRosterEntry,
 } from '../hooks/useTasks';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { EmptyState, InlineError } from './StateViews';
 import { SkeletonList } from './Skeletons';
@@ -26,6 +28,8 @@ interface TaskConfirmProps {
   task: TaskWithAssignments;
   onDone: (outcome: 'confirmed' | 'rejected', points: number, booked: boolean) => void;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }
 
 /**
@@ -35,7 +39,7 @@ interface TaskConfirmProps {
  * das Dankeswort – und die Punktzahl steht nirgends als Überschrift. Sie
  * erscheint erst in der Rückmeldung, nachgeordnet.
  */
-export function TaskConfirm({ task, onDone, onDismiss }: TaskConfirmProps) {
+export function TaskConfirm({ task, onDone, onDismiss, isOpen = true }: TaskConfirmProps) {
   const { t } = useTranslation();
   const { activeMembership } = useClub();
   const roster = useTaskRoster(task.id);
@@ -82,16 +86,9 @@ export function TaskConfirm({ task, onDone, onDismiss }: TaskConfirmProps) {
   }
 
   return (
-    <FormModal
-      isOpen
-      title={task.title}
-      submitLabel={t('common.close')}
-      canSubmit={!isBusy}
-      isSubmitting={isBusy}
-      error={error}
-      onDismiss={onDismiss}
-      onSubmit={onDismiss}
-    >
+    // Ein Blatt, das anzeigt: «Schliessen» steht einmal in der Kopfzeile. Was
+    // hier etwas tut, tut es je Einreichung im Inhalt (guidelines.md §2).
+    <FormModal isOpen={isOpen} title={task.title} error={error} onDismiss={onDismiss}>
       {roster.isLoading ? (
         <SkeletonList />
       ) : entries.length === 0 ? (
@@ -182,7 +179,12 @@ export function TaskConfirm({ task, onDone, onDismiss }: TaskConfirmProps) {
                 )
               }
             >
-              {t('taskConfirm.confirm')}
+              {/* Die Aktion läuft im auslösenden Knopf (guidelines.md §4). */}
+              {confirm.isPending && confirm.variables?.assignmentId === entry.assignmentId ? (
+                <IonSpinner name="crescent" />
+              ) : (
+                t('taskConfirm.confirm')
+              )}
             </IonButton>
 
             {/* A1: zurück an die Person – der Hinweis ist Pflicht, weil eine
@@ -244,11 +246,12 @@ export function TaskConfirm({ task, onDone, onDismiss }: TaskConfirmProps) {
   );
 }
 
-/** Blatt-Hülle; der Inhalt entsteht erst beim Öffnen. */
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
 export function TaskConfirmModal({
   task,
   ...props
 }: Omit<TaskConfirmProps, 'task'> & { task: TaskWithAssignments | null }) {
-  if (!task) return null;
-  return <TaskConfirm task={task} {...props} />;
+  const sheet = useSheetProps(task ? { task, ...props } : null);
+  return sheet && <TaskConfirm {...sheet} />;
 }

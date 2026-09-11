@@ -21,7 +21,7 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 
-/* Follows the device setting; the club theme is layered on top at runtime. */
+/* Folgt der Geräteeinstellung; das Vereins-Theme legt sich zur Laufzeit darüber. */
 import '@ionic/react/css/palettes/dark.system.css';
 
 import './theme/variables.css';
@@ -34,6 +34,7 @@ import { OnboardingPage } from './pages/onboarding/OnboardingPage';
 import { JoinByInvitePage } from './pages/onboarding/JoinByInvitePage';
 import { TabsPage } from './pages/TabsPage';
 import { AppMenu, APP_CONTENT_ID } from './components/AppMenu';
+import { SkeletonPage } from './components/Skeletons';
 import {
   RedirectIfClubMember,
   RedirectIfSignedIn,
@@ -85,11 +86,17 @@ export default function App() {
                     </RequireAuth>
                   }
                 />
+                {/* Beide Weichen zeigen hier dasselbe Skelett statt eines
+                    Spinners: Der Weg in die Tabs wartet auf die
+                    Mitgliedschaften aus dem Netz, und was danach kommt, steht
+                    fest – eine Seite mit Kopfzeile und Liste (guidelines §4).
+                    Zwei verschiedene Zwischenbilder hintereinander wären ein
+                    Flackern, deshalb reichen beide dasselbe herein. */}
                 <Route
                   path="/tabs/*"
                   element={
-                    <RequireAuth>
-                      <RequireClub>
+                    <RequireAuth pending={<SkeletonPage />}>
+                      <RequireClub pending={<SkeletonPage />}>
                         <TabsPage />
                       </RequireClub>
                     </RequireAuth>

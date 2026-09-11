@@ -52,7 +52,6 @@ describe('ShiftList', () => {
         shifts={[shift()]}
         attendance={[]}
         memberId="me"
-        onDismiss={vi.fn()}
         {...props}
       />,
     );

@@ -19,6 +19,7 @@ import {
   useOffices,
 } from '../hooks/useMeeting';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import { formatDateTime } from '../lib/format';
@@ -29,6 +30,8 @@ interface InputTriageProps {
   input: MeetingInput;
   onDone: (outcome: 'scheduled' | 'running' | 'forwarded' | 'answered' | 'declined') => void;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }
 
 /** Der Sentinel für «laufend bearbeiten» – eine Auswahl ohne Sitzung. */
@@ -45,7 +48,7 @@ const RUNNING = 'running';
  * **ist** schon eine Antwort. «Eingeplant für den 14.3.» erreicht die
  * einreichende Person, lange bevor der Entscheid fällt.
  */
-export function InputTriage({ input, onDone, onDismiss }: InputTriageProps) {
+export function InputTriage({ input, onDone, onDismiss, isOpen = true }: InputTriageProps) {
   const { t } = useTranslation();
   const { isAdmin } = useClub();
   const meetings = useMeetings();
@@ -100,14 +103,16 @@ export function InputTriage({ input, onDone, onDismiss }: InputTriageProps) {
 
   return (
     <FormModal
-      isOpen
+      isOpen={isOpen}
       title={t('meeting.triageTitle')}
-      submitLabel={closed ? t('common.close') : t('meeting.applyTriage')}
-      canSubmit={closed ? true : target !== null && !isBusy}
+      submitLabel={t('meeting.applyTriage')}
+      canSubmit={target !== null && !isBusy}
       isSubmitting={isBusy}
       error={error}
       onDismiss={onDismiss}
-      onSubmit={() => (closed ? onDismiss() : applyTriage())}
+      // Ein abgeschlossener Input wird nur noch angezeigt: «Schliessen» steht
+      // dann einmal in der Kopfzeile (guidelines.md §2).
+      onSubmit={closed ? undefined : applyTriage}
     >
       {/* Der Vorschlag – ungekürzt, so wie er eingereicht wurde. */}
       <ListSection
@@ -260,4 +265,13 @@ export function InputTriage({ input, onDone, onDismiss }: InputTriageProps) {
       )}
     </FormModal>
   );
+}
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
+export function InputTriageModal({
+  input,
+  ...props
+}: Omit<InputTriageProps, 'input'> & { input: MeetingInput | null }) {
+  const sheet = useSheetProps(input ? { input, ...props } : null);
+  return sheet && <InputTriage {...sheet} />;
 }

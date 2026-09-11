@@ -116,3 +116,56 @@ export function coverageGap(
   if (!capacityNeeded || capacityNeeded <= 0) return 0;
   return Math.max(0, capacityNeeded - tally.registered - tally.present);
 }
+
+/** Was die Gruppierung von einer Antwort braucht. */
+export interface AttendanceEntry {
+  member_id: string;
+  shift_id: string | null;
+  status: string;
+  responded_at: string | null;
+  decline_reason: string | null;
+}
+
+export interface AttendanceGroups<M> {
+  /** Zugesagt oder schon anwesend. */
+  registered: { member: M; entry: AttendanceEntry }[];
+  /** Abgesagt oder als abwesend vermerkt. */
+  excused: { member: M; entry: AttendanceEntry }[];
+  /** Betroffene ohne jede Antwort. */
+  undecided: M[];
+}
+
+/**
+ * Die Antworten eines Termins nach Personen gruppiert – die drei Listen
+ * «Zugesagt», «Abgesagt» und «Keine Antwort» aus der bestehenden myclub-App.
+ *
+ * Gezählt werden nur Antworten auf den **Termin** (`shift_id === null`); eine
+ * übernommene Schicht ist keine Zusage zum Anlass. Und es zählen nur die
+ * Betroffenen: Wer nicht zum Team gehört, taucht in keiner Liste auf – auch
+ * nicht in «Keine Antwort», dort wäre er eine falsche Erwartung.
+ */
+export function groupAttendance<M extends { id: string }>(
+  entries: readonly AttendanceEntry[],
+  members: readonly M[],
+): AttendanceGroups<M> {
+  const byMember = new Map(
+    entries
+      .filter((entry) => entry.shift_id === null)
+      .map((entry) => [entry.member_id, entry] as const),
+  );
+
+  const groups: AttendanceGroups<M> = { registered: [], excused: [], undecided: [] };
+
+  for (const member of members) {
+    const entry = byMember.get(member.id);
+    if (!entry) {
+      groups.undecided.push(member);
+    } else if (entry.status === 'registered' || entry.status === 'present') {
+      groups.registered.push({ member, entry });
+    } else {
+      groups.excused.push({ member, entry });
+    }
+  }
+
+  return groups;
+}

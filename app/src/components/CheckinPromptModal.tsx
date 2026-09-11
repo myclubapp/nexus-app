@@ -13,6 +13,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useCheckinPrompts, useSkipCheckin, useSubmitCheckin } from '../hooks/useContextCheckin';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import { SkeletonList } from './Skeletons';
@@ -29,6 +30,8 @@ interface CheckinPromptProps {
   invitation: CheckinInvitation;
   onDone: (outcome: 'answered' | 'skipped') => void;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }
 
 /**
@@ -43,7 +46,7 @@ interface CheckinPromptProps {
  * (Schritt 7). Das ist keine Beiläufigkeit: Belohntes Befinden wäre verzerrtes
  * Befinden (BR-138), und wer das nicht liest, rechnet damit.
  */
-export function CheckinPrompt({ invitation, onDone, onDismiss }: CheckinPromptProps) {
+export function CheckinPrompt({ invitation, onDone, onDismiss, isOpen = true }: CheckinPromptProps) {
   const { t } = useTranslation();
   const prompts = useCheckinPrompts(invitation.context);
   const submit = useSubmitCheckin();
@@ -81,7 +84,7 @@ export function CheckinPrompt({ invitation, onDone, onDismiss }: CheckinPromptPr
 
   return (
     <FormModal
-      isOpen
+      isOpen={isOpen}
       title={t('checkin.title')}
       submitLabel={t('checkin.send')}
       canSubmit={problems.length === 0 && !isBusy}
@@ -196,4 +199,13 @@ export function CheckinPrompt({ invitation, onDone, onDismiss }: CheckinPromptPr
       </div>
     </FormModal>
   );
+}
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
+export function CheckinPromptModal({
+  invitation,
+  ...props
+}: Omit<CheckinPromptProps, 'invitation'> & { invitation: CheckinInvitation | null }) {
+  const sheet = useSheetProps(invitation ? { invitation, ...props } : null);
+  return sheet && <CheckinPrompt {...sheet} />;
 }

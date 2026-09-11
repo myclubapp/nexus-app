@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { useClub } from '../hooks/useClub';
 import { useClaimTask, useReleaseTask, useSubmitTask } from '../hooks/useTasks';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import { formatDate } from '../lib/format';
@@ -28,6 +29,8 @@ interface TaskDetailProps {
   /** `warned` sagt, ob die Rückgabe die ausschreibende Person erreicht hat. */
   onDone: (outcome: 'claimed' | 'submitted' | 'released', warned: boolean) => void;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }
 
 /**
@@ -40,7 +43,7 @@ interface TaskDetailProps {
  * Welcher Weg offensteht, entscheidet `taskAction()` und nicht diese Ansicht:
  * Sonst hinge die Regel an der Reihenfolge von JSX-Bedingungen.
  */
-export function TaskDetail({ task, onDone, onDismiss }: TaskDetailProps) {
+export function TaskDetail({ task, onDone, onDismiss, isOpen = true }: TaskDetailProps) {
   const { t } = useTranslation();
   const { activeMembership } = useClub();
   const claim = useClaimTask();
@@ -73,13 +76,9 @@ export function TaskDetail({ task, onDone, onDismiss }: TaskDetailProps) {
   const canSubmitForm = isActionable ? proofUsable : true;
 
   // Ein gesperrter «Übernehmen»-Knopf über einer Aufgabe, an der nichts zu tun
-  // ist, sagt das Falsche. Wo es keinen Weg gibt, schliesst der Hauptknopf –
-  // das ist auf iOS ohnehin die Rolle des rechten Knopfs im Blatt.
-  const submitLabel = isActionable
-    ? action === 'submit'
-      ? t('taskDetail.report')
-      : t('marketplace.claim')
-    : t('common.close');
+  // ist, sagt das Falsche. Wo es keinen Weg gibt, zeigt das Blatt nur an, und
+  // «Schliessen» steht einmal in der Kopfzeile (guidelines.md §2).
+  const submitLabel = action === 'submit' ? t('taskDetail.report') : t('marketplace.claim');
 
   function run() {
     if (action === 'claim') {
@@ -91,21 +90,19 @@ export function TaskDetail({ task, onDone, onDismiss }: TaskDetailProps) {
         { taskId: task.id, proofUrl: proof },
         { onSuccess: () => onDone('submitted', false) },
       );
-      return;
     }
-    onDismiss();
   }
 
   return (
     <FormModal
-      isOpen
+      isOpen={isOpen}
       title={task.title}
       submitLabel={submitLabel}
       canSubmit={canSubmitForm && !isBusy}
       isSubmitting={isBusy}
       error={error}
       onDismiss={onDismiss}
-      onSubmit={run}
+      onSubmit={isActionable ? run : undefined}
     >
       {/* Schritt 3: Warum zuerst. Es ist der Grund, aus dem jemand zusagt. */}
       {sample && (
@@ -223,11 +220,12 @@ export function TaskDetail({ task, onDone, onDismiss }: TaskDetailProps) {
   );
 }
 
-/** Blatt-Hülle; der Inhalt entsteht erst beim Öffnen. */
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
 export function TaskDetailModal({
   task,
   ...props
 }: Omit<TaskDetailProps, 'task'> & { task: TaskWithAssignments | null }) {
-  if (!task) return null;
-  return <TaskDetail task={task} {...props} />;
+  const sheet = useSheetProps(task ? { task, ...props } : null);
+  return sheet && <TaskDetail {...sheet} />;
 }

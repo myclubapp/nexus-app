@@ -16,6 +16,7 @@ import {
   IonToolbar,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
+import { usePresentingElement } from '../hooks/usePresentingElement';
 import { ListSection } from './ListSection';
 import { EmptyState, ErrorState, InlineSuccess } from './StateViews';
 import { SkeletonList } from './Skeletons';
@@ -31,7 +32,6 @@ import type { EventShift } from '../lib/database.types';
 
 interface ShiftRosterProps {
   shifts: EventShift[];
-  onDismiss: () => void;
 }
 
 /**
@@ -44,7 +44,7 @@ interface ShiftRosterProps {
  * Eigene Komponente ohne Blatt-Hülle, weil `IonModal` seinen Inhalt im Test
  * nicht rendert (docs/TESTING.md).
  */
-export function ShiftRoster({ shifts, onDismiss }: ShiftRosterProps) {
+export function ShiftRoster({ shifts }: ShiftRosterProps) {
   const { t } = useTranslation();
   const toast = useToast();
   const [shiftId, setShiftId] = useState<string | null>(shifts[0]?.id ?? null);
@@ -235,12 +235,6 @@ export function ShiftRoster({ shifts, onDismiss }: ShiftRosterProps) {
           },
         ]}
       />
-
-      <div className="app-actions">
-        <IonButton expand="block" fill="clear" onClick={onDismiss}>
-          {t('common.close')}
-        </IonButton>
-      </div>
     </>
   );
 }
@@ -249,11 +243,16 @@ export function ShiftRoster({ shifts, onDismiss }: ShiftRosterProps) {
 export function ShiftRosterModal({
   isOpen,
   ...props
-}: ShiftRosterProps & { isOpen: boolean }) {
+}: ShiftRosterProps & { isOpen: boolean; onDismiss: () => void }) {
   const { t } = useTranslation();
+  const presentingElement = usePresentingElement();
 
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={props.onDismiss}>
+    <IonModal
+      isOpen={isOpen}
+      onDidDismiss={props.onDismiss}
+      presentingElement={presentingElement}
+    >
       <IonHeader translucent>
         <IonToolbar>
           <IonTitle>{t('roster.title')}</IonTitle>

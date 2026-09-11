@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import {
+  IonActionSheet,
   IonButton,
   IonButtons,
   IonContent,
@@ -11,6 +12,8 @@ import {
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { InlineError } from './StateViews';
+import { usePresentingElement } from '../hooks/usePresentingElement';
+import { useDiscardGuard } from '../hooks/useDiscardGuard';
 
 interface FormModalProps {
   isOpen: boolean;
@@ -22,7 +25,11 @@ interface FormModalProps {
   isSubmitting?: boolean;
   /** Fehlermeldung des letzten Versuchs; wird über den Feldern angezeigt. */
   error?: string | null;
-  onSubmit: () => void;
+  /**
+   * Die Bestätigung rechts. Fehlt sie, zeigt das Blatt nur an: Dann steht
+   * «Schliessen» einmal links, und rechts steht nichts (guidelines.md §2).
+   */
+  onSubmit?: () => void;
   onDismiss: () => void;
   children: ReactNode;
 }
@@ -34,6 +41,24 @@ interface FormModalProps {
  * Systemdialogen, damit der Daumen sie nicht suchen muss. Der Fehler des
  * letzten Versuchs steht im Formular und nicht in einem Toast, weil er sich
  * auf ein Feld bezieht, das die Person gerade korrigieren soll.
+ *
+ * Ohne `onSubmit` ist es ein Blatt, das **anzeigt** – ein Detail, eine Liste,
+ * eine Erklärung, allenfalls mit Knöpfen im Inhalt, die etwas tun. Dann trägt
+ * die Kopfzeile genau einen Knopf, «Schliessen», an der Stelle von Abbrechen.
+ * Ein «Schliessen» rechts neben einem «Abbrechen» links wären zwei Wege für
+ * dieselbe Handlung.
+ *
+ * Ein beschriebenes Blatt wirft seinen Entwurf nicht mehr wortlos weg: Der
+ * erste Tastendruck im Formular schaltet den Wächter aus `useDiscardGuard`
+ * scharf, und jeder Weg, der den Entwurf verliert – Wischgeste, Griff daneben,
+ * Abbrechen –, fragt danach über ein `IonActionSheet` nach (guidelines.md §2).
+ * Nur das Schliessen nach dem Speichern läuft durch.
+ *
+ * Welche Felder das Formular mitbringt, muss die Hülle dafür nicht wissen –
+ * sie hört auf die `ionInput`- und `ionChange`-Ereignisse, die jedes
+ * Ionic-Bedienelement bei einer **Benutzereingabe** auslöst. Ein vorausgefülltes
+ * Feld löst keines aus, ein Blatt ohne Eingabefelder auch nicht; beide
+ * schliessen weiterhin ohne Rückfrage.
  */
 export function FormModal({
   isOpen,
@@ -47,35 +72,93 @@ export function FormModal({
   children,
 }: FormModalProps) {
   const { t } = useTranslation();
+  const presentingElement = usePresentingElement();
+  const guard = useDiscardGuard(isOpen);
+  const modal = useRef<HTMLIonModalElement>(null);
+
+  useEffect(() => {
+    const element = modal.current;
+    if (!element) return;
+
+    // `ionInput` und `ionChange` sind zusammengesetzte Ereignisse und steigen
+    // aus jedem Feld bis zum Blatt auf; ein Zuhörer genügt für das ganze
+    // Formular. React kennt die beiden Namen nicht, deshalb von Hand.
+    element.addEventListener('ionInput', guard.markTouched);
+    element.addEventListener('ionChange', guard.markTouched);
+    return () => {
+      element.removeEventListener('ionInput', guard.markTouched);
+      element.removeEventListener('ionChange', guard.markTouched);
+    };
+  }, [guard.markTouched]);
+
+  /**
+   * Abbrechen geht über Ionic und nicht direkt an `onDismiss`: Nur so läuft
+   * der Knopf durch denselben Wächter wie die Wischgeste – der Entwurf ist
+   * hier so endgültig weg wie dort. Ionic meldet danach `onDidDismiss`, und
+   * die Seite schliesst das Blatt wie sonst auch.
+   */
+  const requestDismiss = () => {
+    // Ohne geladenes Ionic – in jsdom – gibt es kein `dismiss`; dann bleibt der
+    // gerade Weg, damit der Knopf nirgends tot ist.
+    if (modal.current?.dismiss) void modal.current.dismiss(undefined, 'cancel');
+    else onDismiss();
+  };
 
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={onDismiss}>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonButton onClick={onDismiss}>{t('common.cancel')}</IonButton>
-          </IonButtons>
-          <IonTitle>{title}</IonTitle>
-          <IonButtons slot="end">
-            <IonButton
-              strong
-              disabled={!canSubmit || isSubmitting}
-              onClick={onSubmit}
-            >
-              {isSubmitting ? (
-                <IonSpinner name="crescent" />
-              ) : (
-                (submitLabel ?? t('common.save'))
-              )}
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
+    <>
+      <IonModal
+        ref={modal}
+        isOpen={isOpen}
+        onDidDismiss={onDismiss}
+        presentingElement={presentingElement}
+        canDismiss={guard.canDismiss}
+      >
+        <IonHeader>
+          <IonToolbar>
+            <IonButtons slot="start">
+              <IonButton onClick={requestDismiss}>
+                {onSubmit ? t('common.cancel') : t('common.close')}
+              </IonButton>
+            </IonButtons>
+            <IonTitle>{title}</IonTitle>
+            {onSubmit && (
+              <IonButtons slot="end">
+                <IonButton
+                  strong
+                  disabled={!canSubmit || isSubmitting}
+                  onClick={onSubmit}
+                >
+                  {isSubmitting ? (
+                    <IonSpinner name="crescent" />
+                  ) : (
+                    (submitLabel ?? t('common.save'))
+                  )}
+                </IonButton>
+              </IonButtons>
+            )}
+          </IonToolbar>
+        </IonHeader>
 
-      <IonContent>
-        {error && <InlineError message={error} />}
-        {children}
-      </IonContent>
-    </IonModal>
+        <IonContent>
+          {error && <InlineError message={error} />}
+          {children}
+        </IonContent>
+      </IonModal>
+
+      {/* Neben dem Blatt, nicht darin: Ein Overlay im Blatt ginge mit ihm
+          unter, bevor jemand geantwortet hat. */}
+      <IonActionSheet
+        isOpen={guard.isAsking}
+        onDidDismiss={() => guard.answer(false)}
+        buttons={[
+          {
+            text: t('common.discardChanges'),
+            role: 'destructive',
+            handler: () => guard.answer(true),
+          },
+          { text: t('common.keepEditing'), role: 'cancel' },
+        ]}
+      />
+    </>
   );
 }

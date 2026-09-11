@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   IonInput,
   IonItem,
+  IonNote,
   IonSelect,
   IonSelectOption,
   IonTextarea,
@@ -10,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { useTeams } from '../hooks/useInvites';
 import { usePublishNews, useUpdateNews } from '../hooks/useNews';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import { validateNews, type NewsDraft } from '../lib/news';
@@ -20,6 +22,8 @@ interface NewsFormProps {
   editing?: News | null;
   onDone: (edited: boolean) => void;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }
 
 /**
@@ -30,7 +34,7 @@ interface NewsFormProps {
  * Wer einen Tippfehler behebt, soll nicht den ganzen Verein ein zweites Mal
  * aufschrecken.
  */
-export function NewsForm({ editing = null, onDone, onDismiss }: NewsFormProps) {
+export function NewsForm({ editing = null, onDone, onDismiss, isOpen = true }: NewsFormProps) {
   const { t } = useTranslation();
   const teams = useTeams();
   const publish = usePublishNews();
@@ -63,7 +67,7 @@ export function NewsForm({ editing = null, onDone, onDismiss }: NewsFormProps) {
 
   return (
     <FormModal
-      isOpen
+      isOpen={isOpen}
       title={editing ? t('newsForm.editTitle') : t('newsForm.title')}
       submitLabel={editing ? t('common.save') : t('newsForm.publish')}
       canSubmit={problems.length === 0 && !isBusy}
@@ -115,6 +119,8 @@ export function NewsForm({ editing = null, onDone, onDismiss }: NewsFormProps) {
             labelPlacement="stacked"
             value={teamId}
             onIonChange={(e) => setTeamId((e.detail.value as string | null) ?? null)}
+            cancelText={t('common.cancel')}
+            okText={t('common.ok')}
           >
             <IonSelectOption value={null}>{t('newsForm.wholeClub')}</IonSelectOption>
             {(teams.data ?? []).map((team) => (
@@ -130,16 +136,18 @@ export function NewsForm({ editing = null, onDone, onDismiss }: NewsFormProps) {
         <InlineError key={problem} message={t(`newsForm.problem.${problem}`)} />
       ))}
 
-      {editing && <InlineError message={t('newsForm.editHint')} />}
+      {/* A3 ist eine Erklärung, kein Fehler: eine Fussnote, keine rote Box. */}
+      {editing && <IonNote className="app-footnote">{t('newsForm.editHint')}</IonNote>}
     </FormModal>
   );
 }
 
-/** Blatt-Hülle; der Inhalt entsteht erst beim Öffnen. */
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
 export function NewsFormModal({
   isOpen,
   ...props
 }: NewsFormProps & { isOpen: boolean }) {
-  if (!isOpen) return null;
-  return <NewsForm {...props} />;
+  const sheet = useSheetProps(isOpen ? props : null);
+  return sheet && <NewsForm {...sheet} />;
 }

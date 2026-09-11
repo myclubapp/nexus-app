@@ -24,7 +24,7 @@
 7. Vorstand bestätigt oder ändert den Saisonbeginn.
 8. System legt den Verein an, erzeugt einen eindeutigen Kurznamen aus dem Vereinsnamen, macht die gründende Person zum Vorstand und legt den zur Vereinsart passenden Satz Standard-Punkteregeln sowie die Standard-Terminlabels an.
 9. System legt zur Vereinsart passende, als Beispiel gekennzeichnete Inhalte an, damit kein Bildschirm leer bleibt (UC-037).
-10. System zeigt den Startbildschirm mit genau drei Handlungsangeboten: ersten Termin erfassen, Mitglieder einladen, Punkteregeln ansehen.
+10. System zeigt den Startbildschirm mit drei Handlungsangeboten: ersten Termin erfassen, Mitglieder einladen, Punkteregeln ansehen. Solange keine Vereins-Website verbunden ist, kommt als einmaliges Angebot der Import der Website-News dazu (UC-038, BR-171).
 
 ## Alternative Flows
 

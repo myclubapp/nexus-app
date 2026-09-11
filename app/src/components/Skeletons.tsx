@@ -2,12 +2,18 @@ import {
   IonCard,
   IonCardContent,
   IonCardHeader,
+  IonChip,
+  IonCol,
+  IonGrid,
   IonItem,
   IonLabel,
   IonList,
   IonNote,
+  IonRow,
   IonSkeletonText,
 } from '@ionic/react';
+import { useTranslation } from 'react-i18next';
+import { AppPage } from './AppPage';
 
 /**
  * Ladeansichten in der Form des erwarteten Inhalts.
@@ -74,5 +80,75 @@ export function SkeletonCard({ cards = 2 }: { cards?: number }) {
         </IonCard>
       ))}
     </>
+  );
+}
+
+/**
+ * Ganze Seite in der Form dessen, was danach kommt – das Zwischenbild der
+ * Weichen vor der angemeldeten App (`RequireAuth`, `RequireClub`).
+ *
+ * Bis hierher stand dort ein Vollbild-Spinner auf weissem Grund. Der Weg in
+ * die Tabs wartet aber auf einen Netzaufruf (die Mitgliedschaften), und was
+ * danach folgt, steht fest: eine Seite mit Kopfzeile und Liste. Genau die
+ * zeichnet dieses Skelett nach, damit der Übergang in den Tab kein Bildwechsel
+ * mehr ist (guidelines §4).
+ *
+ * Die Liste ist bewusst der gemeinsame Nenner aller fünf Tabs: Welcher davon
+ * gleich erscheint, weiss die Weiche nicht, und Kennzahlen-Kacheln hätte nur
+ * das Dashboard.
+ *
+ * Der Titel bleibt ein Skelett statt eines Platzhalterworts – ein «myclub»,
+ * das eine Zehntelsekunde später zu «Start» wird, ist eine Ankündigung, die
+ * sich selbst widerruft. Die Ansage für Bedienhilfen übernimmt das
+ * `role="status"` mit `aria-label`, weil ein Skelett keinen Text hat.
+ */
+export function SkeletonPage({ rows = 4 }: { rows?: number }) {
+  const { t } = useTranslation();
+
+  return (
+    <AppPage
+      title={<IonSkeletonText animated style={{ width: '35%' }} />}
+      largeTitle={<IonSkeletonText animated style={{ width: '55%' }} />}
+    >
+      <div role="status" aria-label={t('common.loading')}>
+        <SkeletonList rows={rows} />
+      </div>
+    </AppPage>
+  );
+}
+
+/**
+ * News-Karten in ihrer Form – Bild, Datum, Titel, drei Textzeilen und der
+ * Autoren-Chip – im selben Raster wie die echten Karten.
+ */
+export function SkeletonNewsCards({ cards = 2 }: { cards?: number }) {
+  return (
+    <IonGrid className="app-news-grid">
+      <IonRow>
+        {Array.from({ length: cards }, (_, index) => (
+          <IonCol key={index} size="12" sizeSm="6" sizeMd="6" sizeLg="4">
+            <IonCard className="app-news-card">
+              <IonSkeletonText animated className="app-news-card__image-skeleton" />
+              <IonCardHeader>
+                <IonSkeletonText animated style={{ width: '40%' }} />
+                <IonSkeletonText animated style={{ width: '80%', height: '1.2rem' }} />
+              </IonCardHeader>
+              <IonCardContent>
+                <IonSkeletonText animated style={{ width: '90%' }} />
+                <IonSkeletonText animated style={{ width: '80%' }} />
+                <IonSkeletonText animated style={{ width: '85%' }} />
+              </IonCardContent>
+              <IonRow>
+                <IonCol size="8">
+                  <IonChip>
+                    <IonSkeletonText animated style={{ width: '60px' }} />
+                  </IonChip>
+                </IonCol>
+              </IonRow>
+            </IonCard>
+          </IonCol>
+        ))}
+      </IonRow>
+    </IonGrid>
   );
 }

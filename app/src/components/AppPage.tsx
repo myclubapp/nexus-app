@@ -12,22 +12,37 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
+import { CreateFab, type CreateAction } from './CreateFab';
 
 interface AppPageProps {
-  /** Titel in der Kopfzeile und – sofern nicht abgewählt – als grosser Titel. */
-  title: string;
+  /**
+   * Titel in der Kopfzeile und – sofern nicht abgewählt – als grosser Titel.
+   * `ReactNode` statt `string`, damit die Ladeansicht ein `IonSkeletonText`
+   * an die Stelle des Titels setzen kann (guidelines §4): Ein Platzhaltertext
+   * wäre eine Ankündigung, die gleich darauf durch ein anderes Wort ersetzt
+   * wird.
+   */
+  title: ReactNode;
   /**
    * Abweichender grosser Titel. `false` unterdrückt die zweite Kopfzeile für
    * Seiten, die direkt mit Inhalt beginnen sollen (z.B. Formulare).
    */
-  largeTitle?: string | false;
+  largeTitle?: ReactNode | false;
   /**
    * Zielroute des Zurück-Knopfs. Ohne Angabe steht links der Menüknopf –
    * eine Detailseite führt zurück, eine Hauptseite öffnet die Seitenleiste.
    */
   backHref?: string;
-  /** Aktionen rechts in der Kopfzeile, üblicherweise `IonButtons`. */
+  /**
+   * Aktionen rechts in der Kopfzeile, üblicherweise `IonButtons`. Nichts,
+   * was etwas Neues anlegt – das gehört in `createActions`.
+   */
   toolbarEnd?: ReactNode;
+  /**
+   * Die Erstellen-Wege der Seite. Sie erscheinen als rundes Plus unten
+   * rechts (`CreateFab`), nie als Symbol in der Kopfzeile.
+   */
+  createActions?: CreateAction[];
   /** Zweite Kopfzeile, üblicherweise ein `IonSegment` oder `IonSearchbar`. */
   subToolbar?: ReactNode;
   /** Aktiviert «Ziehen zum Aktualisieren». */
@@ -46,12 +61,17 @@ interface AppPageProps {
  * Die Aktionsknöpfe stehen bewusst nur in der äusseren Kopfzeile: eine zweite
  * Kopie im eingeklappten Titel wäre für Bedienhilfen und Tests ein zweiter
  * gleichnamiger Knopf.
+ *
+ * Was etwas Neues anlegt, steht nicht dort, sondern als Plus unten rechts:
+ * `createActions` gibt es an `CreateFab` weiter, das als direktes Kind des
+ * `IonContent` im `fixed`-Slot sitzt.
  */
 export function AppPage({
   title,
   largeTitle,
   backHref,
   toolbarEnd,
+  createActions,
   subToolbar,
   onRefresh,
   children,
@@ -65,7 +85,9 @@ export function AppPage({
         <IonToolbar>
           <IonButtons slot="start">
             {backHref ? (
-              <IonBackButton defaultHref={backHref} />
+              /* Ohne `text` beschriftet Ionic den Knopf im iOS-Modus fest mit
+                 «Back» – die Voreinstellung kennt keine Übersetzung. */
+              <IonBackButton defaultHref={backHref} text={t('common.back')} />
             ) : (
               /* `autoHide` ist die Voreinstellung und trägt hier die halbe
                  Logik: Der Knopf verschwindet von selbst, sobald kein Menü
@@ -81,7 +103,12 @@ export function AppPage({
         {subToolbar && <IonToolbar>{subToolbar}</IonToolbar>}
       </IonHeader>
 
-      <IonContent fullscreen>
+      {/* Der Freiraum unten gehört zum Fab: Ohne ihn liegt die letzte
+          Listenzeile unter dem runden Knopf, sobald ganz nach unten
+          gescrollt ist. */}
+      <IonContent fullscreen className={createActions ? 'app-content--fab' : undefined}>
+        {createActions && <CreateFab actions={createActions} />}
+
         {onRefresh && (
           <IonRefresher
             slot="fixed"

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { IonInput, IonItem, IonNote, IonRadio, IonRadioGroup } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import {
   DECLINE_REASONS,
@@ -16,6 +17,8 @@ interface DeclineFormProps {
   error?: string | null;
   onSubmit: (reason: string) => void;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }
 
 /**
@@ -35,6 +38,7 @@ export function DeclineForm({
   error,
   onSubmit,
   onDismiss,
+  isOpen = true,
 }: DeclineFormProps) {
   const { t } = useTranslation();
   const [reasonKey, setReasonKey] = useState<DeclineReasonKey>('ill');
@@ -46,7 +50,7 @@ export function DeclineForm({
 
   return (
     <FormModal
-      isOpen
+      isOpen={isOpen}
       title={t('agenda.decline')}
       submitLabel={t('agenda.declineConfirm')}
       canSubmit={canSubmit}
@@ -94,11 +98,12 @@ export function DeclineForm({
   );
 }
 
-/** Blatt-Hülle; der Inhalt entsteht erst beim Öffnen. */
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
 export function DeclineModal({
   isOpen,
   ...props
 }: DeclineFormProps & { isOpen: boolean }) {
-  if (!isOpen) return null;
-  return <DeclineForm {...props} />;
+  const sheet = useSheetProps(isOpen ? props : null);
+  return sheet && <DeclineForm {...sheet} />;
 }

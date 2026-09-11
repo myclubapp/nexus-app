@@ -20,7 +20,7 @@ export function useShiftRoster(shiftId: string | null) {
   const { isAdmin } = useClub();
 
   return useQuery({
-    queryKey: ['shiftRoster', shiftId],
+    queryKey: ['shift-roster', shiftId],
     enabled: Boolean(shiftId) && isAdmin && isConfigured,
     queryFn: async (): Promise<RosterEntry[]> => {
       const { data, error } = await supabase.rpc('shift_roster', {
@@ -70,8 +70,8 @@ export function useConfirmShift(shiftId: string | null) {
       return { points: row?.points ?? 0, booked: row?.booked ?? false };
     },
     onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: ['shiftRoster', shiftId] });
-      void queryClient.invalidateQueries({ queryKey: ['shiftCandidates', shiftId] });
+      void queryClient.invalidateQueries({ queryKey: ['shift-roster', shiftId] });
+      void queryClient.invalidateQueries({ queryKey: ['shift-candidates', shiftId] });
       void queryClient.invalidateQueries({ queryKey: ['agenda', activeClub?.id] });
     },
   });
@@ -92,7 +92,7 @@ export function useShiftCandidates(shiftId: string | null) {
   const { isAdmin } = useClub();
 
   return useQuery({
-    queryKey: ['shiftCandidates', shiftId],
+    queryKey: ['shift-candidates', shiftId],
     enabled: Boolean(shiftId) && isAdmin && isConfigured,
     queryFn: async (): Promise<Candidate[]> => {
       const { data, error } = await supabase.rpc('shift_candidates', {
@@ -129,7 +129,7 @@ export function useSetShiftAbsence(shiftId: string | null) {
       if (error) throw new Error(error.message);
     },
     onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: ['shiftRoster', shiftId] });
+      void queryClient.invalidateQueries({ queryKey: ['shift-roster', shiftId] });
     },
   });
 }

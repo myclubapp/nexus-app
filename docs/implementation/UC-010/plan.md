@@ -112,7 +112,8 @@ Frist selbst rechnet, kann sie auch umgehen.
       abgesagter Termin, begonnener Termin.
 - [x] 11. Manueller Testplan `docs/test-plans/uc-010-zu-oder-absagen.md`.
 - [x] 12. **Statusabgleich** — FR-025, FR-026, FR-027 auf `Implemented`.
-- [ ] 13. **Terminansicht** mit Warum und Punktwert (Schritt 2 und 5).
+- [x] 13. **Terminansicht** mit Warum (Schritt 2) – `EventDetailModal`; der Punktwert (Schritt 5) bleibt offen.
+- [x] 15. **Schnitt der bestehenden myclub-App** — Status-Symbol am Zeilenanfang, Wischen für die Gegenantwort, Zusagen-Zahl rechts, Spaltenköpfe «Status / Teilnehmer», Detail mit «Mein Status» und den drei Listen.
 - [ ] 14. **Plattform-Parität** — Blatt und Radioliste auf iOS, Android, Browser.
 
 ---
@@ -135,3 +136,4 @@ Frist selbst rechnet, kann sie auch umgehen.
 | 2026-09-09 | Plan erstellt und umgesetzt: Migration 0017, `attendance.ts`, `DeclineModal`, Agenda mit Teilnehmerstand. |
 | 2026-09-09 | Gegen die Datenbank geprüft: Absage 48 h vorher → 5 Punkte, 3 h vorher → 0 (BR-040); vier Wechsel zwischen Zu- und Absage ergeben **eine** Antwortzeile und **eine** Prämienbuchung (BR-037, NFR-017); ein abgesagter Termin (A3) und ein begonnener (BR-038) weisen jede Antwort ab. Testdaten entfernt. |
 | 2026-09-09 | Die Migration lag zunächst als `0016`; parallel war remote bereits ein `0016_guard_last_admin_club_delete` eingespielt. Meine Migration ist auf `0017` umnummeriert und der Verlauf geradegezogen. |
+| 2026-09-11 | An-/Abmeldung auf den Schnitt der bestehenden myclub-App (`github.com/myclubapp/app`: `trainings.page.html`, `training-detail.page.html`, `status-icon`) gebracht: `AttendanceStatusIcon` (Ampel-Symbol, Tippen schaltet um), `IonItemSliding` mit grünem Haken und rotem Kreuz, Zusagen-Zahl als `IonBadge`, Spaltenköpfe, Termin-Detail `EventDetailModal` mit Eckdaten, «Mein Status» und Akkordeons Zugesagt / Abgesagt / Keine Antwort. Die Absage läuft weiterhin über das Blatt mit dem Grund (FR-026). Team-Termine zeigen Nichtbetroffenen «nicht für dich» statt eines Antwortstands. |

@@ -6,8 +6,9 @@ import { LoadingState } from '../../components/StateViews';
 import { peekPendingInvite } from '../../lib/invite';
 
 /**
- * Landing page for the magic link on web. supabase-js exchanges the PKCE code
- * on load, so this page only waits for the session and gets out of the way.
+ * Die Landeseite des Anmeldelinks im Browser. supabase-js tauscht den
+ * PKCE-Code beim Laden; diese Seite wartet nur auf die Sitzung und macht
+ * dann den Weg frei.
  */
 export function AuthCallbackPage() {
   const { session, initialising } = useAuth();

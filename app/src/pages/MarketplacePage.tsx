@@ -28,7 +28,7 @@ import {
   useMatchingTasks,
   useMatchingVacancies,
 } from '../hooks/useContribution';
-import { ContributionProfileForm } from '../components/ContributionProfileModal';
+import { ContributionProfileModal } from '../components/ContributionProfileModal';
 import { isBudgetSpent, isProfileFilled } from '../lib/contribution';
 import { canActOn, isSample } from '../lib/sample';
 import { formatDate, formatDateTime } from '../lib/format';
@@ -460,16 +460,15 @@ export function MarketplacePage() {
         </>
       )}
 
-      {profileOpen && (
-        <ContributionProfileForm
-          profile={profile.data ?? null}
-          onDismiss={() => setProfileOpen(false)}
-          onDone={() => {
-            setProfileOpen(false);
-            toast.success(t('contribution.saved'));
-          }}
-        />
-      )}
+      <ContributionProfileModal
+        isOpen={profileOpen}
+        profile={profile.data ?? null}
+        onDismiss={() => setProfileOpen(false)}
+        onDone={() => {
+          setProfileOpen(false);
+          toast.success(t('contribution.saved'));
+        }}
+      />
 
       <TaskDetailModal
         task={openTask}

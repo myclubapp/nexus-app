@@ -100,6 +100,8 @@ export function LeaderboardPage() {
               label={t('leaderboard.team')}
               value={activeTeamId}
               onIonChange={(e) => setTeamId(e.detail.value as string)}
+              cancelText={t('common.cancel')}
+              okText={t('common.ok')}
             >
               {teams.map((team) => (
                 <IonSelectOption key={team.id} value={team.id}>
@@ -114,6 +116,8 @@ export function LeaderboardPage() {
             label={t('leaderboard.period')}
             value={period}
             onIonChange={(e) => setPeriod(e.detail.value as LeaderboardPeriod)}
+            cancelText={t('common.cancel')}
+            okText={t('common.ok')}
           >
             {LEADERBOARD_PERIODS.map((entry) => (
               <IonSelectOption key={entry} value={entry}>
@@ -127,6 +131,8 @@ export function LeaderboardPage() {
             label={t('leaderboard.pillar')}
             value={pillar}
             onIonChange={(e) => setPillar((e.detail.value as Pillar | null) ?? null)}
+            cancelText={t('common.cancel')}
+            okText={t('common.ok')}
           >
             <IonSelectOption value={null}>{t('leaderboard.allPillars')}</IonSelectOption>
             {PILLARS.map((entry) => (

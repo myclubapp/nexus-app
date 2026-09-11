@@ -45,7 +45,7 @@ describe('EventQr', () => {
   });
 
   function render() {
-    return renderWithProviders(<EventQr eventId="e1" onDismiss={vi.fn()} />);
+    return renderWithProviders(<EventQr eventId="e1" />);
   }
 
   it('zeigt den Code mit dem Token dieses Termins (BR-055)', () => {

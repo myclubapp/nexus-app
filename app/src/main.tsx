@@ -9,7 +9,8 @@ import './i18n';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // Club data changes slowly; this keeps the app usable on a train ride.
+      // Vereinsdaten ändern sich langsam; so bleibt die App auch im Zug
+      // bedienbar.
       staleTime: 60_000,
       retry: 1,
       refetchOnWindowFocus: false,

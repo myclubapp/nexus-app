@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { screen } from '@testing-library/react';
 import { IonButton, IonButtons } from '@ionic/react';
+import { addOutline } from 'ionicons/icons';
 import { AppPage } from './AppPage';
 import { renderWithProviders } from '../test/utils';
 
@@ -75,6 +76,34 @@ describe('AppPage', () => {
     expect(screen.getAllByText('Neu')).toHaveLength(1);
   });
 
+  it('hängt den Erstellen-Fab in den Inhalt, nicht in die Kopfzeile', () => {
+    // Nur als direktes Kind des `IonContent` greift `slot="fixed"` – im
+    // Header bliebe der Knopf beim Scrollen stehen und läge oben (§2).
+    const { container } = renderWithProviders(
+      <AppPage
+        title="Agenda"
+        createActions={[{ icon: addOutline, label: 'Neuer Termin', onClick: () => {} }]}
+      >
+        <p>Inhalt</p>
+      </AppPage>,
+    );
+
+    expect(container.querySelectorAll('ion-content > ion-fab')).toHaveLength(1);
+    expect(container.querySelector('ion-header ion-fab')).toBeNull();
+    expect(container.querySelector('ion-content')?.className).toContain('app-content--fab');
+  });
+
+  it('lässt den Inhalt ohne Erstellen-Weg schmal', () => {
+    const { container } = renderWithProviders(
+      <AppPage title="Agenda">
+        <p>Inhalt</p>
+      </AppPage>,
+    );
+
+    expect(container.querySelector('ion-fab')).toBeNull();
+    expect(container.querySelector('ion-content')?.className).not.toContain('app-content--fab');
+  });
+
   it('blendet den Zurück-Knopf nur mit Zielroute ein', () => {
     const { container, unmount } = renderWithProviders(
       <AppPage title="Ohne">
@@ -89,9 +118,10 @@ describe('AppPage', () => {
         <p>Inhalt</p>
       </AppPage>,
     );
-    expect(
-      withBack.container.querySelector('ion-back-button'),
-    ).toHaveAttribute('default-href', '/tabs/profile');
+    const backButton = withBack.container.querySelector('ion-back-button');
+    expect(backButton).toHaveAttribute('default-href', '/tabs/profile');
+    // Ohne eigene Beschriftung steht im iOS-Modus das englische «Back».
+    expect(backButton).toHaveAttribute('text', 'Zurück');
   });
 
   it('zeigt den Aktualisieren-Griff nur mit Rückruf', () => {

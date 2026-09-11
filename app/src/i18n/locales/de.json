@@ -16,9 +16,14 @@
     "points_other": "{{count}} Punkte",
     "notConfigured": "Die App ist noch nicht mit einem Supabase-Projekt verbunden. Trage die Werte in .env.local ein.",
     "confirm": "Bestätigen",
+    "create": "Erstellen",
     "stepOf": "Schritt {{current}} von {{total}}",
     "saveFailed": "Das hat nicht geklappt. Bitte nochmals versuchen.",
-    "saved": "Gespeichert"
+    "saved": "Gespeichert",
+    "discardChanges": "Änderungen verwerfen",
+    "keepEditing": "Weiter bearbeiten",
+    "details": "Details",
+    "more": "Mehr"
   },
   "auth": {
     "title": "Willkommen",
@@ -216,6 +221,23 @@
     "tally": "{{yes}} zugesagt · {{no}} abgesagt · {{open}} offen",
     "cancelledWithReason": "Abgesagt: {{reason}}",
     "draft": "Entwurf",
+    "statusColumn": "Status",
+    "participantsColumn": "Teilnehmer",
+    "myStatus": "Mein Status",
+    "attendances": "An-/Abwesenheiten",
+    "listRegistered": "Zugesagt: {{count}}",
+    "listExcused": "Abgesagt: {{count}}",
+    "listUndecided": "Keine Antwort: {{count}}",
+    "statusLabel": {
+      "open": "Noch offen – tippen zum Zusagen",
+      "registered": "Zugesagt – tippen zum Absagen",
+      "present": "Anwesend",
+      "excused": "Abgesagt – tippen zum Zusagen",
+      "absent": "Nicht da",
+      "cancelled": "Termin abgesagt",
+      "locked": "Termin hat begonnen",
+      "notAffected": "Nicht für dich"
+    },
     "undercovered_one": "Noch {{count}} Zusage fehlt",
     "undercovered_other": "Noch {{count}} Zusagen fehlen"
   },
@@ -675,8 +697,24 @@
     "title": "News von der Website",
     "adminOnly": "Nur der Vorstand kann die Website verbinden.",
     "url": "Adresse eurer Website",
-    "urlHint": "Läuft eure Website mit WordPress, holen wir die letzten Beiträge in den Feed – und danach jede Nacht die neuen. «verein.ch» genügt.",
+    "urlHint": "Voraussetzung ist eine Website mit WordPress – wir holen die Beiträge über deren Schnittstelle. Ob eure Website eine hat, sagt euch die Prüfung. «verein.ch» genügt.",
     "willFetch": "Abgefragt wird {{url}}",
+    "check": "Website prüfen",
+    "checkFailedHint": "Entweder läuft die Website nicht mit WordPress, oder ihre Schnittstelle ist gesperrt. Fragt im Zweifel, wer eure Website betreut.",
+    "found": "Gefunden",
+    "foundWordpress": "WordPress erkannt",
+    "foundPosts_one": "WordPress erkannt · {{count}} Beitrag veröffentlicht",
+    "foundPosts_other": "WordPress erkannt · {{count}} Beiträge veröffentlicht",
+    "foundEndpoint": "Schnittstelle: {{url}}",
+    "scope": "Umfang",
+    "postLimit": "Beiträge je Abgleich",
+    "postLimitValue_one": "{{count}} Beitrag",
+    "postLimitValue_other": "{{count}} Beiträge",
+    "categories": "Kategorien",
+    "categoriesAll": "Alle Kategorien",
+    "categoriesHint": "Ohne Auswahl kommen die Beiträge aller Kategorien. Mehr als 100 Beiträge je Abgleich gibt die Schnittstelle nicht her.",
+    "categoriesUnknown": "Prüft die Website, dann stehen hier ihre Kategorien zur Auswahl. Ohne Auswahl kommen die Beiträge aller Kategorien.",
+    "categoryOption": "{{name}} ({{count}})",
     "connect": "Beiträge holen",
     "refresh": "Jetzt aktualisieren",
     "imported_one": "{{count}} Beitrag übernommen",
@@ -685,11 +723,13 @@
     "lastSync_one": "{{when}} · {{count}} Beitrag",
     "lastSync_other": "{{when}} · {{count}} Beiträge",
     "neverSynced": "Noch kein Abgleich",
+    "savedScope_one": "Gespeichert: {{count}} Beitrag je Abgleich · {{categories}}",
+    "savedScope_other": "Gespeichert: {{count}} Beiträge je Abgleich · {{categories}}",
     "lastError": "Letzter Abgleich fehlgeschlagen",
     "disconnect": "Verbindung trennen",
     "disconnectConfirm": "Neue Beiträge der Website erscheinen danach nicht mehr im Feed. Bereits übernommene Meldungen bleiben.",
     "disconnected": "Verbindung getrennt. Die übernommenen Beiträge bleiben.",
-    "scheduleHint": "Der Abgleich läuft danach jede Nacht von selbst. Übernommene Beiträge bleiben auch nach dem Trennen im Feed."
+    "scheduleHint": "Der Abgleich läuft danach jede Nacht von selbst. Änderungen an Umfang und Kategorien werden mit «Jetzt aktualisieren» gespeichert."
   },
   "shifts": {
     "title": "Schichten",
@@ -1483,6 +1523,10 @@
       "taskWhyMissing": "Die Aufgabe braucht ihr Warum."
     },
     "followHintAdmin": "Aus einem Anliegen entsteht höchstens eine Aufgabe. «Als News publizieren» macht deine Antwort für den ganzen Verein sichtbar."
+  },
+  "news": {
+    "share": "Teilen",
+    "linkCopied": "Link kopiert"
   },
   "eventEdit": {
     "title": "Termin bearbeiten",

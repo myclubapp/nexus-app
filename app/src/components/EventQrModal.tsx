@@ -26,7 +26,6 @@ import { checkInErrorKey } from '../lib/checkInError';
 
 interface EventQrProps {
   eventId: string;
-  onDismiss: () => void;
 }
 
 /**
@@ -39,7 +38,7 @@ interface EventQrProps {
  * Eigene Komponente ohne Blatt-Hülle, weil `IonModal` seinen Inhalt im Test
  * nicht rendert (docs/TESTING.md).
  */
-export function EventQr({ eventId, onDismiss }: EventQrProps) {
+export function EventQr({ eventId }: EventQrProps) {
   const { t } = useTranslation();
   const toast = useToast();
   const token = useEventQrToken(eventId);
@@ -133,12 +132,6 @@ export function EventQr({ eventId, onDismiss }: EventQrProps) {
           })}
         </ListSection>
       )}
-
-      <div className="app-actions">
-        <IonButton expand="block" fill="clear" onClick={onDismiss}>
-          {t('common.close')}
-        </IonButton>
-      </div>
     </>
   );
 }
@@ -169,7 +162,7 @@ export function EventQrModal({
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        {eventId && <EventQr eventId={eventId} onDismiss={onDismiss} />}
+        {eventId && <EventQr eventId={eventId} />}
       </IonContent>
     </IonModal>
   );

@@ -83,6 +83,8 @@ export function PointHistoryPage() {
                 onIonChange={(e) =>
                   setPillar((e.detail.value as Pillar | null) ?? null)
                 }
+                cancelText={t('common.cancel')}
+                okText={t('common.ok')}
               >
                 <IonSelectOption value={null}>
                   {t('pointHistory.allPillars')}

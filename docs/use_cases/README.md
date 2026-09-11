@@ -70,7 +70,7 @@ synchron gehalten werden können.
 | [UC-026](UC-026-news-publizieren.md) | Vereins-News publizieren | Vorstand | FR-076, FR-077, FR-078, FR-070 | Implemented |
 | [UC-027](UC-027-vereins-puls-freigeben.md) | Vereins-Puls freigeben | Vorstand | FR-082, FR-083, FR-084, FR-070 | Implemented |
 | [UC-028](UC-028-benachrichtigungen-einstellen.md) | Benachrichtigungen einstellen | Mitglied | FR-079, FR-080, FR-081 | In Progress |
-| [UC-038](UC-038-website-news-uebernehmen.md) | News von der Vereins-Website übernehmen | Vorstand | FR-146, FR-147 | In Progress |
+| [UC-038](UC-038-website-news-uebernehmen.md) | News von der Vereins-Website übernehmen | Vorstand | FR-146, FR-147, FR-149 | In Progress |
 
 ### «Stimme» & Dialog
 
@@ -88,8 +88,9 @@ synchron gehalten werden können.
 | [UC-033](UC-033-beitrags-profil-erfassen.md) | Beitrags-Profil erfassen | Mitglied | FR-058, FR-059 | Implemented |
 | [UC-034](UC-034-vereinsidentitaet-konfigurieren.md) | Vereinsidentität, Begriffe und Module konfigurieren | Vorstand | FR-111, FR-112, FR-113, FR-114, FR-115 | Implemented |
 | [UC-035](UC-035-verband-verbinden.md) | Verband verbinden | Vorstand | FR-120, FR-121 | Draft |
+| [UC-039](UC-039-verbands-team-verknuepfen.md) | Verbands-Team verknüpfen oder importieren | Vorstand | FR-150, FR-151, FR-152, FR-153 | Draft |
 | [UC-036](UC-036-rechnungen-einsehen.md) | Rechnungen einsehen und Punkte bei pünktlicher Zahlung | Mitglied | FR-116, FR-117, FR-118, FR-119 | Implemented |
-| [UC-037](UC-037-beispielinhalte-verwalten.md) | Beispielinhalte verwalten | Vorstand | FR-134 bis FR-145 | Implemented |
+| [UC-037](UC-037-beispielinhalte-verwalten.md) | Beispielinhalte verwalten | Vorstand | FR-134 bis FR-145 | Draft |
 
 ---
 
@@ -100,7 +101,7 @@ synchron gehalten werden können.
 | **M1 – Fundament** | UC-001 bis UC-008, UC-034, UC-037 |
 | **M2 – Agenda-Loop** | UC-009 bis UC-016, UC-020 |
 | **M3 – Gemeinschaft** | UC-017 bis UC-019, UC-021 bis UC-033 |
-| **M4 – Anschlüsse** | UC-035, UC-036 |
+| **M4 – Anschlüsse** | UC-035, UC-036, UC-039 |
 
 ---
 
@@ -121,6 +122,9 @@ Diese Anforderungen sind bewusst nach dem MVP eingeplant und tragen im Katalog d
 Ebenfalls ohne eigene Spezifikation, weil vollständig systemseitig: FR-060, FR-061, FR-068, FR-069
 (Kennzahlen der Vereins-Gesundheit) – sie sind Anzeigeflächen der in UC-023 beschriebenen Signale und
 werden seit dem 11.09.2026 im Plan zu UC-023 mitgeführt.
+
+Ohne eigene Spezifikation, weil reine Navigationsregel: FR-148 (Verwaltung als eigene Gruppe) – der
+Ablauf steht in UC-008, die Gliederung der Seite in [`../guidelines.md`](../guidelines.md) §2.
 
 ---
 

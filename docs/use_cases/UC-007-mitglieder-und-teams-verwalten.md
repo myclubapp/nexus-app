@@ -32,8 +32,9 @@
 **Flow:**
 
 1. Vorstand wählt «Team anlegen» und gibt einen Namen ein.
-2. System legt das Team im Verein an.
-3. Use case continues at step 6.
+2. Besteht eine aktive Verbandsverbindung, bietet das System zusätzlich an, das Team mit einem Verbands-Team zu verknüpfen (UC-039).
+3. System legt das Team im Verein an.
+4. Use case continues at step 6.
 
 ### A2: Letzten Vorstand herabstufen
 

@@ -21,11 +21,12 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **TR** das Dashboard öffnen | Oben rechts steht «News schreiben» | | |
+| 1 | Als **TR** das Dashboard öffnen | Unten rechts steht das Plus «News schreiben» | | |
 | 2 | Antippen | Das Blatt zeigt Titel, Text, Bild und Geltungsbereich (Schritt 2) | | |
 | 3 | Ohne Titel publizieren wollen | Gesperrt, der Grund steht da | | |
 | 4 | Titel und Text erfassen, «Ganzer Verein» lassen, publizieren | Toast «Publiziert. Alle Betroffenen haben sie in der Inbox.» | | |
-| 5 | Den Feed auf dem Dashboard ansehen | Die News steht zuoberst | | |
+| 5 | Den Feed auf dem Dashboard ansehen | Die News steht zuoberst als Karte: Bild (falls Link), Datum, Titel, Anriss auf drei Zeilen, unten der Chip mit dem Vereinsnamen; auf dem Tablet zwei, auf dem Laptop drei Karten nebeneinander | | |
+| 5a | Die Karte antippen | Das Detail öffnet sich als Karte über der Seite mit dem ganzen Text; «Schliessen» links | | |
 | 6 | Als **M2** die Inbox öffnen | Die News ist da (BR-110) | | |
 | 7 | Als **M1** ebenso | Auch da | | |
 
@@ -64,12 +65,12 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **V** bei einer News «Bearbeiten» wählen | Das Blatt öffnet sich mit den bestehenden Werten | | |
+| 1 | Als **V** die News-Karte antippen, im Detail den Dreipunkt oben rechts und «Bearbeiten» wählen | Das Detail schliesst, das Formular öffnet sich mit den bestehenden Werten | | |
 | 2 | Den Hinweis im Blatt lesen | Er sagt, dass beim Speichern niemand erneut benachrichtigt wird | | |
 | 3 | Speichern | Der Feed zeigt den neuen Text | | |
 | 4 | Die Inbox eines Mitglieds prüfen | **Keine** zweite Nachricht (A3) | | |
 | 5 | `club_message_log` prüfen | **Kein** zweiter Eintrag – eine Korrektur ist keine neue Verbindung | | |
-| 6 | «Zurückziehen» wählen | Die News verschwindet aus dem Feed | | |
+| 6 | Die Karte antippen, Dreipunkt, «Zurückziehen» (rot) wählen | Das Detail schliesst, Toast oben, die News verschwindet aus dem Feed | | |
 | 7 | Die Inbox eines Mitglieds prüfen | Der Eintrag **bleibt** als Verlauf (A4) | | |
 | 8 | Ihn antippen | Er führt ins Dashboard; die News ist dort nicht mehr | | |
 
@@ -81,8 +82,9 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Eine übernommene News im Feed ansehen | «Bearbeiten» wird **nicht** angeboten | | |
+| 1 | Eine übernommene News antippen und den Dreipunkt öffnen | «Bearbeiten» wird **nicht** angeboten | | |
 | 2 | «Zurückziehen» ist verfügbar | Ja – sie lässt sich entfernen | | |
+| 4 | Auf der Karte das Teilen-Symbol antippen | Auf dem Gerät öffnet sich das Teilen-Blatt mit dem Link zur Quelle; im Browser Toast «Link kopiert» | | |
 | 3 | Den Grund verstehen | Eine Änderung ginge beim nächsten Abgleich verloren | | |
 
 ---
@@ -93,7 +95,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **M1** das Dashboard öffnen | **Kein** «News schreiben», keine Knöpfe an den Karten | | |
+| 1 | Als **M1** das Dashboard öffnen und eine News antippen | **Kein** Plus unten rechts, **kein** Dreipunkt im Detail | | |
 | 2 | Als **M1** `publish_news` direkt aufrufen | Abgewiesen | | |
 | 3 | Als **V** nach einer Auswertung suchen, wer eine News gelesen hat | Es gibt keine (BR-112) | | |
 | 4 | Als **V** fremde `notifications` abfragen | Leer | | |

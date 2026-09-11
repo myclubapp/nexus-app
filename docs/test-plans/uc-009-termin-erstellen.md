@@ -24,8 +24,8 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Tab «Agenda» öffnen | Oben rechts ein Pluszeichen | | |
-| 2 | Pluszeichen antippen | Das Blatt «Termin erstellen» öffnet sich | | |
+| 1 | Tab «Agenda» öffnen | Unten rechts ein Pluszeichen | | |
+| 2 | Pluszeichen antippen, dann den Kalender-Knopf | Das Blatt «Termin erstellen» öffnet sich | | |
 | 3 | Die Termintypen öffnen | Sieben Typen **in der Sprache des Vereins** (BR-032) | | |
 | 4 | «Training» wählen | — | | |
 | 5 | Die Punkteregel ablesen | **«Training besucht»** ist bereits vorgeschlagen (Schritt 6) | | |
@@ -136,8 +136,8 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **M** die Agenda öffnen | **Kein** Pluszeichen | | |
-| 2 | Als **T** die Agenda öffnen | Das Pluszeichen ist da – auch ohne Vorstandsrolle | | |
+| 1 | Als **M** die Agenda öffnen | **Kein** Pluszeichen unten rechts | | |
+| 2 | Als **T** die Agenda öffnen | Das Pluszeichen ist da und öffnet den Termin **direkt** – ohne Vorstandsrolle gibt es nur diesen einen Weg | | |
 | 3 | Mit dem Token von **M** `POST /rest/v1/events` | Abgewiesen von der Policy | | |
 | 4 | Mit dem Token von **T** `POST /rest/v1/events` | Geht durch (BR-033) | | |
 | 5 | Mit dem Token von **M** `POST /rest/v1/rpc/cancel_event` | Fehler «Nur Trainer:innen und der Vorstand sagen Termine ab» | | |

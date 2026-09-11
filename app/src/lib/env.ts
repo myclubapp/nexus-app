@@ -1,13 +1,13 @@
 /**
- * Typed access to the Vite environment. Fails loudly in development when a
- * required variable is missing instead of producing confusing runtime errors.
+ * Typisierter Zugriff auf die Vite-Umgebung. Fehlt eine nötige Variable,
+ * scheitert der Start laut – statt später mit unklaren Laufzeitfehlern.
  */
 type AppEnv = {
   supabaseUrl: string;
   supabaseAnonKey: string;
-  /** Deep link scheme used for magic link callbacks on iOS/Android. */
+  /** Deep-Link-Schema für den Rücksprung des Anmeldelinks auf iOS und Android. */
   appScheme: string;
-  /** Web origin used for magic link callbacks in the browser/PWA. */
+  /** Web-Adresse für den Rücksprung des Anmeldelinks im Browser und in der PWA. */
   webRedirectUrl: string;
 };
 

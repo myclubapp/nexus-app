@@ -5,9 +5,9 @@ import { env, isConfigured } from './env';
 import type { Database } from './database.types';
 
 /**
- * On device the session must survive an app restart. Capacitor Preferences is
- * the native-backed store recommended by the architecture document; in the
- * browser we fall back to localStorage, which supabase-js uses by default.
+ * Auf dem Gerät muss die Sitzung einen Neustart überstehen. Capacitor
+ * Preferences ist der native Speicher, den die Architektur dafür vorsieht;
+ * im Browser bleibt es bei localStorage, das supabase-js von sich aus nimmt.
  */
 const capacitorStorage = {
   getItem: async (key: string) => (await Preferences.get({ key })).value,
@@ -35,8 +35,8 @@ export const supabase: SupabaseClient<Database> = createClient<Database>(
       storage: Capacitor.isNativePlatform() ? capacitorStorage : undefined,
       persistSession: true,
       autoRefreshToken: true,
-      // Magic links arrive as a PKCE code that we exchange ourselves, both in
-      // the browser and via the Capacitor appUrlOpen deep link listener.
+      // Ein Anmeldelink trägt einen PKCE-Code, den die App selbst tauscht –
+      // im Browser wie über den appUrlOpen-Listener von Capacitor.
       detectSessionInUrl: !Capacitor.isNativePlatform(),
       flowType: 'pkce',
     },

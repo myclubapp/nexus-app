@@ -2,8 +2,6 @@ import { useMemo, useState } from 'react';
 import {
   IonBadge,
   IonButton,
-  IonButtons,
-  IonIcon,
   IonInput,
   IonItem,
   IonLabel,
@@ -120,25 +118,19 @@ export function PointRulePage() {
     <AppPage
       title={t('pointRules.title')}
       backHref="/tabs/profile"
-      toolbarEnd={
-        <IonButtons slot="end">
-          <IonButton
-            onClick={() => {
-              setNewLabel('');
-              setNewCode('');
-              setNewPillar(7);
-              setNewPoints('10');
-              setNewOpen(true);
-            }}
-          >
-            <IonIcon
-              slot="icon-only"
-              icon={addOutline}
-              aria-label={t('pointRules.addRule')}
-            />
-          </IonButton>
-        </IonButtons>
-      }
+      createActions={[
+        {
+          icon: addOutline,
+          label: t('pointRules.addRule'),
+          onClick: () => {
+            setNewLabel('');
+            setNewCode('');
+            setNewPillar(7);
+            setNewPoints('10');
+            setNewOpen(true);
+          },
+        },
+      ]}
       onRefresh={() => rules.refetch()}
     >
       {rules.isLoading ? (
@@ -272,6 +264,8 @@ export function PointRulePage() {
               label={t('pointRules.limitPeriod')}
               value={limitPeriod}
               onIonChange={(e) => setLimitPeriod(e.detail.value as LimitPeriod)}
+              cancelText={t('common.cancel')}
+              okText={t('common.ok')}
             >
               {LIMIT_PERIODS.map((period) => (
                 <IonSelectOption key={period} value={period}>
@@ -341,6 +335,8 @@ export function PointRulePage() {
               label={t('pointRules.pillarLabel')}
               value={newPillar}
               onIonChange={(e) => setNewPillar(e.detail.value as Pillar)}
+              cancelText={t('common.cancel')}
+              okText={t('common.ok')}
             >
               {PILLARS.map((pillar) => (
                 <IonSelectOption key={pillar} value={pillar}>

@@ -11,6 +11,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useBookPoints, useReversePoints } from '../hooks/useGamification';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import { formatDateTime } from '../lib/format';
@@ -32,6 +33,8 @@ interface BookPointsProps {
   correctingLabel?: string;
   onDone: (count: number, corrected: boolean) => void;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }
 
 /**
@@ -51,6 +54,7 @@ export function BookPoints({
   correctingLabel,
   onDone,
   onDismiss,
+  isOpen = true,
 }: BookPointsProps) {
   const { t } = useTranslation();
   const book = useBookPoints();
@@ -89,7 +93,7 @@ export function BookPoints({
 
   return (
     <FormModal
-      isOpen
+      isOpen={isOpen}
       title={isCorrection ? t('bookPoints.correctTitle') : t('bookPoints.title')}
       submitLabel={isCorrection ? t('bookPoints.correct') : t('bookPoints.book')}
       canSubmit={canSubmit && !isBusy}
@@ -126,6 +130,8 @@ export function BookPoints({
                 labelPlacement="stacked"
                 value={memberIds}
                 onIonChange={(e) => setMemberIds((e.detail.value as string[]) ?? [])}
+                cancelText={t('common.cancel')}
+                okText={t('common.ok')}
               >
                 {members.map((member) => (
                   <IonSelectOption key={member.id} value={member.id}>
@@ -143,6 +149,8 @@ export function BookPoints({
                 labelPlacement="stacked"
                 value={pillar}
                 onIonChange={(e) => setPillar(e.detail.value as Pillar)}
+                cancelText={t('common.cancel')}
+                okText={t('common.ok')}
               >
                 {PILLARS.map((entry) => (
                   <IonSelectOption key={entry} value={entry}>
@@ -192,11 +200,12 @@ export function BookPoints({
   );
 }
 
-/** Blatt-Hülle; der Inhalt entsteht erst beim Öffnen. */
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
 export function BookPointsModal({
   isOpen,
   ...props
 }: BookPointsProps & { isOpen: boolean }) {
-  if (!isOpen) return null;
-  return <BookPoints {...props} />;
+  const sheet = useSheetProps(isOpen ? props : null);
+  return sheet && <BookPoints {...sheet} />;
 }

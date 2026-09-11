@@ -74,7 +74,7 @@ Sinnzusammenhang, bevor er sichtbar wird (BR-036).
 - `app/src/hooks/useEvents.ts`: anlegen (einzeln und als Serie), ankündigen,
   absagen, ändern mit Geltungsbereich (A2).
 - `app/src/components/EventFormModal.tsx`: das Formular mit Vorschau.
-- `app/src/pages/AgendaPage.tsx`: das Pluszeichen, nur für Trainer:innen.
+- `app/src/pages/AgendaPage.tsx`: das Pluszeichen unten rechts, nur für Trainer:innen.
 
 ---
 

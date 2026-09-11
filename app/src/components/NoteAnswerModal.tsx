@@ -23,6 +23,7 @@ import {
   useSetNoteStatus,
 } from '../hooks/useVoice';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import { formatDateTime } from '../lib/format';
@@ -42,6 +43,8 @@ interface NoteAnswerProps {
   note: VoiceNote;
   onDone: (outcome: 'answered' | 'declined' | 'flagged') => void;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }
 
 /**
@@ -57,7 +60,7 @@ interface NoteAnswerProps {
  * keinen Endstatus ohne Begründung zu, und deshalb verlangen beide Ausgänge
  * denselben Text.
  */
-export function NoteAnswer({ note, onDone, onDismiss }: NoteAnswerProps) {
+export function NoteAnswer({ note, onDone, onDismiss, isOpen = true }: NoteAnswerProps) {
   const { t } = useTranslation();
   const { isAdmin } = useClub();
   const rules = usePointRules();
@@ -132,20 +135,16 @@ export function NoteAnswer({ note, onDone, onDismiss }: NoteAnswerProps) {
 
   return (
     <FormModal
-      isOpen
+      isOpen={isOpen}
       title={t('noteAnswer.title')}
-      submitLabel={closed ? t('common.close') : t('noteAnswer.send')}
-      canSubmit={closed ? true : ready && !isBusy}
+      submitLabel={t('noteAnswer.send')}
+      canSubmit={ready && !isBusy}
       isSubmitting={isBusy}
       error={error}
       onDismiss={onDismiss}
-      onSubmit={() => {
-        if (closed) {
-          onDismiss();
-          return;
-        }
-        void send(false).catch(() => undefined);
-      }}
+      // Ein abgeschlossenes Anliegen wird nur noch angezeigt: «Schliessen»
+      // steht dann einmal in der Kopfzeile (guidelines.md §2).
+      onSubmit={closed ? undefined : () => void send(false).catch(() => undefined)}
     >
       {/* Schritt 3: das Anliegen selbst – Wort für Wort, ungekürzt. */}
       <ListSection title={t(`voice.kind.${note.kind}`)} footnote={note.createdWeek}>
@@ -327,4 +326,13 @@ export function NoteAnswer({ note, onDone, onDismiss }: NoteAnswerProps) {
       )}
     </FormModal>
   );
+}
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
+export function NoteAnswerModal({
+  note,
+  ...props
+}: Omit<NoteAnswerProps, 'note'> & { note: VoiceNote | null }) {
+  const sheet = useSheetProps(note ? { note, ...props } : null);
+  return sheet && <NoteAnswer {...sheet} />;
 }

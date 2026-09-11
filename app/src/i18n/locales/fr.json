@@ -16,9 +16,14 @@
     "points_other": "{{count}} points",
     "notConfigured": "L'application n'est pas encore reliée à un projet Supabase. Complète les valeurs dans .env.local.",
     "confirm": "Confirmer",
+    "create": "Créer",
     "stepOf": "Étape {{current}} sur {{total}}",
     "saveFailed": "Cela n’a pas fonctionné. Veuillez réessayer.",
-    "saved": "Enregistré"
+    "saved": "Enregistré",
+    "discardChanges": "Ignorer les modifications",
+    "keepEditing": "Continuer la modification",
+    "details": "Détails",
+    "more": "Plus"
   },
   "auth": {
     "title": "Bienvenue",
@@ -216,6 +221,23 @@
     "tally": "{{yes}} oui · {{no}} non · {{open}} sans réponse",
     "cancelledWithReason": "Annulé: {{reason}}",
     "draft": "Brouillon",
+    "statusColumn": "Statut",
+    "participantsColumn": "Participants",
+    "myStatus": "Mon statut",
+    "attendances": "Présences et absences",
+    "listRegistered": "Inscrits : {{count}}",
+    "listExcused": "Absents : {{count}}",
+    "listUndecided": "Sans réponse : {{count}}",
+    "statusLabel": {
+      "open": "En attente – toucher pour participer",
+      "registered": "Inscrit – toucher pour se désister",
+      "present": "Présent",
+      "excused": "Absent – toucher pour participer",
+      "absent": "Pas venu",
+      "cancelled": "Rendez-vous annulé",
+      "locked": "Le rendez-vous a commencé",
+      "notAffected": "Pas pour toi"
+    },
     "undercovered_one": "Il manque encore {{count}} réponse",
     "undercovered_other": "Il manque encore {{count}} réponses"
   },
@@ -675,8 +697,24 @@
     "title": "Actualités du site web",
     "adminOnly": "Seul le comité peut connecter le site web.",
     "url": "Adresse de votre site web",
-    "urlHint": "Si votre site tourne sous WordPress, nous reprenons les derniers articles dans le fil – puis les nouveaux chaque nuit. «monclub.ch» suffit.",
+    "urlHint": "Un site sous WordPress est nécessaire – nous récupérons les articles via son interface. La vérification vous dira si votre site en a une. «monclub.ch» suffit.",
     "willFetch": "Adresse interrogée: {{url}}",
+    "check": "Vérifier le site",
+    "checkFailedHint": "Soit le site ne tourne pas sous WordPress, soit son interface est bloquée. En cas de doute, demandez à qui s'occupe de votre site.",
+    "found": "Trouvé",
+    "foundWordpress": "WordPress détecté",
+    "foundPosts_one": "WordPress détecté · {{count}} article publié",
+    "foundPosts_other": "WordPress détecté · {{count}} articles publiés",
+    "foundEndpoint": "Interface: {{url}}",
+    "scope": "Étendue",
+    "postLimit": "Articles par synchronisation",
+    "postLimitValue_one": "{{count}} article",
+    "postLimitValue_other": "{{count}} articles",
+    "categories": "Catégories",
+    "categoriesAll": "Toutes les catégories",
+    "categoriesHint": "Sans sélection, les articles de toutes les catégories sont repris. L'interface ne livre pas plus de 100 articles par synchronisation.",
+    "categoriesUnknown": "Vérifiez le site: ses catégories apparaîtront ici. Sans sélection, les articles de toutes les catégories sont repris.",
+    "categoryOption": "{{name}} ({{count}})",
     "connect": "Récupérer les articles",
     "refresh": "Actualiser maintenant",
     "imported_one": "{{count}} article repris",
@@ -685,11 +723,13 @@
     "lastSync_one": "{{when}} · {{count}} article",
     "lastSync_other": "{{when}} · {{count}} articles",
     "neverSynced": "Pas encore de synchronisation",
+    "savedScope_one": "Enregistré: {{count}} article par synchronisation · {{categories}}",
+    "savedScope_other": "Enregistré: {{count}} articles par synchronisation · {{categories}}",
     "lastError": "Dernière synchronisation échouée",
     "disconnect": "Déconnecter le site",
     "disconnectConfirm": "Les nouveaux articles du site n'apparaîtront plus dans le fil. Les actualités déjà reprises restent.",
     "disconnected": "Site déconnecté. Les articles repris restent.",
-    "scheduleHint": "La synchronisation se fait ensuite automatiquement chaque nuit. Les articles repris restent dans le fil même après la déconnexion."
+    "scheduleHint": "La synchronisation se fait ensuite automatiquement chaque nuit. Les modifications de l'étendue et des catégories sont enregistrées avec «Actualiser maintenant»."
   },
   "shifts": {
     "title": "Tranches",
@@ -1483,6 +1523,10 @@
       "taskWhyMissing": "La tâche a besoin de son pourquoi."
     },
     "followHintAdmin": "Une demande donne au plus une tâche. « Publier comme actualité » rend ta réponse visible pour tout le club."
+  },
+  "news": {
+    "share": "Partager",
+    "linkCopied": "Lien copié"
   },
   "eventEdit": {
     "title": "Modifier le rendez-vous",

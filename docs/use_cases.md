@@ -185,12 +185,15 @@ flowchart LR
         UC026[UC-026\nVereins-News publizieren]
         UC027[UC-027\nVereins-Puls freigeben]
         UC028[UC-028\nBenachrichtigungen\neinstellen]
+        UC038[UC-038\nNews von der Vereins-\nWebsite übernehmen]
     end
 
     board --> UC026
     board --> UC027
     system --> UC027
     member --> UC028
+    board --> UC038
+    system --> UC038
 ```
 
 ---
@@ -234,14 +237,19 @@ flowchart LR
         UC034[UC-034\nVereinsidentität, Begriffe\nund Module konfigurieren]
         UC035[UC-035\nVerband verbinden]
         UC036[UC-036\nRechnungen einsehen und\nPunkte bei Zahlung]
+        UC039[UC-039\nVerbands-Team verknüpfen\noder importieren]
     end
 
     board --> UC034
     board --> UC035
+    board --> UC039
     treasurer --> UC036
     member --> UC036
     external --> UC035
+    external --> UC039
     external --> UC036
+
+    UC039 -.->|erfordert| UC035
 ```
 
 ---

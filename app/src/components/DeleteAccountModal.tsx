@@ -16,6 +16,7 @@ import {
   IonToolbar,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
+import { usePresentingElement } from '../hooks/usePresentingElement';
 import { useAdminBlockers, useDeleteAccount } from '../hooks/useAccount';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
@@ -141,9 +142,14 @@ export function DeleteAccountContent({ onDismiss }: { onDismiss: () => void }) {
  */
 export function DeleteAccountModal({ isOpen, onDismiss }: DeleteAccountModalProps) {
   const { t } = useTranslation();
+  const presentingElement = usePresentingElement();
 
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={onDismiss}>
+    <IonModal
+      isOpen={isOpen}
+      onDidDismiss={onDismiss}
+      presentingElement={presentingElement}
+    >
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">

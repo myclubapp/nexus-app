@@ -3,9 +3,9 @@ import { IonBadge, IonButton, IonItem, IonLabel, IonNote } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
-import { MeetingInputForm } from '../components/MeetingInputModal';
-import { InputTriage } from '../components/InputTriageModal';
-import { MeetingAgenda } from '../components/MeetingAgendaModal';
+import { MeetingInputModal } from '../components/MeetingInputModal';
+import { InputTriageModal } from '../components/InputTriageModal';
+import { MeetingAgendaModal } from '../components/MeetingAgendaModal';
 import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
 import {
@@ -184,34 +184,29 @@ export function MeetingPage() {
         </>
       )}
 
-      {writing && (
-        <MeetingInputForm
-          onDismiss={() => setWriting(false)}
-          onDone={(wasAnonymous, ticketLost) => {
-            setWriting(false);
-            if (ticketLost) toast.failure(t('meeting.ticketLost'));
-            else
-              toast.success(
-                wasAnonymous ? t('meeting.sentAnonymous') : t('meeting.sent'),
-              );
-          }}
-        />
-      )}
+      <MeetingInputModal
+        isOpen={writing}
+        onDismiss={() => setWriting(false)}
+        onDone={(wasAnonymous, ticketLost) => {
+          setWriting(false);
+          if (ticketLost) toast.failure(t('meeting.ticketLost'));
+          else
+            toast.success(
+              wasAnonymous ? t('meeting.sentAnonymous') : t('meeting.sent'),
+            );
+        }}
+      />
 
-      {triaged && (
-        <InputTriage
-          input={triaged}
-          onDismiss={() => setTriagedId(null)}
-          onDone={(outcome) => {
-            setTriagedId(null);
-            toast.success(t(`meeting.done.${outcome}`));
-          }}
-        />
-      )}
+      <InputTriageModal
+        input={triaged}
+        onDismiss={() => setTriagedId(null)}
+        onDone={(outcome) => {
+          setTriagedId(null);
+          toast.success(t(`meeting.done.${outcome}`));
+        }}
+      />
 
-      {agendaFor && (
-        <MeetingAgenda meeting={agendaFor} onDismiss={() => setAgendaFor(null)} />
-      )}
+      <MeetingAgendaModal meeting={agendaFor} onDismiss={() => setAgendaFor(null)} />
     </AppPage>
   );
 }

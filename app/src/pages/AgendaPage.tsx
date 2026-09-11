@@ -46,7 +46,7 @@ import { ShiftListModal } from '../components/ShiftListModal';
 import { ShiftRosterModal } from '../components/ShiftRosterModal';
 import { EventQrModal } from '../components/EventQrModal';
 import { canRespond, coverageGap, tallyAttendance } from '../lib/attendance';
-import { EventEdit } from '../components/EventEditModal';
+import { EventEditModal } from '../components/EventEditModal';
 import { canActOn, isSample } from '../lib/sample';
 import { isCheckInOpen } from '../lib/checkInWindow';
 import { canRemind, reminderMessage } from '../lib/reminder';
@@ -605,18 +605,16 @@ export function AgendaPage() {
       {/* UC-009 A2 und FR-023. Das Blatt entsteht erst mit dem Termin: Ohne
           ihn hätte es nichts zu bearbeiten, und `IonModal` behielte den Stand
           des zuletzt geöffneten. */}
-      {editEvent && (
-        <EventEdit
-          event={editEvent}
-          onDismiss={() => setEditEventId(null)}
-          onDone={(outcome) => {
-            setEditEventId(null);
-            toast.success(
-              t(outcome === 'cancelled' ? 'eventEdit.cancelled' : 'eventEdit.changed'),
-            );
-          }}
-        />
-      )}
+      <EventEditModal
+        event={editEvent ?? null}
+        onDismiss={() => setEditEventId(null)}
+        onDone={(outcome) => {
+          setEditEventId(null);
+          toast.success(
+            t(outcome === 'cancelled' ? 'eventEdit.cancelled' : 'eventEdit.changed'),
+          );
+        }}
+      />
 
       <ShiftRosterModal
         isOpen={rosterEventId !== null}

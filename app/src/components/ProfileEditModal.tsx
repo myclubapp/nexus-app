@@ -3,6 +3,7 @@ import { IonInput, IonItem, IonToggle } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { useMyProfile, useUpdateMyProfile } from '../hooks/useProfile';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 
 interface ProfileEditModalProps {
@@ -21,9 +22,12 @@ interface ProfileEditModalProps {
 export function ProfileEditForm({
   onSaved,
   onDismiss,
+  isOpen = true,
 }: {
   onSaved: () => void;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }) {
   const { t } = useTranslation();
   const profile = useMyProfile();
@@ -47,7 +51,7 @@ export function ProfileEditForm({
 
   return (
     <FormModal
-      isOpen
+      isOpen={isOpen}
       title={t('profile.editTitle')}
       // BR-031: Ein Mitglied trägt immer einen Anzeigenamen.
       canSubmit={displayName.trim().length >= 2}
@@ -110,8 +114,9 @@ export function ProfileEditForm({
   );
 }
 
-/** Blatt-Hülle; der Inhalt entsteht erst beim Öffnen. */
-export function ProfileEditModal({ isOpen, onDismiss, onSaved }: ProfileEditModalProps) {
-  if (!isOpen) return null;
-  return <ProfileEditForm onDismiss={onDismiss} onSaved={onSaved} />;
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
+export function ProfileEditModal({ isOpen, ...props }: ProfileEditModalProps) {
+  const sheet = useSheetProps(isOpen ? props : null);
+  return sheet && <ProfileEditForm {...sheet} />;
 }

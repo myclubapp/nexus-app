@@ -22,7 +22,7 @@
 4. Vorstand fügt den API-Schlüssel ein.
 5. System führt einen Testaufruf gegen die Verbandsschnittstelle durch.
 6. System speichert den Schlüssel verschlüsselt, setzt die Verbindung auf aktiv und startet den ersten Abgleich.
-7. System zeigt die synchronisierten Spiele in der Agenda und die Verbandsnews im Feed.
+7. System zeigt die Verbandsnews im Feed und führt den Vorstand weiter zu den Teams: Spiele entstehen erst, wenn ein Team mit einem Verbands-Team verknüpft ist (UC-039).
 
 ## Alternative Flows
 
@@ -65,7 +65,7 @@
 ### Success Postconditions
 
 - Die Verbindung besteht mit dem Status aktiv und einem verschlüsselt abgelegten Schlüssel.
-- Spiele und Verbandsnews erscheinen in Agenda und Feed.
+- Verbandsnews erscheinen im Feed; Spiele folgen den Verknüpfungen der Teams (UC-039).
 
 ### Failure Postconditions
 
@@ -78,9 +78,9 @@
 
 Wer den Schlüssel des Vereins besitzt, ist berechtigt. Es gibt kein Vereinsverzeichnis und keinen Zuordnungsprozess über Kontaktadressen.
 
-### BR-152: Nur verbundene Vereine werden abgeglichen
+### BR-152: Nur verbundene Vereine und verknüpfte Teams werden abgeglichen
 
-Es findet kein globaler Vorabgleich aller Verbandsvereine statt.
+Es findet kein globaler Vorabgleich aller Verbandsvereine statt. Innerhalb eines verbundenen Vereins holt der Abgleich Spiele ausschliesslich für Teams, die mit einem Verbands-Team verknüpft sind (BR-175).
 
 ### BR-153: Schlüssel liegen im Tresor
 

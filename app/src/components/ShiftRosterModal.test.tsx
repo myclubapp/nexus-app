@@ -49,7 +49,7 @@ describe('ShiftRoster', () => {
   });
 
   function render(shifts: EventShift[] = [shift()]) {
-    return renderWithProviders(<ShiftRoster shifts={shifts} onDismiss={vi.fn()} />);
+    return renderWithProviders(<ShiftRoster shifts={shifts} />);
   }
 
   it('nennt den Punktwert der Schicht vor der Bestätigung (BR-042)', () => {

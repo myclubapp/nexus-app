@@ -21,7 +21,8 @@ vi.mock('../hooks/useClub', () => ({
 
 /**
  * `FormModal` steckt in einem `IonModal`, das in jsdom nichts rendert
- * (docs/TESTING.md).
+ * (docs/TESTING.md). Der Ersatz zeichnet die Kopfzeile nach: Ohne `onSubmit`
+ * zeigt das Blatt nur an, und dann steht dort einzig «Schliessen».
  */
 vi.mock('./FormModal', () => ({
   FormModal: ({
@@ -29,17 +30,25 @@ vi.mock('./FormModal', () => ({
     submitLabel,
     canSubmit,
     onSubmit,
+    onDismiss,
   }: {
     children: ReactNode;
     submitLabel?: string;
     canSubmit?: boolean;
-    onSubmit: () => void;
+    onSubmit?: () => void;
+    onDismiss: () => void;
   }) => (
     <div>
       {children}
-      <button type="button" disabled={canSubmit === false} onClick={onSubmit}>
-        {submitLabel}
-      </button>
+      {onSubmit ? (
+        <button type="button" disabled={canSubmit === false} onClick={onSubmit}>
+          {submitLabel}
+        </button>
+      ) : (
+        <button type="button" onClick={onDismiss}>
+          Schliessen
+        </button>
+      )}
     </div>
   ),
 }));
@@ -176,14 +185,15 @@ describe('TaskDetail', () => {
     expect(screen.queryByRole('button', { name: 'Erledigt melden' })).toBeNull();
   });
 
-  it('macht aus dem Hauptknopf ein Schliessen, wo es nichts zu tun gibt', () => {
+  it('zeigt nur an, wo es nichts zu tun gibt – mit einem Schliessen statt eines Hauptknopfs', () => {
     // Ein gesperrter «Übernehmen»-Knopf über einer vergebenen Aufgabe sagt das
-    // Falsche.
+    // Falsche; das Blatt lässt `onSubmit` weg (guidelines.md §2).
     const taken = task({
       assignments: [{ member_id: 'someone' }] as TaskWithAssignments['assignments'],
     });
     render(taken);
     expect(screen.getByRole('button', { name: 'Schliessen' })).toBeEnabled();
+    expect(screen.queryByRole('button', { name: 'Übernehmen' })).toBeNull();
   });
 
   it('schreibt beim Öffnen nichts in die Datenbank (BR-074)', () => {

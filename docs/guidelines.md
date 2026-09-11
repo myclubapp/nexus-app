@@ -58,8 +58,13 @@ Daraus folgen die Muster:
 | Erklärtext unter einer Liste  | `ListSection footnote=…` (iOS-Fussnote), nicht ein `IonItem` mit Text   |
 | Etwas erfassen                | `FormModal` – Abbrechen links, Bestätigen rechts                        |
 | Mehrschrittige Erfassung      | `Wizard` – eine Frage je Schritt, Fortschrittsbalken                    |
+| Blatt über der Seite          | `presentingElement` aus `usePresentingElement()` – Karte statt Vollbild |
 | Zeilenaktion                  | `IonItemSliding` + `IonItemOption`, nicht ein drittes Icon in der Zeile |
+| Zu-/Absage-Status             | `AttendanceStatusIcon` am Zeilenanfang, Wischen nach rechts für die Gegenantwort, Zusagen-Zahl als `IonBadge` rechts, Namen im `EventDetailModal` – der Schnitt der bestehenden myclub-App |
+| News                          | `NewsCard` im `IonGrid` (12 / 6 / 6 / 4 Spalten), Volltext im `NewsDetailModal` – der Schnitt der bestehenden myclub-App |
+| **Etwas Neues anlegen**       | **`AppPage createActions=…`** – Plus unten rechts, nie ein Symbol in der Kopfzeile |
 | Auswahl zwischen Sichten      | `IonSegment` in `AppPage subToolbar=…`                                  |
+| Auswahl aus einer Liste       | `IonSelect` **mit `cancelText`/`okText`** – sonst «Cancel»/«OK» (§8)    |
 | **Inhalt lädt**               | **Skelett in der Form des Inhalts** (§4), nicht ein Spinner             |
 | **Eine Aktion läuft**         | **`IonSpinner` im auslösenden Knopf** (§4)                              |
 | Rückfrage **vor** einer Aktion | `IonAlert` bzw. `IonActionSheet`, nie ein eigener Dialog                |
@@ -68,9 +73,224 @@ Daraus folgen die Muster:
 | Lange Listen                  | `IonInfiniteScroll`, nicht ein «Mehr laden»-Knopf                       |
 
 **Mobile first.** Alles wird für die Einhand-Bedienung auf einem Telefon
-entworfen: Hauptaktion unten oder in der Kopfzeile rechts, Trefferflächen
-mindestens 44 × 44 px (Ionic hält das ein, solange nichts verkleinert wird),
-keine Ansicht, die Querformat oder Tablet voraussetzt.
+entworfen: Hauptaktion unten in Daumenreichweite, Trefferflächen mindestens
+44 × 44 px (Ionic hält das ein, solange nichts verkleinert wird), keine
+Ansicht, die Querformat oder Tablet voraussetzt.
+
+### Neues entsteht unten rechts
+
+**Was etwas Neues anlegt – News, Termin, Aufgabe, Einladung, Punkteregel,
+Team –, steht als rundes Plus unten rechts über dem Inhalt, nicht als Symbol
+in der Kopfzeile.** Ein `IonFab` in der Vereinsfarbe:
+
+```tsx
+<AppPage
+  title={t('dashboard.title')}
+  createActions={
+    isTrainer
+      ? [{ icon: createOutline, label: t('newsForm.title'), onClick: openForm }]
+      : undefined
+  }
+>
+```
+
+Drei Gründe, und alle drei gelten für jede Ansicht gleich:
+
+- **Der Daumen kommt hin.** Die Kopfzeile ist auf einem heutigen Telefon die
+  am schwersten erreichbare Zone; die untere rechte Ecke die leichteste.
+- **Ein Zeichen, überall dasselbe.** Vorher trug dieselbe Handlung je Seite
+  ein anderes Symbol – ein Stift auf der Startseite, ein Plus in der Agenda.
+  Wer «neu» sucht, sucht ab jetzt an einer Stelle nach einem Zeichen.
+- **Rang wird sichtbar.** In der Kopfzeile steht die Hauptaktion gleichrangig
+  neben Nebensächlichem. Der Fab hebt sie heraus.
+
+Umgesetzt ist das einmal, in `CreateFab`: `slot="fixed"`, `vertical="bottom"`,
+`horizontal="end"`, `color="primary"`, Symbol `add`. Eingehängt wird er **nur**
+über `AppPage createActions=…` – dort landet er als direktes Kind des
+`IonContent` und damit im Slot, der ihn beim Scrollen stehen lässt. Ein
+`IonFab` in einer Seite selbst ist ein Fehler; `CreateFab.test.tsx` hält das
+fest.
+
+Hat eine Seite **mehrere** Erstellen-Wege, klappen sie aus demselben Plus nach
+oben auf (`IonFabList`): Das Plus trägt dann `common.create`, jeder Weg sein
+eigenes Symbol und seinen eigenen Namen für Bedienhilfen. Der häufigere Weg
+steht zuerst, also am nächsten beim Plus.
+
+Die Kopfzeile behält, was **nichts anlegt**: filtern, teilen, eine Sicht
+umschalten. `toolbarEnd` bleibt dafür bestehen.
+
+Die Regel gilt für den **Einstieg** ins Erfassen. Ein beschrifteter Knopf
+mitten im Inhalt bleibt richtig, wo er zu einem Text gehört, der ihn erklärt
+oder begrenzt – «Anliegen schreiben» unter dem verbleibenden Kontingent
+(`VoicePage`), «Freigeben» am Ende des komponierten Pulses (`PulsePage`). Ein
+Fab trüge dort das Wort nicht mit, das die Handlung verständlich macht.
+
+### Blätter: Karte über der Seite, nicht Vollbild
+
+**Jedes `IonModal` bekommt ein `presentingElement`.** Ohne dieses Element legt
+sich das Blatt als Vollbild über die App: kein Rand, kein sichtbarer
+Hintergrund, kein Hinweis darauf, woher es kam und wohin das Schliessen führt.
+Mit ihm fährt die darunterliegende Seite zurück und dunkelt ab, das Blatt
+bekommt runde Ecken und einen Rand – das Karten-Muster («card modal»), das iOS
+für «etwas erfassen, dann zurück» verwendet. Ionic zeigt es ausschliesslich im
+iOS-Modus, und der gilt hier auf allen Plattformen (§2).
+
+Das presentierende Element ist immer dasselbe und wird nie von Hand gesucht:
+
+```tsx
+const presentingElement = usePresentingElement();
+
+<IonModal isOpen={…} onDidDismiss={…} presentingElement={presentingElement}>
+```
+
+`usePresentingElement()` liefert das **äussere** `ion-router-outlet`
+(`id="main"` in `src/App.tsx`) – nicht das verschachtelte Outlet der Tabs.
+Nähme das Blatt das innere, bliebe der Tab-Balken vor der zurückgefahrenen
+Seite stehen und die Karte läge halb darauf. Findet der Hook kein Outlet – in
+jsdom, vor dem ersten Anhängen –, gibt er `undefined` zurück und Ionic zeigt
+das Blatt wie bisher als Vollbild. Das ist der Ausfallweg, keine Ausnahme.
+
+Der Hook sucht das Outlet **beim Rendern**, nicht erst in einem Effekt danach.
+Ionic liest `presentingElement` genau im Moment des Präsentierens; ein Blatt,
+das mit `isOpen` in den Baum kommt – jede Erfassung entsteht erst beim
+Öffnen –, präsentiert sich vor dem ersten Effekt. Ein nachträglich gesetztes
+Element holt die Karte nicht mehr nach: Das Blatt bleibt Vollbild, nur die
+Klasse `modal-card` kommt dazu. Wer den Hook auf ein `useEffect` umbaut, baut
+genau diesen Fehler wieder ein.
+
+### Ein Blatt fällt erst, wenn es unten ist
+
+Ein Blatt, das erst beim Öffnen entsteht – jede Erfassung, jedes Detail mit
+eigenem Zustand –, darf **nicht** im selben Moment aus dem Baum fallen, in dem
+die Seite es schliesst. Ionic nimmt ein Blatt, das mitten im Präsentieren
+entfernt wird, ohne Übergang heraus, und die Seite darunter bleibt in ihrer
+Karten-Stellung stehen: auf 91,5 % verkleinert, abgedunkelt, ohne Weg zurück.
+Sichtbar wird das nach jedem Speichern, weil die Seite dort `isOpen` auf
+`false` setzt oder den Gegenstand auf `null`.
+
+Dazwischen liegt deshalb das `onDidDismiss` von Ionic, und die Brücke dorthin
+ist `useSheetProps()`. Die Hülle jedes solchen Blattes sieht gleich aus:
+
+```tsx
+export function NewsFormModal({ isOpen, ...props }: NewsFormProps & { isOpen: boolean }) {
+  const sheet = useSheetProps(isOpen ? props : null);
+  return sheet && <NewsForm {...sheet} />;
+}
+
+export function TaskDetailModal({ task, ...props }: … & { task: Task | null }) {
+  const sheet = useSheetProps(task ? { task, ...props } : null);
+  return sheet && <TaskDetail {...sheet} />;
+}
+```
+
+Gibt die Seite `null`, bleiben die zuletzt gesehenen Eigenschaften stehen, der
+Inhalt bekommt `isOpen: false` und reicht es an `FormModal` weiter, das Blatt
+fährt zu – und erst sein `onDismiss` gibt den Inhalt frei. Öffnet die Seite
+erneut, beginnt das Blatt leer, weil der Inhalt dazwischen abgebaut war.
+
+Drei Folgen:
+
+- **Der Inhalt trägt `isOpen?: boolean`** (Standard `true`, damit ein Test ihn
+  direkt rendern kann) und gibt es an `FormModal` weiter. Ein `<FormModal
+  isOpen>` mit nacktem `isOpen` ist ein Fehler – `sheetLifetime.test.ts`
+  hält das fest.
+- **Die Hülle gehört zur Komponente, nicht zur Seite.** Ein
+  `{writing && <MeetingInputForm …/>}` in einer Seite ist derselbe Fehler an
+  anderer Stelle; die Seite hängt `<MeetingInputModal isOpen={writing} …/>`
+  ein.
+- **Ein Blatt, das nie abgebaut wird** – `EventDetailModal`, `ShiftListModal`,
+  die Erklärungs-Blätter in `StrengthsPage` –, braucht davon nichts: Es steht
+  von Anfang an im Baum und wechselt nur `isOpen`.
+
+`FormModal` erledigt das für jede Erfassung selbst. Wer ein Blatt ohne diese
+Hülle baut – Scanner, QR-Anzeige, Listen-Blatt –, holt sich das Element über
+den Hook; `usePresentingElement.test.tsx` prüft das für jede Datei, die ein
+`IonModal` öffnet.
+
+Zwei Folgen gehören zur Karte dazu:
+
+- **Sie lässt sich nach unten wegwischen.** Wo dabei Eingaben verloren gingen,
+  fängt `canDismiss` die Geste ab und fragt über ein `IonActionSheet` nach –
+  dasselbe Verhalten wie in Mail und Kalender. Ein Blatt, das nur anzeigt,
+  braucht das nicht.
+
+  Der Wächter steckt in `useDiscardGuard()` und wird von `FormModal` für jede
+  Erfassung gestellt; die Formulare selbst melden nichts an. Scharf wird er
+  vom ersten `ionInput` oder `ionChange` aus dem Blatt – Ionic löst beide nur
+  bei einer **Benutzereingabe** aus, ein vorausgefülltes Feld also nicht. Drei
+  Punkte gehören dazu:
+
+  - **Abgefangen wird jeder Weg, der den Entwurf wegwirft**: die Wischgeste
+    (`role: 'gesture'`), der Griff neben das Blatt (`role: 'backdrop'`, auf dem
+    Laptop anklickbar) und der Abbrechen-Knopf (`role: 'cancel'`). Damit
+    Abbrechen dort ankommt, ruft es `modal.dismiss(undefined, 'cancel')` statt
+    `onDismiss` – ein direkter Aufruf ginge an Ionic vorbei und der Entwurf wäre
+    wortlos weg, während die Geste daneben noch fragt.
+
+    **Nicht** abgefangen wird das gesteuerte Schliessen ohne Rolle: Setzt die
+    Seite nach dem Speichern `isOpen={false}`, ruft Ionic ebenfalls `dismiss()`
+    und prüft auch dort `canDismiss`. Ein Wächter, der jede Rolle abfängt, fragt
+    nach dem erfolgreichen Speichern «verwerfen?» und sperrt das Blatt zu.
+  - **Unbeschrieben bleibt `canDismiss` der Wert `true`**, nicht eine Funktion,
+    die `true` zurückgibt. Ionic liest zu Beginn der Geste `canDismiss !== true`
+    und lässt das Blatt sonst nur ein Fünftel weit mitlaufen; ein leeres Blatt
+    behielte damit das gebremste Gefühl, obwohl es nichts zu retten gibt.
+  - **Das Action Sheet steht neben dem Blatt, nicht darin.** Im Blatt ginge es
+    mit ihm unter, bevor jemand geantwortet hat.
+
+  Ausnahme mit Grund: `DeleteAccountModal`. Dort ist das Wegwischen der
+  ungefährliche Ausgang aus einer zerstörerischen Handlung und soll leicht
+  bleiben. `discardGuard.test.ts` führt die Liste und prüft jedes andere Blatt
+  mit Eingabefeld.
+- **Ein Blatt über einem Blatt** nimmt das darüberliegende Modal als
+  presentierendes Element, nicht wieder das Outlet – sonst stapeln sich zwei
+  Karten auf derselben Ebene.
+
+**Schliessen steht genau einmal: in der Kopfzeile.** Ein Blatt, das nur
+anzeigt – Termin-Detail, Schichten, QR-Code, Scanner –, hat den Knopf
+«Schliessen» als `IonButton` in den `IonButtons` der `IonToolbar` und sonst
+nirgends. Kein zweiter Schliessen-Knopf am Ende des Inhalts, kein `app-actions`
+nur dafür: Derselbe Knopf zweimal auf einem Blatt wirkt wie zwei verschiedene
+Handlungen, und wer nach unten scrollt, findet ohnehin die Wischgeste und die
+Kopfzeile. Der Inhalt endet mit dem, was er zeigt. Am Ende eines Blattes steht
+ein Knopf nur, wenn er etwas **tut** – Bestätigen in `FormModal`, «Mein Status»
+im Termin-Detail, die Antwort im Einsatz-Blatt. Folge für den Schnitt: Die
+Inhalts-Komponente (`EventDetail`, `ShiftList`, `EventQr`, …) kennt kein
+`onDismiss`; das gehört allein der Blatt-Hülle, die Kopfzeile und `IonModal`
+stellt.
+
+Dasselbe gilt für ein `FormModal`, das nur anzeigt – eine Einreichung mit
+Knöpfen je Zeile, ein Fürsorge-Hinweis, die Sammelansicht einer Sitzung: Es
+bekommt **kein `onSubmit`**. Dann trägt die Kopfzeile genau einen Knopf,
+«Schliessen», an der Stelle von Abbrechen, und rechts steht nichts. Ein
+`submitLabel={t('common.close')}` mit `onSubmit={onDismiss}` stellt
+«Abbrechen» und «Schliessen» nebeneinander – zwei Knöpfe für dieselbe
+Handlung. Wechselt ein Blatt je nach Zustand zwischen Erfassen und Anzeigen
+(`TaskDetail`, `NoteAnswer`), wechselt es `onSubmit` zwischen der Aktion und
+`undefined`.
+
+### Alerts und Action Sheets: die Rolle färbt den Knopf
+
+Ein Knopf in `IonAlert` oder `IonActionSheet` bekommt **nie** ein `color`. Seine
+Farbe entsteht aus seiner Rolle, und Ionic setzt sie im iOS-Modus selbst:
+
+| Knopf                                | Rolle                 | Farbe                         |
+| ------------------------------------ | --------------------- | ----------------------------- |
+| Abbrechen, Schliessen, «Nicht jetzt» | `role: 'cancel'`      | Vereinsfarbe (Ionic-Standard) |
+| Löschen, Widerrufen, Zurückziehen    | `role: 'destructive'` | Rot über `--ion-color-danger` |
+| Jede andere Bestätigung              | keine Rolle           | Vereinsfarbe                  |
+
+Abbrechen bleibt bewusst in der Vereinsfarbe – so wie in den Systemdialogen von
+iOS. Herausgehoben wird nur, was Daten entfernt: Genau ein roter Knopf im Blatt,
+und die Person sieht auf einen Blick, welcher der beiden der gefährliche ist.
+
+Zwei Folgen:
+
+- **Jedes Overlay hat genau einen Knopf mit `role: 'cancel'`.** Ohne ihn
+  schliesst die Geste zurück nichts und der Abbrechen-Knopf steht wie eine
+  zweite Hauptaktion da. `overlayRoles.test.ts` prüft das für jede Datei.
+- **Ein Wegwerf-Knopf trägt `role: 'destructive'`**, auch wenn die Aktion
+  fachlich harmlos klingt («Verbindung trennen»).
 
 ### Breite Bildschirme: eine Oberfläche, nicht zwei
 
@@ -101,6 +321,15 @@ Regeln:
 - **Ein Eintrag, der an zwei Stellen steht, ist eine Komponente.** Die
   Verwaltungswege stehen in der Seitenleiste **und** auf der Profilseite; sie
   sind deshalb `ClubAdminLinks` und werden dort eingehängt, nicht kopiert.
+- **Verwaltung ist ein eigener Abschnitt, keine Zeile unter «Einstellungen».**
+  `ClubAdminLinks` hängt an beiden Stellen in einer eigenen `ListSection` mit
+  dem Titel `menu.administration` (FR-148). Wer die Einträge in den
+  Einstellungs-Abschnitt einreiht, macht Vorstandswege zu persönlichen
+  Optionen: Das Mitglied kann dann nicht lesen, was es selbst entscheidet und
+  was es für den Verein tut. Der Abschnitt erscheint nur, wenn
+  `isAdmin || isTrainer` – dieselbe Bedingung, die `ClubAdminLinks` selbst
+  prüft; sie steht aussen, weil eine `ListSection` sonst als leere Überschrift
+  stehen bliebe.
 
 Ein `IonMenuToggle` umschliesst immer einen **ganzen Abschnitt**, nie eine
 einzelne Zeile: Läge es um das einzelne `IonItem`, wäre jede Zeile Einzelkind
@@ -115,34 +344,39 @@ Bestand in `src/components/`. Vor jedem neuen Bauteil hier nachsehen.
 
 | Komponente         | Zweck                                                                                                                            |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| `AppPage`          | Seitengerüst: durchscheinende Kopfzeile, grosser Titel, `fullscreen`-Inhalt, optional Zurück-Knopf, zweite Toolbar, Aktualisieren |
+| `AppPage`          | Seitengerüst: durchscheinende Kopfzeile, grosser Titel, `fullscreen`-Inhalt, optional Zurück-Knopf, zweite Toolbar, Aktualisieren, Erstellen-Fab |
+| `CreateFab`        | Das Plus unten rechts – der einzige Weg zu einem `IonFab`; eingehängt über `AppPage createActions=…` (§2)                        |
 | `ListSection`      | Gruppierter Listenabschnitt mit Überschrift, optionaler Aktion und Fussnote                                                       |
 | `FormModal`        | Erfassungs-Blatt mit Abbrechen/Bestätigen, Ladezustand und Fehleranzeige                                                          |
 | `Wizard`           | Schrittführung mit Fortschrittsbalken; der Formularzustand bleibt bei der Seite                                                   |
 | `StatCard`         | Eine Kennzahl mit Beschriftung; mehrere in `.app-stat-row`                                                                        |
-| `Skeletons` ⏳      | `SkeletonList`, `SkeletonStats`, `SkeletonCard` – die Ladeansicht jeder datengetriebenen Sicht (§4)                               |
+| `Skeletons`        | `SkeletonList`, `SkeletonStats`, `SkeletonCard` – die Ladeansicht jeder datengetriebenen Sicht (§4); `SkeletonPage` als ganze Seite für die Weiche vor den Tabs |
 | `StateViews`       | `EmptyState`, `ErrorState`, `NotConfiguredState`, `LoadingState`                                                                  |
 | `FirstStepsCard`   | Die drei ersten Schritte nach der Gründung (UC-001)                                                                               |
 | `RouteGuards`      | `RequireAuth`, `RequireClub`, `RedirectIfSignedIn`, `RedirectIfClubMember`                                                        |
 | `AppMenu`          | Seitenleiste im `IonSplitPane`: Konto, Vereinswechsel, Verwaltung, Sprache, Abmelden – Spalte ab `lg`, sonst Overlay              |
 | `ClubAdminLinks`   | Die Verwaltungswege des Vorstands als Listeneinträge; einmal definiert, in `AppMenu` und auf der Profilseite eingehängt            |
 | `LanguageSwitcher` | Sprachwahl über `IonSelect`                                                                                                       |
+| `AttendanceStatusIcon` | Der eigene Antwortstand als Ampel-Symbol am Zeilenanfang; ein Tippen schaltet um. Nachbau des `app-status-icon` der bestehenden myclub-App |
+| `EventDetailModal` | Termin-Detail als Blatt: Eckdaten mit Symbol je Zeile, «Mein Status», die Listen Zugesagt / Abgesagt / Keine Antwort              |
+| `NewsCard`         | Eine News als Karte: Bild, Datum, Titel, Anriss, Autoren-Chip, Teilen – im Raster der Startseite und im Detail                   |
+| `NewsDetailModal`  | News-Detail als Blatt mit Volltext; Bearbeiten und Zurückziehen für Trainer:innen hinter dem Dreipunkt                          |
 | `CheckInModal`     | QR-Scan über `html5-qrcode`                                                                                                       |
 | `QrCode`           | QR-Code als Data-URL, ohne fremden Dienst (C-003)                                                                                 |
 
-Dazu ein Hook, der zum UI gehört und nicht zum Datenzugriff:
+Dazu zwei Hooks, die zum UI gehören und nicht zum Datenzugriff:
 
-| Hook         | Zweck                                                                     |
-| ------------ | ------------------------------------------------------------------------- |
-| `useToast()` ⏳ | Kurzrückmeldung oben – der einzige zulässige Weg zu einem Toast (§5)   |
+| Hook                     | Zweck                                                                                  |
+| ------------------------ | -------------------------------------------------------------------------------------- |
+| `useToast()`             | Kurzrückmeldung oben – der einzige zulässige Weg zu einem Toast (§5)                    |
+| `usePresentingElement()` | Das äussere Router-Outlet als Bezug jedes Blattes – die Karten-Darstellung von iOS (§2) |
+| `useSheetProps()`        | Hält die Eigenschaften eines Blattes, das erst beim Öffnen entsteht, bis es zu Ende geschlossen hat (§2) |
 
-⏳ **Noch nicht gebaut.** `Skeletons.tsx` und `useToast.ts` sind die beiden
-Bauteile, die §4 und §5 voraussetzen; sie entstehen mit der ersten Umsetzung,
-die sie braucht. Bis dahin ist der Bestand nicht regelkonform:
-`LoadingState` zeigt an acht Stellen einen Spinner statt eines Skeletts, und
-der `IonToast` in `InvitePage` steht unten statt oben. Beides wird beim
-nächsten Anfassen der jeweiligen Ansicht nachgezogen, nicht in einem eigenen
-Durchgang.
+Beides steht (Stand 10.9.2026): `Skeletons.tsx` trägt `SkeletonList`,
+`SkeletonStats`, `SkeletonCard` und `SkeletonPage`, jede datengetriebene
+Ansicht verwendet sie, und `LoadingState` steht nur noch dort, wo der Ausgang
+einer Weiche wirklich offen ist – siehe §4. Jeder Toast läuft über
+`useToast()`; einen direkten `IonToast` gibt es nicht mehr.
 
 **Jede Ansicht beginnt mit `AppPage`.** Eine Seite, die `IonPage` direkt
 verwendet, ist ein Fehler, ausser sie hat nachweislich keine Kopfzeile.
@@ -167,6 +401,8 @@ Die Trennung ist scharf:
 | Inhalt wird zum ersten Mal geladen               | Skelett aus `Skeletons`                        |
 | Eine ausgelöste Aktion läuft (Speichern, Senden) | `IonSpinner` **im auslösenden Knopf**          |
 | Nachladen bei schon sichtbarem Inhalt            | nichts – der Inhalt bleibt stehen              |
+| Eine Weiche wartet, der Ausgang steht fest       | `SkeletonPage` als `pending` der Route         |
+| Eine Weiche wartet, der Ausgang ist offen        | `LoadingState` (Spinner)                       |
 | Ziehen zum Aktualisieren                         | `IonRefresher` über `AppPage onRefresh=…`      |
 
 Der `IonSpinner` im Bestätigen-Knopf von `FormModal`, `Wizard`, `LoginPage`
@@ -222,9 +458,36 @@ Etappen.
 )}
 ```
 
-`LoadingState` aus `StateViews` bleibt nur für die ganzseitigen Weichen, bei
-denen noch nicht feststeht, welcher Inhalt folgt: `RouteGuards` und
-`AuthCallbackPage`. In einer Ansicht mit bekanntem Inhalt ist es ein Fehler.
+`LoadingState` aus `StateViews` bleibt nur, wo der Ausgang einer Weiche
+wirklich offen ist: `AuthCallbackPage` (die Sitzung entsteht gerade erst) und
+die Weichen vor Anmeldung und Onboarding. In einer Ansicht mit bekanntem
+Inhalt ist es ein Fehler.
+
+**Wartet eine Weiche auf das Netz und steht ihr Ausgang fest, gilt dieselbe
+Regel wie für jede Ansicht: ein Skelett.** Der Weg nach `/tabs/*` ist genau
+dieser Fall – `RequireClub` wartet auf die Mitgliedschaften, und was danach
+kommt, ist eine Seite mit Kopfzeile und Liste. Beide Weichen dieses Wegs
+bekommen das Zwischenbild deshalb von der Route herein:
+
+```tsx
+<RequireAuth pending={<SkeletonPage />}>
+  <RequireClub pending={<SkeletonPage />}>
+    <TabsPage />
+  </RequireClub>
+</RequireAuth>
+```
+
+Es kommt von der Route und nicht aus dem Guard, weil nur die Route weiss,
+wohin der Weg führt: Derselbe `RequireAuth` steht auch vor dem Onboarding, und
+dort wäre ein Listen-Skelett eine falsche Ankündigung. Und **beide** Weichen
+eines Wegs bekommen dasselbe Zwischenbild – zwei verschiedene hintereinander
+sind ein Flackern.
+
+Der Titel eines solchen Skeletts bleibt ein `IonSkeletonText`, kein
+Platzhalterwort: Ein «myclub», das eine Zehntelsekunde später zu «Start» wird,
+ist eine Ankündigung, die sich selbst widerruft. Weil ein Skelett keinen Text
+hat, trägt es ein `role="status"` mit `aria-label={t('common.loading')}` –
+sonst ist das Warten für Bedienhilfen stumm.
 
 ---
 
@@ -397,6 +660,33 @@ genau eine englische Entsprechung im Code:
 - Datum und Zahl über `src/lib/format.ts` – dort steht die Schweizer
   Lokalisierung je Sprache.
 
+**Ionic beschriftet manches selbst – auf Englisch.** Diese Vorgaben stehen in
+keiner Sprachdatei, `i18n:check` sieht sie deshalb nicht. Wer eine der folgenden
+Komponenten setzt, übersetzt sie im selben Zug:
+
+| Komponente      | Eigenschaft                           | Vorgabe von Ionic         |
+| --------------- | ------------------------------------- | ------------------------- |
+| `IonSelect`     | `cancelText`, `okText`                | «Cancel», «OK»            |
+| `IonSearchbar`  | `cancelButtonText`                    | «Cancel»                  |
+| `IonBackButton` | `text`                                | «Back»                    |
+| `IonDatetime`   | `doneText`, `cancelText`, `clearText` | «Done», «Cancel», «Clear» |
+
+Für die Auswahl heisst das an **jeder** Stelle:
+
+```tsx
+<IonSelect
+  label={t('voice.kindLabel')}
+  value={kind}
+  cancelText={t('common.cancel')}
+  okText={t('common.ok')}
+  onIonChange={…}
+>
+```
+
+`AppPage` erledigt es für den Zurück-Knopf ein für alle Mal;
+`overlayLabels.test.ts` prüft den Rest an der Quelle, weil das Alert-Blatt eines
+`IonSelect` in jsdom nicht aufgeht.
+
 ---
 
 ## 9. Datenzugriff
@@ -486,6 +776,26 @@ ist er der Hauptweg. Er ist deshalb als **PWA** eingerichtet
    Wechsel besorgt `IonSplitPane` (§2).
 9. **Einen Service Worker ohne Plattformprüfung registrieren.** Er gehört in
    den Browser, nicht in die nativen Apps (§10).
+10. **Ein `IonModal` ohne `presentingElement`.** Ein Blatt im Vollbild ist
+    nicht die iOS-Darstellung; das Element kommt aus `usePresentingElement()`
+    (§2).
+11. **Ein `IonSelect` ohne `cancelText`/`okText`.** Das Auswahl-Blatt zeigt
+    sonst «Cancel» und «OK» – in allen vier Sprachen (§8).
+12. **Ein `color` an einem Knopf in `IonAlert`/`IonActionSheet`.** Die Farbe
+    kommt aus der Rolle (§2).
+13. **Ein Erstellen-Symbol in der Kopfzeile** – Plus, Stift oder was sonst
+    etwas anlegt. Das gehört in `AppPage createActions=…` (§2).
+14. **Ein `IonFab` ausserhalb von `CreateFab`.** Sonst steht derselbe Knopf
+    zweimal verschieden da (§2).
+15. **Ein zweiter Schliessen-Knopf am Ende eines Blattes.** Schliessen steht
+    einmal in der Kopfzeile; unten steht nur ein Knopf, der etwas tut (§2).
+16. **Ein `FormModal` mit `submitLabel={t('common.close')}`.** Ein Blatt, das
+    nur anzeigt, lässt `onSubmit` weg; sonst stehen Abbrechen und Schliessen
+    nebeneinander (§2).
+17. **Ein Blatt-Inhalt, der mit dem Schliessen aus dem Baum fällt** – ein
+    `<FormModal isOpen>` mit nacktem `isOpen`, ein `{open && <Form …/>}` in
+    einer Seite. Die Hülle geht über `useSheetProps()`, sonst bleibt die Seite
+    in der Karten-Stellung stehen (§2).
 
 ---
 

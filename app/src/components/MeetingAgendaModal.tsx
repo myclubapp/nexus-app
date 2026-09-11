@@ -2,6 +2,7 @@ import { IonItem, IonLabel, IonNote } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { useMeetingAgenda } from '../hooks/useMeeting';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { EmptyState, ErrorState } from './StateViews';
 import { SkeletonList } from './Skeletons';
@@ -11,6 +12,8 @@ import type { AppEvent } from '../lib/database.types';
 interface MeetingAgendaProps {
   meeting: AppEvent;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }
 
 /**
@@ -25,20 +28,15 @@ interface MeetingAgendaProps {
  * `meeting_agenda()` in ihre drei Körbe, und alles, was keiner davon ist, fällt
  * heraus.
  */
-export function MeetingAgenda({ meeting, onDismiss }: MeetingAgendaProps) {
+export function MeetingAgenda({ meeting, onDismiss, isOpen = true }: MeetingAgendaProps) {
   const { t } = useTranslation();
   const agenda = useMeetingAgenda(meeting.id);
 
   const grouped = groupAgenda(agenda.data ?? []);
 
   return (
-    <FormModal
-      isOpen
-      title={meeting.title}
-      submitLabel={t('common.close')}
-      onDismiss={onDismiss}
-      onSubmit={onDismiss}
-    >
+    // Ein Blatt, das nur anzeigt: «Schliessen» steht einmal in der Kopfzeile.
+    <FormModal isOpen={isOpen} title={meeting.title} onDismiss={onDismiss}>
       {agenda.isLoading ? (
         <SkeletonList />
       ) : agenda.error ? (
@@ -99,4 +97,13 @@ export function MeetingAgenda({ meeting, onDismiss }: MeetingAgendaProps) {
       )}
     </FormModal>
   );
+}
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
+export function MeetingAgendaModal({
+  meeting,
+  ...props
+}: Omit<MeetingAgendaProps, 'meeting'> & { meeting: AppEvent | null }) {
+  const sheet = useSheetProps(meeting ? { meeting, ...props } : null);
+  return sheet && <MeetingAgenda {...sheet} />;
 }

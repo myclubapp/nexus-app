@@ -14,6 +14,7 @@ import {
   IonButtons,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
+import { usePresentingElement } from '../hooks/usePresentingElement';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import { OVERLAP_SIGNAL, useReleaseShift, useTakeShift } from '../hooks/useShifts';
@@ -29,7 +30,6 @@ interface ShiftListProps {
   attendance: Attendance[];
   /** Die eigene Mitgliedschaft; entscheidet, welche Schicht «meine» ist. */
   memberId: string | null;
-  onDismiss: () => void;
 }
 
 /**
@@ -47,7 +47,6 @@ export function ShiftList({
   shifts,
   attendance,
   memberId,
-  onDismiss,
 }: ShiftListProps) {
   const { t } = useTranslation();
   const toast = useToast();
@@ -187,12 +186,6 @@ export function ShiftList({
           },
         ]}
       />
-
-      <div className="app-actions">
-        <IonButton expand="block" fill="clear" onClick={onDismiss}>
-          {t('common.close')}
-        </IonButton>
-      </div>
     </>
   );
 }
@@ -204,11 +197,16 @@ export function ShiftList({
 export function ShiftListModal({
   isOpen,
   ...props
-}: ShiftListProps & { isOpen: boolean }) {
+}: ShiftListProps & { isOpen: boolean; onDismiss: () => void }) {
   const { t } = useTranslation();
+  const presentingElement = usePresentingElement();
 
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={props.onDismiss}>
+    <IonModal
+      isOpen={isOpen}
+      onDidDismiss={props.onDismiss}
+      presentingElement={presentingElement}
+    >
       <IonHeader translucent>
         <IonToolbar>
           <IonTitle>{t('shifts.title')}</IonTitle>

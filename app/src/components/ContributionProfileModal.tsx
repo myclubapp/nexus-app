@@ -12,6 +12,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useSaveContributionProfile } from '../hooks/useContribution';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import { formatDate } from '../lib/format';
@@ -29,6 +30,8 @@ interface ContributionProfileProps {
   profile: ContributionProfile | null;
   onDone: () => void;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }
 
 /**
@@ -46,6 +49,7 @@ export function ContributionProfileForm({
   profile,
   onDone,
   onDismiss,
+  isOpen = true,
 }: ContributionProfileProps) {
   const { t } = useTranslation();
   const save = useSaveContributionProfile();
@@ -62,7 +66,7 @@ export function ContributionProfileForm({
 
   return (
     <FormModal
-      isOpen
+      isOpen={isOpen}
       title={t('contribution.title')}
       submitLabel={t('common.save')}
       canSubmit={problems.length === 0 && !save.isPending}
@@ -161,4 +165,13 @@ export function ContributionProfileForm({
       <IonNote className="app-footnote">{t('contribution.voluntary')}</IonNote>
     </FormModal>
   );
+}
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
+export function ContributionProfileModal({
+  isOpen,
+  ...props
+}: ContributionProfileProps & { isOpen: boolean }) {
+  const sheet = useSheetProps(isOpen ? props : null);
+  return sheet && <ContributionProfileForm {...sheet} />;
 }

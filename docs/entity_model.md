@@ -54,6 +54,7 @@ erDiagram
     TEAM ||--o{ INVITE : "adressiert"
     TEAM ||--o{ JOIN_REQUEST : "betrifft"
     TEAM ||--o{ HEALTH_SIGNAL : "verortet"
+    FEDERATION_CONNECTION ||--o{ TEAM : "speist"
 
     CLUB_MEMBER ||--o{ TEAM_MEMBER : "gehört zu"
     CLUB_MEMBER ||--o{ ATTENDANCE : "nimmt teil an"
@@ -152,14 +153,23 @@ Die Mitgliedschaft einer Person in einem Verein samt Rolle und Sichtbarkeitsents
 
 Eine Gruppe innerhalb eines Vereins, an der Termine, Ranglisten und Reichweiten hängen.
 
-| Attribute | Description                    | Data Type | Length/Precision | Validation Rules                |
-| --------- | ------------------------------ | --------- | ---------------- | ------------------------------- |
-| id        | Eindeutige Kennung des Teams   | UUID      | 36               | Primary Key, Generated          |
-| club_id   | Verein des Teams               | UUID      | 36               | Not Null, Foreign Key (CLUB.id) |
-| name      | Bezeichnung des Teams          | String    | 80               | Not Null                        |
-| sort      | Reihenfolge in Auswahllisten   | Integer   | 10               | Optional                        |
+| Attribute            | Description                                     | Data Type | Length/Precision | Validation Rules                |
+| -------------------- | ----------------------------------------------- | --------- | ---------------- | ------------------------------- |
+| id                  | Eindeutige Kennung des Teams                     | UUID      | 36               | Primary Key, Generated          |
+| club_id             | Verein des Teams                                 | UUID      | 36               | Not Null, Foreign Key (CLUB.id) |
+| name                | Bezeichnung des Teams                            | String    | 80               | Not Null                        |
+| sort                | Reihenfolge in Auswahllisten                     | Integer   | 10               | Optional                        |
+| federation          | Verband des verknüpften Teams                    | String    | 40               | Optional                        |
+| federation_team_id  | Kennung des Teams beim Verband                   | String    | 60               | Optional                        |
+| name_addition       | Zusatz des Vereins zum Namen des Verbands        | String    | 40               | Optional                        |
+| league              | Liga oder Kategorie laut Verband                 | String    | 80               | Optional                        |
+| federation_synced_at| Zeitpunkt des letzten Abgleichs mit dem Verband  | DateTime  | -                | Optional                        |
 
-**Constraints:** Der Teamname ist innerhalb eines Vereins eindeutig.
+**Constraints:** Der Teamname ist innerhalb eines Vereins eindeutig. Eine Verknüpfung besteht nur,
+wenn `federation` und `federation_team_id` beide gesetzt sind; die Kombination aus `club_id`,
+`federation` und `federation_team_id` ist eindeutig (BR-175). Bei einem verknüpften Team pflegt der
+Abgleich `name` und `league`, während `name_addition` erhalten bleibt; angezeigt wird die Verbindung
+aus beidem (BR-176).
 
 ### TEAM_MEMBER
 
@@ -727,7 +737,7 @@ Die Verbindung eines Vereins zu einem Verband über dessen API-Schlüssel.
 | last_sync_at   | Zeitpunkt des letzten Abgleichs                | DateTime  | -                | Optional                                  |
 | last_error     | Fehlermeldung des letzten Abgleichs            | String    | 500              | Optional                                  |
 
-**Constraints:** Primärschlüssel ist die Kombination aus `club_id` und `federation`. Der Schlüssel wird nie an den Client ausgeliefert. Der Abgleich liest ausschliesslich; es werden keine Daten an den Verband zurückgeschrieben.
+**Constraints:** Primärschlüssel ist die Kombination aus `club_id` und `federation`. Der Schlüssel wird nie an den Client ausgeliefert. Der Abgleich liest ausschliesslich; es werden keine Daten an den Verband zurückgeschrieben. Abgeglichen werden ausschliesslich Teams, die über `TEAM.federation_team_id` verknüpft sind (UC-039); eine gelöste Verknüpfung oder eine getrennte Verbindung entfernt weder Teams noch bereits importierte Termine (BR-181).
 
 ---
 

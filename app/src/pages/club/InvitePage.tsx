@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  IonAlert,
   IonBadge,
   IonButton,
   IonButtons,
@@ -21,6 +22,7 @@ import {
 } from '@ionic/react';
 import { addOutline, copyOutline, shareOutline } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
+import { usePresentingElement } from '../../hooks/usePresentingElement';
 import { Share } from '@capacitor/share';
 import { useClub } from '../../hooks/useClub';
 import {
@@ -53,6 +55,9 @@ import type { Invite, InviteRole } from '../../lib/database.types';
  */
 export function InvitePage() {
   const { t } = useTranslation();
+  const presentingElement = usePresentingElement();
+  // §5: Ein Widerruf wird vorher gefragt, nicht nachher gemeldet.
+  const [revokeId, setRevokeId] = useState<string | null>(null);
   const { isAdmin } = useClub();
   const toast = useToast();
 
@@ -113,18 +118,16 @@ export function InvitePage() {
     <AppPage
       title={t('invite.title')}
       backHref="/tabs/profile"
-      toolbarEnd={
-        <IonButtons slot="end">
-          <IonButton
-            onClick={() => {
-              resetForm();
-              setFormOpen(true);
-            }}
-          >
-            <IonIcon slot="icon-only" icon={addOutline} aria-label={t('invite.create')} />
-          </IonButton>
-        </IonButtons>
-      }
+      createActions={[
+        {
+          icon: addOutline,
+          label: t('invite.create'),
+          onClick: () => {
+            resetForm();
+            setFormOpen(true);
+          },
+        },
+      ]}
       onRefresh={() => invites.refetch()}
     >
       {invites.isLoading ? (
@@ -171,12 +174,7 @@ export function InvitePage() {
                     <IonItemOption
                       color="danger"
                       disabled={revokeInvite.isPending}
-                      onClick={() =>
-                        revokeInvite.mutate(invite.id, {
-                          onSuccess: () => toast.success(t('invite.revoked')),
-                          onError: (cause) => toast.failure(cause.message),
-                        })
-                      }
+                      onClick={() => setRevokeId(invite.id)}
                     >
                       {t('invite.revoke')}
                     </IonItemOption>
@@ -221,6 +219,8 @@ export function InvitePage() {
               label={t('invite.scope')}
               value={teamId}
               onIonChange={(e) => setTeamId((e.detail.value as string | null) ?? null)}
+              cancelText={t('common.cancel')}
+              okText={t('common.ok')}
             >
               <IonSelectOption value={null}>{t('invite.scopeClub')}</IonSelectOption>
               {(teams.data ?? []).map((team) => (
@@ -239,6 +239,8 @@ export function InvitePage() {
                 setRole(e.detail.value as InviteRole);
                 setAdminConfirmed(false);
               }}
+              cancelText={t('common.cancel')}
+              okText={t('common.ok')}
             >
               {INVITE_ROLES.map((entry) => (
                 <IonSelectOption key={entry} value={entry}>
@@ -290,9 +292,34 @@ export function InvitePage() {
         </ListSection>
       </FormModal>
 
+      <IonAlert
+        isOpen={revokeId !== null}
+        header={t('invite.revoke')}
+        message={t('invite.revokeConfirm')}
+        onDidDismiss={() => setRevokeId(null)}
+        buttons={[
+          { text: t('common.cancel'), role: 'cancel' },
+          {
+            text: t('invite.revoke'),
+            role: 'destructive',
+            handler: () => {
+              if (!revokeId) return;
+              revokeInvite.mutate(revokeId, {
+                onSuccess: () => toast.success(t('invite.revoked')),
+                onError: (cause) => toast.failure(cause.message),
+              });
+            },
+          },
+        ]}
+      />
+
       {/* Teilen (Schritt 7 und 8). Kein FormModal: Hier wird nichts erfasst,
           und zwei Knöpfe, die beide nur schliessen, wären eine Zumutung. */}
-      <IonModal isOpen={shownInvite !== null} onDidDismiss={() => setShownInvite(null)}>
+      <IonModal
+        isOpen={shownInvite !== null}
+        onDidDismiss={() => setShownInvite(null)}
+        presentingElement={presentingElement}
+      >
         <IonHeader>
           <IonToolbar>
             <IonTitle>{t('invite.shareTitle')}</IonTitle>

@@ -29,10 +29,10 @@
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
 | 1 | Tab «Agenda» öffnen | **E1** und **E2** stehen da, **E3** ebenfalls | | |
-| 2 | Den Teilnehmerstand von **E1** ablesen | «0 zugesagt · 0 abgesagt · 4 offen» – die vier des Teams | | |
-| 3 | «Zusagen» antippen | Toast **oben**; der Knopf ist danach gefüllt | | |
-| 4 | Den Stand erneut ablesen | «1 zugesagt · 0 abgesagt · 3 offen» | | |
-| 5 | Als **T** die Agenda öffnen | Derselbe Stand ist sichtbar | | |
+| 2 | Die Zeile von **E1** ansehen | Links ein gelbes Fragezeichen (noch offen), rechts die Zahl **0**; darüber die Spaltenköpfe «Status» und «Teilnehmer» | | |
+| 3 | Die Zeile nach rechts wischen und den grünen Haken antippen – alternativ das Fragezeichen antippen | Toast **oben**; links steht jetzt ein grüner Haken, rechts die **1** | | |
+| 4 | Die Zahl rechts antippen | Das Detail öffnet sich als Karte über der Seite: Eckdaten mit Symbolen, «Mein Status» als grüner runder Knopf, die Liste «Zugesagt: 1» mit dem eigenen Namen, «Keine Antwort: 3» zugeklappt | | |
+| 5 | Als **T** die Agenda öffnen | Unter **E1** steht zusätzlich «1 zugesagt · 0 abgesagt · 3 offen» – die Zahlen sieht nur, wer plant | | |
 | 6 | Bei **E3** (Vereinstermin) den Stand ablesen | Die Grundlage ist der **ganze Verein**, nicht das Team | | |
 
 ---
@@ -44,13 +44,13 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Bei **E1** «Absagen» antippen | Ein Blatt mit vorformulierten Gründen öffnet sich | | |
+| 1 | **E1** nach rechts wischen und das rote Kreuz antippen – alternativ den grünen Haken am Zeilenanfang | Ein Blatt mit vorformulierten Gründen öffnet sich | | |
 | 2 | Die Gründe ansehen | Krank, Arbeit, Familie, Abwesend, Verletzt, Anderer Grund | | |
 | 3 | Den Hinweis unten lesen | «Du meldest dich rechtzeitig ab – das zählt für deine Verlässlichkeit» | | |
 | 4 | «Anderer Grund» wählen | Ein Freitextfeld erscheint | | |
 | 5 | Das Feld leer lassen | «Absage senden» ist ausgegraut | | |
 | 6 | «Ferienabwesenheit» eintragen und senden | Toast nennt die **5 Punkte** für die rechtzeitige Abmeldung | | |
-| 7 | Den Teilnehmerstand ablesen | Die Absage ist gezählt | | |
+| 7 | Die Zeile ansehen und das Detail öffnen | Links ein rotes Kreuz, rechts die **0**; im Detail steht der Name unter «Abgesagt: 1» – den Grund sieht nur **T** | | |
 | 8 | Dashboard öffnen | Der Punktestand ist um 5 gestiegen | | |
 | 9 | Die Punktehistorie ansehen | Ein Eintrag «Rechtzeitig abgemeldet» | | |
 | 10 | Als **T** den Termin ansehen | Die Absage ist im Stand sichtbar | | |
@@ -64,7 +64,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Bei **E2** (in 3 Stunden) «Absagen» antippen | Der Hinweis lautet «Der Termin beginnt bald. Eine Absage kostet nie Punkte.» | | |
+| 1 | Bei **E2** (in 3 Stunden) nach rechts wischen und das rote Kreuz antippen | Der Hinweis lautet «Der Termin beginnt bald. Eine Absage kostet nie Punkte.» | | |
 | 2 | «Krank» wählen und senden | Toast **ohne** Punkteangabe | | |
 | 3 | Punktestand prüfen | **Unverändert** | | |
 | 4 | Punktehistorie prüfen | **Kein** Eintrag für diese Absage | | |
@@ -98,8 +98,8 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **M** die Agenda öffnen | **E3** zeigt «Abgesagt: Halle gesperrt» | | |
-| 2 | Nach «Zusagen» und «Absagen» suchen | **Beide Knöpfe fehlen** | | |
+| 1 | Als **M** die Agenda öffnen | **E3** zeigt links ein rotes Ausrufezeichen und in der Zeile «Abgesagt: Halle gesperrt» | | |
+| 2 | Die Zeile nach rechts wischen und das Symbol antippen | **Keine Wischleiste, das Symbol reagiert nicht** | | |
 | 3 | Nach dem Check-in-Knopf suchen | Fehlt ebenfalls | | |
 | 4 | Mit einem HTTP-Aufruf `respond_to_event` auf **E3** | Fehler «Dieser Termin wurde abgesagt» | | |
 
@@ -144,7 +144,7 @@
 | ---- | ------ | --------------- | --------- | ----- |
 | 1 | Auf Französisch das Absage-Blatt öffnen | Alle sechs Gründe französisch | | |
 | 2 | Den Frist-Hinweis lesen | Französisch, je nach Termin die passende Variante | | |
-| 3 | Den Teilnehmerstand ablesen | «2 oui · 1 non · 3 sans réponse» – die Zahlen stehen im Satz | | |
+| 3 | Als **T** den Teilnehmerstand ablesen; als **M** das Detail öffnen | «2 oui · 1 non · 3 sans réponse»; im Detail «Mon statut», «Inscrits : 2», «Absents : 1», «Sans réponse : 3» | | |
 | 4 | Eine rechtzeitige Absage senden | Der Toast nennt die Punkte auf Französisch | | |
 | 5 | Auf Italienisch und Englisch wiederholen | Wie oben (C-007) | | |
 

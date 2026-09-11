@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { usePointRules } from '../hooks/useGamification';
 import { useCancelEvent, useUpdateEvent } from '../hooks/useEvents';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import {
@@ -26,6 +27,8 @@ interface EventEditProps {
   event: AppEvent;
   onDone: (outcome: 'changed' | 'cancelled') => void;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }
 
 /**
@@ -43,7 +46,7 @@ interface EventEditProps {
  * Zeiten bleiben aussen vor: Sie unterscheiden die Termine einer Serie gerade
  * voneinander und lassen sich nicht gemeinsam setzen.
  */
-export function EventEdit({ event, onDone, onDismiss }: EventEditProps) {
+export function EventEdit({ event, onDone, onDismiss, isOpen = true }: EventEditProps) {
   const { t } = useTranslation();
   const rules = usePointRules();
   const update = useUpdateEvent();
@@ -91,7 +94,7 @@ export function EventEdit({ event, onDone, onDismiss }: EventEditProps) {
 
   return (
     <FormModal
-      isOpen
+      isOpen={isOpen}
       title={t('eventEdit.title')}
       submitLabel={t('common.save')}
       canSubmit={title.trim().length >= 2 && !whyMissing && !isBusy}
@@ -232,4 +235,13 @@ export function EventEdit({ event, onDone, onDismiss }: EventEditProps) {
       />
     </FormModal>
   );
+}
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
+export function EventEditModal({
+  event,
+  ...props
+}: Omit<EventEditProps, 'event'> & { event: AppEvent | null }) {
+  const sheet = useSheetProps(event ? { event, ...props } : null);
+  return sheet && <EventEdit {...sheet} />;
 }

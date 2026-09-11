@@ -19,7 +19,6 @@ const SCANNER_ELEMENT_ID = 'myclub-qr-scanner';
 
 interface CheckInScannerProps {
   eventId: string;
-  onDismiss: () => void;
 }
 
 /**
@@ -33,7 +32,7 @@ interface CheckInScannerProps {
  * Eigene Komponente ohne Blatt-Hülle, weil `IonModal` seinen Inhalt im Test
  * nicht rendert (docs/TESTING.md).
  */
-export function CheckInScanner({ eventId, onDismiss }: CheckInScannerProps) {
+export function CheckInScanner({ eventId }: CheckInScannerProps) {
   const { t } = useTranslation();
   const checkIn = useCheckIn();
   const runCheckIn = checkIn.mutate;
@@ -142,12 +141,6 @@ export function CheckInScanner({ eventId, onDismiss }: CheckInScannerProps) {
 
       {/* A1–A3: der Grund in der Sprache der Person, nicht der Datenbank. */}
       {errorKey && <InlineError message={t(`checkIn.error.${errorKey}`)} />}
-
-      <div className="app-actions">
-        <IonButton expand="block" fill="clear" onClick={onDismiss}>
-          {t('common.close')}
-        </IonButton>
-      </div>
     </>
   );
 }
@@ -178,7 +171,7 @@ export function CheckInModal({ eventId, onDismiss }: CheckInModalProps) {
       </IonHeader>
 
       <IonContent fullscreen className="ion-padding">
-        {eventId && <CheckInScanner eventId={eventId} onDismiss={onDismiss} />}
+        {eventId && <CheckInScanner eventId={eventId} />}
       </IonContent>
     </IonModal>
   );

@@ -144,9 +144,7 @@ export function TransparencyPage() {
       <FormModal
         isOpen={explain !== null}
         title={explain ? t(signalKey(explain.signalType, 'title')) : ''}
-        submitLabel={t('common.close')}
         onDismiss={() => setExplain(null)}
-        onSubmit={() => setExplain(null)}
       >
         {explain && (
           <>

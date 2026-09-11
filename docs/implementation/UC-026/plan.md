@@ -131,3 +131,4 @@ Verbindungs-Quote – und der Geltungsbereich ist wirkungslos.
 | 2026-09-11 | Nachtrag: Der Plan war nie abgeschlossen worden, obwohl `0043`, `lib/news.ts`, `hooks/useNews.ts` und `NewsFormModal` seit dem 10.09. stehen und A3 wie A4 im Feed erreichbar sind. Aufgaben abgehakt, FR-076 und FR-077 auf `Implemented`, Use Case geschlossen |
 | 2026-09-11 | A2 («News aus einer Vorstandsantwort») ist seit `0055` wirklich gebaut: `answer_voice_note()` und `answer_meeting_input()` publizieren mit `news.source = 'board'` |
 | 2026-09-09 | Plan erstellt |
+| 2026-09-11 | News-Darstellung auf den Schnitt der bestehenden myclub-App (`news.page.html`, `news-detail.page.html`) gebracht: `NewsCard` mit Bild, Datum, Titel, Anriss (drei Zeilen), Autoren-Chip und Teilen, im `IonGrid` 12 / 6 / 6 / 4; `NewsDetailModal` mit Volltext, Bearbeiten und Zurückziehen (A3, A4) hinter dem Dreipunkt als Action Sheet; `SkeletonNewsCards` in derselben Form. |

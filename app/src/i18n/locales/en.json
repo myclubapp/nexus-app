@@ -16,9 +16,14 @@
     "points_other": "{{count}} points",
     "notConfigured": "The app is not connected to a Supabase project yet. Fill in the values in .env.local.",
     "confirm": "Confirm",
+    "create": "Create",
     "stepOf": "Step {{current}} of {{total}}",
     "saveFailed": "That did not work. Please try again.",
-    "saved": "Saved"
+    "saved": "Saved",
+    "discardChanges": "Discard changes",
+    "keepEditing": "Keep editing",
+    "details": "Details",
+    "more": "More"
   },
   "auth": {
     "title": "Welcome",
@@ -216,6 +221,23 @@
     "tally": "{{yes}} in · {{no}} out · {{open}} open",
     "cancelledWithReason": "Cancelled: {{reason}}",
     "draft": "Draft",
+    "statusColumn": "Status",
+    "participantsColumn": "Participants",
+    "myStatus": "My status",
+    "attendances": "Attendance",
+    "listRegistered": "Attending: {{count}}",
+    "listExcused": "Declined: {{count}}",
+    "listUndecided": "No reply: {{count}}",
+    "statusLabel": {
+      "open": "Open – tap to attend",
+      "registered": "Attending – tap to decline",
+      "present": "Present",
+      "excused": "Declined – tap to attend",
+      "absent": "Absent",
+      "cancelled": "Event cancelled",
+      "locked": "Event has started",
+      "notAffected": "Not for you"
+    },
     "undercovered_one": "{{count}} reply still missing",
     "undercovered_other": "{{count}} replies still missing"
   },
@@ -675,8 +697,24 @@
     "title": "News from your website",
     "adminOnly": "Only the board can connect the website.",
     "url": "Your website address",
-    "urlHint": "If your website runs on WordPress we pull the latest posts into the feed – and the new ones every night. «ourclub.ch» is enough.",
+    "urlHint": "This needs a website running WordPress – we pull the posts through its API. The check tells you whether yours has one. «ourclub.ch» is enough.",
     "willFetch": "We will fetch {{url}}",
+    "check": "Check website",
+    "checkFailedHint": "Either the website does not run on WordPress, or its API is blocked. When in doubt, ask whoever looks after your website.",
+    "found": "Found",
+    "foundWordpress": "WordPress detected",
+    "foundPosts_one": "WordPress detected · {{count}} post published",
+    "foundPosts_other": "WordPress detected · {{count}} posts published",
+    "foundEndpoint": "API: {{url}}",
+    "scope": "Scope",
+    "postLimit": "Posts per sync",
+    "postLimitValue_one": "{{count}} post",
+    "postLimitValue_other": "{{count}} posts",
+    "categories": "Categories",
+    "categoriesAll": "All categories",
+    "categoriesHint": "Without a selection, posts from all categories are imported. The API returns no more than 100 posts per sync.",
+    "categoriesUnknown": "Check the website and its categories will show up here. Without a selection, posts from all categories are imported.",
+    "categoryOption": "{{name}} ({{count}})",
     "connect": "Fetch posts",
     "refresh": "Refresh now",
     "imported_one": "{{count}} post imported",
@@ -685,11 +723,13 @@
     "lastSync_one": "{{when}} · {{count}} post",
     "lastSync_other": "{{when}} · {{count}} posts",
     "neverSynced": "No sync yet",
+    "savedScope_one": "Saved: {{count}} post per sync · {{categories}}",
+    "savedScope_other": "Saved: {{count}} posts per sync · {{categories}}",
     "lastError": "Last sync failed",
     "disconnect": "Disconnect website",
     "disconnectConfirm": "New posts from the website will no longer appear in the feed. Imported news stays.",
     "disconnected": "Website disconnected. Imported posts stay.",
-    "scheduleHint": "The sync then runs automatically every night. Imported posts stay in the feed even after disconnecting."
+    "scheduleHint": "The sync then runs automatically every night. Changes to scope and categories are saved with «Refresh now»."
   },
   "shifts": {
     "title": "Shifts",
@@ -1483,6 +1523,10 @@
       "taskWhyMissing": "The task needs its why."
     },
     "followHintAdmin": "A note yields at most one task. «Publish as news» makes your answer visible to the whole club."
+  },
+  "news": {
+    "share": "Share",
+    "linkCopied": "Link copied"
   },
   "eventEdit": {
     "title": "Edit event",

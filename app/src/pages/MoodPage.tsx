@@ -12,7 +12,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
-import { CheckinPrompt } from '../components/CheckinPromptModal';
+import { CheckinPromptModal } from '../components/CheckinPromptModal';
 import { TrendChart } from '../components/TrendChart';
 import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
@@ -211,16 +211,14 @@ export function MoodPage() {
         </>
       )}
 
-      {answering && (
-        <CheckinPrompt
-          invitation={answering}
-          onDismiss={() => setAnswering(null)}
-          onDone={(outcome) => {
-            setAnswering(null);
-            toast.success(t(`checkin.done.${outcome}`));
-          }}
-        />
-      )}
+      <CheckinPromptModal
+        invitation={answering}
+        onDismiss={() => setAnswering(null)}
+        onDone={(outcome) => {
+          setAnswering(null);
+          toast.success(t(`checkin.done.${outcome}`));
+        }}
+      />
     </AppPage>
   );
 }

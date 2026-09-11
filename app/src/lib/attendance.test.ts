@@ -6,6 +6,7 @@ import {
   coverageGap,
   parseCapacity,
   canRespond,
+  groupAttendance,
   isEarlyDecline,
   tallyAttendance,
 } from './attendance';
@@ -132,6 +133,48 @@ describe('Gleichlauf mit decline_is_early() in SQL', () => {
   it('vergleicht in SQL ebenfalls strikt grösser', () => {
     // `>` und nicht `>=`: genau 24 Stunden reichen nicht.
     expect(migration).toMatch(/p_starts_at - now\(\) > interval/);
+  });
+});
+
+describe('groupAttendance', () => {
+  const members = [
+    { id: 'a', display_name: 'Anna' },
+    { id: 'b', display_name: 'Beat' },
+    { id: 'c', display_name: 'Cla' },
+    { id: 'd', display_name: 'Dana' },
+  ];
+  const entry = (member_id: string, status: string, shift_id: string | null = null) => ({
+    member_id,
+    shift_id,
+    status,
+    responded_at: null,
+    decline_reason: null,
+  });
+
+  it('teilt die Betroffenen in zugesagt, abgesagt und ohne Antwort', () => {
+    const groups = groupAttendance(
+      [entry('a', 'registered'), entry('b', 'present'), entry('c', 'excused')],
+      members,
+    );
+
+    expect(groups.registered.map((row) => row.member.id)).toEqual(['a', 'b']);
+    expect(groups.excused.map((row) => row.member.id)).toEqual(['c']);
+    expect(groups.undecided.map((member) => member.id)).toEqual(['d']);
+  });
+
+  it('zählt eine übernommene Schicht nicht als Zusage zum Termin', () => {
+    const groups = groupAttendance([entry('a', 'registered', 'shift-1')], members);
+
+    expect(groups.registered).toHaveLength(0);
+    expect(groups.undecided.map((member) => member.id)).toContain('a');
+  });
+
+  it('führt niemanden auf, der nicht betroffen ist', () => {
+    // Die Antwort einer Person aus einem anderen Team gehört in keine Liste.
+    const groups = groupAttendance([entry('x', 'registered')], members);
+
+    expect(groups.registered).toHaveLength(0);
+    expect(groups.undecided).toHaveLength(4);
   });
 });
 

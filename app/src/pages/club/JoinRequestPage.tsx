@@ -136,6 +136,8 @@ export function JoinRequestPage() {
               label={t('invite.roleLabel')}
               value={role}
               onIonChange={(e) => setRole(e.detail.value as Role)}
+              cancelText={t('common.cancel')}
+              okText={t('common.ok')}
             >
               {DECIDABLE_ROLES.map((entry) => (
                 <IonSelectOption key={entry} value={entry}>
@@ -150,6 +152,8 @@ export function JoinRequestPage() {
               label={t('invite.scope')}
               value={teamId}
               onIonChange={(e) => setTeamId((e.detail.value as string | null) ?? null)}
+              cancelText={t('common.cancel')}
+              okText={t('common.ok')}
             >
               <IonSelectOption value={null}>{t('invite.scopeClub')}</IonSelectOption>
               {(teams.data ?? []).map((team) => (

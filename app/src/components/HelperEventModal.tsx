@@ -14,6 +14,7 @@ import { addOutline } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { useCreateHelperEvent, usePublishEvent } from '../hooks/useHelperEvents';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import { durationInMinutes } from '../lib/eventSeries';
@@ -23,6 +24,8 @@ import { formatDateTime } from '../lib/format';
 interface HelperEventFormProps {
   onDone: (published: boolean, muted: boolean) => void;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }
 
 /**
@@ -35,7 +38,7 @@ interface HelperEventFormProps {
  * Eigene Komponente, weil `IonModal` seinen Inhalt im Test nicht rendert
  * (docs/TESTING.md).
  */
-export function HelperEventForm({ onDone, onDismiss }: HelperEventFormProps) {
+export function HelperEventForm({ onDone, onDismiss, isOpen = true }: HelperEventFormProps) {
   const { t } = useTranslation();
   const createEvent = useCreateHelperEvent();
   const publish = usePublishEvent();
@@ -109,7 +112,7 @@ export function HelperEventForm({ onDone, onDismiss }: HelperEventFormProps) {
 
   return (
     <FormModal
-      isOpen
+      isOpen={isOpen}
       title={t('helperEvent.title')}
       submitLabel={t('helperEvent.publish')}
       canSubmit={canPublish && !isBusy}
@@ -297,11 +300,12 @@ export function HelperEventForm({ onDone, onDismiss }: HelperEventFormProps) {
   );
 }
 
-/** Blatt-Hülle; der Inhalt entsteht erst beim Öffnen. */
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
 export function HelperEventModal({
   isOpen,
   ...props
 }: HelperEventFormProps & { isOpen: boolean }) {
-  if (!isOpen) return null;
-  return <HelperEventForm {...props} />;
+  const sheet = useSheetProps(isOpen ? props : null);
+  return sheet && <HelperEventForm {...sheet} />;
 }

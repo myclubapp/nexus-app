@@ -119,9 +119,7 @@ export function StrengthsPage() {
       <FormModal
         isOpen={explain !== null}
         title={explain ? t(`dimensions.${explain}.title`) : ''}
-        submitLabel={t('common.close')}
         onDismiss={() => setExplain(null)}
-        onSubmit={() => setExplain(null)}
       >
         {explain && (
           <>

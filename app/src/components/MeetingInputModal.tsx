@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useOffices, useSubmitInput } from '../hooks/useMeeting';
 import { useVoiceNotes } from '../hooks/useVoice';
 import { FormModal } from './FormModal';
+import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import { createAnonTicket, hashTicket, storeTicket } from '../lib/tickets';
@@ -21,6 +22,8 @@ interface MeetingInputProps {
   /** `ticketLost` sagt, ob der anonyme Rückweg auf diesem Gerät besteht. */
   onDone: (anonymous: boolean, ticketLost: boolean) => void;
   onDismiss: () => void;
+  /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
+  isOpen?: boolean;
 }
 
 /**
@@ -34,7 +37,7 @@ interface MeetingInputProps {
  * weiterhin (BR-125, offen seit UC-029); stattdessen lässt sich ein bestehendes
  * eigenes Anliegen als Quelle wählen – der Weg über UC-029, ohne Mikrofon.
  */
-export function MeetingInputForm({ onDone, onDismiss }: MeetingInputProps) {
+export function MeetingInputForm({ onDone, onDismiss, isOpen = true }: MeetingInputProps) {
   const { t } = useTranslation();
   const offices = useOffices();
   const notes = useVoiceNotes();
@@ -81,7 +84,7 @@ export function MeetingInputForm({ onDone, onDismiss }: MeetingInputProps) {
 
   return (
     <FormModal
-      isOpen
+      isOpen={isOpen}
       title={t('meeting.submitTitle')}
       submitLabel={t('meeting.submit')}
       canSubmit={problems.length === 0 && !submit.isPending}
@@ -180,4 +183,13 @@ export function MeetingInputForm({ onDone, onDismiss }: MeetingInputProps) {
       ))}
     </FormModal>
   );
+}
+
+/** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
+export function MeetingInputModal({
+  isOpen,
+  ...props
+}: MeetingInputProps & { isOpen: boolean }) {
+  const sheet = useSheetProps(isOpen ? props : null);
+  return sheet && <MeetingInputForm {...sheet} />;
 }

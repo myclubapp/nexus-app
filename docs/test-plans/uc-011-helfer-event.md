@@ -26,7 +26,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Den Personen-Knopf in der Kopfzeile antippen | Das Blatt «Helfer-Event ausschreiben» öffnet sich | | |
+| 1 | Das Plus unten rechts antippen, dann den Personen-Knopf | Das Blatt «Helfer-Event ausschreiben» öffnet sich | | |
 | 2 | Die Abschnitte überfliegen | Angaben, «Wozu dient das?», Schichten, «Schicht hinzufügen» — in dieser Reihenfolge | | |
 | 3 | Titel «Waldfest», Beginn morgen 08:00, Ende morgen 18:00, Ort «Festhütte» erfassen | Die Felder übernehmen die Eingabe | | |
 | 4 | «Ausschreiben» ansehen | **Ausgegraut** – Warum und Schicht fehlen noch | | |
@@ -155,7 +155,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **M** die Agenda öffnen | **Kein** Personen-Knopf in der Kopfzeile | | |
+| 1 | Als **M** die Agenda öffnen | **Kein** Plus unten rechts, also auch kein Personen-Knopf | | |
 | 2 | Als **T** die Agenda öffnen | Der Knopf ist da | | |
 | 3 | Als **M** mit einem HTTP-Aufruf `publish_event` auf ein fremdes Event | Fehler «Nur Trainer:innen und der Vorstand schreiben aus» | | |
 | 4 | Als **M** mit einem HTTP-Aufruf `log_club_message` | Das Ausführungsrecht fehlt (interne Routine, NFR-013) | | |
@@ -171,7 +171,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Über den Plus-Knopf einen gewöhnlichen Termin anlegen | Toast «Termin erstellt» | | |
+| 1 | Über das Plus und den Kalender-Knopf einen gewöhnlichen Termin anlegen | Toast «Termin erstellt» | | |
 | 2 | Als **M** die Agenda öffnen | Der Termin ist **sofort sichtbar** – er ist kein Entwurf | | |
 | 3 | Am Termin nach dem Merkmal «Entwurf» suchen | Fehlt | | |
 | 4 | Eine Terminserie anlegen und als **M** nachsehen | Alle Termine der Serie sind sichtbar | | |
@@ -202,7 +202,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **T** (Trainer:in, nicht Vorstand) die Agenda öffnen | Der Plus-Knopf ist da, der **Personen-Knopf fehlt** | | |
+| 1 | Als **T** (Trainer:in, nicht Vorstand) die Agenda öffnen | Das Plus ist da und öffnet den Termin direkt – es klappt **nicht** auf, der Personen-Knopf fehlt | | |
 | 2 | Als **T** mit einem HTTP-Aufruf `create_helper_event` | Fehler «Nur der Vorstand schreibt einen Helferaufruf aus» | | |
 | 3 | Als **T** mit einem HTTP-Aufruf `publish_event` auf einen Helfer-Entwurf | Derselbe Fehler | | |
 | 4 | Als **T** einen gewöhnlichen Termin anlegen | Geht weiterhin (BR-033) | | |

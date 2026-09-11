@@ -53,7 +53,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | In der Mitgliederverwaltung oben «Punkte buchen» wählen | Das Blatt öffnet sich ohne Vorauswahl | | |
+| 1 | In der Mitgliederverwaltung das Plus unten rechts antippen, dann «Punkte buchen» | Das Blatt öffnet sich ohne Vorauswahl | | |
 | 2 | **M1** und **M2** wählen, Wert und Anlass setzen, buchen | Toast «2 Buchungen erstellt» | | |
 | 3 | Beide Mitglieder prüfen | Jedes hat **eine** Buchung mit demselben Wert und demselben Anlass | | |
 | 4 | Beide Inboxen prüfen | Beide wurden benachrichtigt | | |
@@ -97,7 +97,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **TR** die Mitgliederverwaltung öffnen | **Kein** «Punkte buchen» in der Kopfzeile, kein Ledger im Mitgliedsblatt | | |
+| 1 | Als **TR** die Mitgliederverwaltung öffnen | **Kein** «Punkte buchen» unter dem Plus, kein Ledger im Mitgliedsblatt | | |
 | 2 | Als **TR** `book_points_manually` direkt aufrufen | Abgewiesen – die Voraussetzung nennt ausdrücklich `admin` | | |
 | 3 | Als **M1** dasselbe | Abgewiesen | | |
 | 4 | Als **V** für ein Mitglied eines **fremden** Vereins buchen | Abgewiesen | | |

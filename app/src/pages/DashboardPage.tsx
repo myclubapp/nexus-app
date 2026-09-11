@@ -1,20 +1,17 @@
 import {
   IonButton,
-  IonButtons,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
-  IonIcon,
+  IonCol,
+  IonGrid,
   IonItem,
   IonLabel,
   IonNote,
+  IonRow,
 } from '@ionic/react';
 import { createOutline } from 'ionicons/icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { Share } from '@capacitor/share';
 import { useClub } from '../hooks/useClub';
 import {
   useMyPoints,
@@ -28,15 +25,16 @@ import { useNewsSource } from '../hooks/useNewsSources';
 import { useIsNewClub } from '../hooks/useOnboarding';
 import { AppPage } from '../components/AppPage';
 import { FirstStepsCard } from '../components/FirstStepsCard';
+import { NewsCard } from '../components/NewsCard';
+import { NewsDetailModal } from '../components/NewsDetailModal';
 import { NewsFormModal } from '../components/NewsFormModal';
 import { ListSection } from '../components/ListSection';
 import { StatCard } from '../components/StatCard';
 import { EmptyState, ErrorState } from '../components/StateViews';
-import { SkeletonCard, SkeletonList, SkeletonStats } from '../components/Skeletons';
+import { SkeletonList, SkeletonNewsCards, SkeletonStats } from '../components/Skeletons';
 import { formatDate, formatDateTime } from '../lib/format';
+import { canShareNatively } from '../lib/invite';
 import { bookingLabel } from '../lib/points';
-import { isEditable } from '../lib/news';
-import { useRetractNews } from '../hooks/useNews';
 import { useToast } from '../hooks/useToast';
 import type { News } from '../lib/database.types';
 
@@ -45,11 +43,12 @@ export function DashboardPage() {
   const navigate = useNavigate();
   const { activeClub, activeMembership, eventLabel, isTrainer } = useClub();
   const toast = useToast();
-  const retract = useRetractNews();
   const [newsForm, setNewsForm] = useState<{ open: boolean; editing: News | null }>({
     open: false,
     editing: null,
   });
+  // Die geöffnete News – das Detail-Blatt mit Bild und Volltext.
+  const [openNews, setOpenNews] = useState<News | null>(null);
   const isNewClub = useIsNewClub();
   const points = useMyPoints();
   const summary = useMyPointsSummary();
@@ -74,25 +73,43 @@ export function DashboardPage() {
     );
   }
 
+  /**
+   * Eine übernommene News weitergeben – über das Teilen-Blatt des Geräts,
+   * im Browser als kopierter Link. Geteilt wird die Quelle, nicht die App:
+   * Der Verweis führt Aussenstehende auf die Website des Vereins.
+   */
+  async function shareNews(entry: News) {
+    const url = entry.external_url;
+    if (!url) return;
+    if (canShareNatively()) {
+      try {
+        await Share.share({ title: entry.title, url });
+        return;
+      } catch {
+        // Abbruch im Teilen-Dialog ist kein Fehler – dann bleibt Kopieren.
+      }
+    }
+    await navigator.clipboard?.writeText(url);
+    toast.success(t('news.linkCopied'));
+  }
+
   return (
     <AppPage
       title={t('dashboard.title')}
       largeTitle={t('dashboard.greeting', {
         name: activeMembership?.display_name ?? '',
       })}
-      toolbarEnd={
+      createActions={
         /* Schritt 1: «News schreiben» steht dort, wo News gelesen werden. */
-        isTrainer ? (
-          <IonButtons slot="end">
-            <IonButton onClick={() => setNewsForm({ open: true, editing: null })}>
-              <IonIcon
-                slot="icon-only"
-                icon={createOutline}
-                aria-label={t('newsForm.title')}
-              />
-            </IonButton>
-          </IonButtons>
-        ) : undefined
+        isTrainer
+          ? [
+              {
+                icon: createOutline,
+                label: t('newsForm.title'),
+                onClick: () => setNewsForm({ open: true, editing: null }),
+              },
+            ]
+          : undefined
       }
       onRefresh={() =>
         Promise.all([
@@ -226,54 +243,45 @@ export function DashboardPage() {
         )}
       </ListSection>
 
+      {/* Die News als Karten im Raster der bestehenden myclub-App: eine Spalte
+          auf dem Telefon, zwei auf dem Tablet, drei auf dem Laptop. */}
       <ListSection title={t('dashboard.latestNews')} inset={false}>
         {news.isLoading ? (
-          <SkeletonCard />
+          <SkeletonNewsCards />
         ) : (news.data ?? []).length === 0 ? (
           <EmptyState message={t('dashboard.noNews')} />
         ) : (
-          (news.data ?? []).map((entry) => (
-            <IonCard key={entry.id}>
-              <IonCardHeader>
-                <IonCardSubtitle>{formatDateTime(entry.published_at)}</IonCardSubtitle>
-                <IonCardTitle>{entry.title}</IonCardTitle>
-              </IonCardHeader>
-              {entry.body && <IonCardContent>{entry.body}</IonCardContent>}
-
-              {/* A3 und A4. Übernommene News der Website werden nicht zum
-                  Bearbeiten angeboten: Die Änderung ginge beim nächsten
-                  Abgleich verloren (UC-038). */}
-              {isTrainer && (
-                <IonCardContent>
-                  {isEditable(entry) && (
-                    <IonButton
-                      size="small"
-                      fill="clear"
-                      onClick={() => setNewsForm({ open: true, editing: entry })}
-                    >
-                      {t('newsForm.edit')}
-                    </IonButton>
-                  )}
-                  <IonButton
-                    size="small"
-                    fill="clear"
-                    color="medium"
-                    disabled={retract.isPending}
-                    onClick={() =>
-                      retract.mutate(entry.id, {
-                        onSuccess: () => toast.success(t('newsForm.retracted')),
-                        onError: (cause) => toast.failure(cause.message),
-                      })
-                    }
-                  >
-                    {t('newsForm.retract')}
-                  </IonButton>
-                </IonCardContent>
-              )}
-            </IonCard>
-          ))
+          <IonGrid className="app-news-grid">
+            <IonRow>
+              {(news.data ?? []).map((entry) => (
+                <IonCol key={entry.id} size="12" sizeSm="6" sizeMd="6" sizeLg="4">
+                  <NewsCard
+                    entry={entry}
+                    fallbackAuthor={activeClub?.name ?? ''}
+                    onOpen={setOpenNews}
+                    onShare={(item) => void shareNews(item)}
+                  />
+                </IonCol>
+              ))}
+            </IonRow>
+          </IonGrid>
         )}
       </ListSection>
+
+      {/* A3 und A4 (UC-026): Bearbeiten und Zurückziehen liegen im Detail
+          hinter dem Dreipunkt – der Feed bleibt zum Lesen da. */}
+      <NewsDetailModal
+        entry={openNews}
+        fallbackAuthor={activeClub?.name ?? ''}
+        isTrainer={isTrainer}
+        onShare={(item) => void shareNews(item)}
+        onEdit={(entry) => {
+          setOpenNews(null);
+          setNewsForm({ open: true, editing: entry });
+        }}
+        onDismiss={() => setOpenNews(null)}
+      />
+
       <NewsFormModal
         isOpen={newsForm.open}
         editing={newsForm.editing}
