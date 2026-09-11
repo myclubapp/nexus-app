@@ -180,6 +180,34 @@ niemanden.
 
 ---
 
+## Nachtrag vom 2026-09-11: was FR-085 wirklich blockiert
+
+Bei der Durchsicht aller offenen Use Cases geprüft und bestätigt: An UC-029 ist
+**alles gebaut ausser der Aufnahme selbst**. A4 («Transkription schlägt fehl»)
+und A5 (Kontingent) sind umgesetzt, und die Seite sagt offen, dass das Mikrofon
+fehlt, statt einen Knopf anzubieten, der nichts tut.
+
+**Warum hier nichts weitergebaut wurde:** Eine Aufnahme ohne Transkription
+wäre eine Funktion, deren Ergebnis immer weggeworfen wird. Schritt 7 verwirft
+die Audiodatei als **Voreinstellung**, ein Vereinsspeicher besteht nicht, und
+ohne Transkript gäbe es in Schritt 5 nichts zu prüfen. `MediaRecorder` jetzt
+einzubauen hiesse, Ton aufzunehmen, der nirgends hingeht.
+
+**Was FR-085 löst – eine Entscheidung, kein Stück Code:**
+
+| Weg | Was er verlangt | Was er kostet |
+| --- | --- | --- |
+| **Whisper selbst betreiben** | Ein Endpunkt (`faster-whisper`, `whisper.cpp`), erreichbar für eine Edge Function; Audio geht hin und kommt als Text zurück | Betrieb einer eigenen Instanz; dafür erfüllt er C-018 wörtlich |
+| **Auf dem Gerät** | Apples `Speech`-Framework über ein Capacitor-Plugin; auf Android ist die Standard-Erkennung Googles und damit durch BR-125 ausgeschlossen | Nur iOS – Android bliebe beim Textweg |
+| **Beim Textweg bleiben** | Nichts | FR-085 bleibt offen; A4 ist der reguläre Ablauf, und die Spezifikation sieht ihn ausdrücklich vor |
+
+Solange keiner dieser Wege gewählt ist, bleibt **UC-029 `In Progress`** – nicht
+weil etwas vergessen wurde, sondern weil der Hauptablauf ohne Transkription
+nicht stattfindet. Ihn als erledigt zu führen, wäre die unehrlichste
+Statuszeile im ganzen Katalog.
+
+---
+
 ## Progress Log
 
 | Datum      | Eintrag       |
