@@ -14,6 +14,8 @@ export interface CreateEventInput {
   why: string | null;
   teamId: string | null;
   pointRuleCode: string | null;
+  /** FR-029: benötigte Teilnehmerzahl; `null` heisst «kein Bedarf». */
+  capacityNeeded: number | null;
   /** Gesetzt, wenn eine Serie angelegt wird (A1). */
   series?: SeriesRule;
 }
@@ -82,6 +84,7 @@ export function useCreateEvent() {
         starts_at: toTimestamp(occurrence.startsAt),
         ends_at: occurrence.endsAt ? toTimestamp(occurrence.endsAt) : null,
         location: input.location?.trim() || null,
+        capacity_needed: input.capacityNeeded,
         point_rule_code: input.pointRuleCode,
         created_by: activeMembership?.id ?? null,
       }));
@@ -149,6 +152,7 @@ export function useUpdateEvent() {
       location?: string | null;
       why?: string | null;
       pointRuleCode?: string | null;
+      capacityNeeded?: number | null;
     }) => {
       // Typisiert statt Record: Sonst nimmt supabase-js jeden Spaltennamen an,
       // auch einen falsch geschriebenen, und die Änderung liefe ins Leere.
@@ -157,6 +161,7 @@ export function useUpdateEvent() {
       if (input.location !== undefined) patch.location = input.location?.trim() || null;
       if (input.why !== undefined) patch.why = input.why?.trim() || null;
       if (input.pointRuleCode !== undefined) patch.point_rule_code = input.pointRuleCode;
+      if (input.capacityNeeded !== undefined) patch.capacity_needed = input.capacityNeeded;
       if (Object.keys(patch).length === 0) return;
 
       // Zeiten bleiben aussen vor: Sie unterscheiden die Termine einer Serie

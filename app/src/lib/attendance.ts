@@ -87,3 +87,32 @@ export function tallyAttendance(
     undecided: Math.max(0, affectedCount - registered - excused - present - absent),
   };
 }
+
+/**
+ * Der hinterlegte Teilnehmerbedarf aus einer Eingabe (FR-029).
+ *
+ * Leer heisst **kein Bedarf**, nicht null: Die meisten Termine brauchen keine
+ * Mindestzahl, und eine Null läse sich wie «null Leute genügen». Alles, was
+ * keine positive ganze Zahl ist, gilt als leer – ein Tippfehler soll keine
+ * Unterdeckung erfinden.
+ */
+export function parseCapacity(input: string): number | null {
+  const value = Number(input.trim());
+  if (!Number.isInteger(value) || value <= 0) return null;
+  return value;
+}
+
+/**
+ * Fehlen Zusagen (FR-029)?
+ *
+ * Gezählt werden Zusagen **und** bereits Anwesende: Wer eingecheckt ist, ist
+ * da, auch wenn nie eine Zusage kam. Ohne hinterlegten Bedarf gibt es keine
+ * Unterdeckung – ein Termin ohne Bedarf ist nie zu leer.
+ */
+export function coverageGap(
+  capacityNeeded: number | null | undefined,
+  tally: Pick<AttendanceTally, 'registered' | 'present'>,
+): number {
+  if (!capacityNeeded || capacityNeeded <= 0) return 0;
+  return Math.max(0, capacityNeeded - tally.registered - tally.present);
+}

@@ -215,7 +215,9 @@
     "declinedWithPoints": "Refus enregistré – {{points}} points pour la désinscription à temps",
     "tally": "{{yes}} oui · {{no}} non · {{open}} sans réponse",
     "cancelledWithReason": "Annulé: {{reason}}",
-    "draft": "Brouillon"
+    "draft": "Brouillon",
+    "undercovered_one": "Il manque encore {{count}} réponse",
+    "undercovered_other": "Il manque encore {{count}} réponses"
   },
   "profile": {
     "title": "Profil",
@@ -640,7 +642,9 @@
     "previewMore_other": "et {{count}} autres",
     "previewCapped": "Une série ne crée pas plus de {{max}} rendez-vous. Choisissez une date de fin plus proche.",
     "previewTitle_one": "Aperçu: {{count}} rendez-vous",
-    "previewMore_one": "et {{count}} autre"
+    "previewMore_one": "et {{count}} autre",
+    "capacity": "Nombre de participants requis",
+    "capacityHint": "Facultatif. Si un nombre figure ici, l’agenda indique combien de réponses manquent encore."
   },
   "helperEvent": {
     "title": "Publier un appel aux bénévoles",

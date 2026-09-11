@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import {
   DECLINE_REASONS,
   EARLY_DECLINE_HOURS,
+  coverageGap,
+  parseCapacity,
   canRespond,
   isEarlyDecline,
   tallyAttendance,
@@ -130,5 +132,34 @@ describe('Gleichlauf mit decline_is_early() in SQL', () => {
   it('vergleicht in SQL ebenfalls strikt grösser', () => {
     // `>` und nicht `>=`: genau 24 Stunden reichen nicht.
     expect(migration).toMatch(/p_starts_at - now\(\) > interval/);
+  });
+});
+
+describe('Teilnehmerbedarf (FR-029)', () => {
+  it('nimmt eine positive ganze Zahl', () => {
+    expect(parseCapacity('12')).toBe(12);
+    expect(parseCapacity(' 8 ')).toBe(8);
+  });
+
+  it('liest alles andere als «kein Bedarf»', () => {
+    // Leer heisst kein Bedarf, nicht null – die meisten Termine brauchen
+    // keine Mindestzahl, und «0» läse sich wie «null Leute genügen».
+    expect(parseCapacity('')).toBeNull();
+    expect(parseCapacity('0')).toBeNull();
+    expect(parseCapacity('-3')).toBeNull();
+    expect(parseCapacity('7,5')).toBeNull();
+    expect(parseCapacity('viele')).toBeNull();
+  });
+
+  it('zählt Zusagen und Anwesende gegen den Bedarf', () => {
+    // Wer eingecheckt ist, ist da – auch ohne vorherige Zusage.
+    expect(coverageGap(10, { registered: 6, present: 2 })).toBe(2);
+    expect(coverageGap(10, { registered: 10, present: 0 })).toBe(0);
+    expect(coverageGap(10, { registered: 12, present: 1 })).toBe(0);
+  });
+
+  it('kennt ohne hinterlegten Bedarf keine Unterdeckung', () => {
+    expect(coverageGap(null, { registered: 0, present: 0 })).toBe(0);
+    expect(coverageGap(undefined, { registered: 0, present: 0 })).toBe(0);
   });
 });

@@ -215,7 +215,9 @@
     "declinedWithPoints": "Disdetta salvata – {{points}} punti per la disdetta puntuale",
     "tally": "{{yes}} sì · {{no}} no · {{open}} senza risposta",
     "cancelledWithReason": "Annullato: {{reason}}",
-    "draft": "Bozza"
+    "draft": "Bozza",
+    "undercovered_one": "Manca ancora {{count}} conferma",
+    "undercovered_other": "Mancano ancora {{count}} conferme"
   },
   "profile": {
     "title": "Profilo",
@@ -640,7 +642,9 @@
     "previewMore_other": "e altri {{count}}",
     "previewCapped": "Una serie non crea più di {{max}} appuntamenti. Scegli una data di fine più vicina.",
     "previewTitle_one": "Anteprima: {{count}} appuntamento",
-    "previewMore_one": "e altro {{count}}"
+    "previewMore_one": "e altro {{count}}",
+    "capacity": "Numero di partecipanti necessario",
+    "capacityHint": "Facoltativo. Se qui c’è un numero, l’agenda mostra quante conferme mancano ancora."
   },
   "helperEvent": {
     "title": "Pubblicare una chiamata volontari",

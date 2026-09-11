@@ -10,6 +10,7 @@ import {
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { useClub } from '../hooks/useClub';
+import { parseCapacity } from '../lib/attendance';
 import { useTeams } from '../hooks/useInvites';
 import { usePointRules } from '../hooks/useGamification';
 import { useAnnounceEvent, useCreateEvent } from '../hooks/useEvents';
@@ -72,6 +73,7 @@ export function EventForm({ onDone, onDismiss }: EventFormProps) {
   const [startsAt, setStartsAt] = useState('');
   const [endsAt, setEndsAt] = useState('');
   const [location, setLocation] = useState('');
+  const [capacity, setCapacity] = useState('');
   const [why, setWhy] = useState('');
   const [teamId, setTeamId] = useState<string | null>(null);
   const [ruleCode, setRuleCode] = useState<string | null>(null);
@@ -126,6 +128,7 @@ export function EventForm({ onDone, onDismiss }: EventFormProps) {
         endsAt: endsAt || null,
         location: location || null,
         why: why || null,
+        capacityNeeded: parseCapacity(capacity),
         teamId,
         pointRuleCode: effectiveRuleCode,
         series: seriesRule ?? undefined,
@@ -204,6 +207,23 @@ export function EventForm({ onDone, onDismiss }: EventFormProps) {
             labelPlacement="stacked"
             value={location}
             onIonInput={(e) => setLocation(e.detail.value ?? '')}
+          />
+        </IonItem>
+      </ListSection>
+
+      {/* FR-029: der Teilnehmerbedarf. Freiwillig – die meisten Termine
+          brauchen keine Mindestzahl, und wo keiner steht, gibt es auch keine
+          Unterdeckung zu melden. */}
+      <ListSection footnote={t('eventForm.capacityHint')}>
+        <IonItem>
+          <IonInput
+            type="number"
+            inputmode="numeric"
+            min={1}
+            label={t('eventForm.capacity')}
+            labelPlacement="stacked"
+            value={capacity}
+            onIonInput={(e) => setCapacity(e.detail.value ?? '')}
           />
         </IonItem>
       </ListSection>

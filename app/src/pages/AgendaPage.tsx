@@ -45,7 +45,7 @@ import { HelperEventModal } from '../components/HelperEventModal';
 import { ShiftListModal } from '../components/ShiftListModal';
 import { ShiftRosterModal } from '../components/ShiftRosterModal';
 import { EventQrModal } from '../components/EventQrModal';
-import { canRespond, tallyAttendance } from '../lib/attendance';
+import { canRespond, coverageGap, tallyAttendance } from '../lib/attendance';
 import { isSample } from '../lib/sample';
 import { isCheckInOpen } from '../lib/checkInWindow';
 import { canRemind, reminderMessage } from '../lib/reminder';
@@ -247,6 +247,9 @@ export function AgendaPage() {
             );
             const tally = tallyAttendance(eventAnswers, affectedCount);
             const attending = tally.registered + tally.present;
+            // FR-029: Wie viele Zusagen fehlen noch bis zum hinterlegten
+            // Bedarf? Ohne Bedarf null – ein Termin ohne ihn ist nie zu leer.
+            const gap = coverageGap(event.capacity_needed, tally);
             // BR-041: die Unterdeckung, und zwar richtig gezählt. Eine Absage
             // belegt keinen Platz – wer nur `shift_id` zählt, hält eine
             // Schicht für besetzt, aus der sich längst jemand abgemeldet hat.
@@ -370,6 +373,18 @@ export function AgendaPage() {
                             no: tally.excused,
                             open: tally.undecided,
                           })}
+                        </IonNote>
+                      </p>
+                    )}
+
+                    {/* FR-029: die Unterdeckung. Sie steht **allen** da, nicht
+                        nur der Trainer:in – ein Termin, dem Leute fehlen, ist
+                        genau der, bei dem die eigene Zusage zählt. Ohne
+                        hinterlegten Bedarf gibt es sie nicht. */}
+                    {!isDraft && !isCancelled && !hasStarted && gap > 0 && (
+                      <p>
+                        <IonNote color="warning">
+                          {t('agenda.undercovered', { count: gap })}
                         </IonNote>
                       </p>
                     )}

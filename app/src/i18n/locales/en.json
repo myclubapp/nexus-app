@@ -215,7 +215,9 @@
     "declinedWithPoints": "Decline saved – {{points}} points for cancelling in good time",
     "tally": "{{yes}} in · {{no}} out · {{open}} open",
     "cancelledWithReason": "Cancelled: {{reason}}",
-    "draft": "Draft"
+    "draft": "Draft",
+    "undercovered_one": "{{count}} reply still missing",
+    "undercovered_other": "{{count}} replies still missing"
   },
   "profile": {
     "title": "Profile",
@@ -640,7 +642,9 @@
     "previewMore_other": "and {{count}} more",
     "previewCapped": "A series creates at most {{max}} events. Choose an earlier end date.",
     "previewTitle_one": "Preview: {{count}} event",
-    "previewMore_one": "and {{count}} more"
+    "previewMore_one": "and {{count}} more",
+    "capacity": "Participants needed",
+    "capacityHint": "Optional. With a number here, the agenda shows how many replies are still missing."
   },
   "helperEvent": {
     "title": "Publish a call for helpers",

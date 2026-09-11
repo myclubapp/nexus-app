@@ -37,7 +37,7 @@ Sinnzusammenhang, bevor er sichtbar wird (BR-036).
 | FR-021 | Termin erstellen      | Titel, Typ, Zeit und Ort erfassen             | Implemented | Über `EventForm`; die Policy prüft die Rolle               |
 | FR-022 | Terminserie erstellen | Wiederkehrende Termine als Serie              | Implemented | A1, mit Vorschau und Obergrenze                            |
 | FR-023 | Termin absagen        | Mit Begründung absagen                        | Implemented | A4 über `cancel_event()`; nachgemessen                     |
-| FR-029 | Teilnehmerbedarf      | Benötigte Teilnehmerzahl hinterlegen          | Missing     | Spalte `capacity_needed` besteht; kein Feld im Formular    |
+| FR-029 | Teilnehmerbedarf      | Benötigte Teilnehmerzahl hinterlegen          | Implemented | Feld im Formular, Unterdeckung in der Agenda (2026-09-11)  |
 
 ### Business Rules
 
@@ -82,7 +82,7 @@ Sinnzusammenhang, bevor er sichtbar wird (BR-036).
 
 | #   | Was fehlt                                                                      | Anforderung | Quelle          |
 | --- | ------------------------------------------------------------------------------ | ----------- | --------------- |
-| 1   | **Teilnehmerbedarf** (`capacity_needed`) hat kein Feld im Formular              | FR-029      | Cross-reference |
+| 1   | ~~**Teilnehmerbedarf** (`capacity_needed`) hat kein Feld im Formular~~ – erledigt am 2026-09-11 | FR-029      | Cross-reference |
 | 2   | A2 «Einzeltermin einer Serie ändern» ist als Hook da, aber ohne Bedienoberfläche | FR-022      | Automated       |
 | 3   | Die Absage hat noch keinen Einstieg in der Agenda – `cancel_event()` ist bereit | FR-023      | Automated       |
 
@@ -120,7 +120,7 @@ Sinnzusammenhang, bevor er sichtbar wird (BR-036).
       Absage ohne Grund, Absage mit Grund und Zustellung, zweite Absage folgenlos.
 - [x] 15. Manueller Testplan `docs/test-plans/uc-009-termin-erstellen.md`.
 - [x] 16. **Statusabgleich** — FR-021 bis FR-023 auf `Implemented`.
-- [ ] 17. **Teilnehmerbedarf** ins Formular (FR-029).
+- [x] 17. **Teilnehmerbedarf** ins Formular (FR-029) – erledigt am 2026-09-11.
 - [ ] 18. **Absage und Serienänderung** in der Agenda bedienbar machen.
 - [ ] 19. **Plattform-Parität** — die Datums- und Zeitauswahl auf iOS, Android
       und im Browser; `datetime-local` verhält sich dort unterschiedlich.

@@ -209,6 +209,24 @@
 
 ---
 
+## TC-012: Teilnehmerbedarf und Unterdeckung (FR-029)
+
+**Priority:** Medium
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Einen Termin **ohne** Teilnehmerbedarf anlegen | Er wird angelegt; in der Agenda steht keine Unterdeckung | | |
+| 2 | Einen Termin mit Bedarf 12 anlegen und zwei Zusagen erfassen | «Noch 10 Zusagen fehlen» | | |
+| 3 | Bis auf eine Zusage auffüllen | Die Zahl zählt herunter, der Singular stimmt | | |
+| 4 | Den Bedarf erreichen | Der Hinweis verschwindet | | |
+| 5 | Jemanden einchecken lassen, der nie zugesagt hat | Zählt mit – wer da ist, ist da | | |
+| 6 | «0», «-3» und «viele» eingeben | Gilt als kein Bedarf; keine Unterdeckung, keine Fehlermeldung | | |
+| 7 | Als Mitglied ohne Rolle hinsehen | Die Unterdeckung steht auch dort – gerade dort zählt die eigene Zusage | | |
+| 8 | Einen abgesagten und einen begonnenen Termin prüfen | Keine Unterdeckung mehr | | |
+| 9 | Die vier Sprachen prüfen | Feld, Fusstext und Unterdeckung sind übersetzt | | |
+
+---
+
 ## Test Matrix
 
 | Device / Browser | OS / Version | Screen Size | Status |

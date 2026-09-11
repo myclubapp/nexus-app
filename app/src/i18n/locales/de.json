@@ -215,7 +215,9 @@
     "declinedWithPoints": "Absage gespeichert – {{points}} Punkte für die rechtzeitige Abmeldung",
     "tally": "{{yes}} zugesagt · {{no}} abgesagt · {{open}} offen",
     "cancelledWithReason": "Abgesagt: {{reason}}",
-    "draft": "Entwurf"
+    "draft": "Entwurf",
+    "undercovered_one": "Noch {{count}} Zusage fehlt",
+    "undercovered_other": "Noch {{count}} Zusagen fehlen"
   },
   "profile": {
     "title": "Profil",
@@ -640,7 +642,9 @@
     "previewMore_other": "und {{count}} weitere",
     "previewCapped": "Mehr als {{max}} Termine legt eine Serie nicht an. Wähle ein früheres Enddatum.",
     "previewTitle_one": "Vorschau: {{count}} Termin",
-    "previewMore_one": "und {{count}} weiterer"
+    "previewMore_one": "und {{count}} weiterer",
+    "capacity": "Benötigte Teilnehmerzahl",
+    "capacityHint": "Freiwillig. Steht hier eine Zahl, zeigt die Agenda, wie viele Zusagen noch fehlen."
   },
   "helperEvent": {
     "title": "Helfer-Event ausschreiben",
