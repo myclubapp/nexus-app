@@ -64,7 +64,8 @@ describe('PUSH_CATEGORIES', () => {
       'event', 'points', 'task', 'news', 'pulse', 'health',
       // Seit UC-030 stellt `notify()` unter `input` zu, seit UC-032 unter
       // `checkin`. Fehlte eine davon hier, liesse sie sich nie abwählen.
-      'input', 'checkin', 'join_request',
+      // Seit UC-035 kommt `system` dazu: technische Meldungen zu Anschlüssen.
+      'input', 'checkin', 'system', 'join_request',
     ]);
   });
 });

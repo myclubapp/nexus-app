@@ -747,6 +747,47 @@ export type Database = {
           },
         ]
       }
+      federation_connections: {
+        Row: {
+          api_key_secret: string | null
+          club_id: string
+          created_at: string
+          federation: string
+          federation_club_id: string
+          last_error: string | null
+          last_sync_at: string | null
+          status: string
+        }
+        Insert: {
+          api_key_secret?: string | null
+          club_id: string
+          created_at?: string
+          federation: string
+          federation_club_id: string
+          last_error?: string | null
+          last_sync_at?: string | null
+          status?: string
+        }
+        Update: {
+          api_key_secret?: string | null
+          club_id?: string
+          created_at?: string
+          federation?: string
+          federation_club_id?: string
+          last_error?: string | null
+          last_sync_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "federation_connections_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       functionary_roles: {
         Row: {
           club_id: string
@@ -2196,6 +2237,15 @@ export type Database = {
           points: number
         }[]
       }
+      connect_federation: {
+        Args: {
+          p_api_key?: string
+          p_club_id: string
+          p_federation: string
+          p_federation_club_id: string
+        }
+        Returns: undefined
+      }
       connection_ratio: {
         Args: { p_club_id: string; p_days?: number }
         Returns: {
@@ -2278,8 +2328,13 @@ export type Database = {
       detect_succession_gaps: { Args: { p_club_id?: string }; Returns: number }
       dimension_of_pillar: { Args: { p_pillar: number }; Returns: string }
       discard_pulse: { Args: { p_pulse_id: string }; Returns: undefined }
+      disconnect_federation: {
+        Args: { p_club_id: string; p_federation: string }
+        Returns: undefined
+      }
       drop_sample_content: { Args: { p_club_id: string }; Returns: number }
       ensure_demo_club: { Args: never; Returns: string }
+      event_in_scope: { Args: { p_event_id: string }; Returns: boolean }
       event_roster: {
         Args: { p_event_id: string }
         Returns: {
@@ -2291,6 +2346,15 @@ export type Database = {
       expire_health_signals: { Args: never; Returns: number }
       expire_sample_content: { Args: never; Returns: number }
       expire_tasks: { Args: { p_limit?: number }; Returns: number }
+      federation_credentials: {
+        Args: { p_club_id?: string }
+        Returns: {
+          api_key: string
+          club_id: string
+          federation: string
+          federation_club_id: string
+        }[]
+      }
       find_club_by_slug: {
         Args: { p_slug: string }
         Returns: {
@@ -2531,6 +2595,15 @@ export type Database = {
           notified: number
         }[]
       }
+      report_federation_sync: {
+        Args: {
+          p_club_id: string
+          p_error?: string
+          p_federation: string
+          p_ok: boolean
+        }
+        Returns: undefined
+      }
       report_invoice: {
         Args: {
           p_amount: number
@@ -2690,6 +2763,7 @@ export type Database = {
       }
       suggest_modules: { Args: never; Returns: number }
       suggest_task: { Args: { p_task_id: string }; Returns: number }
+      sync_federations: { Args: never; Returns: number }
       sync_news_sources: { Args: never; Returns: number }
       take_shift: {
         Args: { p_accept_overlap?: boolean; p_shift_id: string }

@@ -6,7 +6,7 @@
 **Use Case Name:** Verband verbinden
 **Primary Actor:** Vorstand
 **Goal:** Spielpläne, Resultate und Verbandsnews automatisch in die App holen
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

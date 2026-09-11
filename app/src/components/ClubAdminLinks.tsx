@@ -90,6 +90,12 @@ export function ClubAdminLinks() {
             <IonLabel>{t("newsImport.title")}</IonLabel>
           </IonItem>
 
+          {/* UC-035: Der Verband ist ein Anschluss wie die Website – und
+              steht deshalb daneben. */}
+          <IonItem button routerLink="/tabs/profile/federation" detail>
+            <IonLabel>{t("federation.title")}</IonLabel>
+          </IonItem>
+
           <IonItem button routerLink="/tabs/profile/invite" detail>
             <IonLabel>{t("invite.title")}</IonLabel>
           </IonItem>

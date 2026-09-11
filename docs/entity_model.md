@@ -732,12 +732,13 @@ Die Verbindung eines Vereins zu einem Verband über dessen API-Schlüssel.
 | -------------- | ---------------------------------------------- | --------- | ---------------- | ----------------------------------------- |
 | club_id        | Verein der Verbindung                          | UUID      | 36               | Not Null, Foreign Key (CLUB.id)           |
 | federation     | Kennung des Verbands                           | String    | 40               | Not Null                                  |
+| federation_club_id | Kennung des Vereins **beim Verband**            | String    | 40               | Not Null                                  |
 | api_key_secret | Verweis auf den im Tresor abgelegten Schlüssel | String    | 120              | Optional                                  |
 | status         | Zustand der Verbindung                         | String    | 20               | Not Null, Values: pending, active, error  |
 | last_sync_at   | Zeitpunkt des letzten Abgleichs                | DateTime  | -                | Optional                                  |
 | last_error     | Fehlermeldung des letzten Abgleichs            | String    | 500              | Optional                                  |
 
-**Constraints:** Primärschlüssel ist die Kombination aus `club_id` und `federation`. Der Schlüssel wird nie an den Client ausgeliefert. Der Abgleich liest ausschliesslich; es werden keine Daten an den Verband zurückgeschrieben. Abgeglichen werden ausschliesslich Teams, die über `TEAM.federation_team_id` verknüpft sind (UC-039); eine gelöste Verknüpfung oder eine getrennte Verbindung entfernt weder Teams noch bereits importierte Termine (BR-181).
+**Constraints:** Primärschlüssel ist die Kombination aus `club_id` und `federation`. In `api_key_secret` steht ausschliesslich der **Name** des Vault-Eintrags, nie der Schlüssel selbst (BR-153). Der Schlüssel wird nie an den Client ausgeliefert. Der Abgleich liest ausschliesslich; es werden keine Daten an den Verband zurückgeschrieben. Abgeglichen werden ausschliesslich Teams, die über `TEAM.federation_team_id` verknüpft sind (UC-039); eine gelöste Verknüpfung oder eine getrennte Verbindung entfernt weder Teams noch bereits importierte Termine (BR-181).
 
 ---
 

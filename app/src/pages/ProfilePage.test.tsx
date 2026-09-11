@@ -129,6 +129,7 @@ describe('ProfilePage', () => {
       '/tabs/profile/offices',
       '/tabs/profile/rules',
       '/tabs/profile/news',
+      '/tabs/profile/federation',
       '/tabs/profile/invite',
       '/tabs/profile/requests',
     ]);

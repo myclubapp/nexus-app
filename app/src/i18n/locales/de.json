@@ -1171,6 +1171,10 @@
       "checkin": {
         "title": "Befinden",
         "body": "Die kurze Frage nach einem Termin und der Hinweis an dich selbst."
+      },
+      "system": {
+        "title": "Anschlüsse",
+        "body": "Technische Meldungen, etwa wenn die Verbandsverbindung stockt."
       }
     }
   },
@@ -1544,5 +1548,48 @@
     "cancelled": "Abgesagt. Alle Betroffenen wurden benachrichtigt.",
     "changed": "Gespeichert.",
     "open": "Bearbeiten"
+  },
+  "federation": {
+    "title": "Verband verbinden",
+    "intro": "Spielpläne und Resultate kommen vom Verband. Dafür braucht es die Kennung eures Vereins bei ihm – mehr nicht.",
+    "choose": "Verband",
+    "chooseHint": "Unterstützt sind die Verbände, deren Schnittstelle offen dokumentiert ist.",
+    "clubId": "Vereinskennung beim Verband",
+    "clubIdHint": "Sie steht in der Adresse eurer Vereinsseite beim Verband, meist als Zahl.",
+    "apiKey": "API-Schlüssel",
+    "apiKeyHint": "Nur nötig, wo der Verband einen verlangt. Er wird verschlüsselt abgelegt und nie an ein Gerät ausgeliefert.",
+    "noKeyNeeded": "Dieser Verband verlangt keinen Schlüssel.",
+    "connect": "Prüfen und verbinden",
+    "connected": "Verbunden. Der erste Abgleich läuft.",
+    "checking": "Verbindung wird geprüft …",
+    "status": "Stand",
+    "statusLabel": {
+      "pending": "Noch nicht geprüft",
+      "active": "Aktiv",
+      "error": "Fehler"
+    },
+    "lastSync": "Letzter Abgleich: {{when}}",
+    "neverSynced": "Noch kein Abgleich",
+    "lastError": "Letzte Meldung des Verbands: {{message}}",
+    "errorHint": "Die App bleibt vollständig nutzbar – nur die Verbandsdaten veralten.",
+    "disconnect": "Verbindung trennen",
+    "disconnectConfirm": "Der Schlüssel wird gelöscht und der Abgleich endet. Bereits übernommene Termine bleiben bestehen.",
+    "disconnected": "Getrennt. Die übernommenen Termine bleiben.",
+    "teamsFound_one": "{{count}} Team beim Verband gefunden",
+    "teamsFound_other": "{{count}} Teams beim Verband gefunden",
+    "nextStep": "Verknüpft eure Teams mit den Teams des Verbands – erst dann entstehen Spiele.",
+    "toTeams": "Zu den Teams",
+    "empty": "Noch kein Verband verbunden.",
+    "problem": {
+      "clubIdMissing": "Ohne Vereinskennung gibt es nichts abzugleichen.",
+      "keyMissing": "Dieser Verband verlangt einen Schlüssel."
+    },
+    "serviceMissing": "Der Abgleichdienst antwortet nicht. Die Verbindung ist gespeichert und wird beim nächsten Lauf geprüft.",
+    "name": {
+      "swissunihockey": "Swiss Unihockey",
+      "swissvolley": "Swiss Volley",
+      "swisshandball": "Swiss Handball",
+      "swissturnverband": "Schweizerischer Turnverband"
+    }
   }
 }

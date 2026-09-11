@@ -1171,6 +1171,10 @@
       "checkin": {
         "title": "Ressenti",
         "body": "La petite question après un rendez-vous et le rappel qui ne va qu'à toi."
+      },
+      "system": {
+        "title": "Raccordements",
+        "body": "Messages techniques, par exemple lorsque la liaison avec la fédération faiblit."
       }
     }
   },
@@ -1544,5 +1548,48 @@
     "cancelled": "Annulé. Toutes les personnes concernées ont été averties.",
     "changed": "Enregistré.",
     "open": "Modifier"
+  },
+  "federation": {
+    "title": "Connecter la fédération",
+    "intro": "Calendriers et résultats viennent de la fédération. Il faut pour cela l’identifiant de votre club chez elle – rien de plus.",
+    "choose": "Fédération",
+    "chooseHint": "Sont prises en charge les fédérations dont l’interface est documentée publiquement.",
+    "clubId": "Identifiant du club chez la fédération",
+    "clubIdHint": "Il figure dans l’adresse de votre page de club chez la fédération, le plus souvent sous forme de nombre.",
+    "apiKey": "Clé API",
+    "apiKeyHint": "Nécessaire uniquement là où la fédération en exige une. Elle est chiffrée et n’est jamais livrée à un appareil.",
+    "noKeyNeeded": "Cette fédération n’exige aucune clé.",
+    "connect": "Vérifier et connecter",
+    "connected": "Connecté. La première synchronisation est en cours.",
+    "checking": "Vérification de la liaison …",
+    "status": "État",
+    "statusLabel": {
+      "pending": "Pas encore vérifié",
+      "active": "Actif",
+      "error": "Erreur"
+    },
+    "lastSync": "Dernière synchronisation : {{when}}",
+    "neverSynced": "Aucune synchronisation",
+    "lastError": "Dernier message de la fédération : {{message}}",
+    "errorHint": "L’app reste pleinement utilisable – seules les données de la fédération vieillissent.",
+    "disconnect": "Couper la liaison",
+    "disconnectConfirm": "La clé est supprimée et la synchronisation s’arrête. Les rendez-vous déjà repris subsistent.",
+    "disconnected": "Coupé. Les rendez-vous repris subsistent.",
+    "teamsFound_one": "{{count}} équipe trouvée chez la fédération",
+    "teamsFound_other": "{{count}} équipes trouvées chez la fédération",
+    "nextStep": "Liez vos équipes à celles de la fédération – les matchs n’apparaissent qu’ensuite.",
+    "toTeams": "Vers les équipes",
+    "empty": "Aucune fédération connectée.",
+    "problem": {
+      "clubIdMissing": "Sans identifiant de club, il n’y a rien à synchroniser.",
+      "keyMissing": "Cette fédération exige une clé."
+    },
+    "serviceMissing": "Le service de synchronisation ne répond pas. La liaison est enregistrée et sera vérifiée au prochain passage.",
+    "name": {
+      "swissunihockey": "Swiss Unihockey",
+      "swissvolley": "Swiss Volley",
+      "swisshandball": "Swiss Handball",
+      "swissturnverband": "Fédération suisse de gymnastique"
+    }
   }
 }

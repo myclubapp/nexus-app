@@ -1171,6 +1171,10 @@
       "checkin": {
         "title": "How you are",
         "body": "The short question after an event and the nudge meant only for you."
+      },
+      "system": {
+        "title": "Connections",
+        "body": "Technical notices, such as when the federation link falters."
       }
     }
   },
@@ -1544,5 +1548,48 @@
     "cancelled": "Cancelled. Everyone affected has been notified.",
     "changed": "Saved.",
     "open": "Edit"
+  },
+  "federation": {
+    "title": "Connect federation",
+    "intro": "Fixtures and results come from the federation. All it takes is your club’s id with them – nothing more.",
+    "choose": "Federation",
+    "chooseHint": "Supported are the federations whose interface is publicly documented.",
+    "clubId": "Club id at the federation",
+    "clubIdHint": "It appears in the address of your club page at the federation, usually as a number.",
+    "apiKey": "API key",
+    "apiKeyHint": "Only needed where the federation demands one. It is stored encrypted and never handed to a device.",
+    "noKeyNeeded": "This federation needs no key.",
+    "connect": "Check and connect",
+    "connected": "Connected. The first sync is running.",
+    "checking": "Checking the connection …",
+    "status": "State",
+    "statusLabel": {
+      "pending": "Not checked yet",
+      "active": "Active",
+      "error": "Error"
+    },
+    "lastSync": "Last sync: {{when}}",
+    "neverSynced": "No sync yet",
+    "lastError": "Last message from the federation: {{message}}",
+    "errorHint": "The app stays fully usable – only the federation data ages.",
+    "disconnect": "Disconnect",
+    "disconnectConfirm": "The key is deleted and the sync ends. Events already imported stay.",
+    "disconnected": "Disconnected. The imported events stay.",
+    "teamsFound_one": "{{count}} team found at the federation",
+    "teamsFound_other": "{{count}} teams found at the federation",
+    "nextStep": "Link your teams to the federation’s teams – only then do games appear.",
+    "toTeams": "To the teams",
+    "empty": "No federation connected yet.",
+    "problem": {
+      "clubIdMissing": "Without a club id there is nothing to sync.",
+      "keyMissing": "This federation needs a key."
+    },
+    "serviceMissing": "The sync service is not answering. The connection is saved and will be checked on the next run.",
+    "name": {
+      "swissunihockey": "Swiss Unihockey",
+      "swissvolley": "Swiss Volley",
+      "swisshandball": "Swiss Handball",
+      "swissturnverband": "Swiss Gymnastics Federation"
+    }
   }
 }

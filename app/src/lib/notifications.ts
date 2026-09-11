@@ -19,6 +19,10 @@ export const PUSH_CATEGORIES = [
   // Seit UC-032: die Frage nach dem Befinden. Sie ist die Kategorie, die man
   // am ehesten abschalten will – deshalb muss sie in der Liste stehen.
   'checkin',
+  // Seit UC-035: technische Meldungen zu Anschlüssen – heute die
+  // Verbandsverbindung. Sie erreicht nur den Vorstand, und auch er soll sie
+  // abschalten können; eine Kategorie ohne Schalter wäre die einzige.
+  'system',
   'join_request',
 ] as const;
 

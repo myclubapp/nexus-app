@@ -1171,6 +1171,10 @@
       "checkin": {
         "title": "Come stai",
         "body": "La domanda breve dopo un appuntamento e il promemoria solo per te."
+      },
+      "system": {
+        "title": "Collegamenti",
+        "body": "Messaggi tecnici, per esempio quando il collegamento con la federazione si inceppa."
       }
     }
   },
@@ -1544,5 +1548,48 @@
     "cancelled": "Annullato. Tutte le persone coinvolte sono state avvisate.",
     "changed": "Salvato.",
     "open": "Modifica"
+  },
+  "federation": {
+    "title": "Collegare la federazione",
+    "intro": "Calendari e risultati arrivano dalla federazione. Serve l’identificativo della vostra società presso di lei – nient’altro.",
+    "choose": "Federazione",
+    "chooseHint": "Sono supportate le federazioni la cui interfaccia è documentata pubblicamente.",
+    "clubId": "Identificativo della società presso la federazione",
+    "clubIdHint": "Si trova nell’indirizzo della vostra pagina societaria presso la federazione, di solito come numero.",
+    "apiKey": "Chiave API",
+    "apiKeyHint": "Necessaria solo dove la federazione la richiede. Viene cifrata e non è mai consegnata a un dispositivo.",
+    "noKeyNeeded": "Questa federazione non richiede alcuna chiave.",
+    "connect": "Verifica e collega",
+    "connected": "Collegato. La prima sincronizzazione è in corso.",
+    "checking": "Verifica del collegamento …",
+    "status": "Stato",
+    "statusLabel": {
+      "pending": "Non ancora verificato",
+      "active": "Attivo",
+      "error": "Errore"
+    },
+    "lastSync": "Ultima sincronizzazione: {{when}}",
+    "neverSynced": "Nessuna sincronizzazione",
+    "lastError": "Ultimo messaggio della federazione: {{message}}",
+    "errorHint": "L’app resta pienamente utilizzabile – invecchiano solo i dati della federazione.",
+    "disconnect": "Interrompi il collegamento",
+    "disconnectConfirm": "La chiave viene cancellata e la sincronizzazione termina. Gli appuntamenti già ripresi restano.",
+    "disconnected": "Interrotto. Gli appuntamenti ripresi restano.",
+    "teamsFound_one": "{{count}} squadra trovata presso la federazione",
+    "teamsFound_other": "{{count}} squadre trovate presso la federazione",
+    "nextStep": "Collegate le vostre squadre a quelle della federazione – solo allora nascono le partite.",
+    "toTeams": "Alle squadre",
+    "empty": "Nessuna federazione collegata.",
+    "problem": {
+      "clubIdMissing": "Senza identificativo della società non c’è nulla da sincronizzare.",
+      "keyMissing": "Questa federazione richiede una chiave."
+    },
+    "serviceMissing": "Il servizio di sincronizzazione non risponde. Il collegamento è salvato e verrà verificato al prossimo giro.",
+    "name": {
+      "swissunihockey": "Swiss Unihockey",
+      "swissvolley": "Swiss Volley",
+      "swisshandball": "Swiss Handball",
+      "swissturnverband": "Federazione svizzera di ginnastica"
+    }
   }
 }
