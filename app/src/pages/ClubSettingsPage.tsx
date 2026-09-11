@@ -5,6 +5,9 @@ import {
   IonInput,
   IonItem,
   IonLabel,
+  IonItemOption,
+  IonItemOptions,
+  IonItemSliding,
   IonNote,
   IonSpinner,
   IonTextarea,
@@ -13,6 +16,11 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useClub } from '../hooks/useClub';
 import { useSaveClubSettings } from '../hooks/useClubSettings';
+import {
+  useAdoptSample,
+  useDropSampleContent,
+  useSampleContent,
+} from '../hooks/useSample';
 import { useToast } from '../hooks/useToast';
 import {
   applyClubTheme,
@@ -60,6 +68,9 @@ export function ClubSettingsPage() {
   const { t } = useTranslation();
   const { activeClub, isAdmin } = useClub();
   const save = useSaveClubSettings();
+  const dropSamples = useDropSampleContent();
+  const samples = useSampleContent();
+  const adopt = useAdoptSample();
   const toast = useToast();
 
   const [name, setName] = useState('');
@@ -71,6 +82,7 @@ export function ClubSettingsPage() {
   const [logoUrl, setLogoUrl] = useState('');
   // A4: Die Warnung steht **vor** dem Speichern, nicht als Hinweis danach.
   const [confirmSeason, setConfirmSeason] = useState(false);
+  const [confirmDrop, setConfirmDrop] = useState(false);
 
   // Den Entwurf aus dem Verein füllen, sobald er geladen oder gewechselt ist.
   useEffect(() => {
@@ -332,6 +344,71 @@ export function ClubSettingsPage() {
               </IonItem>
             ))}
           </ListSection>
+
+          {/* FR-136 und BR-162: **eine** Aktion, nicht einzeln aufräumen. */}
+          <ListSection
+            title={t('sample.sectionTitle')}
+            footnote={t('sample.sectionHint')}
+          >
+            {/* A3: einen einzelnen behalten. Nach links wischen, wie bei jeder
+                Zeilenaktion (guidelines §2). */}
+            {(samples.data ?? []).map((item) => (
+              <IonItemSliding key={`${item.kind}-${item.id}`}>
+                <IonItem>
+                  <IonLabel className="ion-text-wrap">
+                    <h2>{item.title}</h2>
+                    <IonNote>{t(`sample.kind.${item.kind}`)}</IonNote>
+                  </IonLabel>
+                </IonItem>
+                <IonItemOptions side="end">
+                  <IonItemOption
+                    onClick={() =>
+                      adopt.mutate(
+                        { kind: item.kind, id: item.id },
+                        {
+                          onSuccess: () => toast.success(t('sample.adopted')),
+                          onError: (cause) => toast.failure((cause as Error).message),
+                        },
+                      )
+                    }
+                  >
+                    {t('sample.adopt')}
+                  </IonItemOption>
+                </IonItemOptions>
+              </IonItemSliding>
+            ))}
+
+            <IonItem lines="none">
+              <IonButton
+                fill="outline"
+                color="danger"
+                disabled={dropSamples.isPending || (samples.data ?? []).length === 0}
+                onClick={() => setConfirmDrop(true)}
+              >
+                {t('sample.drop')}
+              </IonButton>
+            </IonItem>
+          </ListSection>
+
+          <IonAlert
+            isOpen={confirmDrop}
+            header={t('sample.drop')}
+            message={t('sample.dropConfirm')}
+            onDidDismiss={() => setConfirmDrop(false)}
+            buttons={[
+              { text: t('common.cancel'), role: 'cancel' },
+              {
+                text: t('sample.drop'),
+                role: 'destructive',
+                handler: () =>
+                  dropSamples.mutate(undefined, {
+                    onSuccess: (count) =>
+                      toast.success(t('sample.dropped', { count })),
+                    onError: (cause) => toast.failure((cause as Error).message),
+                  }),
+              },
+            ]}
+          />
 
           {/* guidelines §2: Die Rückfrage steht **vor** der Aktion, und die
               Farbe des Knopfs kommt aus seiner Rolle. */}

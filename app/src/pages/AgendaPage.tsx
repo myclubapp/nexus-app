@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
   IonAlert,
@@ -7,13 +7,24 @@ import {
   IonButtons,
   IonIcon,
   IonItem,
+  IonItemOption,
+  IonItemOptions,
+  IonItemSliding,
   IonLabel,
   IonList,
   IonNote,
   IonSegment,
   IonSegmentButton,
 } from '@ionic/react';
-import { addOutline, peopleOutline } from 'ionicons/icons';
+import {
+  alertCircle,
+  calendarOutline,
+  checkmarkCircle,
+  closeCircle,
+  locationOutline,
+  peopleOutline,
+  pricetagOutline,
+} from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { useAgenda, useRespondToEvent } from '../hooks/useAgenda';
 import { usePublishEvent } from '../hooks/useHelperEvents';
@@ -24,8 +35,10 @@ import { AppPage } from '../components/AppPage';
 import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
 import { useToast } from '../hooks/useToast';
-import { formatDateTime } from '../lib/format';
+import { formatDateTime, formatTime } from '../lib/format';
+import { AttendanceStatusIcon } from '../components/AttendanceStatusIcon';
 import { CheckInModal } from '../components/CheckInModal';
+import { EventDetailModal } from '../components/EventDetailModal';
 import { EventFormModal } from '../components/EventFormModal';
 import { DeclineModal } from '../components/DeclineModal';
 import { HelperEventModal } from '../components/HelperEventModal';
@@ -33,11 +46,23 @@ import { ShiftListModal } from '../components/ShiftListModal';
 import { ShiftRosterModal } from '../components/ShiftRosterModal';
 import { EventQrModal } from '../components/EventQrModal';
 import { canRespond, tallyAttendance } from '../lib/attendance';
+import { isSample } from '../lib/sample';
 import { isCheckInOpen } from '../lib/checkInWindow';
 import { canRemind, reminderMessage } from '../lib/reminder';
 import { shiftCoverage } from '../lib/shift';
 
 type Range = 'upcoming' | 'past';
+
+/** Die Knöpfe in der Zeile lösen nicht zugleich das Detail dahinter aus. */
+function stopBubbling(event: MouseEvent) {
+  event.stopPropagation();
+}
+
+/** Die Wischleiste fährt nach der Wahl von selbst zu, wie in der alten App. */
+function closeSliding(event: MouseEvent) {
+  const sliding = (event.currentTarget as HTMLElement).closest('ion-item-sliding');
+  void (sliding as HTMLIonItemSlidingElement | null)?.close();
+}
 
 export function AgendaPage() {
   const { t } = useTranslation();
@@ -53,6 +78,8 @@ export function AgendaPage() {
   const [rosterEventId, setRosterEventId] = useState<string | null>(null);
   // UC-014 Schritt 1: Die Trainer:in zeigt den Code und erfasst, wer da ist.
   const [qrEventId, setQrEventId] = useState<string | null>(null);
+  // UC-010 Schritt 1: Der Termin öffnet sich als Blatt mit Eckdaten und Stand.
+  const [detailEventId, setDetailEventId] = useState<string | null>(null);
   const [decliningEvent, setDecliningEvent] = useState<{
     id: string;
     startsAt: string;
@@ -74,6 +101,9 @@ export function AgendaPage() {
   );
   /** Solange die Mitglieder nicht geladen sind, ist die Zahl unbekannt. */
   const membersKnown = members.data !== undefined && !members.error;
+  /** Die eigenen Teams – entscheiden, ob ein Team-Termin einen betrifft. */
+  const myTeamIds =
+    activeMembers.find((m) => m.id === activeMembership?.id)?.teamIds ?? [];
   const agenda = useAgenda(range);
   const respond = useRespondToEvent();
   const publish = usePublishEvent();
@@ -86,6 +116,22 @@ export function AgendaPage() {
   const events = agenda.data ?? [];
   const shiftEvent = events.find((entry) => entry.id === shiftEventId);
   const rosterEvent = events.find((entry) => entry.id === rosterEventId);
+  const detailEvent = events.find((entry) => entry.id === detailEventId) ?? null;
+
+  /** Betroffen ist bei einem Team-Termin nur dieses Team, sonst der ganze Verein. */
+  function affectedMembers(teamId: string | null) {
+    return teamId ? activeMembers.filter((m) => m.teamIds.includes(teamId)) : activeMembers;
+  }
+
+  function register(eventId: string) {
+    respond.mutate(
+      { eventId, status: 'registered' },
+      {
+        onSuccess: () => toast.success(t('agenda.attending')),
+        onError: (cause) => toast.failure(cause.message),
+      },
+    );
+  }
 
   useEffect(() => {
     if (!highlightId) return;
@@ -100,30 +146,30 @@ export function AgendaPage() {
   return (
     <AppPage
       title={t('agenda.title')}
-      toolbarEnd={
+      createActions={
         // BR-033: Termine erfassen Trainer:innen und der Vorstand. Der
         // Helferaufruf dagegen erreicht den ganzen Verein und kennt kein
         // Team – ihn schreibt nur der Vorstand aus (UC-011 Precondition).
-        isTrainer ? (
-          <IonButtons slot="end">
-            {isAdmin && (
-              <IonButton onClick={() => setHelperOpen(true)}>
-                <IonIcon
-                  slot="icon-only"
-                  icon={peopleOutline}
-                  aria-label={t('helperEvent.title')}
-                />
-              </IonButton>
-            )}
-            <IonButton onClick={() => setFormOpen(true)}>
-              <IonIcon
-                slot="icon-only"
-                icon={addOutline}
-                aria-label={t('eventForm.title')}
-              />
-            </IonButton>
-          </IonButtons>
-        ) : undefined
+        // Der Termin steht zuerst: Er ist der häufigere Weg und liegt damit
+        // in der aufgeklappten Liste am nächsten beim Plus.
+        isTrainer
+          ? [
+              {
+                icon: calendarOutline,
+                label: t('eventForm.title'),
+                onClick: () => setFormOpen(true),
+              },
+              ...(isAdmin
+                ? [
+                    {
+                      icon: peopleOutline,
+                      label: t('helperEvent.title'),
+                      onClick: () => setHelperOpen(true),
+                    },
+                  ]
+                : []),
+            ]
+          : undefined
       }
       subToolbar={
         <IonSegment
@@ -148,6 +194,17 @@ export function AgendaPage() {
         <EmptyState message={t('agenda.empty')} />
       ) : (
         <IonList inset>
+          {/* Die Spaltenköpfe der bestehenden myclub-App: links der eigene
+              Stand, rechts die Zahl der Zusagen. */}
+          <IonItem>
+            <IonLabel slot="start">
+              <p>{t('agenda.statusColumn')}</p>
+            </IonLabel>
+            <IonLabel slot="end">
+              <p>{t('agenda.participantsColumn')}</p>
+            </IonLabel>
+          </IonItem>
+
           {events.map((event) => {
             // Seit 0025 trägt `attendance` je Schicht eine eigene Zeile. Die
             // Antwort auf den **Termin** ist die ohne Schicht – ohne diesen
@@ -162,12 +219,12 @@ export function AgendaPage() {
             // überhaupt sichtbar – die Policy aus 0018 blendet ihn für alle
             // anderen aus. Wer ihn sieht, soll ihn auch als Entwurf erkennen.
             const isDraft = event.published_at === null;
+            const hasStarted = new Date(event.starts_at) <= new Date();
+            // Ein Team-Termin gilt nur für das Team – wer nicht dazugehört,
+            // bekommt keinen Antwortstand, sondern ein «nicht dabei».
+            const isAffected = event.team_id === null || myTeamIds.includes(event.team_id);
             const respondable =
-              !isDraft &&
-              canRespond({
-                isCancelled,
-                hasStarted: new Date(event.starts_at) <= new Date(),
-              });
+              !isDraft && isAffected && canRespond({ isCancelled, hasStarted });
             // Der Check-in folgt seinem eigenen Fenster (BR-054) und nicht der
             // Einteilung der Agenda: Die teilt bei `starts_at`, das Fenster
             // reicht aber bis zum Ende. Wer um 19:05 die Halle betritt, fände
@@ -179,12 +236,9 @@ export function AgendaPage() {
               isCancelled,
               isDraft,
             });
-            // Betroffen ist bei einem Team-Termin nur dieses Team, sonst der
-            // ganze Verein. Nähme man immer die Vereinsgrösse, stünde bei jedem
-            // Team-Termin eine zu hohe Zahl Unentschlossener.
-            const affectedCount = event.team_id
-              ? activeMembers.filter((m) => m.teamIds.includes(event.team_id!)).length
-              : activeMembers.length;
+            // Nähme man immer die Vereinsgrösse, stünde bei jedem Team-Termin
+            // eine zu hohe Zahl Unentschlossener.
+            const affectedCount = affectedMembers(event.team_id).length;
             // Aus demselben Grund zählt der Teilnehmerstand nur Antworten auf
             // den Termin. Zwei Personen mit je zwei Schichten ergäben sonst
             // vier Zusagen – und UC-015 erbte den Fehler.
@@ -192,6 +246,7 @@ export function AgendaPage() {
               (entry) => entry.shift_id === null,
             );
             const tally = tallyAttendance(eventAnswers, affectedCount);
+            const attending = tally.registered + tally.present;
             // BR-041: die Unterdeckung, und zwar richtig gezählt. Eine Absage
             // belegt keinen Platz – wer nur `shift_id` zählt, hält eine
             // Schicht für besetzt, aus der sich längst jemand abgemeldet hat.
@@ -202,198 +257,244 @@ export function AgendaPage() {
             const shiftsNeeded = coverage.reduce((sum, c) => sum + c.needed, 0);
 
             const isHighlighted = event.id === highlightId;
+            const openDetail = () => setDetailEventId(event.id);
+            const openDecline = () =>
+              setDecliningEvent({ id: event.id, startsAt: event.starts_at });
 
             return (
-              <IonItem
-                key={event.id}
-                ref={isHighlighted ? highlightRef : undefined}
-                color={isHighlighted ? 'light' : undefined}
-              >
-                <IonLabel className="ion-text-wrap">
-                  <h2>{event.title}</h2>
-                  <IonNote>
-                    {eventLabel(event.type)} · {formatDateTime(event.starts_at)}
-                    {event.location ? ` · ${event.location}` : ''}
-                  </IonNote>
-
-                  {shiftsNeeded > 0 && (
-                    <p>
-                      <IonBadge color="tertiary">
-                        {t('agenda.shiftNeeded', {
-                          filled: shiftsFilled,
-                          needed: shiftsNeeded,
-                        })}
-                      </IonBadge>
-                    </p>
+              <IonItemSliding key={event.id}>
+                <IonItem
+                  ref={isHighlighted ? highlightRef : undefined}
+                  color={isHighlighted ? 'light' : undefined}
+                  detail={!isDraft}
+                >
+                  {/* Der Antwortstand am Zeilenanfang; ein Tippen schaltet um.
+                      Ein Entwurf hat noch keinen – in ihn antwortet niemand. */}
+                  {!isDraft && (
+                    <AttendanceStatusIcon
+                      slot="start"
+                      status={mine?.status ?? null}
+                      isCancelled={isCancelled}
+                      isLocked={hasStarted}
+                      isAffected={isAffected}
+                      onToggle={
+                        respondable
+                          ? (next) => (next === 'registered' ? register(event.id) : openDecline())
+                          : undefined
+                      }
+                    />
                   )}
 
-                  {/* UC-012 Schritt 1: der Weg zu den Schichten. Ein Entwurf
-                      hat noch keinen, in ihn trägt sich niemand ein. */}
-                  {shiftsNeeded > 0 && !isDraft && !isCancelled && (
-                    <IonButtons>
-                      <IonButton
-                        size="small"
-                        fill="outline"
-                        onClick={() => setShiftEventId(event.id)}
-                      >
-                        {t('shifts.open')}
-                      </IonButton>
+                  <IonLabel className="ion-text-wrap" onClick={isDraft ? undefined : openDetail}>
+                    <h2>{event.title}</h2>
+                    <h3>
+                      <IonIcon className="app-inline-icon" icon={calendarOutline} />
+                      {formatDateTime(event.starts_at)}
+                      {event.ends_at ? ` – ${formatTime(event.ends_at)}` : ''}
+                    </h3>
+                    {event.location && (
+                      <h3>
+                        <IonIcon className="app-inline-icon" icon={locationOutline} />
+                        {event.location}
+                      </h3>
+                    )}
+                    <h3>
+                      <IonIcon className="app-inline-icon" icon={pricetagOutline} />
+                      {eventLabel(event.type)}
+                    </h3>
 
-                      {/* UC-013 Schritt 1: bestätigt wird, was stattgefunden
-                          hat – deshalb erst im vergangenen Bereich. */}
-                      {isAdmin && range === 'past' && (
+                    {/* A3: Ein abgesagter Termin zeigt den Grund und sperrt. */}
+                    {isCancelled && (
+                      <h3>
+                        <IonIcon className="app-inline-icon" color="danger" icon={alertCircle} />
+                        <IonNote color="danger">
+                          {t('agenda.cancelledWithReason', {
+                            reason: event.cancelled_reason ?? '',
+                          })}
+                        </IonNote>
+                      </h3>
+                    )}
+
+                    {/* BR-160: Beispielinhalte sind immer gekennzeichnet. */}
+                    {isSample(event) && (
+                      <p>
+                        <IonBadge color="medium">{t('sample.badge')}</IonBadge>
+                      </p>
+                    )}
+
+                    {shiftsNeeded > 0 && (
+                      <p>
+                        <IonBadge color="tertiary">
+                          {t('agenda.shiftNeeded', {
+                            filled: shiftsFilled,
+                            needed: shiftsNeeded,
+                          })}
+                        </IonBadge>
+                      </p>
+                    )}
+
+                    {/* UC-012 Schritt 1: der Weg zu den Schichten. Ein Entwurf
+                        hat noch keinen, in ihn trägt sich niemand ein. */}
+                    {shiftsNeeded > 0 && !isDraft && !isCancelled && (
+                      <IonButtons onClick={stopBubbling}>
                         <IonButton
                           size="small"
                           fill="outline"
-                          onClick={() => setRosterEventId(event.id)}
+                          onClick={() => setShiftEventId(event.id)}
                         >
-                          {t('roster.open')}
+                          {t('shifts.open')}
                         </IonButton>
-                      )}
-                    </IonButtons>
-                  )}
 
-                  {/* Schritt 2: der Teilnehmerstand */}
-                  <p>
-                    <IonNote>
-                      {t('agenda.tally', {
-                        yes: tally.registered,
-                        no: tally.excused,
-                        open: tally.undecided,
-                      })}
-                    </IonNote>
-                  </p>
-
-                  {/* UC-015: A2 blendet den Weg aus, sobald alle geantwortet
-                      haben – erinnern liesse sich dann ohnehin niemand. */}
-                  {range === 'upcoming' &&
-                    canRemind({
-                      isDraft,
-                      isCancelled,
-                      hasStarted: new Date(event.starts_at) <= new Date(),
-                      undecided: membersKnown ? tally.undecided : null,
-                      isTrainer,
-                    }) && (
-                      <IonButtons>
-                        <IonButton
-                          size="small"
-                          fill="clear"
-                          disabled={remind.isPending}
-                          onClick={() =>
-                            setRemindEvent({ id: event.id, undecided: tally.undecided })
-                          }
-                        >
-                          {t('reminder.remind')}
-                        </IonButton>
+                        {/* UC-013 Schritt 1: bestätigt wird, was stattgefunden
+                            hat – deshalb erst im vergangenen Bereich. */}
+                        {isAdmin && range === 'past' && (
+                          <IonButton
+                            size="small"
+                            fill="outline"
+                            onClick={() => setRosterEventId(event.id)}
+                          >
+                            {t('roster.open')}
+                          </IonButton>
+                        )}
                       </IonButtons>
                     )}
 
-                  {/* FR-034 und Schritt 4: beide nur, solange das Fenster offen
-                      ist – der Code nützt sonst niemandem, und der Scan wird
-                      abgewiesen. */}
-                  {checkInOpen && (
-                    <IonButtons>
-                      <IonButton
-                        size="small"
-                        onClick={() => setCheckInEventId(event.id)}
-                      >
-                        {t('agenda.checkIn')}
-                      </IonButton>
-                      {isTrainer && (
+                    {/* FR-027: der Stand in Zahlen – für die, die damit planen.
+                        Alle anderen sehen die Zusagen rechts und die Namen im
+                        Detail. */}
+                    {isTrainer && !isDraft && (
+                      <p>
+                        <IonNote>
+                          {t('agenda.tally', {
+                            yes: tally.registered,
+                            no: tally.excused,
+                            open: tally.undecided,
+                          })}
+                        </IonNote>
+                      </p>
+                    )}
+
+                    {/* UC-015: A2 blendet den Weg aus, sobald alle geantwortet
+                        haben – erinnern liesse sich dann ohnehin niemand. */}
+                    {range === 'upcoming' &&
+                      canRemind({
+                        isDraft,
+                        isCancelled,
+                        hasStarted,
+                        undecided: membersKnown ? tally.undecided : null,
+                        isTrainer,
+                      }) && (
+                        <IonButtons onClick={stopBubbling}>
+                          <IonButton
+                            size="small"
+                            fill="clear"
+                            disabled={remind.isPending}
+                            onClick={() =>
+                              setRemindEvent({ id: event.id, undecided: tally.undecided })
+                            }
+                          >
+                            {t('reminder.remind')}
+                          </IonButton>
+                        </IonButtons>
+                      )}
+
+                    {/* FR-034 und Schritt 4: beide nur, solange das Fenster offen
+                        ist – der Code nützt sonst niemandem, und der Scan wird
+                        abgewiesen. */}
+                    {checkInOpen && (
+                      <IonButtons onClick={stopBubbling}>
+                        <IonButton
+                          size="small"
+                          onClick={() => setCheckInEventId(event.id)}
+                        >
+                          {t('agenda.checkIn')}
+                        </IonButton>
+                        {isTrainer && (
+                          <IonButton
+                            size="small"
+                            fill="outline"
+                            onClick={() => setQrEventId(event.id)}
+                          >
+                            {t('checkIn.showQr')}
+                          </IonButton>
+                        )}
+                      </IonButtons>
+                    )}
+
+                    {/* A2 zu Ende gedacht: Der gesicherte Entwurf lässt sich
+                        von hier aus ausschreiben, sonst wäre er eine Sackgasse. */}
+                    {isDraft && isAdmin && (
+                      <IonButtons onClick={stopBubbling}>
                         <IonButton
                           size="small"
                           fill="outline"
-                          onClick={() => setQrEventId(event.id)}
-                        >
-                          {t('checkIn.showQr')}
-                        </IonButton>
-                      )}
-                    </IonButtons>
-                  )}
-
-                  {/* A3: Ein abgesagter Termin zeigt den Grund und sperrt. */}
-                  {isCancelled && (
-                    <p>
-                      <IonNote color="danger">
-                        {t('agenda.cancelledWithReason', {
-                          reason: event.cancelled_reason ?? '',
-                        })}
-                      </IonNote>
-                    </p>
-                  )}
-
-                  {/* A2 zu Ende gedacht: Der gesicherte Entwurf lässt sich
-                      von hier aus ausschreiben, sonst wäre er eine Sackgasse. */}
-                  {isDraft && isAdmin && (
-                    <IonButtons>
-                      <IonButton
-                        size="small"
-                        fill="outline"
-                        disabled={publish.isPending}
-                        onClick={() =>
-                          publish.mutate(event.id, {
-                            onSuccess: (result) =>
-                              // Auch der gedrosselte Aufruf ist ergangen –
-                              // die Schreibaktion war erfolgreich (§5).
-                              toast.success(
-                                result.muted
-                                  ? t('helperEvent.mutedHint')
-                                  : t('helperEvent.published'),
-                              ),
-                            onError: (cause) => toast.failure(cause.message),
-                          })
-                        }
-                      >
-                        {t('helperEvent.publish')}
-                      </IonButton>
-                    </IonButtons>
-                  )}
-
-                  {range === 'upcoming' && respondable && (
-                    <IonButtons>
-                      <IonButton
-                        size="small"
-                        fill={mine?.status === 'registered' ? 'solid' : 'outline'}
-                        disabled={respond.isPending}
-                        onClick={() =>
-                          respond.mutate(
-                            { eventId: event.id, status: 'registered' },
-                            {
-                              onSuccess: () => toast.success(t('agenda.attending')),
+                          disabled={publish.isPending}
+                          onClick={() =>
+                            publish.mutate(event.id, {
+                              onSuccess: (result) =>
+                                // Auch der gedrosselte Aufruf ist ergangen –
+                                // die Schreibaktion war erfolgreich (§5).
+                                toast.success(
+                                  result.muted
+                                    ? t('helperEvent.mutedHint')
+                                    : t('helperEvent.published'),
+                                ),
                               onError: (cause) => toast.failure(cause.message),
-                            },
-                          )
-                        }
-                      >
-                        {t('agenda.attend')}
-                      </IonButton>
-                      <IonButton
-                        size="small"
-                        color="medium"
-                        fill={mine?.status === 'excused' ? 'solid' : 'outline'}
-                        disabled={respond.isPending}
-                        onClick={() =>
-                          setDecliningEvent({ id: event.id, startsAt: event.starts_at })
-                        }
-                      >
-                        {t('agenda.decline')}
-                      </IonButton>
-                    </IonButtons>
-                  )}
-                </IonLabel>
+                            })
+                          }
+                        >
+                          {t('helperEvent.publish')}
+                        </IonButton>
+                      </IonButtons>
+                    )}
+                  </IonLabel>
 
-                {isDraft ? (
-                  <IonBadge slot="end" color="medium">
-                    {t('agenda.draft')}
-                  </IonBadge>
-                ) : (
-                  mine?.status === 'present' && (
-                    <IonBadge slot="end" color="success">
-                      {t('agenda.checkedIn')}
+                  {/* Rechts die Zahl der Zusagen, wie in der alten App – ein
+                      Tippen darauf führt zu den Namen. */}
+                  {isDraft ? (
+                    <IonBadge slot="end" color="medium">
+                      {t('agenda.draft')}
                     </IonBadge>
-                  )
+                  ) : (
+                    <IonBadge slot="end" color="primary" onClick={openDetail}>
+                      {attending}
+                    </IonBadge>
+                  )}
+                </IonItem>
+
+                {/* Zu- und Absagen durch Wischen nach rechts: grün der Haken,
+                    rot das Kreuz – nur die Gegenantwort zum aktuellen Stand. */}
+                {range === 'upcoming' && respondable && (
+                  <IonItemOptions side="start">
+                    {mine?.status !== 'registered' && (
+                      <IonItemOption
+                        color="success"
+                        aria-label={t('agenda.attend')}
+                        disabled={respond.isPending}
+                        onClick={(e) => {
+                          closeSliding(e);
+                          register(event.id);
+                        }}
+                      >
+                        <IonIcon slot="icon-only" icon={checkmarkCircle} />
+                      </IonItemOption>
+                    )}
+                    {mine?.status !== 'excused' && (
+                      <IonItemOption
+                        color="danger"
+                        aria-label={t('agenda.decline')}
+                        disabled={respond.isPending}
+                        onClick={(e) => {
+                          closeSliding(e);
+                          openDecline();
+                        }}
+                      >
+                        <IonIcon slot="icon-only" icon={closeCircle} />
+                      </IonItemOption>
+                    )}
+                  </IonItemOptions>
                 )}
-              </IonItem>
+              </IonItemSliding>
             );
           })}
         </IonList>
@@ -443,6 +544,28 @@ export function AgendaPage() {
       />
 
       <EventQrModal eventId={qrEventId} onDismiss={() => setQrEventId(null)} />
+
+      {/* UC-010 Schritt 2: Eckdaten, «Mein Status» und die Namen hinter den
+          Zahlen. Absagen schliesst das Blatt und öffnet das mit dem Grund –
+          zwei Karten übereinander stünden sonst auf derselben Ebene. */}
+      <EventDetailModal
+        event={detailEvent}
+        members={detailEvent ? affectedMembers(detailEvent.team_id) : []}
+        memberId={
+          detailEvent &&
+          (detailEvent.team_id === null || myTeamIds.includes(detailEvent.team_id))
+            ? (activeMembership?.id ?? null)
+            : null
+        }
+        isTrainer={isTrainer}
+        eventLabel={eventLabel}
+        onDecline={() => {
+          if (!detailEvent) return;
+          setDetailEventId(null);
+          setDecliningEvent({ id: detailEvent.id, startsAt: detailEvent.starts_at });
+        }}
+        onDismiss={() => setDetailEventId(null)}
+      />
 
       <ShiftRosterModal
         isOpen={rosterEventId !== null}

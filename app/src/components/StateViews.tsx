@@ -17,7 +17,24 @@ export function LoadingState() {
   );
 }
 
-export function EmptyState({ message, icon }: { message: string; icon?: string }) {
+/**
+ * Die leere Ansicht – mit Erklärung und mindestens einem nächsten Schritt.
+ *
+ * **BR-165: «Kein Bildschirm ohne Inhalt oder Erklärung.»** Eine leere Fläche
+ * ohne Text ist kein zulässiger Zustand. Seit UC-037 ist das Handlungsangebot
+ * Teil der Komponente und nicht mehr etwas, woran jede Ansicht selbst denken
+ * muss: `action` erscheint als Knopf unter der Erklärung.
+ */
+export function EmptyState({
+  message,
+  icon,
+  action,
+}: {
+  message: string;
+  icon?: string;
+  /** Der nächste Schritt. Ohne ihn bleibt es bei der Erklärung. */
+  action?: { label: string; onClick?: () => void; routerLink?: string };
+}) {
   return (
     <div className="app-state">
       <IonIcon
@@ -27,6 +44,17 @@ export function EmptyState({ message, icon }: { message: string; icon?: string }
         aria-hidden="true"
       />
       <IonNote>{message}</IonNote>
+      {action && (
+        <IonButton
+          className="app-state__action"
+          fill="outline"
+          size="small"
+          onClick={action.onClick}
+          routerLink={action.routerLink}
+        >
+          {action.label}
+        </IonButton>
+      )}
     </div>
   );
 }
@@ -84,7 +112,7 @@ export function InlineSuccess({ message }: { message: string }) {
   );
 }
 
-/** Shown when the Supabase environment variables are still missing. */
+/** Steht, solange die Supabase-Umgebungsvariablen fehlen. */
 export function NotConfiguredState() {
   const { t } = useTranslation();
   return (

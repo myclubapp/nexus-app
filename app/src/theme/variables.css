@@ -334,3 +334,10 @@
   margin-inline: var(--app-space-2);
   object-fit: contain;
 }
+
+/* --- Handlungsangebot im leeren Zustand (UC-037, BR-165) --------------------
+   Abstand zur Erklärung, damit der Knopf ein Angebot ist und keine Fortsetzung
+   des Satzes. */
+.app-state__action {
+  margin-top: var(--app-space-3);
+}

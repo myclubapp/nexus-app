@@ -1356,6 +1356,23 @@
     "budgetCap_other": "{{count}} contributions per period",
     "updatedAt": "Last updated on {{date}}"
   },
+  "sample": {
+    "badge": "Example",
+    "sectionTitle": "Example content",
+    "sectionHint": "It disappears by itself: with the first content of the same kind you create, or after 30 days. You never have to tidy it up one by one.",
+    "drop": "Remove example content",
+    "dropConfirm": "Only content marked as an example is removed. What you created or adopted yourselves stays.",
+    "dropped_one": "{{count}} example removed. No club data was affected.",
+    "dropped_other": "{{count}} examples removed. No club data was affected.",
+    "adopt": "Adopt as our own content",
+    "adopted": "Adopted. The content now belongs to the club and acts like any other.",
+    "blocked": "This is an example. It shows what it looks like – you cannot take part here.",
+    "kind": {
+      "event": "Event",
+      "task": "Task",
+      "news": "Post"
+    }
+  },
   "noteAnswer": {
     "title": "Note",
     "send": "Answer",

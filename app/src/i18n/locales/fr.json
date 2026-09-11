@@ -1356,6 +1356,23 @@
     "budgetCap_other": "{{count}} contributions par période",
     "updatedAt": "Dernière mise à jour le {{date}}"
   },
+  "sample": {
+    "badge": "Exemple",
+    "sectionTitle": "Contenus d'exemple",
+    "sectionHint": "Ils disparaissent d'eux-mêmes : avec le premier contenu de même nature que vous créez, ou après 30 jours. Tu n'as jamais à les ranger un par un.",
+    "drop": "Supprimer les contenus d'exemple",
+    "dropConfirm": "Seuls les contenus marqués comme exemple sont supprimés. Ce que vous avez créé ou repris vous-mêmes reste.",
+    "dropped_one": "{{count}} contenu d'exemple supprimé. Aucune donnée du club n'a été touchée.",
+    "dropped_other": "{{count}} contenus d'exemple supprimés. Aucune donnée du club n'a été touchée.",
+    "adopt": "Reprendre comme contenu propre",
+    "adopted": "Repris. Le contenu appartient désormais au club et agit comme tout autre.",
+    "blocked": "C'est un exemple. Il montre à quoi cela ressemble – tu ne peux pas y participer.",
+    "kind": {
+      "event": "Rendez-vous",
+      "task": "Tâche",
+      "news": "Actualité"
+    }
+  },
   "noteAnswer": {
     "title": "Demande",
     "send": "Répondre",

@@ -1356,6 +1356,23 @@
     "budgetCap_other": "{{count}} contributi nel periodo",
     "updatedAt": "Ultimo aggiornamento il {{date}}"
   },
+  "sample": {
+    "badge": "Esempio",
+    "sectionTitle": "Contenuti di esempio",
+    "sectionHint": "Spariscono da soli: con il primo contenuto dello stesso tipo che create voi, oppure dopo 30 giorni. Non devi mai sistemarli uno per uno.",
+    "drop": "Rimuovi i contenuti di esempio",
+    "dropConfirm": "Vengono rimossi soltanto i contenuti contrassegnati come esempio. Quello che avete creato o ripreso voi resta.",
+    "dropped_one": "{{count}} contenuto di esempio rimosso. Nessun dato della società è stato toccato.",
+    "dropped_other": "{{count}} contenuti di esempio rimossi. Nessun dato della società è stato toccato.",
+    "adopt": "Riprendi come contenuto proprio",
+    "adopted": "Ripreso. Il contenuto appartiene ora alla società e agisce come ogni altro.",
+    "blocked": "Questo è un esempio. Mostra come appare – partecipare qui non puoi.",
+    "kind": {
+      "event": "Appuntamento",
+      "task": "Compito",
+      "news": "Notizia"
+    }
+  },
   "noteAnswer": {
     "title": "Richiesta",
     "send": "Rispondi",

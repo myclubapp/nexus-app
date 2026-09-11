@@ -1356,6 +1356,23 @@
     "budgetCap_other": "{{count}} Beiträge im Zeitraum",
     "updatedAt": "Zuletzt gepflegt am {{date}}"
   },
+  "sample": {
+    "badge": "Beispiel",
+    "sectionTitle": "Beispielinhalte",
+    "sectionHint": "Sie verschwinden von selbst: mit dem ersten eigenen Inhalt derselben Art oder nach 30 Tagen. Einzeln aufräumen musst du sie nie.",
+    "drop": "Beispielinhalte entfernen",
+    "dropConfirm": "Entfernt werden ausschliesslich Inhalte, die als Beispiel gekennzeichnet sind. Was ihr selbst erfasst oder übernommen habt, bleibt.",
+    "dropped_one": "{{count}} Beispielinhalt entfernt. Vereinsdaten waren nicht betroffen.",
+    "dropped_other": "{{count}} Beispielinhalte entfernt. Vereinsdaten waren nicht betroffen.",
+    "adopt": "Als eigenen Inhalt übernehmen",
+    "adopted": "Übernommen. Der Inhalt gehört jetzt dem Verein und wirkt wie jeder andere.",
+    "blocked": "Das ist ein Beispiel. Es zeigt, wie es aussieht – mitmachen kannst du hier nicht.",
+    "kind": {
+      "event": "Termin",
+      "task": "Aufgabe",
+      "news": "Beitrag"
+    }
+  },
   "noteAnswer": {
     "title": "Anliegen",
     "send": "Antworten",

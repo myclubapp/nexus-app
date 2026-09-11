@@ -6,7 +6,7 @@
 **Use Case Name:** Beispielinhalte verwalten
 **Primary Actor:** Vorstand
 **Goal:** Einen neu gegründeten Verein von Beginn weg mit Inhalten erleben und die Beispiele wieder loswerden, sobald echte Daten da sind
-**Status:** Draft
+**Status:** Implemented
 
 ## Preconditions
 

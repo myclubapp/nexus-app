@@ -370,6 +370,32 @@ export type Database = {
           },
         ]
       }
+      club_module_suggestions: {
+        Row: {
+          club_id: string
+          module: string
+          suggested_at: string
+        }
+        Insert: {
+          club_id: string
+          module: string
+          suggested_at?: string
+        }
+        Update: {
+          club_id?: string
+          module?: string
+          suggested_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "club_module_suggestions_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       club_pulses: {
         Row: {
           club_id: string
@@ -436,6 +462,7 @@ export type Database = {
           club_kind: string
           created_at: string
           id: string
+          is_demo: boolean
           name: string
           season_start: string | null
           settings: Json
@@ -445,6 +472,7 @@ export type Database = {
           club_kind?: string
           created_at?: string
           id?: string
+          is_demo?: boolean
           name: string
           season_start?: string | null
           settings?: Json
@@ -454,6 +482,7 @@ export type Database = {
           club_kind?: string
           created_at?: string
           id?: string
+          is_demo?: boolean
           name?: string
           season_start?: string | null
           settings?: Json
@@ -1149,6 +1178,7 @@ export type Database = {
           external_url: string | null
           id: string
           image_url: string | null
+          is_sample: boolean
           published_at: string
           source: string
           synced_at: string | null
@@ -1164,6 +1194,7 @@ export type Database = {
           external_url?: string | null
           id?: string
           image_url?: string | null
+          is_sample?: boolean
           published_at?: string
           source?: string
           synced_at?: string | null
@@ -1179,6 +1210,7 @@ export type Database = {
           external_url?: string | null
           id?: string
           image_url?: string | null
+          is_sample?: boolean
           published_at?: string
           source?: string
           synced_at?: string | null
@@ -1910,6 +1942,10 @@ export type Database = {
       }
     }
     Functions: {
+      adopt_sample: {
+        Args: { p_id: string; p_kind: string }
+        Returns: undefined
+      }
       announce_event: { Args: { p_event_id: string }; Returns: number }
       announce_task: {
         Args: { p_task_id: string }
@@ -2104,6 +2140,8 @@ export type Database = {
       detect_health_signals: { Args: { p_club_id?: string }; Returns: number }
       dimension_of_pillar: { Args: { p_pillar: number }; Returns: string }
       discard_pulse: { Args: { p_pulse_id: string }; Returns: undefined }
+      drop_sample_content: { Args: { p_club_id: string }; Returns: number }
+      ensure_demo_club: { Args: never; Returns: string }
       event_roster: {
         Args: { p_event_id: string }
         Returns: {
@@ -2113,6 +2151,7 @@ export type Database = {
         }[]
       }
       expire_health_signals: { Args: never; Returns: number }
+      expire_sample_content: { Args: never; Returns: number }
       expire_tasks: { Args: { p_limit?: number }; Returns: number }
       find_club_by_slug: {
         Args: { p_slug: string }
@@ -2147,6 +2186,7 @@ export type Database = {
       is_club_admin: { Args: { p_club_id: string }; Returns: boolean }
       is_club_member: { Args: { p_club_id: string }; Returns: boolean }
       is_club_trainer: { Args: { p_club_id: string }; Returns: boolean }
+      join_demo_club: { Args: never; Returns: string }
       last_connection_at: { Args: { p_club_id: string }; Returns: string }
       leaderboard_rows: {
         Args: {
@@ -2199,6 +2239,10 @@ export type Database = {
           ref_id: string
           title: string
         }[]
+      }
+      module_enabled: {
+        Args: { p_club_id: string; p_module: string }
+        Returns: boolean
       }
       my_checkin_trend: {
         Args: { p_club_id: string }
@@ -2344,6 +2388,7 @@ export type Database = {
         Args: { p_club_id: string; p_team_id?: string }
         Returns: string
       }
+      reset_demo_club: { Args: never; Returns: number }
       respond_to_event: {
         Args: { p_event_id: string; p_reason?: string; p_status: string }
         Returns: {
@@ -2381,6 +2426,7 @@ export type Database = {
         Args: { p_club_id: string; p_club_kind: string }
         Returns: undefined
       }
+      seed_sample_content: { Args: { p_club_id: string }; Returns: number }
       send_due_reminders: { Args: { p_limit?: number }; Returns: number }
       set_health_opt_out: {
         Args: { p_club_id: string; p_opt_out: boolean }
@@ -2464,6 +2510,7 @@ export type Database = {
         }
         Returns: string
       }
+      suggest_modules: { Args: never; Returns: number }
       suggest_task: { Args: { p_task_id: string }; Returns: number }
       sync_news_sources: { Args: never; Returns: number }
       take_shift: {

@@ -192,4 +192,15 @@ describe('TaskDetail', () => {
     expect(submitMutate).not.toHaveBeenCalled();
     expect(releaseMutate).not.toHaveBeenCalled();
   });
+
+  it('bietet an einem Beispiel nichts zum Übernehmen an (UC-037, A2)', () => {
+    // Ein Knopf, der in eine Fehlermeldung führt, wäre ein Versprechen, das die
+    // App bricht – `claim_task()` weist ein Beispiel seit `0053` ab.
+    const { container } = renderWithProviders(
+      <TaskDetail task={task({ is_sample: true })} onDone={vi.fn()} onDismiss={vi.fn()} />,
+    );
+
+    expect(container.textContent).toContain('Das ist ein Beispiel');
+    expect(container.textContent).not.toContain('Übernehmen');
+  });
 });

@@ -14,6 +14,7 @@ import { FormModal } from './FormModal';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import { formatDate } from '../lib/format';
+import { isSample } from '../lib/sample';
 import {
   isProofUsable,
   taskAction,
@@ -48,7 +49,11 @@ export function TaskDetail({ task, onDone, onDismiss }: TaskDetailProps) {
 
   const [proof, setProof] = useState('');
 
-  const action = taskAction(task, activeMembership?.id ?? null);
+  // A2: An einem Beispiel gibt es nichts zu übernehmen. Der Server weist es
+  // ohnehin ab (`claim_task()` seit `0053`); ein Knopf, der in eine
+  // Fehlermeldung führt, wäre ein Versprechen, das die App bricht.
+  const sample = isSample(task);
+  const action = sample ? 'none' : taskAction(task, activeMembership?.id ?? null);
   const capacity = taskCapacity(task);
   const urgency = taskUrgency(task.due_at);
   const proofUsable = isProofUsable(proof);
@@ -101,6 +106,16 @@ export function TaskDetail({ task, onDone, onDismiss }: TaskDetailProps) {
       onSubmit={run}
     >
       {/* Schritt 3: Warum zuerst. Es ist der Grund, aus dem jemand zusagt. */}
+      {sample && (
+        <ListSection title={t('sample.badge')}>
+          <IonItem lines="none">
+            <IonLabel className="ion-text-wrap">
+              <p>{t('sample.blocked')}</p>
+            </IonLabel>
+          </IonItem>
+        </ListSection>
+      )}
+
       {task.why && (
         <ListSection title={t('taskForm.whyTitle')}>
           <IonItem>

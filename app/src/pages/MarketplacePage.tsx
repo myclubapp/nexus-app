@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import {
   IonBadge,
   IonButton,
-  IonButtons,
-  IonIcon,
   IonItem,
   IonLabel,
   IonNote,
@@ -30,6 +28,7 @@ import {
 } from '../hooks/useContribution';
 import { ContributionProfileForm } from '../components/ContributionProfileModal';
 import { isBudgetSpent, isProfileFilled } from '../lib/contribution';
+import { isSample } from '../lib/sample';
 import { formatDate } from '../lib/format';
 import {
   groupTasks,
@@ -155,6 +154,15 @@ export function MarketplacePage() {
               : ''}
           </IonNote>
 
+          {/* BR-160: Ein Beispiel, das aussieht wie ein echter Vereinsinhalt,
+              ist schlimmer als eine leere Fläche – es erzeugt eine Erwartung,
+              die niemand einlöst. */}
+          {isSample(task) && (
+            <p>
+              <IonBadge color="medium">{t('sample.badge')}</IonBadge>
+            </p>
+          )}
+
           {/* BR-072: Dringlichkeit ist sichtbar. */}
           {urgency === 'urgent' && (
             <p>
@@ -214,18 +222,16 @@ export function MarketplacePage() {
     <AppPage
       title={t('marketplace.title')}
       onRefresh={() => tasks.refetch()}
-      toolbarEnd={
-        isTrainer ? (
-          <IonButtons slot="end">
-            <IonButton onClick={() => setFormOpen(true)}>
-              <IonIcon
-                slot="icon-only"
-                icon={addOutline}
-                aria-label={t('taskForm.title')}
-              />
-            </IonButton>
-          </IonButtons>
-        ) : undefined
+      createActions={
+        isTrainer
+          ? [
+              {
+                icon: addOutline,
+                label: t('taskForm.title'),
+                onClick: () => setFormOpen(true),
+              },
+            ]
+          : undefined
       }
     >
       {tasks.isLoading ? (
