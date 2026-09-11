@@ -49,6 +49,7 @@ vi.mock('../hooks/useClub', () => ({
 const emptyQuery = { data: [], isLoading: false, error: null, refetch: async () => {} };
 
 vi.mock('../hooks/useGamification', () => ({
+  useMyStreak: () => ({ data: 0, isLoading: false, error: null }),
   useMyPoints: () => ({
     transactions: [],
     isLoading: false,
