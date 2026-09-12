@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import {
+  IonAlert,
   IonBadge,
   IonButton,
   IonItem,
+  IonItemOption,
+  IonItemOptions,
+  IonItemSliding,
   IonLabel,
   IonNote,
 } from '@ionic/react';
@@ -20,7 +24,7 @@ import { ShiftListModal } from '../components/ShiftListModal';
 import { StatCard } from '../components/StatCard';
 import { useClub } from '../hooks/useClub';
 import { useToast } from '../hooks/useToast';
-import { useMyTaskCount, usePublishTask, useTasks } from '../hooks/useTasks';
+import { useDeleteTask, useMyTaskCount, usePublishTask, useTasks } from '../hooks/useTasks';
 import { useAgenda } from '../hooks/useAgenda';
 import {
   useContributionBudget,
@@ -67,10 +71,13 @@ export function MarketplacePage() {
   const offices = useOffices();
   const budget = useContributionBudget();
   const publish = usePublishTask();
+  const deleteTask = useDeleteTask();
   const taskCount = useMyTaskCount();
 
   const [formOpen, setFormOpen] = useState(false);
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
+  // A6: der Entwurf, dessen Löschung gerade zur Rückfrage steht.
+  const [deleteTaskId, setDeleteTaskId] = useState<string | null>(null);
   const [confirmTaskId, setConfirmTaskId] = useState<string | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [openOfficeId, setOpenOfficeId] = useState<string | null>(null);
@@ -99,6 +106,8 @@ export function MarketplacePage() {
   // vorhin.
   const openTask = items.find((entry) => entry.id === openTaskId) ?? null;
   const confirmTask = items.find((entry) => entry.id === confirmTaskId) ?? null;
+  const deleteCandidate =
+    items.find((entry) => entry.id === deleteTaskId && entry.status === 'draft') ?? null;
 
   // UC-019 Schritt 2: Was liegt zur Bestätigung bereit? Eine Aufgabe zählt
   // dazu, sobald **eine** Übernahme gemeldet und noch nicht bestätigt ist –
@@ -153,7 +162,7 @@ export function MarketplacePage() {
     const urgency = taskUrgency(task.due_at);
     const isHighlighted = task.id === highlightId;
 
-    return (
+    const item = (
       <IonItem
         key={task.id}
         ref={isHighlighted ? highlightRef : undefined}
@@ -245,6 +254,24 @@ export function MarketplacePage() {
           </IonNote>
         )}
       </IonItem>
+    );
+
+    if (action !== 'publish') return item;
+
+    // A6: Der Entwurf lässt sich wegwischen – das Löschen fragt zuerst nach.
+    return (
+      <IonItemSliding key={task.id}>
+        {item}
+        <IonItemOptions side="end">
+          <IonItemOption
+            color="danger"
+            disabled={deleteTask.isPending}
+            onClick={() => setDeleteTaskId(task.id)}
+          >
+            {t('taskForm.deleteDraft')}
+          </IonItemOption>
+        </IonItemOptions>
+      </IonItemSliding>
     );
   }
 
@@ -563,6 +590,35 @@ export function MarketplacePage() {
         attendance={shiftEvent?.attendance ?? []}
         memberId={activeMembership?.id ?? null}
         onDismiss={() => setShiftEventId(null)}
+      />
+
+      {/* A6: Die Rückfrage steht **vor** dem Löschen; der Knopf ist rot über
+          seine Rolle. Ein Entwurf war nie sichtbar – weg ist er ohne Spur. */}
+      <IonAlert
+        isOpen={deleteCandidate !== null}
+        header={t('taskForm.deleteDraft')}
+        message={t('taskForm.deleteDraftConfirm', { title: deleteCandidate?.title ?? '' })}
+        onDidDismiss={() => setDeleteTaskId(null)}
+        buttons={[
+          { text: t('common.cancel'), role: 'cancel' },
+          {
+            text: t('taskForm.deleteDraft'),
+            role: 'destructive',
+            handler: () => {
+              const id = deleteCandidate?.id;
+              if (!id) return;
+              deleteTask.mutate(id, {
+                onSuccess: () => toast.success(t('taskForm.draftDeleted')),
+                onError: (cause) =>
+                  toast.failure(
+                    cause.message === 'task_not_draft'
+                      ? t('taskForm.notDraftAnymore')
+                      : cause.message,
+                  ),
+              });
+            },
+          },
+        ]}
       />
 
       <TaskFormModal

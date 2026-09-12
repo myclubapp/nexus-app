@@ -59,6 +59,19 @@
 2. Nach Ablauf setzt das System die Aufgabe auf abgelaufen und informiert die ausschreibende Person.
 3. Use case ends.
 
+### A6: Entwurf löschen
+
+**Trigger:** Vorstand will einen Entwurf nicht mehr (A3, Schritt 2)
+**Flow:**
+
+1. Vorstand wischt den Entwurf nach links und wählt «Entwurf löschen» – oder wählt denselben Knopf im Bearbeiten-Blatt (A5).
+2. System fragt nach; der Entwurf war für Mitglieder nie sichtbar.
+3. Vorstand bestätigt.
+4. System löscht den Entwurf. Ist er inzwischen ausgeschrieben, lehnt das System ab und sagt es (BR-182).
+5. Use case ends.
+
+**Stand (12.09.2026):** Umgesetzt. Bis dahin liess sich ein Entwurf nur ausschreiben oder ändern, nicht loswerden – die Policy `tasks_trainer_delete` (0033) erlaubte das Löschen, die App bot keinen Weg.
+
 ## Postconditions
 
 ### Success Postconditions

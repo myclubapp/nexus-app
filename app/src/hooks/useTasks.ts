@@ -75,6 +75,39 @@ export function useCreateTask() {
   });
 }
 
+/**
+ * Entwurf löschen (UC-017, A6).
+ *
+ * Nur ein Entwurf ist löschbar: Was ausgeschrieben ist, haben Mitglieder
+ * gesehen – das verschwindet nicht still, sondern läuft ab oder wird
+ * erledigt. Die Bedingung steht in der Abfrage, und ob eine Zeile getroffen
+ * wurde, wird geprüft (BR-182): Ein Entwurf, den jemand inzwischen
+ * ausgeschrieben hat, meldet sich sonst als «gelöscht», obwohl er steht.
+ *
+ * Kein `security definer`: `tasks_trainer_delete` (0033) lässt genau die
+ * Personen löschen, die auch ausschreiben dürfen.
+ */
+export function useDeleteTask() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (taskId: string): Promise<void> => {
+      const { data, error } = await supabase
+        .from('tasks')
+        .delete()
+        .eq('id', taskId)
+        .eq('status', 'draft')
+        .select('id');
+      if (error) throw new Error(error.message);
+      if (!data || data.length === 0) throw new Error('task_not_draft');
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['tasks', activeClub?.id] });
+    },
+  });
+}
+
 export interface PublishTaskResult {
   notified: number;
   /** Die sanfte Sperre hat den Vorschlag unterdrückt (K1, BR-044). */

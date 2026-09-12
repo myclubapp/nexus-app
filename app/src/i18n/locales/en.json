@@ -924,7 +924,11 @@
       "assigneesTooLow": "At least one person must be able to take the task on.",
       "dueInPast": "The deadline is in the past.",
       "recurrenceOutOfRange": "The rhythm lies between one day and two years."
-    }
+    },
+    "deleteDraft": "Delete draft",
+    "deleteDraftConfirm": "“{{title}}” will be deleted. Members never saw this draft.",
+    "draftDeleted": "Draft deleted.",
+    "notDraftAnymore": "This draft has since been posted and can no longer be changed."
   },
   "taskDetail": {
     "facts": "At a glance",

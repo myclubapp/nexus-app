@@ -924,7 +924,11 @@
       "assigneesTooLow": "Mindestens eine Person muss die Aufgabe übernehmen können.",
       "dueInPast": "Die Frist liegt in der Vergangenheit.",
       "recurrenceOutOfRange": "Der Rhythmus liegt zwischen einem Tag und zwei Jahren."
-    }
+    },
+    "deleteDraft": "Entwurf löschen",
+    "deleteDraftConfirm": "«{{title}}» wird gelöscht. Der Entwurf war für Mitglieder nie sichtbar.",
+    "draftDeleted": "Entwurf gelöscht.",
+    "notDraftAnymore": "Dieser Entwurf ist inzwischen ausgeschrieben und lässt sich nicht mehr ändern."
   },
   "taskDetail": {
     "facts": "Eckdaten",

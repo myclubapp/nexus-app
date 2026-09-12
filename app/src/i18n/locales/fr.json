@@ -924,7 +924,11 @@
       "assigneesTooLow": "Au moins une personne doit pouvoir reprendre la tâche.",
       "dueInPast": "Le délai est dans le passé.",
       "recurrenceOutOfRange": "Le rythme se situe entre un jour et deux ans."
-    }
+    },
+    "deleteDraft": "Supprimer le brouillon",
+    "deleteDraftConfirm": "« {{title}} » sera supprimé. Les membres n’ont jamais vu ce brouillon.",
+    "draftDeleted": "Brouillon supprimé.",
+    "notDraftAnymore": "Ce brouillon a été publié entre-temps et ne peut plus être modifié."
   },
   "taskDetail": {
     "facts": "En bref",

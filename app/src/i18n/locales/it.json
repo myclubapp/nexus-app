@@ -924,7 +924,11 @@
       "assigneesTooLow": "Almeno una persona deve poter assumere il compito.",
       "dueInPast": "La scadenza è nel passato.",
       "recurrenceOutOfRange": "Il ritmo va da un giorno a due anni."
-    }
+    },
+    "deleteDraft": "Elimina bozza",
+    "deleteDraftConfirm": "«{{title}}» verrà eliminata. I membri non hanno mai visto questa bozza.",
+    "draftDeleted": "Bozza eliminata.",
+    "notDraftAnymore": "Questa bozza è stata pubblicata nel frattempo e non può più essere modificata."
   },
   "taskDetail": {
     "facts": "In breve",
