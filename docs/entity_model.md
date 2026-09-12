@@ -47,6 +47,7 @@ erDiagram
     CLUB ||--o{ INVOICE_REF : "spiegelt"
     CLUB ||--o{ BILLING_OUTBOX : "meldet"
     CLUB ||--o{ FEDERATION_CONNECTION : "verbindet"
+    CLUB ||--o| LEGACY_SOURCE : "übernimmt aus"
 
     TEAM ||--o{ TEAM_MEMBER : "umfasst"
     TEAM ||--o{ EVENT : "plant"
@@ -275,11 +276,11 @@ Ein Termin des Vereins: Training, Wettkampf, Anlass, Helfer-Event, Sitzung oder 
 | cancelled_at     | Zeitpunkt der Absage                                   | DateTime  | -                | Optional                                                                |
 | cancelled_reason | Begründung der Absage                                  | String    | 500              | Optional                                                                |
 | is_sample        | Kennzeichen als Beispielinhalt der Erstbefüllung        | Boolean   | 1                | Not Null                                                                |
-| external_id      | Kennung beim Verband («<Verband>:<Spiel>»), bei importierten Spielen | String | 80          | Optional, Unique je Verein                                              |
+| external_id      | Kennung in der Quelle: «<Verband>:<Spiel>» bei Verbandsspielen, «legacy:event:<id>» / «legacy:helper:<id>» bei Terminen aus der bisherigen App | String | 80 | Optional, Unique je Verein |
 | result           | Resultat laut Verband, als Text («3:4 n.V.»)            | String    | 40               | Optional                                                                |
 | created_by       | Erfassende Person                                      | UUID      | 36               | Not Null, Foreign Key (CLUB_MEMBER.id)                                  |
 
-**Constraints:** `ends_at` liegt nach `starts_at`. Für die Typen helper, gv und social ist `why` nicht leer. Eine Absage verlangt `cancelled_at` und `cancelled_reason`. **Ein Termin mit `team_id` ist nur für dieses Team sichtbar und beantwortbar** – Trainer:innen und Vorstand ausgenommen, weil sie ihn planen; ein Termin ohne `team_id` gilt dem ganzen Verein (C-032). EVENT_SERIES, EVENT_SHIFT, ATTENDANCE und EVENT_QR_TOKEN erben diesen Geltungsbereich vom Termin. Ein Termin mit `external_id` stammt vom Verband: `title`, `starts_at`, `location` und `result` überschreibt der Abgleich, alles andere gehört dem Verein (BR-180); weder das Lösen der Verknüpfung noch das Trennen der Verbindung löscht ihn (BR-181).
+**Constraints:** `ends_at` liegt nach `starts_at`. Für die Typen helper, gv und social ist `why` nicht leer. Eine Absage verlangt `cancelled_at` und `cancelled_reason`. **Ein Termin mit `team_id` ist nur für dieses Team sichtbar und beantwortbar** – Trainer:innen und Vorstand ausgenommen, weil sie ihn planen; ein Termin ohne `team_id` gilt dem ganzen Verein (C-032). EVENT_SERIES, EVENT_SHIFT, ATTENDANCE und EVENT_QR_TOKEN erben diesen Geltungsbereich vom Termin. Ein Termin mit `external_id` stammt vom Verband: `title`, `starts_at`, `location` und `result` überschreibt der Abgleich, alles andere gehört dem Verein (BR-180); weder das Lösen der Verknüpfung noch das Trennen der Verbindung löscht ihn (BR-181). Ein Termin mit `external_id` «legacy:…» stammt aus der bisherigen myclub-App (UC-040): Titel, Warum, Zeit, Ort, Bedarf und Absage überschreibt der Abgleich, Zusagen und Schicht-Einträge bleiben (BR-183); der Abgleich löscht nichts (BR-184).
 
 ### EVENT_QR_TOKEN
 
@@ -310,8 +311,9 @@ Ein Zeitfenster innerhalb eines Helfer-Events mit eigenem Personalbedarf und Pun
 | ends_at         | Ende der Schicht                         | DateTime  | -                | Not Null                         |
 | needed          | Benötigte Anzahl Helfer:innen            | Integer   | 10               | Not Null, Min: 1                 |
 | point_rule_code | Regel, die den Einsatz bewertet          | String    | 60               | Not Null                         |
+| external_id     | Kennung in der Quelle, bei übernommenen Schichten | String | 80             | Optional, Unique je Termin       |
 
-**Constraints:** `ends_at` liegt nach `starts_at`. Die Zahl der Einträge mit Status registered oder present überschreitet `needed` nicht.
+**Constraints:** `ends_at` liegt nach `starts_at`. Die Zahl der Einträge mit Status registered oder present überschreitet `needed` nicht. Eine Schicht mit `external_id` stammt aus der bisherigen myclub-App (UC-040): Bezeichnung, Zeiten, Bedarf und Punktwert überschreibt der Abgleich; sie verschwindet nur, solange niemand eingetragen ist (BR-184).
 
 ### ATTENDANCE
 
@@ -498,7 +500,8 @@ Ein Beitrag des Vereins oder eines Teams im Feed.
 | team_id      | Team, falls der Beitrag nur dort gilt        | UUID      | 36               | Optional, Foreign Key (TEAM.id)         |
 | source       | Herkunft des Beitrags                        | String    | 20               | Not Null, Values: club, team, board, federation |
 | title        | Titel des Beitrags                           | String    | 160              | Not Null                                |
-| body         | Text des Beitrags                            | String    | 5000             | Optional                                |
+| body         | Text des Beitrags; bei Website-Beiträgen der Anriss | String | 5000           | Optional                                |
+| body_html    | Volltext eines Website-Beitrags als HTML der Quelle, entschärft beim Anzeigen (BR-169) | Text | - | Optional, nur `source = website` |
 | image_url    | Verweis auf ein Bild                         | String    | 500              | Optional                                |
 | published_at | Zeitpunkt der Publikation                    | DateTime  | -                | Not Null                                |
 | is_sample    | Kennzeichen als Einführungs- oder Beispielbeitrag | Boolean | 1              | Not Null                                |
@@ -778,6 +781,21 @@ Die Verbindung eines Vereins zu einem Verband über dessen API-Schlüssel.
 | last_error     | Fehlermeldung des letzten Abgleichs            | String    | 500              | Optional                                  |
 
 **Constraints:** Primärschlüssel ist die Kombination aus `club_id` und `federation`. In `api_key_secret` steht ausschliesslich der **Name** des Vault-Eintrags, nie der Schlüssel selbst (BR-153). Der Schlüssel wird nie an den Client ausgeliefert. Der Abgleich liest ausschliesslich; es werden keine Daten an den Verband zurückgeschrieben. Abgeglichen werden ausschliesslich Teams, die über `TEAM.federation_team_id` verknüpft sind (UC-039); eine gelöste Verknüpfung oder eine getrennte Verbindung entfernt weder Teams noch bereits importierte Termine (BR-181).
+
+### LEGACY_SOURCE
+
+Die Verbindung eines Vereins zu seinem Bestand in der bisherigen myclub-App (Firebase), für die Übergangszeit der Umstellung (UC-040).
+
+| Attribute        | Description                                          | Data Type | Length/Precision | Validation Rules                          |
+| ---------------- | ---------------------------------------------------- | --------- | ---------------- | ----------------------------------------- |
+| club_id          | Verein der Quelle                                    | UUID      | 36               | Primary Key, Foreign Key (CLUB.id)        |
+| firebase_club_id | Kennung des Vereins in der bisherigen App            | String    | 60               | Not Null, Unique, Pattern `[A-Za-z0-9_-]` |
+| status           | Zustand der Quelle                                   | String    | 20               | Not Null, Values: pending, active, error  |
+| last_sync_at     | Zeitpunkt der letzten gelungenen Übernahme           | DateTime  | -                | Optional                                  |
+| last_error       | Meldung des letzten Fehlschlags                      | String    | 500              | Optional                                  |
+| imported_events  | Zahl der Termine des letzten gelungenen Laufs        | Integer   | 10               | Not Null, Default 0                       |
+
+**Constraints:** Ein Verein hat höchstens eine Quelle, eine Kennung gehört höchstens einem Verein. Der Zugang zum bisherigen Backend steht **nicht** in dieser Tabelle, sondern als Secret der Edge Function (BR-185). Der Abgleich liest ausschliesslich (BR-191) und übernimmt nur aktuelle Termine (BR-186); er löscht nichts (BR-184).
 
 ---
 

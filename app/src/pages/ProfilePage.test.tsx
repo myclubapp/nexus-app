@@ -131,6 +131,8 @@ describe('ProfilePage', () => {
       '/tabs/profile/rules',
       '/tabs/profile/news',
       '/tabs/profile/federation',
+      // Seit UC-040: die bisherige myclub-App, bis der Verein ganz hier ist.
+      '/tabs/profile/legacy',
       '/tabs/profile/invite',
       '/tabs/profile/requests',
     ]);

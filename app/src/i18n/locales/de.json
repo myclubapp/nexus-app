@@ -1646,6 +1646,47 @@
     },
     "startConnect": "Verband verbinden"
   },
+  "legacy": {
+    "title": "Bisherige myclub-App",
+    "intro": "Bis der Verein ganz hier ist, laufen beide Apps. Anlässe und Helfer-Events samt Schichten, die ihr in der bisherigen App ausschreibt, erscheinen hier von selbst – ohne Doppelerfassung.",
+    "nightly": "Übernommen wird, was in der bisherigen App aktuell ist. Jede Nacht kommt dazu, was dort neu ist oder sich geändert hat.",
+    "connectTitle": "Verbinden",
+    "replace": "Andere Kennung",
+    "clubId": "Vereinskennung in der bisherigen App",
+    "clubIdHint": "Sie steht in der Adresse eurer Vereinsseite dort, zum Beispiel «su-452800». Die ganze Adresse einzufügen genügt.",
+    "connect": "Prüfen und verbinden",
+    "checking": "Wird geprüft …",
+    "found": "Gefunden",
+    "unnamed": "Verein ohne Namen",
+    "foundCounts": "{{events}} Anlässe · {{helpers}} Helfer-Events · {{shifts}} Schichten – Stand heute",
+    "synced_one": "{{count}} Termin übernommen",
+    "synced_other": "{{count}} Termine übernommen",
+    "connectedLater": "Verbunden. Die Übernahme kam nicht durch; der nächtliche Lauf holt sie nach.",
+    "syncNow": "Jetzt übernehmen",
+    "syncing": "Wird übernommen …",
+    "status": "Stand",
+    "statusLabel": {
+      "pending": "Noch nicht geprüft",
+      "active": "Aktiv",
+      "error": "Fehler"
+    },
+    "connectedTo": "Verbunden mit «{{id}}»",
+    "lastSync": "Letzte Übernahme: {{when}}",
+    "neverSynced": "Noch keine Übernahme",
+    "importedCount_one": "{{count}} aktueller Termin in der Agenda",
+    "importedCount_other": "{{count}} aktuelle Termine in der Agenda",
+    "lastError": "Letzte Meldung: {{message}}",
+    "errorHint": "Die App bleibt vollständig nutzbar – nur die Termine aus der bisherigen App veralten.",
+    "disconnect": "Verbindung trennen",
+    "disconnectConfirm": "Die Übernahme endet. Bereits übernommene Termine und Schichten bleiben bestehen.",
+    "disconnected": "Getrennt. Die übernommenen Termine bleiben.",
+    "empty": "Die bisherige App ist noch nicht verbunden.",
+    "startConnect": "Bisherige App verbinden",
+    "problem": {
+      "clubIdInvalid": "Die Kennung besteht aus Buchstaben, Ziffern und Bindestrich, zum Beispiel «su-452800»."
+    },
+    "serviceMissing": "Der Übernahmedienst antwortet nicht. Bitte später noch einmal versuchen."
+  },
   "teams": {
     "title": "Teams",
     "empty": "Noch kein Team. Ein Team ist ein Name – der Rest kommt von selbst.",

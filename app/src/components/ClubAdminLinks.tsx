@@ -102,6 +102,12 @@ export function ClubAdminLinks() {
             <IonLabel>{t("federation.title")}</IonLabel>
           </IonItem>
 
+          {/* UC-040: Die bisherige myclub-App ist ein Anschluss auf Zeit –
+              bis der Verein ganz hier ist. */}
+          <IonItem button routerLink="/tabs/profile/legacy" detail>
+            <IonLabel>{t("legacy.title")}</IonLabel>
+          </IonItem>
+
           <IonItem button routerLink="/tabs/profile/invite" detail>
             <IonLabel>{t("invite.title")}</IonLabel>
           </IonItem>

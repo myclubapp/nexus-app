@@ -238,15 +238,18 @@ flowchart LR
         UC035[UC-035\nVerband verbinden]
         UC036[UC-036\nRechnungen einsehen und\nPunkte bei Zahlung]
         UC039[UC-039\nVerbands-Team verknüpfen\noder importieren]
+        UC040[UC-040\nTermine aus der bisherigen\nmyclub-App übernehmen]
     end
 
     board --> UC034
     board --> UC035
     board --> UC039
+    board --> UC040
     treasurer --> UC036
     member --> UC036
     external --> UC035
     external --> UC039
+    external --> UC040
     external --> UC036
 
     UC039 -.->|erfordert| UC035

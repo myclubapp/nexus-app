@@ -1646,6 +1646,47 @@
     },
     "startConnect": "Connect a federation"
   },
+  "legacy": {
+    "title": "Previous myclub app",
+    "intro": "Until the club has fully moved here, both apps run side by side. Events and helper events with their shifts published in the previous app appear here automatically, with no double entry.",
+    "nightly": "What is current in the previous app is taken over. Every night, whatever is new or changed there is added.",
+    "connectTitle": "Connect",
+    "replace": "Different ID",
+    "clubId": "Club ID in the previous app",
+    "clubIdHint": "It is part of your club page address there, for example “su-452800”. Pasting the whole address is fine.",
+    "connect": "Check and connect",
+    "checking": "Checking …",
+    "found": "Found",
+    "unnamed": "Unnamed club",
+    "foundCounts": "{{events}} events · {{helpers}} helper events · {{shifts}} shifts – as of today",
+    "synced_one": "{{count}} event taken over",
+    "synced_other": "{{count}} events taken over",
+    "connectedLater": "Connected. The takeover did not go through; the nightly run will catch up.",
+    "syncNow": "Take over now",
+    "syncing": "Taking over …",
+    "status": "Status",
+    "statusLabel": {
+      "pending": "Not checked yet",
+      "active": "Active",
+      "error": "Error"
+    },
+    "connectedTo": "Connected to “{{id}}”",
+    "lastSync": "Last takeover: {{when}}",
+    "neverSynced": "No takeover yet",
+    "importedCount_one": "{{count}} current event in the agenda",
+    "importedCount_other": "{{count}} current events in the agenda",
+    "lastError": "Last message: {{message}}",
+    "errorHint": "The app stays fully usable – only the events from the previous app go stale.",
+    "disconnect": "Disconnect",
+    "disconnectConfirm": "The takeover ends. Events and shifts already taken over remain.",
+    "disconnected": "Disconnected. The events taken over remain.",
+    "empty": "The previous app is not connected yet.",
+    "startConnect": "Connect previous app",
+    "problem": {
+      "clubIdInvalid": "The ID consists of letters, digits and hyphens, for example “su-452800”."
+    },
+    "serviceMissing": "The takeover service is not responding. Please try again later."
+  },
   "teams": {
     "title": "Teams",
     "empty": "No team yet. A team is a name – the rest follows.",

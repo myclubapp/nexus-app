@@ -1646,6 +1646,47 @@
     },
     "startConnect": "Collegare una federazione"
   },
+  "legacy": {
+    "title": "App myclub precedente",
+    "intro": "Finché la società non è del tutto qui, le due app funzionano in parallelo. Eventi e impieghi volontari con i loro turni pubblicati nell’app precedente compaiono qui automaticamente, senza doppia registrazione.",
+    "nightly": "Viene ripreso ciò che è attuale nell’app precedente. Ogni notte si aggiunge ciò che lì è nuovo o è cambiato.",
+    "connectTitle": "Collegare",
+    "replace": "Altro identificativo",
+    "clubId": "Identificativo della società nell’app precedente",
+    "clubIdHint": "Si trova nell’indirizzo della vostra pagina della società lì, per esempio «su-452800». Basta incollare l’intero indirizzo.",
+    "connect": "Verificare e collegare",
+    "checking": "Verifica in corso …",
+    "found": "Trovato",
+    "unnamed": "Società senza nome",
+    "foundCounts": "{{events}} eventi · {{helpers}} impieghi volontari · {{shifts}} turni – stato attuale",
+    "synced_one": "{{count}} appuntamento ripreso",
+    "synced_other": "{{count}} appuntamenti ripresi",
+    "connectedLater": "Collegato. La ripresa non è riuscita; l’esecuzione notturna la recupererà.",
+    "syncNow": "Riprendere adesso",
+    "syncing": "Ripresa in corso …",
+    "status": "Stato",
+    "statusLabel": {
+      "pending": "Non ancora verificato",
+      "active": "Attivo",
+      "error": "Errore"
+    },
+    "connectedTo": "Collegato a «{{id}}»",
+    "lastSync": "Ultima ripresa: {{when}}",
+    "neverSynced": "Nessuna ripresa finora",
+    "importedCount_one": "{{count}} appuntamento attuale nell’agenda",
+    "importedCount_other": "{{count}} appuntamenti attuali nell’agenda",
+    "lastError": "Ultimo messaggio: {{message}}",
+    "errorHint": "L’app resta pienamente utilizzabile – solo gli appuntamenti dall’app precedente non sono più aggiornati.",
+    "disconnect": "Scollegare",
+    "disconnectConfirm": "La ripresa termina. Gli appuntamenti e i turni già ripresi restano.",
+    "disconnected": "Scollegato. Gli appuntamenti ripresi restano.",
+    "empty": "L’app precedente non è ancora collegata.",
+    "startConnect": "Collegare l’app precedente",
+    "problem": {
+      "clubIdInvalid": "L’identificativo è composto da lettere, cifre e trattini, per esempio «su-452800»."
+    },
+    "serviceMissing": "Il servizio di ripresa non risponde. Riprovare più tardi."
+  },
   "teams": {
     "title": "Squadre",
     "empty": "Ancora nessuna squadra. Una squadra è un nome – il resto viene da sé.",

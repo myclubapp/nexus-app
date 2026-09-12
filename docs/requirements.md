@@ -207,6 +207,8 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-151 | Team mit Verbands-Team verknüpfen | Als Vorstand möchte ich beim Anlegen oder Bearbeiten eines Teams das passende Verbands-Team aus einer Auswahlliste wählen, damit unser bestehendes Team dessen Spielplan erhält. | Low      | Implemented   |
 | FR-152 | Namenshoheit am Teamnamen   | Als Vorstand möchte ich, dass der Verband nur den Grundnamen eines verknüpften Teams pflegt und unser Zusatz erhalten bleibt, damit der Abgleich unsere Bezeichnung nicht überschreibt. | Low      | Implemented   |
 | FR-153 | Verknüpfung lösen           | Als Vorstand möchte ich die Verknüpfung eines Teams zum Verband lösen, damit das Team wieder allein von uns gepflegt wird und bereits importierte Termine bestehen bleiben.          | Low      | Implemented   |
+| FR-154 | Termine aus der bisherigen App übernehmen | Als Vorstand möchte ich die aktuellen Anlässe und Helfer-Events samt Schichten aus der bisherigen myclub-App übernehmen, damit wir während der Umstellung nichts zweimal erfassen. | High     | Implemented   |
+| FR-155 | Bisherige App täglich abgleichen | Als System möchte ich die verbundene bisherige App jede Nacht abgleichen, damit neue und geänderte Termine von selbst in der Agenda stehen. | High     | Implemented   |
 
 ### 1.12 Erstbefüllung, leere Zustände & Einführung
 

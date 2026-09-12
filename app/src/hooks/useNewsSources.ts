@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isConfigured, supabase } from '../lib/supabase';
+import { functionErrorMessage } from '../lib/functionError';
 import type { NewsSource } from '../lib/database.types';
 import type { ApiStyle, CategoryChoice, SiteCategory } from '../lib/wordpress';
 import { useClub } from './useClub';
@@ -32,29 +33,6 @@ export interface ConnectInput {
   url: string;
   postLimit: number;
   categories: CategoryChoice[];
-}
-
-/**
- * Die Fehlermeldung aus einer Edge Function lesen.
- *
- * supabase-js macht aus jeder Antwort ausserhalb von 2xx einen
- * `FunctionsHttpError` und lässt `data` leer. Die eigentliche Ursache – «404
- * Not Found», «Keine WordPress-Beiträge unter dieser Adresse» – steckt im
- * Rumpf der Antwort. Ohne dieses Auspacken sähe der Vorstand nur «Edge
- * Function returned a non-2xx status code» und wüsste nicht, was zu
- * korrigieren ist.
- */
-async function functionErrorMessage(error: unknown): Promise<string> {
-  const context = (error as { context?: Response }).context;
-  if (context && typeof context.json === 'function') {
-    try {
-      const body = await context.json();
-      if (typeof body?.error === 'string') return body.error;
-    } catch {
-      // Antwort ohne JSON-Rumpf: Es bleibt die Meldung von supabase-js.
-    }
-  }
-  return error instanceof Error ? error.message : String(error);
 }
 
 /** Die verbundene Website des aktiven Vereins (UC-038). */

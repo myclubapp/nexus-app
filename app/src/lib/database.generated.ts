@@ -637,6 +637,7 @@ export type Database = {
         Row: {
           ends_at: string
           event_id: string
+          external_id: string | null
           id: string
           needed: number
           point_rule_code: string
@@ -647,6 +648,7 @@ export type Database = {
         Insert: {
           ends_at: string
           event_id: string
+          external_id?: string | null
           id?: string
           needed?: number
           point_rule_code: string
@@ -657,6 +659,7 @@ export type Database = {
         Update: {
           ends_at?: string
           event_id?: string
+          external_id?: string | null
           id?: string
           needed?: number
           point_rule_code?: string
@@ -1173,6 +1176,44 @@ export type Database = {
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legacy_sources: {
+        Row: {
+          club_id: string
+          created_at: string
+          firebase_club_id: string
+          imported_events: number
+          last_error: string | null
+          last_sync_at: string | null
+          status: string
+        }
+        Insert: {
+          club_id: string
+          created_at?: string
+          firebase_club_id: string
+          imported_events?: number
+          last_error?: string | null
+          last_sync_at?: string | null
+          status?: string
+        }
+        Update: {
+          club_id?: string
+          created_at?: string
+          firebase_club_id?: string
+          imported_events?: number
+          last_error?: string | null
+          last_sync_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legacy_sources_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: true
+            referencedRelation: "clubs"
             referencedColumns: ["id"]
           },
         ]
@@ -2367,6 +2408,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      connect_legacy_source: {
+        Args: { p_club_id: string; p_firebase_club_id: string }
+        Returns: undefined
+      }
       connection_ratio: {
         Args: { p_club_id: string; p_days?: number }
         Returns: {
@@ -2452,6 +2497,10 @@ export type Database = {
       discard_pulse: { Args: { p_pulse_id: string }; Returns: undefined }
       disconnect_federation: {
         Args: { p_club_id: string; p_federation: string }
+        Returns: undefined
+      }
+      disconnect_legacy_source: {
+        Args: { p_club_id: string }
         Returns: undefined
       }
       drop_sample_content: { Args: { p_club_id: string }; Returns: number }
@@ -2765,6 +2814,15 @@ export type Database = {
         }
         Returns: number
       }
+      report_legacy_sync: {
+        Args: {
+          p_club_id: string
+          p_count?: number
+          p_error?: string
+          p_ok: boolean
+        }
+        Returns: undefined
+      }
       report_team_sync: {
         Args: {
           p_found: boolean
@@ -2925,6 +2983,7 @@ export type Database = {
       suggest_modules: { Args: never; Returns: number }
       suggest_task: { Args: { p_task_id: string }; Returns: number }
       sync_federations: { Args: never; Returns: number }
+      sync_legacy_sources: { Args: never; Returns: number }
       sync_news_sources: { Args: never; Returns: number }
       take_shift: {
         Args: { p_accept_overlap?: boolean; p_shift_id: string }
@@ -3009,6 +3068,23 @@ export type Database = {
           p_starts_at: string
           p_team_id: string
           p_title: string
+        }
+        Returns: string
+      }
+      upsert_legacy_event: {
+        Args: {
+          p_cancelled?: boolean
+          p_cancelled_reason?: string
+          p_capacity_needed?: number
+          p_club_id: string
+          p_ends_at?: string
+          p_external_id: string
+          p_location?: string
+          p_shifts?: Json
+          p_starts_at: string
+          p_title: string
+          p_type: string
+          p_why: string
         }
         Returns: string
       }

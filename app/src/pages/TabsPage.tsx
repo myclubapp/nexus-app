@@ -27,6 +27,7 @@ import { JoinRequestPage } from './club/JoinRequestPage';
 import { MemberPage } from './club/MemberPage';
 import { NewsSourcePage } from './club/NewsSourcePage';
 import { FederationPage } from './club/FederationPage';
+import { LegacyImportPage } from './club/LegacyImportPage';
 import { TeamPage } from './club/TeamPage';
 import { InboxPage } from './InboxPage';
 import { PointHistoryPage } from './PointHistoryPage';
@@ -77,6 +78,7 @@ export function TabsPage() {
         <Route path="profile/rules" element={<PointRulePage />} />
         <Route path="profile/news" element={<NewsSourcePage />} />
         <Route path="profile/federation" element={<FederationPage />} />
+        <Route path="profile/legacy" element={<LegacyImportPage />} />
         <Route path="profile/teams" element={<TeamPage />} />
         <Route path="profile/inbox" element={<InboxPage />} />
         <Route path="profile/points" element={<PointHistoryPage />} />

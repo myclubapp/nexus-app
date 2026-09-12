@@ -1646,6 +1646,47 @@
     },
     "startConnect": "Connecter une fédération"
   },
+  "legacy": {
+    "title": "Ancienne app myclub",
+    "intro": "Tant que le club n’est pas entièrement ici, les deux apps tournent en parallèle. Les événements et les engagements bénévoles avec leurs créneaux publiés dans l’ancienne app apparaissent ici automatiquement, sans double saisie.",
+    "nightly": "Est repris ce qui est actuel dans l’ancienne app. Chaque nuit s’ajoute ce qui y est nouveau ou a changé.",
+    "connectTitle": "Connecter",
+    "replace": "Autre identifiant",
+    "clubId": "Identifiant du club dans l’ancienne app",
+    "clubIdHint": "Il figure dans l’adresse de votre page de club là-bas, par exemple «su-452800». Coller l’adresse entière suffit.",
+    "connect": "Vérifier et connecter",
+    "checking": "Vérification …",
+    "found": "Trouvé",
+    "unnamed": "Club sans nom",
+    "foundCounts": "{{events}} événements · {{helpers}} engagements bénévoles · {{shifts}} créneaux – état actuel",
+    "synced_one": "{{count}} rendez-vous repris",
+    "synced_other": "{{count}} rendez-vous repris",
+    "connectedLater": "Connecté. La reprise n’a pas abouti; l’exécution nocturne la rattrapera.",
+    "syncNow": "Reprendre maintenant",
+    "syncing": "Reprise en cours …",
+    "status": "État",
+    "statusLabel": {
+      "pending": "Pas encore vérifié",
+      "active": "Actif",
+      "error": "Erreur"
+    },
+    "connectedTo": "Connecté à «{{id}}»",
+    "lastSync": "Dernière reprise: {{when}}",
+    "neverSynced": "Pas encore de reprise",
+    "importedCount_one": "{{count}} rendez-vous actuel dans l’agenda",
+    "importedCount_other": "{{count}} rendez-vous actuels dans l’agenda",
+    "lastError": "Dernier message: {{message}}",
+    "errorHint": "L’app reste entièrement utilisable – seuls les rendez-vous de l’ancienne app ne sont plus à jour.",
+    "disconnect": "Déconnecter",
+    "disconnectConfirm": "La reprise s’arrête. Les rendez-vous et créneaux déjà repris sont conservés.",
+    "disconnected": "Déconnecté. Les rendez-vous repris sont conservés.",
+    "empty": "L’ancienne app n’est pas encore connectée.",
+    "startConnect": "Connecter l’ancienne app",
+    "problem": {
+      "clubIdInvalid": "L’identifiant se compose de lettres, de chiffres et de tirets, par exemple «su-452800»."
+    },
+    "serviceMissing": "Le service de reprise ne répond pas. Veuillez réessayer plus tard."
+  },
   "teams": {
     "title": "Équipes",
     "empty": "Pas encore d’équipe. Une équipe, c’est un nom – le reste vient tout seul.",
