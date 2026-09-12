@@ -200,6 +200,29 @@
 }
 
 /* Frei stehender Hinweistext, z.B. über einer Liste. */
+/* --- Fliesstext neben einer Liste (TextSection) ----------------------------
+   Dieselbe Einrückung wie eine eingefasste Liste, damit Text und Zeilen im
+   selben Raster stehen. Zeilenlänge begrenzt, wie ein Absatz gelesen wird. */
+.app-text {
+  margin: 0 var(--app-space-4) var(--app-space-4);
+  max-width: 65ch;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.app-text p {
+  margin: 0 0 var(--app-space-2);
+}
+
+.app-text p:last-child {
+  margin-bottom: 0;
+}
+
+.app-text--pre {
+  white-space: pre-line;
+}
+
+/* Frei stehender Hinweistext, z.B. über einer Liste. */
 .app-hint {
   display: block;
   padding: var(--app-space-3) var(--app-space-4);

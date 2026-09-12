@@ -46,7 +46,7 @@
 | Feature | Warum später |
 |---|---|
 | Badges, Level, Challenges, Rewards | Gamification-Ausbaustufe 2 – erst wenn der Punkte-Loop läuft |
-| Funktionärsämter mit Factsheets & Vakanz-Anzeige | Ausbaustufe 2 des Marktplatzes |
+| Funktionärsämter mit Factsheets & Vakanz-Anzeige | Ausbaustufe 2 des Marktplatzes – **vorgezogen am 12.09.2026** (UC-041): Factsheet, Sitze, Belegung, PDF im Vereinsspeicher, Vakanz im Marktplatz |
 | Meisterschaft (Spielpläne, Resultate, Tabellen, Aufstellungen) | Optionales Modul, abhängig von API-Keys (§5) |
 | Eltern/Kids (Verknüpfung, stellvertretend antworten) | Erstes Post-MVP-Inkrement – wichtig für Juniorenvereine, aber nicht Tag-1-kritisch |
 | J+S-Exporte, Mitglieder-Export | Post-MVP; Datengrundlage (Anwesenheiten) entsteht im MVP bereits korrekt |

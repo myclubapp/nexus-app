@@ -4,88 +4,12 @@ import { supabase, isConfigured } from '../lib/supabase';
 import { useClub } from './useClub';
 import { hashTicket, readStoredTickets } from '../lib/tickets';
 import { MEETING_TICKET_KEY } from '../lib/meeting';
-import type { AgendaRow, InputStatus, MeetingInput, Office } from '../lib/meeting';
+import type { AgendaRow, InputStatus, MeetingInput } from '../lib/meeting';
 import type { AppEvent } from '../lib/database.types';
 
-/**
- * Die Ämter des Vereins (BR-133).
- *
- * Sie sind für alle Mitglieder lesbar: Ein Verteiler, den niemand kennt, ist
- * keiner – und wer einen Input einreicht, muss sein Zielgremium wählen können.
- */
-export function useOffices() {
-  const { activeClub } = useClub();
-
-  return useQuery({
-    queryKey: ['offices', activeClub?.id],
-    enabled: Boolean(activeClub) && isConfigured,
-    queryFn: async (): Promise<Office[]> => {
-      const { data, error } = await supabase
-        .from('functionary_roles')
-        .select('id, title, holder_member_id, held_since, holder:club_members(display_name)')
-        .eq('club_id', activeClub!.id)
-        .order('title');
-      if (error) throw new Error(error.message);
-
-      return (data ?? []).map((row) => ({
-        id: row.id,
-        title: row.title,
-        holderMemberId: row.holder_member_id,
-        holderName:
-          (row.holder as { display_name: string } | null)?.display_name ?? null,
-        heldSince: row.held_since,
-      }));
-    },
-  });
-}
-
-/**
- * Ein Amt anlegen oder besetzen.
- *
- * `held_since` schreibt der Server (Trigger in `0049`) – wer ein Amt besetzt,
- * denkt an die Person, nicht an das Feld daneben.
- */
-export function useSaveOffice() {
-  const queryClient = useQueryClient();
-  const { activeClub } = useClub();
-
-  return useMutation({
-    mutationFn: async (input: {
-      id?: string;
-      title: string;
-      holderMemberId: string | null;
-    }) => {
-      const row = {
-        club_id: activeClub!.id,
-        title: input.title.trim(),
-        holder_member_id: input.holderMemberId,
-      };
-      const { error } = input.id
-        ? await supabase.from('functionary_roles').update(row).eq('id', input.id)
-        : await supabase.from('functionary_roles').insert(row);
-      if (error) throw new Error(error.message);
-    },
-    onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: ['offices', activeClub?.id] });
-    },
-  });
-}
-
-/** Ein Amt auflösen. Die Inputs daran bleiben – sie tragen ihre Kennung selbst. */
-export function useDeleteOffice() {
-  const queryClient = useQueryClient();
-  const { activeClub } = useClub();
-
-  return useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('functionary_roles').delete().eq('id', id);
-      if (error) throw new Error(error.message);
-    },
-    onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: ['offices', activeClub?.id] });
-    },
-  });
-}
+// Seit UC-041 stehen die Amts-Hooks in `useOffices.ts`; die Sitzungs-Blätter
+// importieren sie weiterhin von hier.
+export { useDeleteOffice, useOffices, useSaveOffice } from './useOffices';
 
 /**
  * Die Inputs, die mich betreffen.

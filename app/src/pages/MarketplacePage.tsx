@@ -29,6 +29,9 @@ import {
   useMatchingVacancies,
 } from '../hooks/useContribution';
 import { ContributionProfileModal } from '../components/ContributionProfileModal';
+import { OfficeDetailModal } from '../components/OfficeDetailModal';
+import { useOffices } from '../hooks/useOffices';
+import { isVacant, openSeats, sortOffices } from '../lib/office';
 import { isBudgetSpent, isProfileFilled } from '../lib/contribution';
 import { canActOn, isSample } from '../lib/sample';
 import { formatDate, formatDateTime } from '../lib/format';
@@ -59,6 +62,9 @@ export function MarketplacePage() {
   const profile = useContributionProfile();
   const matching = useMatchingTasks();
   const vacancies = useMatchingVacancies();
+  // UC-041/FR-127: die Ämter mit freien Sitzen – für alle, nicht nur für
+  // Profile mit Organisation oder Finanzen (BR-183).
+  const offices = useOffices();
   const budget = useContributionBudget();
   const publish = usePublishTask();
   const taskCount = useMyTaskCount();
@@ -67,6 +73,7 @@ export function MarketplacePage() {
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const [confirmTaskId, setConfirmTaskId] = useState<string | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [openOfficeId, setOpenOfficeId] = useState<string | null>(null);
 
   // Der Vorschlag verlinkt `/tabs/marketplace?task=<id>` und soll die Aufgabe
   // zeigen, nicht bloss den Marktplatz (BR-070).
@@ -102,6 +109,11 @@ export function MarketplacePage() {
   const budgetSpent = isBudgetSpent(budget.data);
   const suggestions = matching.data ?? [];
   const openVacancies = vacancies.data ?? [];
+  // Vakante Ämter, die grösste Lücke zuoberst; «Passt zu dir» kommt aus dem
+  // Beitrags-Profil dazu, ersetzt aber die Liste nicht.
+  const vacantOffices = sortOffices(offices.data ?? []).filter(isVacant);
+  const matchedOfficeIds = new Set(openVacancies.map((vacancy) => vacancy.id));
+  const openOffice = (offices.data ?? []).find((office) => office.id === openOfficeId) ?? null;
 
   const toConfirm = isTrainer
     ? items.filter((entry) =>
@@ -120,7 +132,8 @@ export function MarketplacePage() {
     groups.open.length === 0 &&
     groups.drafts.length === 0 &&
     groups.expired.length === 0 &&
-    toConfirm.length === 0;
+    toConfirm.length === 0 &&
+    vacantOffices.length === 0;
 
   useEffect(() => {
     if (!highlightId) return;
@@ -363,18 +376,40 @@ export function MarketplacePage() {
 
           {/* Der zweite Teil des Ziels: Ämter werden angeboten, nicht
               ausgeschrieben. */}
-          {filled && openVacancies.length > 0 && (
+          {/* UC-041, FR-127: «Amt zu vergeben» – für alle Mitglieder. Die
+              Sitzrechnung kommt aus `office_open_seats()` (BR-183); das
+              Beitrags-Profil ergänzt nur «Passt zu dir» (UC-033). Antippen
+              öffnet das Factsheet, die letzte Zeile führt zum Organigramm. */}
+          {vacantOffices.length > 0 && (
             <ListSection
-              title={t('contribution.vacancies')}
-              footnote={t('contribution.vacanciesHint')}
+              title={t('offices.marketplaceSection')}
+              footnote={t('offices.marketplaceHint')}
             >
-              {openVacancies.map((vacancy) => (
-                <IonItem key={vacancy.id}>
+              {vacantOffices.map((office) => (
+                <IonItem key={office.id} button detail onClick={() => setOpenOfficeId(office.id)}>
                   <IonLabel className="ion-text-wrap">
-                    <h2>{vacancy.title}</h2>
+                    <h2>{office.title}</h2>
+                    <IonNote>
+                      {[
+                        matchedOfficeIds.has(office.id) ? t('offices.matches') : null,
+                        office.hoursPerSeason,
+                        office.pointsLabel,
+                      ]
+                        .filter((part): part is string => Boolean(part))
+                        .join(' · ')}
+                    </IonNote>
                   </IonLabel>
+                  <IonBadge slot="end" color="warning">
+                    {t('offices.openSeats', { count: openSeats(office) })}
+                  </IonBadge>
                 </IonItem>
               ))}
+              <IonItem button detail routerLink="/tabs/marketplace/offices">
+                <IonLabel className="ion-text-wrap">
+                  <h2>{t('offices.allOffices')}</h2>
+                  <IonNote>{t('offices.allOfficesHint')}</IonNote>
+                </IonLabel>
+              </IonItem>
             </ListSection>
           )}
 
@@ -466,6 +501,10 @@ export function MarketplacePage() {
           )}
         </>
       )}
+
+      {/* Dasselbe Blatt wie in der Ämterliste: Wer ein Amt ansieht, soll es
+          überall gleich sehen. Bearbeiten gehört in die Ämterliste. */}
+      <OfficeDetailModal office={openOffice} onDismiss={() => setOpenOfficeId(null)} />
 
       <ContributionProfileModal
         isOpen={profileOpen}

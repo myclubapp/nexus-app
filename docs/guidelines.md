@@ -370,6 +370,8 @@ Bestand in `src/components/`. Vor jedem neuen Bauteil hier nachsehen.
 | `NewsCard`         | Eine News als Karte: Bild, Datum, Titel, Anriss, Autoren-Chip, Teilen – im Raster der Startseite und im Detail                   |
 | `NewsDetailModal`  | News-Detail als Blatt mit Volltext; Bearbeiten und Zurückziehen für Trainer:innen hinter dem Dreipunkt                          |
 | `CheckInModal`     | QR-Scan über `html5-qrcode`                                                                                                       |
+| `OfficeDetailModal` | Ein Amt als Factsheet-Blatt: Vakanz-Badge, Warum, Pflichten, Eckdaten, Belegung, «Factsheet öffnen (PDF)» über eine signierte Adresse; «Bearbeiten» nur für den Vorstand (UC-041) |
+| `OfficeFormModal`  | Amt anlegen und ändern: Felder, Belegung mit oder ohne Konto, PDF wählen/ersetzen/entfernen – gespeichert über `save_office()`, das PDF danach (UC-041) |
 | `QrCode`           | QR-Code als Data-URL, ohne fremden Dienst (C-003)                                                                                 |
 
 Dazu zwei Hooks, die zum UI gehören und nicht zum Datenzugriff:

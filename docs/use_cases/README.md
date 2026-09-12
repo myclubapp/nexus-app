@@ -54,6 +54,7 @@ synchron gehalten werden können.
 | [UC-020](UC-020-punktestand-einsehen.md) | Punktestand und «Nächste Punkte» einsehen | Mitglied | FR-041, FR-044, FR-045 | Implemented |
 | [UC-021](UC-021-punkte-manuell-buchen.md) | Punkte manuell buchen oder korrigieren | Vorstand | FR-042, FR-043 | Implemented |
 | [UC-022](UC-022-leaderboard-einsehen.md) | Leaderboard einsehen | Mitglied | FR-046, FR-047, FR-048, FR-049 | Implemented |
+| [UC-041](UC-041-funktionaersamt-mit-factsheet.md) | Funktionärsamt mit Factsheet hinterlegen und im Marktplatz anbieten | Vorstand | FR-126, FR-127 | Implemented |
 
 ### Vereins-Gesundheit
 
@@ -101,7 +102,7 @@ synchron gehalten werden können.
 |---|---|
 | **M1 – Fundament** | UC-001 bis UC-008, UC-034, UC-037 |
 | **M2 – Agenda-Loop** | UC-009 bis UC-016, UC-020 |
-| **M3 – Gemeinschaft** | UC-017 bis UC-019, UC-021 bis UC-033 |
+| **M3 – Gemeinschaft** | UC-017 bis UC-019, UC-021 bis UC-033, UC-041 (vorgezogen aus Ausbaustufe 2) |
 | **M4 – Anschlüsse** | UC-035, UC-036, UC-039, UC-040 |
 
 ---
@@ -114,7 +115,6 @@ Diese Anforderungen sind bewusst nach dem MVP eingeplant und tragen im Katalog d
 | Thema | Requirements |
 |---|---|
 | Badges, Level, Challenges, Rewards | FR-122 bis FR-125 |
-| Funktionärsämter mit Factsheet und Vakanz-Anzeige | FR-126, FR-127 |
 | Meisterschaft | FR-128 |
 | Eltern und Kinder | FR-129 |
 | Exporte und Bulk-Import | FR-130 bis FR-132 |
@@ -131,7 +131,7 @@ Ablauf steht in UC-008, die Gliederung der Seite in [`../guidelines.md`](../guid
 
 ## Geschäftsregeln
 
-Die Regeln BR-001 bis BR-166 sind fortlaufend und über alle Use Cases hinweg eindeutig vergeben.
+Die Regeln BR-001 bis BR-186 sind fortlaufend und über alle Use Cases hinweg eindeutig vergeben.
 Die vier nicht verhandelbaren Regeln des Projekts sind über mehrere Use Cases verteilt:
 
 | Prinzip | Regeln |

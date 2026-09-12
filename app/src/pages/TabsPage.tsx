@@ -68,6 +68,8 @@ export function TabsPage() {
       <IonRouterOutlet>
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="marketplace" element={<MarketplacePage />} />
+        {/* UC-041: die Ämterliste aus dem Marktplatz, mit Zurück dorthin. */}
+        <Route path="marketplace/offices" element={<OfficePage backHref="/tabs/marketplace" />} />
         <Route path="leaderboard" element={<LeaderboardPage />} />
         <Route path="agenda" element={<AgendaPage />} />
         <Route path="profile" element={<ProfilePage />} />

@@ -829,30 +829,109 @@ export type Database = {
           },
         ]
       }
+      functionary_holders: {
+        Row: {
+          created_at: string
+          display_name: string
+          id: string
+          interim: boolean
+          member_id: string | null
+          role_id: string
+          since: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_name: string
+          id?: string
+          interim?: boolean
+          member_id?: string | null
+          role_id: string
+          since?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          id?: string
+          interim?: boolean
+          member_id?: string | null
+          role_id?: string
+          since?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "functionary_holders_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "functionary_holders_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "functionary_holders_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "functionary_roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       functionary_roles: {
         Row: {
           club_id: string
+          contact_member_id: string | null
+          contact_name: string | null
           created_at: string
+          duties: Json
+          factsheet_path: string | null
           held_since: string | null
           holder_member_id: string | null
+          hours_per_season: string | null
           id: string
+          max_holders: number
+          points_label: string | null
           title: string
+          updated_at: string
+          why: string | null
         }
         Insert: {
           club_id: string
+          contact_member_id?: string | null
+          contact_name?: string | null
           created_at?: string
+          duties?: Json
+          factsheet_path?: string | null
           held_since?: string | null
           holder_member_id?: string | null
+          hours_per_season?: string | null
           id?: string
+          max_holders?: number
+          points_label?: string | null
           title: string
+          updated_at?: string
+          why?: string | null
         }
         Update: {
           club_id?: string
+          contact_member_id?: string | null
+          contact_name?: string | null
           created_at?: string
+          duties?: Json
+          factsheet_path?: string | null
           held_since?: string | null
           holder_member_id?: string | null
+          hours_per_season?: string | null
           id?: string
+          max_holders?: number
+          points_label?: string | null
           title?: string
+          updated_at?: string
+          why?: string | null
         }
         Relationships: [
           {
@@ -872,6 +951,20 @@ export type Database = {
           {
             foreignKeyName: "functionary_roles_holder_member_id_fkey"
             columns: ["holder_member_id"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "functionary_roles_contact_member_id_fkey"
+            columns: ["contact_member_id"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "functionary_roles_contact_member_id_fkey"
+            columns: ["contact_member_id"]
             isOneToOne: false
             referencedRelation: "club_members"
             referencedColumns: ["id"]
@@ -2713,6 +2806,14 @@ export type Database = {
       }
       notify_signal_owners: { Args: { p_signal_id: string }; Returns: number }
       nudge_low_checkins: { Args: never; Returns: number }
+      office_open_seats: {
+        Args: { p_role_id: string }
+        Returns: number
+      }
+      path_club_id: {
+        Args: { p_name: string }
+        Returns: string
+      }
       preview_invite: {
         Args: { p_code: string }
         Returns: {
@@ -2873,6 +2974,22 @@ export type Database = {
           p_time_budget?: string
         }
         Returns: undefined
+      }
+      save_office: {
+        Args: {
+          p_club_id: string
+          p_contact_member_id?: string
+          p_contact_name?: string
+          p_duties?: Json
+          p_holders?: Json
+          p_hours_per_season?: string
+          p_id?: string
+          p_max_holders?: number
+          p_points_label?: string
+          p_title: string
+          p_why?: string
+        }
+        Returns: string
       }
       season_label: {
         Args: { p_at?: string; p_club_id: string }

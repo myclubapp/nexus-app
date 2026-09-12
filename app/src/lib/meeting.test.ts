@@ -8,13 +8,10 @@ import {
   isAgendaEmpty,
   isInbox,
   isInputClosed,
-  isVacant,
   validateInput,
-  validateOffice,
   type AgendaRow,
   type InputDraft,
   type MeetingInput,
-  type Office,
 } from './meeting';
 
 function draft(overrides: Partial<InputDraft> = {}): InputDraft {
@@ -39,17 +36,6 @@ function input(overrides: Partial<MeetingInput> = {}): MeetingInput {
     isMine: false,
     isAnonymous: false,
     createdAt: '2026-09-10T10:00:00Z',
-    ...overrides,
-  };
-}
-
-function office(overrides: Partial<Office> = {}): Office {
-  return {
-    id: 'office-1',
-    title: 'Präsidium',
-    holderMemberId: 'm-1',
-    holderName: 'Petra Präsidentin',
-    heldSince: '2024-03-01',
     ...overrides,
   };
 }
@@ -94,13 +80,6 @@ describe('isInbox', () => {
   });
 });
 
-describe('isVacant', () => {
-  it('nennt ein Amt ohne Inhaber:in vakant (BR-135)', () => {
-    expect(isVacant(office())).toBe(false);
-    expect(isVacant(office({ holderMemberId: null, holderName: null }))).toBe(true);
-  });
-});
-
 describe('validateInput', () => {
   it('lässt einen vollständigen Vorschlag durch', () => {
     expect(validateInput(draft())).toEqual([]);
@@ -136,33 +115,6 @@ describe('canDecide', () => {
     expect(canDecide('Wir nehmen das im März auf.')).toBe(true);
     expect(canDecide('   ')).toBe(false);
     expect(canDecide('')).toBe(false);
-  });
-});
-
-describe('validateOffice', () => {
-  it('lässt ein benanntes Amt durch', () => {
-    expect(validateOffice({ title: 'Kassier', holderMemberId: null })).toEqual([]);
-  });
-
-  it('verlangt eine Bezeichnung von mindestens zwei Zeichen', () => {
-    expect(validateOffice({ title: 'K', holderMemberId: null })).toEqual([
-      'titleMissing',
-    ]);
-    expect(validateOffice({ title: '  ', holderMemberId: null })).toEqual([
-      'titleMissing',
-    ]);
-  });
-
-  it('begrenzt die Bezeichnung wie der Constraint', () => {
-    expect(
-      validateOffice({ title: 'x'.repeat(81), holderMemberId: null }),
-    ).toEqual(['titleTooLong']);
-  });
-
-  it('lässt ein vakantes Amt zu', () => {
-    // Ein Amt ohne Inhaber:in ist der Normalfall, den BR-135 sichtbar macht –
-    // kein Fehler.
-    expect(validateOffice({ title: 'Aktuariat', holderMemberId: null })).toEqual([]);
   });
 });
 

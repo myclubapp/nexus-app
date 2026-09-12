@@ -28,13 +28,15 @@ export const INPUT_STATUSES = [
 ] as const;
 export type InputStatus = (typeof INPUT_STATUSES)[number];
 
-export interface Office {
-  id: string;
-  title: string;
-  holderMemberId: string | null;
-  holderName: string | null;
-  heldSince: string | null;
-}
+// Seit UC-041 lebt das Amt in `lib/office.ts` – mit Factsheet, Belegung und
+// der Sitzrechnung (BR-183). Die Sitzungs-Blätter lesen es weiterhin von hier.
+export {
+  isVacant,
+  validateOffice,
+  type Office,
+  type OfficeDraft,
+  type OfficeProblem,
+} from './office';
 
 export interface MeetingInput {
   id: string;
@@ -47,17 +49,6 @@ export interface MeetingInput {
   isMine: boolean;
   isAnonymous: boolean;
   createdAt: string;
-}
-
-/**
- * Ein Amt ohne Inhaber:in ist vakant.
- *
- * Mehr sagt das Datenmodell nicht – eine Ausschreibung im Marktplatz und ein
- * Factsheet stehen in `MVP_Scope` §2 als Ausbaustufe 2. Und mehr braucht die
- * Sammelansicht auch nicht (BR-135).
- */
-export function isVacant(office: Office): boolean {
-  return office.holderMemberId === null;
 }
 
 /** Ein Input mit Endstatus ist abgeschlossen. */
@@ -110,24 +101,6 @@ export function validateInput(draft: InputDraft): InputProblem[] {
 /** Zu jedem Entscheid gehört seine Begründung (§13.3). */
 export function canDecide(text: string): boolean {
   return text.trim().length > 0;
-}
-
-export type OfficeProblem = 'titleMissing' | 'titleTooLong';
-
-export interface OfficeDraft {
-  title: string;
-  holderMemberId: string | null;
-}
-
-/** Was an einem Amt fehlt – dieselben Grenzen wie der Constraint in `0049`. */
-export function validateOffice(draft: OfficeDraft): OfficeProblem[] {
-  const problems: OfficeProblem[] = [];
-  const title = draft.title.trim();
-
-  if (title.length < 2) problems.push('titleMissing');
-  if (title.length > 80) problems.push('titleTooLong');
-
-  return problems;
 }
 
 /** Die drei Arten, die `meeting_agenda()` liefert – und **nur** diese. */
