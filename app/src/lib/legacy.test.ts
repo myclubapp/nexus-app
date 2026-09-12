@@ -48,14 +48,18 @@ describe('statusTone und isStale (A2)', () => {
 });
 
 describe('readLegacySync (Schritt 6, A3)', () => {
-  it('zählt Anlässe und Helfer-Events zusammen', () => {
-    expect(readLegacySync({ ok: true, events: 2, helpers: 17, shifts: 60 })).toEqual({ count: 19, error: null });
-    expect(readLegacySync({ ok: true })).toEqual({ count: 0, error: null });
+  it('zählt Anlässe, Helfer-Events und Trainings zusammen, Antworten getrennt', () => {
+    expect(readLegacySync({ ok: true, events: 2, helpers: 17, trainings: 184, shifts: 60, responses: 4203 })).toEqual({
+      count: 203,
+      responses: 4203,
+      error: null,
+    });
+    expect(readLegacySync({ ok: true })).toEqual({ count: 0, responses: 0, error: null });
   });
 
   it('gibt die Meldung des Dienstes weiter, sonst den Ersatz', () => {
-    expect(readLegacySync({ ok: false, error: ' kaputt ' })).toEqual({ count: null, error: 'kaputt' });
-    expect(readLegacySync(null)).toEqual({ count: null, error: 'Keine Antwort' });
-    expect(readLegacySync({ ok: false, error: '' }, 'Ersatz')).toEqual({ count: null, error: 'Ersatz' });
+    expect(readLegacySync({ ok: false, error: ' kaputt ' })).toEqual({ count: null, responses: null, error: 'kaputt' });
+    expect(readLegacySync(null)).toEqual({ count: null, responses: null, error: 'Keine Antwort' });
+    expect(readLegacySync({ ok: false, error: '' }, 'Ersatz')).toEqual({ count: null, responses: null, error: 'Ersatz' });
   });
 });

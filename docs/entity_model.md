@@ -138,6 +138,7 @@ Die Mitgliedschaft einer Person in einem Verein samt Rolle und Sichtbarkeitsents
 | id                 | Eindeutige Kennung der Mitgliedschaft                    | UUID      | 36               | Primary Key, Generated                       |
 | club_id            | Verein der Mitgliedschaft                                | UUID      | 36               | Not Null, Foreign Key (CLUB.id)              |
 | user_id            | Anmeldekonto der Person                                  | UUID      | 36               | Optional, Foreign Key (USER_ACCOUNT.id)      |
+| legacy_user_id     | Kennung der Person in der bisherigen myclub-App (UC-040)  | String    | 80               | Optional, Unique je Verein                   |
 | display_name       | Im Verein angezeigter Name                               | String    | 80               | Not Null                                     |
 | avatar_url         | Verweis auf das Profilbild                               | String    | 500              | Optional                                     |
 | role               | Rolle im Verein                                          | String    | 20               | Not Null, Values: member, trainer, sportchef, admin, superadmin |
@@ -184,6 +185,7 @@ Eine Gruppe innerhalb eines Vereins, an der Termine, Ranglisten und Reichweiten 
 | league              | Liga oder Kategorie laut Verband                 | String    | 80               | Optional                        |
 | federation_synced_at| Zeitpunkt des letzten Abgleichs mit dem Verband  | DateTime  | -                | Optional                        |
 | federation_stale_at | Zeitpunkt, seit dem der Verband das Team nicht mehr nennt (A6) | DateTime | - | Optional                  |
+| legacy_team_id      | Kennung des Teams in der bisherigen myclub-App (UC-040) | String | 80 | Optional, Unique je Verein |
 
 **Constraints:** Der Teamname ist innerhalb eines Vereins eindeutig. Eine Verknüpfung besteht nur,
 wenn `federation`, `federation_team_id` und `federation_name` gemeinsam gesetzt sind; die Kombination
@@ -794,8 +796,10 @@ Die Verbindung eines Vereins zu seinem Bestand in der bisherigen myclub-App (Fir
 | last_sync_at     | Zeitpunkt der letzten gelungenen Übernahme           | DateTime  | -                | Optional                                  |
 | last_error       | Meldung des letzten Fehlschlags                      | String    | 500              | Optional                                  |
 | imported_events  | Zahl der Termine des letzten gelungenen Laufs        | Integer   | 10               | Not Null, Default 0                       |
+| imported_members | Zahl der Mitglieder des letzten gelungenen Laufs     | Integer   | 10               | Not Null, Default 0                       |
+| imported_responses | Zahl der Antworten des letzten gelungenen Laufs    | Integer   | 10               | Not Null, Default 0                       |
 
-**Constraints:** Ein Verein hat höchstens eine Quelle, eine Kennung gehört höchstens einem Verein. Der Zugang zum bisherigen Backend steht **nicht** in dieser Tabelle, sondern als Secret der Edge Function (BR-185). Der Abgleich liest ausschliesslich (BR-191) und übernimmt nur aktuelle Termine (BR-186); er löscht nichts (BR-184).
+**Constraints:** Ein Verein hat höchstens eine Quelle, eine Kennung gehört höchstens einem Verein. Der Zugang zum bisherigen Backend steht **nicht** in dieser Tabelle, sondern als Secret der Edge Function (BR-185). Der Abgleich liest ausschliesslich (BR-191) und übernimmt nur aktuelle Termine (BR-186); er löscht nichts (BR-184). Mitglieder der bisherigen App entstehen als CLUB_MEMBER ohne `user_id` mit `legacy_user_id` (BR-192), Teams tragen `legacy_team_id`, Antworten werden ATTENDANCE mit Status registered oder excused (BR-193).
 
 ---
 

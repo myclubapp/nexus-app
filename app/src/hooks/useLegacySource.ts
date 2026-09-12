@@ -27,7 +27,7 @@ export function useLegacySource() {
     queryFn: async (): Promise<LegacySource | null> => {
       const { data, error } = await supabase
         .from('legacy_sources')
-        .select('firebase_club_id, status, last_sync_at, last_error, imported_events')
+        .select('firebase_club_id, status, last_sync_at, last_error, imported_events, imported_members, imported_responses')
         .eq('club_id', activeClub!.id)
         .maybeSingle();
       if (error) throw new Error(error.message);
@@ -38,6 +38,8 @@ export function useLegacySource() {
         lastSyncAt: data.last_sync_at,
         lastError: data.last_error,
         importedEvents: data.imported_events,
+        importedMembers: data.imported_members,
+        importedResponses: data.imported_responses,
       };
     },
   });
@@ -77,10 +79,10 @@ export async function syncLegacyNow(clubId: string): Promise<LegacySync> {
     const { data, error } = await supabase.functions.invoke<LegacySyncResult>('sync-legacy', {
       body: { mode: 'sync', clubId },
     });
-    if (error) return { count: null, error: await functionErrorMessage(error) };
+    if (error) return { count: null, responses: null, error: await functionErrorMessage(error) };
     return readLegacySync(data);
   } catch (cause) {
-    return { count: null, error: cause instanceof Error ? cause.message : String(cause) };
+    return { count: null, responses: null, error: cause instanceof Error ? cause.message : String(cause) };
   }
 }
 
@@ -102,6 +104,8 @@ export function useConnectLegacy() {
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ['legacy', activeClub?.id] });
       void queryClient.invalidateQueries({ queryKey: ['agenda'] });
+      void queryClient.invalidateQueries({ queryKey: ['members'] });
+      void queryClient.invalidateQueries({ queryKey: ['teams'] });
     },
   });
 }
@@ -119,6 +123,8 @@ export function useSyncLegacy() {
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ['legacy', activeClub?.id] });
       void queryClient.invalidateQueries({ queryKey: ['agenda'] });
+      void queryClient.invalidateQueries({ queryKey: ['members'] });
+      void queryClient.invalidateQueries({ queryKey: ['teams'] });
     },
   });
 }

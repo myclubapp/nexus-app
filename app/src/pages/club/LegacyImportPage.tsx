@@ -33,7 +33,9 @@ import {
  * jemand verbindet. So sieht die Person, ob es der richtige Verein ist.
  *
  * Nach dem Verbinden läuft die Übernahme sofort (Schritt 6); die Zahl der
- * Termine steht im Toast. Was danach in der alten App neu ist, kommt jede
+ * Termine und Antworten steht im Toast. Mit `0071` kommen auch die Personen
+ * mit: Mitglieder ohne Konto (BR-192), Teams, Trainings und die Zusagen zu
+ * Spielen, Trainings, Anlässen und Schichten (BR-193). Was danach in der alten App neu ist, kommt jede
  * Nacht von selbst – oder per «Jetzt übernehmen» (A3).
  */
 export function LegacyImportPage() {
@@ -73,7 +75,7 @@ export function LegacyImportPage() {
     const synced = await connect.mutateAsync(firebaseClubId);
     setInput('');
     if (synced.error === null) {
-      toast.success(t('legacy.synced', { count: synced.count }));
+      toast.success(t('legacy.synced', { count: synced.count, responses: synced.responses }));
     } else {
       // Die Quelle steht; nur die Übernahme kam nicht durch. Der Satz sagt,
       // dass der nächtliche Lauf sie nachholt (A2).
@@ -86,8 +88,11 @@ export function LegacyImportPage() {
     setFailure(null);
     sync.mutate(undefined, {
       onSuccess: (synced) => {
-        if (synced.error === null) toast.success(t('legacy.synced', { count: synced.count }));
-        else setFailure(synced.error);
+        if (synced.error === null) {
+          toast.success(t('legacy.synced', { count: synced.count, responses: synced.responses }));
+        } else {
+          setFailure(synced.error);
+        }
       },
       onError: (cause) => setFailure(cause.message),
     });
@@ -102,6 +107,7 @@ export function LegacyImportPage() {
       <TextSection>
         <p>{t('legacy.intro')}</p>
         <p>{t('legacy.nightly')}</p>
+        <p>{t('legacy.membersHint')}</p>
       </TextSection>
 
       {source.isLoading ? (
@@ -128,7 +134,13 @@ export function LegacyImportPage() {
                     : t('legacy.neverSynced')}
                 </p>
                 {source.data.lastSyncAt && (
-                  <p>{t('legacy.importedCount', { count: source.data.importedEvents })}</p>
+                  <p>
+                    {t('legacy.importedCount', {
+                      count: source.data.importedEvents,
+                      members: source.data.importedMembers,
+                      responses: source.data.importedResponses,
+                    })}
+                  </p>
                 )}
                 {source.data.lastError && (
                   <IonNote>{t('legacy.lastError', { message: source.data.lastError })}</IonNote>
@@ -199,6 +211,15 @@ export function LegacyImportPage() {
                   events: found.events ?? 0,
                   helpers: found.helpers ?? 0,
                   shifts: found.shifts ?? 0,
+                  trainings: found.trainings ?? 0,
+                  games: found.games ?? 0,
+                })}
+              </p>
+              <p>
+                {t('legacy.foundPeople', {
+                  members: found.members ?? 0,
+                  teams: found.teams ?? 0,
+                  responses: found.responses ?? 0,
                 })}
               </p>
             </IonLabel>

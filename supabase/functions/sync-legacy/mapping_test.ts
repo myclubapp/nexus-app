@@ -2,7 +2,7 @@
  * Die Abbildung der alten App auf Termine (UC-040) – `deno test` in diesem Ordner.
  */
 import { assertEquals, assertStrictEquals } from 'jsr:@std/assert@1';
-import { isCurrent, mapEvent, mapShift, readLocation, shiftTimeToIso, type LegacyDoc } from './mapping.ts';
+import { gameExternalId, isCurrent, isCurrentGame, isCurrentTraining, mapEvent, mapMember, mapResponse, mapShift, mapTeam, mapTraining, readLocation, shiftTimeToIso, type LegacyDoc } from './mapping.ts';
 
 const NOW = new Date('2026-09-12T10:00:00Z');
 
@@ -116,4 +116,51 @@ Deno.test('mapEvent: Ende vor Beginn wird kein Ende; ohne Titel oder Zeit kein T
   assertStrictEquals(mapEvent(helper({ timeFrom: '', date: '', startDate: '' }), 'helper'), null);
   // Ohne `timeFrom` zählt `date`.
   assertEquals(mapEvent(helper({ timeFrom: '' }), 'helper')?.starts_at, '2026-10-17T16:45:00.000Z');
+});
+
+Deno.test('mapTraining: Tag aus date, Uhrzeit aus der Serienvorlage – in Zürcher Ortszeit', () => {
+  // date 17.11. 18:30Z (Winter), timeFrom 6.10. 18:30Z (Sommer = 20:30 Zürich), timeTo 20:15Z (Sommer = 22:15 Zürich)
+  const training = mapTraining(
+    { id: 'tr1', name: 'Herren 2 GF Training', date: '2026-11-17T18:30:00Z', timeFrom: '2026-10-06T18:30:00.000Z', timeTo: '2027-03-30T20:15:00.000Z', location: 'BBC Arena', cancelled: false },
+    'su-432367',
+  );
+  assertEquals(training?.external_id, 'legacy:training:tr1');
+  assertEquals(training?.type, 'training');
+  assertEquals(training?.team_legacy_id, 'su-432367');
+  // 20:30 Zürich am 17.11. (Winter) = 19:30Z; 22:15 Zürich = 21:15Z
+  assertEquals(training?.starts_at, '2026-11-17T19:30:00.000Z');
+  assertEquals(training?.ends_at, '2026-11-17T21:15:00.000Z');
+  assertEquals(training?.why, null);
+  assertEquals(training?.shifts, []);
+});
+
+Deno.test('isCurrentTraining zählt den Tag des Trainings, nicht die Vorlage', () => {
+  const now = new Date('2026-09-12T10:00:00Z');
+  assertEquals(isCurrentTraining({ id: 't', date: '2026-12-10T18:30:00Z', timeFrom: '2026-06-04T18:30:00.000Z' }, now), true);
+  assertEquals(isCurrentTraining({ id: 't', date: '2026-06-04T18:30:00Z', timeFrom: '2026-12-10T18:30:00.000Z' }, now), false);
+});
+
+Deno.test('mapMember, mapTeam, mapResponse, gameExternalId', () => {
+  assertEquals(
+    mapMember({ id: 'uid1', firstName: ' Raphael', lastName: 'Fürst', roles: ['Vorstand', ''] }, { id: 'uid1', email: 'R@Example.ch' }),
+    { legacy_user_id: 'uid1', first_name: 'Raphael', last_name: 'Fürst', email: 'r@example.ch', roles: ['Vorstand'] },
+  );
+  assertEquals(mapMember({ id: 'uid2' }, null).email, null);
+
+  assertEquals(mapTeam({ id: 'su-432367', name: 'Herren GF 4. Liga II', type: 'swissunihockey', externalId: '432367' }, [{ id: 'a' }, { id: 'b' }]), {
+    legacy_team_id: 'su-432367', name: 'Herren GF 4. Liga II', federation_team_id: '432367', member_ids: ['a', 'b'],
+  });
+  assertEquals(mapTeam({ id: 'B8lJPtnXh3W1frLc7AFX', name: 'Junioren U13', type: 'swissunihockey', externalId: '' }, [])?.federation_team_id, null);
+  assertStrictEquals(mapTeam({ id: 'x' }, []), null);
+
+  assertEquals(mapResponse({ id: 'uid1', status: true, changedAt: '2026-09-04T07:54:54.627Z' }, 'legacy:helper:h1', 's1'), {
+    event_external_id: 'legacy:helper:h1', shift_external_id: 's1', legacy_user_id: 'uid1', status: true, changed_at: '2026-09-04T07:54:54.627Z',
+  });
+  assertEquals(mapResponse({ id: 'uid1', status: false }, 'swissunihockey:1', null)?.status, false);
+  assertStrictEquals(mapResponse({ id: 'uid1', status: 'ja' }, 'x'), null);
+
+  assertEquals(gameExternalId({ id: 'su-1102913', externalId: '1102913' }), 'swissunihockey:1102913');
+  assertEquals(gameExternalId({ id: 'su-7' }), 'swissunihockey:7');
+  assertStrictEquals(gameExternalId({ id: 'abc' }), null);
+  assertEquals(isCurrentGame({ id: 'g', dateTime: '2026-09-20T09:55:00Z' }, new Date('2026-09-12T10:00:00Z')), true);
 });

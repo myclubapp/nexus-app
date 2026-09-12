@@ -373,6 +373,7 @@ export type Database = {
           id: string
           is_minor: boolean
           leaderboard_opt_in: boolean
+          legacy_user_id: string | null
           member_since: string
           privacy: Json
           role: string
@@ -388,6 +389,7 @@ export type Database = {
           id?: string
           is_minor?: boolean
           leaderboard_opt_in?: boolean
+          legacy_user_id?: string | null
           member_since?: string
           privacy?: Json
           role?: string
@@ -403,6 +405,7 @@ export type Database = {
           id?: string
           is_minor?: boolean
           leaderboard_opt_in?: boolean
+          legacy_user_id?: string | null
           member_since?: string
           privacy?: Json
           role?: string
@@ -942,29 +945,29 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "functionary_roles_holder_member_id_fkey"
-            columns: ["holder_member_id"]
+            foreignKeyName: "functionary_roles_contact_member_id_fkey"
+            columns: ["contact_member_id"]
             isOneToOne: false
             referencedRelation: "club_directory"
             referencedColumns: ["member_id"]
           },
           {
-            foreignKeyName: "functionary_roles_holder_member_id_fkey"
-            columns: ["holder_member_id"]
+            foreignKeyName: "functionary_roles_contact_member_id_fkey"
+            columns: ["contact_member_id"]
             isOneToOne: false
             referencedRelation: "club_members"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "functionary_roles_contact_member_id_fkey"
-            columns: ["contact_member_id"]
+            foreignKeyName: "functionary_roles_holder_member_id_fkey"
+            columns: ["holder_member_id"]
             isOneToOne: false
             referencedRelation: "club_directory"
             referencedColumns: ["member_id"]
           },
           {
-            foreignKeyName: "functionary_roles_contact_member_id_fkey"
-            columns: ["contact_member_id"]
+            foreignKeyName: "functionary_roles_holder_member_id_fkey"
+            columns: ["holder_member_id"]
             isOneToOne: false
             referencedRelation: "club_members"
             referencedColumns: ["id"]
@@ -1279,6 +1282,8 @@ export type Database = {
           created_at: string
           firebase_club_id: string
           imported_events: number
+          imported_members: number
+          imported_responses: number
           last_error: string | null
           last_sync_at: string | null
           status: string
@@ -1288,6 +1293,8 @@ export type Database = {
           created_at?: string
           firebase_club_id: string
           imported_events?: number
+          imported_members?: number
+          imported_responses?: number
           last_error?: string | null
           last_sync_at?: string | null
           status?: string
@@ -1297,6 +1304,8 @@ export type Database = {
           created_at?: string
           firebase_club_id?: string
           imported_events?: number
+          imported_members?: number
+          imported_responses?: number
           last_error?: string | null
           last_sync_at?: string | null
           status?: string
@@ -2097,6 +2106,7 @@ export type Database = {
           federation_team_id: string | null
           id: string
           league: string | null
+          legacy_team_id: string | null
           name: string
           name_addition: string | null
         }
@@ -2110,6 +2120,7 @@ export type Database = {
           federation_team_id?: string | null
           id?: string
           league?: string | null
+          legacy_team_id?: string | null
           name: string
           name_addition?: string | null
         }
@@ -2123,6 +2134,7 @@ export type Database = {
           federation_team_id?: string | null
           id?: string
           league?: string | null
+          legacy_team_id?: string | null
           name?: string
           name_addition?: string | null
         }
@@ -2331,6 +2343,10 @@ export type Database = {
       }
     }
     Functions: {
+      add_legacy_team_members: {
+        Args: { p_legacy_user_ids: string[]; p_team_id: string }
+        Returns: number
+      }
       adopt_sample: {
         Args: { p_id: string; p_kind: string }
         Returns: undefined
@@ -2806,14 +2822,8 @@ export type Database = {
       }
       notify_signal_owners: { Args: { p_signal_id: string }; Returns: number }
       nudge_low_checkins: { Args: never; Returns: number }
-      office_open_seats: {
-        Args: { p_role_id: string }
-        Returns: number
-      }
-      path_club_id: {
-        Args: { p_name: string }
-        Returns: string
-      }
+      office_open_seats: { Args: { p_role_id: string }; Returns: number }
+      path_club_id: { Args: { p_name: string }; Returns: string }
       preview_invite: {
         Args: { p_code: string }
         Returns: {
@@ -2920,7 +2930,9 @@ export type Database = {
           p_club_id: string
           p_count?: number
           p_error?: string
+          p_members?: number
           p_ok: boolean
+          p_responses?: number
         }
         Returns: undefined
       }
@@ -3102,6 +3114,7 @@ export type Database = {
       sync_federations: { Args: never; Returns: number }
       sync_legacy_sources: { Args: never; Returns: number }
       sync_news_sources: { Args: never; Returns: number }
+      sync_office_holder: { Args: { p_role_id: string }; Returns: undefined }
       take_shift: {
         Args: { p_accept_overlap?: boolean; p_shift_id: string }
         Returns: {
@@ -3188,6 +3201,13 @@ export type Database = {
         }
         Returns: string
       }
+      upsert_legacy_attendance: {
+        Args: { p_club_id: string; p_rows: Json }
+        Returns: {
+          matched: number
+          unmatched: number
+        }[]
+      }
       upsert_legacy_event: {
         Args: {
           p_cancelled?: boolean
@@ -3199,9 +3219,23 @@ export type Database = {
           p_location?: string
           p_shifts?: Json
           p_starts_at: string
+          p_team_id?: string
           p_title: string
           p_type: string
           p_why: string
+        }
+        Returns: string
+      }
+      upsert_legacy_members: {
+        Args: { p_club_id: string; p_rows: Json }
+        Returns: number
+      }
+      upsert_legacy_team: {
+        Args: {
+          p_club_id: string
+          p_federation_team_id?: string
+          p_legacy_team_id: string
+          p_name: string
         }
         Returns: string
       }

@@ -13,8 +13,10 @@ export interface LegacySource {
   status: LegacyStatus;
   lastSyncAt: string | null;
   lastError: string | null;
-  /** Wie viele Termine der letzte gelungene Lauf brachte. */
+  /** Wie viele Termine, Mitglieder und Antworten der letzte gelungene Lauf brachte. */
   importedEvents: number;
+  importedMembers: number;
+  importedResponses: number;
 }
 
 /** Dieselbe Regel wie der Check in `0069_legacy_sources.sql`. */
@@ -72,31 +74,50 @@ export function isStale(
 export interface LegacyCheck {
   ok: boolean;
   name?: string | null;
+  members?: number;
+  teams?: number;
   events?: number;
   helpers?: number;
   shifts?: number;
+  trainings?: number;
+  games?: number;
+  responses?: number;
   error?: string;
 }
 
 /** Was die Übernahme zurückgibt (`sync-legacy`, Betriebsart `sync`). */
 export interface LegacySyncResult {
   ok: boolean;
+  members?: number;
+  teams?: number;
   events?: number;
   helpers?: number;
+  trainings?: number;
   shifts?: number;
+  responses?: number;
+  unmatched?: number;
   error?: string;
 }
 
 /**
- * Die Zahl der übernommenen Termine – oder warum keine kamen. Die Quelle ist
- * in beiden Fällen gespeichert; der Unterschied ist nur, was die Meldung sagt.
+ * Die Zahl der übernommenen Termine und Antworten – oder warum keine kamen.
+ * Die Quelle ist in beiden Fällen gespeichert; der Unterschied ist nur, was
+ * die Meldung sagt.
  */
-export type LegacySync = { count: number; error: null } | { count: null; error: string };
+export type LegacySync =
+  | { count: number; responses: number; error: null }
+  | { count: null; responses: null; error: string };
 
 export function readLegacySync(
   result: LegacySyncResult | null | undefined,
   fallback = 'Keine Antwort',
 ): LegacySync {
-  if (result?.ok) return { count: (result.events ?? 0) + (result.helpers ?? 0), error: null };
-  return { count: null, error: result?.error?.trim() || fallback };
+  if (result?.ok) {
+    return {
+      count: (result.events ?? 0) + (result.helpers ?? 0) + (result.trainings ?? 0),
+      responses: result.responses ?? 0,
+      error: null,
+    };
+  }
+  return { count: null, responses: null, error: result?.error?.trim() || fallback };
 }

@@ -209,6 +209,7 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-153 | Verknüpfung lösen           | Als Vorstand möchte ich die Verknüpfung eines Teams zum Verband lösen, damit das Team wieder allein von uns gepflegt wird und bereits importierte Termine bestehen bleiben.          | Low      | Implemented   |
 | FR-154 | Termine aus der bisherigen App übernehmen | Als Vorstand möchte ich die aktuellen Anlässe und Helfer-Events samt Schichten aus der bisherigen myclub-App übernehmen, damit wir während der Umstellung nichts zweimal erfassen. | High     | Implemented   |
 | FR-155 | Bisherige App täglich abgleichen | Als System möchte ich die verbundene bisherige App jede Nacht abgleichen, damit neue und geänderte Termine von selbst in der Agenda stehen. | High     | Implemented   |
+| FR-156 | Mitglieder, Teams und Zusagen aus der bisherigen App übernehmen | Als Vorstand möchte ich, dass mit den Terminen auch unsere Mitglieder, Teams, Trainings und die Zu- und Absagen aus der bisherigen myclub-App übernommen werden, damit die Umstellung ohne Neuerfassung der Personen gelingt. | High     | Implemented   |
 
 ### 1.12 Erstbefüllung, leere Zustände & Einführung
 

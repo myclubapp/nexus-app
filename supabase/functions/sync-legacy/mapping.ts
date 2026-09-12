@@ -29,7 +29,9 @@ export interface LegacyShift {
 
 export interface LegacyEvent {
   external_id: string;
-  type: 'social' | 'helper';
+  type: 'social' | 'helper' | 'training';
+  /** Team der alten App (`su-432367`), bei Trainings. */
+  team_legacy_id: string | null;
   title: string;
   why: string | null;
   starts_at: string;
@@ -195,5 +197,145 @@ export function mapEvent(doc: LegacyDoc, kind: LegacyKind, shifts: LegacyDoc[] =
     cancelled: doc.cancelled === true,
     cancelled_reason: text(doc.cancelledReason) || null,
     shifts: kind === 'helper' ? shifts.map((shift) => mapShift(shift, startsAt)) : [],
+    team_legacy_id: null,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Trainings, Mitglieder, Teams, Antworten (0071).
+// ---------------------------------------------------------------------------
+
+/**
+ * Der Beginn eines Trainings: `date` ist der Tag **und** die Zeit des
+ * einzelnen Termins, `timeFrom`/`timeTo` sind Zeitvorlagen der Serie von
+ * einem anderen Tag. Die alte App zeigt `date` als Datum und die Uhrzeit von
+ * `timeFrom`/`timeTo` (training-detail.page.html) – genau das entsteht hier:
+ * der Zürcher Tag von `date` mit der Zürcher Uhrzeit der Vorlage.
+ */
+export function readTrainingStartsAt(doc: LegacyDoc): string | null {
+  const day = isoOrNull(doc.date) ?? isoOrNull(doc.startDate);
+  if (!day) return null;
+  const from = isoOrNull(doc.timeFrom);
+  if (!from) return day;
+  const d = zurichParts(new Date(day));
+  const t = zurichParts(new Date(from));
+  return zurichToIso(d.year, d.month, d.day, t.hour, t.minute);
+}
+
+export function isCurrentTraining(doc: LegacyDoc, now: Date = new Date()): boolean {
+  const startsAt = readTrainingStartsAt(doc);
+  if (!startsAt) return false;
+  return Date.parse(startsAt) >= now.getTime() - CURRENT_GRACE_MS;
+}
+
+/** Ein Training der alten App als Termin des Teams. */
+export function mapTraining(doc: LegacyDoc, teamLegacyId: string): LegacyEvent | null {
+  const title = text(doc.name);
+  const startsAt = readTrainingStartsAt(doc);
+  if (!title || !startsAt) return null;
+
+  let endsAt: string | null = null;
+  const to = isoOrNull(doc.timeTo) ?? isoOrNull(doc.endDate);
+  if (to) {
+    const d = zurichParts(new Date(startsAt));
+    const t = zurichParts(new Date(to));
+    endsAt = zurichToIso(d.year, d.month, d.day, t.hour, t.minute);
+    if (Date.parse(endsAt) <= Date.parse(startsAt)) endsAt = null;
+  }
+
+  return {
+    external_id: `legacy:training:${doc.id}`,
+    type: 'training',
+    team_legacy_id: teamLegacyId,
+    title,
+    why: text(doc.description) || null,
+    starts_at: startsAt,
+    ends_at: endsAt,
+    location: readLocation(doc),
+    capacity_needed: null,
+    cancelled: doc.cancelled === true,
+    cancelled_reason: text(doc.cancelledReason) || null,
+    shifts: [],
+  };
+}
+
+export interface LegacyMember {
+  legacy_user_id: string;
+  first_name: string;
+  last_name: string;
+  email: string | null;
+  roles: string[];
+}
+
+/** Ein Mitglied: `club/<id>/members/<uid>` plus `userProfile/<uid>` (E-Mail). */
+export function mapMember(member: LegacyDoc, profile: LegacyDoc | null): LegacyMember {
+  const roles = Array.isArray(member.roles) ? member.roles.map((role) => text(role)).filter(Boolean) : [];
+  return {
+    legacy_user_id: member.id,
+    first_name: text(member.firstName) || text(profile?.firstName),
+    last_name: text(member.lastName) || text(profile?.lastName),
+    email: text(profile?.email).toLowerCase() || null,
+    roles,
+  };
+}
+
+export interface LegacyTeam {
+  legacy_team_id: string;
+  name: string;
+  /** Die Verbandskennung («432367» aus `su-432367` oder `externalId`). */
+  federation_team_id: string | null;
+  member_ids: string[];
+}
+
+/** Ein Team: das Dokument `teams/<id>` und seine Mitglieder. Ohne Namen kein Team. */
+export function mapTeam(team: LegacyDoc, members: LegacyDoc[]): LegacyTeam | null {
+  const name = text(team.name);
+  if (!name) return null;
+  const external = text(team.externalId) || (/^su-(\d+)$/.exec(team.id)?.[1] ?? '');
+  return {
+    legacy_team_id: team.id,
+    name,
+    federation_team_id: text(team.type) === 'swissunihockey' || /^su-\d+$/.test(team.id)
+      ? external || null
+      : null,
+    member_ids: members.map((member) => member.id),
+  };
+}
+
+export interface LegacyResponse {
+  event_external_id: string;
+  shift_external_id: string | null;
+  legacy_user_id: string;
+  status: boolean;
+  changed_at: string | null;
+}
+
+/**
+ * Die Antwort einer Person: `{ status: true/false, changedAt }` unter
+ * `…/attendees/<uid>`. Ohne lesbaren Status keine Antwort.
+ */
+export function mapResponse(
+  attendee: LegacyDoc,
+  eventExternalId: string,
+  shiftExternalId: string | null = null,
+): LegacyResponse | null {
+  if (typeof attendee.status !== 'boolean') return null;
+  return {
+    event_external_id: eventExternalId,
+    shift_external_id: shiftExternalId,
+    legacy_user_id: attendee.id,
+    status: attendee.status,
+    changed_at: isoOrNull(attendee.changedAt),
+  };
+}
+
+/** Ein Spiel der alten App gehört zum Verbandsspiel mit derselben Kennung (BR-194). */
+export function gameExternalId(game: LegacyDoc): string | null {
+  const id = text(game.externalId) || (/^su-(\d+)$/.exec(game.id)?.[1] ?? '');
+  return id ? `swissunihockey:${id}` : null;
+}
+
+export function isCurrentGame(game: LegacyDoc, now: Date = new Date()): boolean {
+  const at = isoOrNull(game.dateTime);
+  return at !== null && Date.parse(at) >= now.getTime() - CURRENT_GRACE_MS;
 }
