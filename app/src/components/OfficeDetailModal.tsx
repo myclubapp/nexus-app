@@ -46,7 +46,9 @@ export function OfficeDetail({ office, onEdit, onDismiss, isOpen = true }: Offic
       {/* BR-183: Die Vakanz ist das Erste, was jemand wissen will. */}
       <div className="app-actions">
         {vacant ? (
-          <IonBadge color="warning">{t('offices.openSeats', { count: open })}</IonBadge>
+          <IonBadge color="warning" aria-label={t('offices.openSeats', { count: open })}>
+            {open}
+          </IonBadge>
         ) : (
           <IonBadge color="success">{t('offices.occupied')}</IonBadge>
         )}

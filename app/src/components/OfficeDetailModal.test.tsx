@@ -98,7 +98,8 @@ describe('OfficeDetail', () => {
   it('rechnet die Vakanz aus Sitzen und Belegung – ad interim zählt nicht (BR-183)', () => {
     renderWithProviders(<OfficeDetail office={office()} onDismiss={() => undefined} />);
     // Sechs Sitze, eine ordentliche Inhaberin: fünf frei, «1 von 6 besetzt».
-    expect(screen.getByText('5 Sitze frei')).toBeInTheDocument();
+    // guidelines §11 Nr. 18: im Badge nur die Zahl, der Wortlaut als aria-label.
+    expect(screen.getByLabelText('5 Sitze frei')).toHaveTextContent('5');
     expect(screen.getByText('1 von 6 besetzt')).toBeInTheDocument();
   });
 
