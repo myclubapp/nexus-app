@@ -67,21 +67,25 @@ describe('ShiftList', () => {
   it('zeigt Zeitfenster, Punktwert und Besetzung (Schritt 2)', () => {
     const { container } = render();
     expect(container.textContent).toContain('+50');
-    expect(container.textContent).toContain('0 von 2 besetzt');
+    // Guidelines §2: im Badge nur die Zahl, der Wortlaut für Bedienhilfen.
+    const badge = container.querySelector('ion-badge')!;
+    expect(badge).toHaveTextContent('0/2');
+    expect(badge).toHaveAttribute('aria-label', '0 von 2 besetzt');
+    expect(container.textContent).not.toContain('besetzt');
   });
 
   it('zählt eine Absage nicht als besetzten Platz (BR-046)', () => {
     const { container } = render({
       attendance: [entry(), entry({ member_id: 'x', status: 'excused' })],
     });
-    expect(container.textContent).toContain('1 von 2 besetzt');
+    expect(container.querySelector('ion-badge')).toHaveTextContent('1/2');
   });
 
   it('sperrt eine volle Schicht (BR-046)', () => {
     const { container } = render({
       attendance: [entry({ member_id: 'a' }), entry({ member_id: 'b' })],
     });
-    expect(container.textContent).toContain('2 von 2 besetzt');
+    expect(container.querySelector('ion-badge')).toHaveTextContent('2/2');
     const button = container.querySelector('ion-button')!;
     expect(button).toHaveTextContent('Voll');
     expect(ionProp(button, 'disabled')).toBe(true);

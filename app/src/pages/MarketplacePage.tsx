@@ -495,8 +495,14 @@ export function MarketplacePage() {
                     <p>{formatDateTime(event.starts_at)}</p>
                     {event.why && <IonNote>{event.why}</IonNote>}
                   </IonLabel>
-                  <IonBadge slot="end" color="tertiary">
-                    {t('agenda.shiftNeeded', { filled: needed - open, needed })}
+                  {/* BR-041: im Badge nur die Zahl, der Wortlaut für
+                      Bedienhilfen – wie in der Agenda (guidelines §2). */}
+                  <IonBadge
+                    slot="end"
+                    color="tertiary"
+                    aria-label={t('agenda.shiftNeeded', { filled: needed - open, needed })}
+                  >
+                    {needed - open}/{needed}
                   </IonBadge>
                 </IonItem>
               ))}

@@ -118,11 +118,14 @@ export function ShiftList({
                 </IonNote>
                 <p>
                   {/* BR-041: die Unterdeckung, jederzeit sichtbar. */}
-                  <IonBadge color={coverage.isFull ? 'success' : 'tertiary'}>
-                    {t('agenda.shiftNeeded', {
+                  <IonBadge
+                    color={coverage.isFull ? 'success' : 'tertiary'}
+                    aria-label={t('agenda.shiftNeeded', {
                       filled: coverage.filled,
                       needed: coverage.needed,
                     })}
+                  >
+                    {coverage.filled}/{coverage.needed}
                   </IonBadge>
                 </p>
               </IonLabel>

@@ -67,6 +67,7 @@ Daraus folgen die Muster:
 | Auswahl aus einer Liste       | `IonSelect` **mit `cancelText`/`okText`** – sonst «Cancel»/«OK» (§8)    |
 | **Datum oder Uhrzeit**        | **`DateField`** – `IonDatetimeButton` + `IonModal` + `IonDatetime`, nie ein rohes `<input type="date">`/`datetime-local` (§8; Fallstrick in `CLAUDE.md`) |
 | Eine Person in einer Zeile    | `MemberAvatar` am Zeilenanfang (Bild, sonst Initialen), die Rolle als `IonBadge` – der Schnitt des `user-list-item` der bestehenden myclub-App |
+| **Ein Zähler als Badge**      | **Nur die Zahl**: `4/5`, `3`, `+50` – nie ein Satz wie «4 von 5 besetzt». Der Wortlaut hängt als `aria-label` am `IonBadge`; wer Worte braucht, schreibt sie in eine `IonNote` oder den `<p>` der Zeile (`AgendaPage`, `MarketplacePage`, `ShiftListModal`) |
 | **Inhalt lädt**               | **Skelett in der Form des Inhalts** (§4), nicht ein Spinner             |
 | **Eine Aktion läuft**         | **`IonSpinner` im auslösenden Knopf** (§4)                              |
 | Rückfrage **vor** einer Aktion | `IonAlert` bzw. `IonActionSheet`, nie ein eigener Dialog                |
@@ -820,6 +821,10 @@ ist er der Hauptweg. Er ist deshalb als **PWA** eingerichtet
     `<FormModal isOpen>` mit nacktem `isOpen`, ein `{open && <Form …/>}` in
     einer Seite. Die Hülle geht über `useSheetProps()`, sonst bleibt die Seite
     in der Karten-Stellung stehen (§2).
+18. **Ein Satz in einem `IonBadge`.** Ein Badge trägt eine Zahl (`4/5`) oder
+    ein einzelnes Wort (Rolle, Status) – «4 von 5 besetzt» drückt den Titel
+    daneben auf zwei Zeilen. Der Wortlaut gehört als `aria-label` an den
+    Badge, als lesbarer Text in eine `IonNote` (§2).
 
 ---
 
