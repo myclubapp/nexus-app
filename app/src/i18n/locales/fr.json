@@ -1672,7 +1672,7 @@
     "checking": "Vérification de la liaison …",
     "status": "État",
     "statusLabel": {
-      "pending": "Pas encore vérifié",
+      "pending": "Non vérifié",
       "active": "Actif",
       "error": "Erreur"
     },

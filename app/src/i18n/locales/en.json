@@ -1672,7 +1672,7 @@
     "checking": "Checking the connection …",
     "status": "State",
     "statusLabel": {
-      "pending": "Not checked yet",
+      "pending": "Unchecked",
       "active": "Active",
       "error": "Error"
     },

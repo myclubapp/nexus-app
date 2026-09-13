@@ -1672,7 +1672,7 @@
     "checking": "Verbindung wird geprüft …",
     "status": "Stand",
     "statusLabel": {
-      "pending": "Noch nicht geprüft",
+      "pending": "Ungeprüft",
       "active": "Aktiv",
       "error": "Fehler"
     },

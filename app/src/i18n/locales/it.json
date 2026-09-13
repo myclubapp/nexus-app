@@ -1672,7 +1672,7 @@
     "checking": "Verifica del collegamento …",
     "status": "Stato",
     "statusLabel": {
-      "pending": "Non ancora verificato",
+      "pending": "Non verificato",
       "active": "Attivo",
       "error": "Errore"
     },

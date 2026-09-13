@@ -31,7 +31,7 @@
 | 4 | Ohne Kennung auf «Prüfen und verbinden» | Der Knopf ist gesperrt, der Grund steht dabei | | |
 | 5 | Die echte Vereinskennung eintragen und prüfen | Die Teams des Vereins erscheinen mit Namen und Liga | | |
 | 6 | Den Abschnitt darunter lesen | Er sagt, dass Spiele erst mit der Verknüpfung entstehen (UC-039); «Zu den Teams» führt zur Teamseite | | |
-| 7 | Den Zustand ansehen | «Noch nicht geprüft» in Grau, nicht in Gelb | | |
+| 7 | Den Zustand ansehen | «Ungeprüft» in Grau, nicht in Gelb | | |
 | 8 | Die Seite neu laden | Die Verbindung steht mit Verband, Zustand und «Noch kein Abgleich» | | |
 
 ---
@@ -121,7 +121,7 @@
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
 | 1 | Die Seite auf Französisch, Italienisch und Englisch öffnen | Alle Texte übersetzt; die Verbandsnamen bleiben Eigennamen | | |
-| 2 | Die Zustände prüfen | «Aktiv», «Fehler», «Noch nicht geprüft» in jeder Sprache | | |
+| 2 | Die Zustände prüfen | «Aktiv», «Fehler», «Ungeprüft» in jeder Sprache | | |
 | 3 | Die Rückfrage beim Trennen prüfen | Übersetzt, mit «Abbrechen» links | | |
 | 4 | Auf 320 px prüfen | Abzeichen und Text stehen nebeneinander, ohne zu überlaufen | | |
 | 5 | Während der Prüfung hinsehen | Der Knopf sagt «Verbindung wird geprüft …» und ist gesperrt | | |
