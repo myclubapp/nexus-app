@@ -96,7 +96,7 @@ synchron gehalten werden können.
 | [UC-039](UC-039-verbands-team-verknuepfen.md) | Verbands-Team verknüpfen oder importieren | Vorstand | FR-150, FR-151, FR-152, FR-153 | Implemented |
 | [UC-040](UC-040-bisherige-app-uebernehmen.md) | Termine aus der bisherigen myclub-App übernehmen | Vorstand | FR-154, FR-155, FR-156 | Implemented |
 | [UC-036](UC-036-rechnungen-einsehen.md) | Rechnungen einsehen und Punkte bei pünktlicher Zahlung | Mitglied | FR-116, FR-117, FR-118, FR-119 | Implemented |
-| [UC-046](UC-046-rechnung-stellen-und-versenden.md) | Rechnung stellen und mit QR-Einzahlungsschein versenden | Kassier:in | FR-169, FR-170, FR-171, FR-172, FR-173, FR-174 | Implemented |
+| [UC-046](UC-046-rechnung-stellen-und-versenden.md) | Rechnung stellen und mit QR-Einzahlungsschein versenden | Kassier:in | FR-169 bis FR-174, FR-176 | Implemented |
 | [UC-047](UC-047-zahlungseingaenge-abgleichen.md) | Zahlungseingänge aus der Bankdatei abgleichen | Kassier:in | FR-175 | Implemented |
 | [UC-037](UC-037-beispielinhalte-verwalten.md) | Beispielinhalte verwalten | Vorstand | FR-134 bis FR-145 | Implemented |
 
@@ -125,7 +125,6 @@ Diese Anforderungen sind bewusst nach dem MVP eingeplant und tragen im Katalog d
 | Eltern und Kinder | FR-129 |
 | Exporte und Bulk-Import | FR-131, FR-132 – FR-130 ist seit UC-043 gebaut |
 | Kalender-Publishing | FR-133 |
-| Zahlungserinnerung an eine offene Rechnung | FR-176 – die Erinnerung **vor** der Fälligkeit läuft seit `0054` von selbst; das Nachfassen danach ist offen |
 
 Ebenfalls ohne eigene Spezifikation, weil vollständig systemseitig: FR-060, FR-061, FR-068, FR-069
 (Kennzahlen der Vereins-Gesundheit) – sie sind Anzeigeflächen der in UC-023 beschriebenen Signale und
@@ -138,7 +137,7 @@ Ablauf steht in UC-008, die Gliederung der Seite in [`../guidelines.md`](../guid
 
 ## Geschäftsregeln
 
-Die Regeln BR-001 bis BR-235 sind fortlaufend und über alle Use Cases hinweg eindeutig vergeben. **Wer eine neue vergibt, prüft zuerst den höchsten Stand** – zuletzt kollidierten UC-044 und UC-045 auf BR-210 bis BR-213.
+Die Regeln BR-001 bis BR-236 sind fortlaufend und über alle Use Cases hinweg eindeutig vergeben. **Wer eine neue vergibt, prüft zuerst den höchsten Stand** – zuletzt kollidierten UC-044 und UC-045 auf BR-210 bis BR-213.
 Die vier nicht verhandelbaren Regeln des Projekts sind über mehrere Use Cases verteilt:
 
 | Prinzip | Regeln |

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  canRemind,
   creditorProblems,
   formatQrReference,
   isQrIban,
@@ -7,6 +8,7 @@ import {
   periodTotals,
   positionsFor,
   qrCheckDigit,
+  remindableCount,
   stateTone,
   totalFor,
 } from './invoicing';
@@ -43,6 +45,8 @@ function invoice(overrides: Partial<Invoice> = {}): Invoice {
     payer: null,
     cancelled_at: null,
     cancel_reason: null,
+    reminded_at: null,
+    reminder_count: 0,
     created_at: '2026-09-14T10:00:00Z',
     updated_at: '2026-09-14T10:00:00Z',
     ...overrides,
@@ -184,6 +188,51 @@ describe('periodTotals', () => {
       open: 0,
       received: 0,
     });
+  });
+});
+
+describe('canRemind (FR-176, BR-236)', () => {
+  const today = '2026-11-01';
+
+  it('erinnert an eine überfällige, noch nie erinnerte Rechnung', () => {
+    expect(canRemind(invoice({ status: 'sent', due_date: '2026-10-15' }), today)).toBe(true);
+  });
+
+  it('erinnert nicht, solange die Frist läuft', () => {
+    // Dafür gibt es die Erinnerung **vor** der Fälligkeit (0054, nächtlich).
+    expect(canRemind(invoice({ status: 'sent', due_date: '2026-12-01' }), today)).toBe(false);
+    expect(canRemind(invoice({ status: 'sent', due_date: today }), today)).toBe(false);
+  });
+
+  it('erinnert nicht an Entwürfe, Bezahltes oder Storniertes', () => {
+    for (const status of ['draft', 'paid', 'cancelled'] as const) {
+      expect(canRemind(invoice({ status, due_date: '2026-10-15' }), today)).toBe(false);
+    }
+  });
+
+  it('höchstens eine Erinnerung je Woche (BR-236)', () => {
+    const base = { status: 'sent' as const, due_date: '2026-10-15' };
+    expect(
+      canRemind(invoice({ ...base, reminded_at: '2026-10-29T08:00:00Z' }), today),
+    ).toBe(false);
+    // Genau sieben Tage her: Die Woche ist um.
+    expect(
+      canRemind(invoice({ ...base, reminded_at: '2026-10-25T08:00:00Z' }), today),
+    ).toBe(true);
+  });
+
+  it('zählt, an wie viele erinnert würde', () => {
+    expect(
+      remindableCount(
+        [
+          invoice({ status: 'sent', due_date: '2026-10-15' }),
+          invoice({ status: 'sent', due_date: '2026-10-20', reminded_at: '2026-10-31T08:00:00Z' }),
+          invoice({ status: 'paid', due_date: '2026-10-15' }),
+          invoice({ status: 'sent', due_date: '2026-12-31' }),
+        ],
+        today,
+      ),
+    ).toBe(1);
   });
 });
 

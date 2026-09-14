@@ -2,14 +2,14 @@
 
 **Use Cases:** [UC-046](../use_cases/UC-046-rechnung-stellen-und-versenden.md), [UC-047](../use_cases/UC-047-zahlungseingaenge-abgleichen.md)
 **Geltungsbereich:** Gläubigerangaben, Beiträge, Periode, Entwürfe, QR-PDF, Versand, Storno, camt-Abgleich
-**Anforderungen:** FR-169 bis FR-175, FR-116, FR-118, FR-119
-**Regeln:** BR-220 bis BR-235, BR-156 bis BR-158
+**Anforderungen:** FR-169 bis FR-176, FR-116, FR-118, FR-119
+**Regeln:** BR-220 bis BR-236, BR-156 bis BR-158
 **Erstellt:** 2026-09-14
 
 ## Vorbereitung
 
 - **V** — Vorstand (Rolle admin, die Kassier:in). **M** — Mitglied mit E-Mail-Adresse und vollständiger Adresse. **M2** — Mitglied **ohne** Strasse/Ort im Profil.
-- Migrationen `0087`–`0089` eingespielt, `npm run types:generate` gelaufen.
+- Migrationen `0087`–`0090` eingespielt, `npm run types:generate` gelaufen.
 - Edge Functions `invoice-run` und `payment-import` deployt; Secrets `SMTP_*` und `MAIL_FROM` gesetzt (dieselben wie UC-044).
 - Das Modul «Rechnungen» ist in den Vereinseinstellungen **eingeschaltet**.
 - Eine **QR-IBAN** zur Hand (beginnt mit CH/LI, an fünfter Stelle eine 3). Zum Prüfen taugt die Testnummer `CH44 3199 9123 0008 8901 2`.
@@ -162,6 +162,22 @@
 
 ---
 
+## TC-010b: An eine offene Rechnung erinnern (FR-176, A8, BR-236)
+
+**Priority:** High
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Eine Periode mit Fälligkeit **gestern** anlegen, Rechnung erzeugen und versenden | Die Zeile trägt «Versendet» mit warnendem Badge | | |
+| 2 | Die Periode ansehen | Unter «Versenden» steht «1 Überfällige erinnern» | | |
+| 3 | Antippen | Toast «1 erinnert.»; unter der Zeile steht «1× erinnert» | | |
+| 4 | Noch einmal antippen | Der Knopf ist verschwunden – diese Woche geht keine zweite hinaus (BR-236) | | |
+| 5 | Als **M** die App öffnen | Meldung «Eine Rechnung ist noch offen» mit Betrag und Fälligkeit; kein Wort über Gebühren oder Folgen (BR-158) | | |
+| 6 | Die Zeile öffnen | «Verwalten» bietet **kein** «Erinnern» mehr, solange die Woche läuft | | |
+| 7 | Eine Rechnung ansehen, deren Frist noch läuft | Weder Knopf noch «Erinnern» im Blatt – dafür gibt es die nächtliche Erinnerung sieben Tage vor der Fälligkeit | | |
+
+---
+
 ## TC-011: Überfälligkeit (UC-036 A3, 0089)
 
 **Priority:** Medium
@@ -184,3 +200,4 @@
 | 2 | Ein Auswahlfeld öffnen (Währung, Gilt für) | «Annuler» und «OK», nicht «Cancel» | | |
 | 3 | Italienisch und Englisch ebenso | Dasselbe | | |
 | 4 | Als **M** mit französischer Sprache eine Rechnung zustellen lassen | Die Mail ist französisch | | |
+| 5 | Das PDF dieser Rechnung öffnen | Auch das **Blatt** ist französisch: «Référence», «Date de facture», «Désignation», und der Einzahlungsschein sagt «Récépissé» / «Section paiement» | | |

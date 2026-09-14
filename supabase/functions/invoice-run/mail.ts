@@ -83,6 +83,92 @@ function escapeHtml(value: string): string {
     .replace(/"/g, '&quot;');
 }
 
+/**
+ * Die Beschriftungen **auf dem Blatt** (nicht in der Mail).
+ *
+ * Die Rechnung ist ein Dokument des Vereins an eine Person – sie gehört in
+ * deren Sprache, wie jeder andere Benutzertext (CLAUDE.md). `swissqrbill`
+ * übersetzt den Einzahlungsschein selbst, sobald es `language` bekommt; was
+ * darüber steht, kommt von hier.
+ */
+export const PDF_LABELS: Record<Locale, {
+  position: string;
+  description: string;
+  amount: string;
+  total: string;
+  reference: string;
+  date: string;
+  incomplete: string;
+}> = {
+  de: {
+    position: 'Pos.',
+    description: 'Bezeichnung',
+    amount: 'Betrag',
+    total: 'Total',
+    reference: 'Referenz',
+    date: 'Rechnungsdatum',
+    incomplete:
+      'Hinweis: Die Adressangaben sind unvollständig. Bitte ergänze sie in deinem Profil, damit die nächste Rechnung richtig zugestellt wird.',
+  },
+  fr: {
+    position: 'Pos.',
+    description: 'Désignation',
+    amount: 'Montant',
+    total: 'Total',
+    reference: 'Référence',
+    date: 'Date de facture',
+    incomplete:
+      'Remarque : tes coordonnées sont incomplètes. Merci de les compléter dans ton profil pour que la prochaine facture te parvienne correctement.',
+  },
+  it: {
+    position: 'Pos.',
+    description: 'Denominazione',
+    amount: 'Importo',
+    total: 'Totale',
+    reference: 'Riferimento',
+    date: 'Data della fattura',
+    incomplete:
+      'Nota: i tuoi dati di indirizzo sono incompleti. Completali nel tuo profilo, così la prossima fattura arriverà correttamente.',
+  },
+  en: {
+    position: 'Pos.',
+    description: 'Description',
+    amount: 'Amount',
+    total: 'Total',
+    reference: 'Reference',
+    date: 'Invoice date',
+    incomplete:
+      'Note: your address details are incomplete. Please complete them in your profile so the next invoice reaches you properly.',
+  },
+};
+
+/** Die Sprache, in der `swissqrbill` den Einzahlungsschein beschriftet. */
+export function billLanguage(locale: Locale): 'DE' | 'FR' | 'IT' | 'EN' {
+  return locale.toUpperCase() as 'DE' | 'FR' | 'IT' | 'EN';
+}
+
+/**
+ * Die Referenz, wie sie auf dem Einzahlungsschein steht: von **rechts** in
+ * Fünfergruppen (SIX). Dieselbe Regel wie `formatQrReference()` in der App –
+ * links gruppiert stünde dieselbe Zahl auf demselben Blatt zweimal
+ * verschieden.
+ */
+export function groupReference(reference: string): string {
+  const clean = reference.replace(/\s/g, '');
+  const head = clean.length % 5;
+  const groups: string[] = [];
+  if (head > 0) groups.push(clean.slice(0, head));
+  for (let index = head; index < clean.length; index += 5) {
+    groups.push(clean.slice(index, index + 5));
+  }
+  return groups.join(' ');
+}
+
+/** Ein Datum, wie es in der Schweiz auf einer Rechnung steht. */
+export function swissDate(date: Date): string {
+  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+}
+
 export function invoiceMail(
   locale: Locale,
   input: InvoiceMailInput,

@@ -1493,6 +1493,8 @@ export type Database = {
           pdf_path: string | null
           period_id: string
           reference: string
+          reminded_at: string | null
+          reminder_count: number
           sent_at: string | null
           status: string
           updated_at: string
@@ -1512,6 +1514,8 @@ export type Database = {
           pdf_path?: string | null
           period_id: string
           reference: string
+          reminded_at?: string | null
+          reminder_count?: number
           sent_at?: string | null
           status?: string
           updated_at?: string
@@ -1531,6 +1535,8 @@ export type Database = {
           pdf_path?: string | null
           period_id?: string
           reference?: string
+          reminded_at?: string | null
+          reminder_count?: number
           sent_at?: string | null
           status?: string
           updated_at?: string
@@ -3437,6 +3443,7 @@ export type Database = {
         Args: { p_code: string; p_display_name?: string }
         Returns: string
       }
+      refresh_invoice_overdue: { Args: never; Returns: number }
       reject_task: {
         Args: { p_assignment_id: string; p_note: string }
         Returns: undefined
@@ -3455,6 +3462,8 @@ export type Database = {
       }
       release_task: { Args: { p_task_id: string }; Returns: boolean }
       remind_due_invoices: { Args: never; Returns: number }
+      remind_invoice: { Args: { p_invoice_id: string }; Returns: boolean }
+      remind_open_invoices: { Args: { p_period_id: string }; Returns: Json }
       remind_undecided: {
         Args: { p_event_id: string }
         Returns: {

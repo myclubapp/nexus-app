@@ -310,6 +310,49 @@ export function useCancelInvoice() {
   });
 }
 
+/**
+ * An eine offene Rechnung erinnern (FR-176).
+ *
+ * Die Antwort `false` heisst «diese Woche schon erinnert» (BR-236) – kein
+ * Fehler, sondern eine Auskunft.
+ */
+export function useRemindInvoice() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (invoiceId: string): Promise<boolean> => {
+      const { data, error } = await supabase.rpc('remind_invoice', {
+        p_invoice_id: invoiceId,
+      });
+      if (error) throw new Error(error.message);
+      return data === true;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['invoices'] }),
+  });
+}
+
+/** Was ein Sammellauf der Erinnerungen bewirkt hat. */
+export interface RemindResult {
+  reminded: number;
+  skipped: number;
+}
+
+/** An alle überfälligen Rechnungen einer Periode erinnern (FR-176). */
+export function useRemindOpenInvoices() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (periodId: string): Promise<RemindResult> => {
+      const { data, error } = await supabase.rpc('remind_open_invoices', {
+        p_period_id: periodId,
+      });
+      if (error) throw new Error(error.message);
+      return data as unknown as RemindResult;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['invoices'] }),
+  });
+}
+
 /** Was der Rechnungslauf zurückmeldet (FR-173, FR-174). */
 export interface InvoiceRunResult {
   sent: number;

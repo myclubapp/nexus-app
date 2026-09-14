@@ -37,6 +37,8 @@
 11. System setzt den Stand der Rechnung auf versendet und schreibt Betrag, Fälligkeit, Stand und den Link in den Rechnungsspiegel, aus dem das Mitglied sie sieht (UC-036).
 12. System zeigt der Kassier:in den Stand der Periode: wie viele Rechnungen versendet sind und welcher Betrag offen ist.
 
+> Die Rechnung – Blatt wie Begleitmail – erscheint in der Sprache der Person, nicht in der des Vereins.
+
 ## Alternative Flows
 
 ### A1: Gläubigerangaben fehlen oder die QR-IBAN ist ungültig
@@ -91,6 +93,16 @@
 
 1. System überspringt dieses Mitglied und nennt es der Kassier:in.
 2. Der Lauf geht für die übrigen Mitglieder weiter; use case continues at step 6.
+
+### A8: An eine offene Rechnung erinnern
+
+**Trigger:** Eine versendete Rechnung ist über ihre Fälligkeit hinaus offen (nach Schritt 12)
+**Flow:**
+
+1. Kassier:in erinnert an eine einzelne Rechnung oder an alle überfälligen der Periode.
+2. System benachrichtigt die betroffenen Mitglieder mit Betrag und Fälligkeit und hält fest, wann und wie oft erinnert wurde.
+3. An eine Rechnung, an die diese Woche schon erinnert wurde, geht keine zweite Erinnerung; System nennt die Zahl der tatsächlich verschickten.
+4. Use case ends.
 
 ### A7: Modul nicht eingeschaltet
 
@@ -153,6 +165,10 @@ Punkte der Säule 6 entstehen ausschliesslich bei Zahlung innerhalb der Frist (B
 ### BR-228: Der Betrag ist die Summe seiner Positionen
 
 Jede Rechnung führt ihre Positionen mit Bezeichnung und Betrag. Der Rechnungsbetrag ist deren Summe in einer Währung; ein frei gesetzter Gesamtbetrag ohne Positionen entsteht nicht.
+
+### BR-236: Eine Erinnerung je Woche und Rechnung
+
+Eine Erinnerung ist ein Hinweis, kein Mahnlauf. Zur selben Rechnung geht höchstens eine je Woche hinaus – auch wenn zwei Vorstandsmitglieder gleichzeitig nachfassen. Sie nennt Betrag und Fälligkeit, keine Gebühr und keine Folge (BR-158).
 
 ### BR-235: Eine bezahlte Rechnung wird nicht storniert
 

@@ -160,6 +160,41 @@ export function periodTotals(invoices: readonly Invoice[]): PeriodTotals {
 }
 
 /**
+ * Darf an diese Rechnung erinnert werden (FR-176, BR-236)?
+ *
+ * Drei Bedingungen, alle drei auch in `remind_invoice()`: Die Rechnung ist
+ * offen, ihre Frist ist abgelaufen, und diese Woche ging noch keine
+ * Erinnerung hinaus. Hier entscheidet die Regel nur, ob der Weg angeboten
+ * wird – ein Knopf, der auf «diese Woche schon erinnert» läuft, wäre ein
+ * Versprechen, das der Server bricht.
+ */
+export function canRemind(
+  invoice: Pick<Invoice, 'status' | 'due_date' | 'reminded_at'>,
+  today: string,
+): boolean {
+  if (invoice.status !== 'sent') return false;
+  if (invoice.due_date >= today) return false;
+  if (!invoice.reminded_at) return true;
+
+  // **In UTC rechnen, nicht lokal.** `new Date('2026-11-01')` ist Mitternacht
+  // UTC; `setDate()` liest und schreibt in Ortszeit, und über den Wechsel von
+  // Sommer- auf Winterzeit verliert diese Rechnung eine Stunde – die Woche
+  // wäre dann sechs Tage und 23 Stunden lang, und die Grenze fiele einen Tag
+  // zu früh. Ein Test hält den Fall fest (letzter Sonntag im Oktober).
+  const cutoff = new Date(`${today}T00:00:00Z`);
+  cutoff.setUTCDate(cutoff.getUTCDate() - 7);
+  return invoice.reminded_at.slice(0, 10) <= cutoff.toISOString().slice(0, 10);
+}
+
+/** Wie viele Rechnungen einer Periode jetzt eine Erinnerung bekämen. */
+export function remindableCount(
+  invoices: readonly Invoice[],
+  today: string,
+): number {
+  return invoices.filter((invoice) => canRemind(invoice, today)).length;
+}
+
+/**
  * Was der Versand blockiert (BR-222, A1).
  *
  * Die Antwort ist eine Liste von Gründen und keine Ja-Nein-Frage: Wer

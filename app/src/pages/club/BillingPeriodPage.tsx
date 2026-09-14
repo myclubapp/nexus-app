@@ -35,9 +35,18 @@ import {
   useInvoiceRun,
   usePaymentImport,
   usePeriodInvoices,
+  useRemindInvoice,
+  useRemindOpenInvoices,
   type PaymentImportResult,
 } from '../../hooks/useInvoicing';
-import { formatQrReference, periodTotals, stateTone, totalFor } from '../../lib/invoicing';
+import {
+  canRemind,
+  formatQrReference,
+  periodTotals,
+  remindableCount,
+  stateTone,
+  totalFor,
+} from '../../lib/invoicing';
 import { formatDate } from '../../lib/format';
 
 /**
@@ -66,6 +75,8 @@ export function BillingPeriodPage() {
   const deleteDraft = useDeleteDraft();
   const cancelInvoice = useCancelInvoice();
   const pdfUrl = useInvoicePdfUrl();
+  const remindOne = useRemindInvoice();
+  const remindAll = useRemindOpenInvoices();
   const toast = useToast();
 
   const [isPicking, setIsPicking] = useState(false);
@@ -85,6 +96,10 @@ export function BillingPeriodPage() {
   const today = new Date().toISOString().slice(0, 10);
 
   const activeMembers = (members.data ?? []).filter((member) => member.status !== 'left');
+  // FR-176: Wie viele jetzt eine Erinnerung bekämen – dieselbe Regel wie in
+  // `remind_invoice()`, damit der Knopf nicht mehr verspricht als der Server
+  // tut (BR-236).
+  const remindable = remindableCount(rows, today);
   const detail = rows.find((invoice) => invoice.id === opened) ?? null;
   const chosenItems = (feeItems.data ?? []).filter((item) => pickedItems.includes(item.id));
 
@@ -181,6 +196,30 @@ export function BillingPeriodPage() {
               {run.isPending ? <IonSpinner name="crescent" /> : t('billing.send', { count: totals.draft })}
             </IonButton>
 
+            {/* FR-176: «damit ich nicht einzeln nachfassen muss». Der Knopf
+                erscheint nur, wenn es überfällige Rechnungen gibt, an die
+                diese Woche noch nicht erinnert wurde. */}
+            {remindable > 0 && (
+              <IonButton
+                expand="block"
+                fill="outline"
+                disabled={remindAll.isPending}
+                onClick={() =>
+                  remindAll.mutate(periodId!, {
+                    onSuccess: (result) =>
+                      toast.success(t('billing.reminded', { count: result.reminded })),
+                    onError: (cause) => toast.failure((cause as Error).message),
+                  })
+                }
+              >
+                {remindAll.isPending ? (
+                  <IonSpinner name="crescent" />
+                ) : (
+                  t('billing.remindAll', { count: remindable })
+                )}
+              </IonButton>
+            )}
+
             {run.error && <InlineError message={describeRunError(run.error as Error, t)} />}
           </div>
 
@@ -229,7 +268,11 @@ export function BillingPeriodPage() {
                         {invoice.currency} {Number(invoice.amount).toFixed(2)} ·{' '}
                         {t('billing.dueOn', { date: formatDate(invoice.due_date) })}
                       </p>
-                      <IonNote>{formatQrReference(invoice.reference)}</IonNote>
+                      <IonNote>
+                        {formatQrReference(invoice.reference)}
+                        {invoice.reminder_count > 0 &&
+                          ` · ${t('billing.remindedTimes', { count: invoice.reminder_count })}`}
+                      </IonNote>
                     </IonLabel>
                     <IonBadge
                       slot="end"
@@ -306,6 +349,17 @@ export function BillingPeriodPage() {
               label: t('billing.discard'),
               destructive: true,
               onClick: () => setConfirmDiscard(detail.id),
+            },
+            detail !== null && canRemind(detail, today) && {
+              label: t('billing.remind'),
+              onClick: () =>
+                remindOne.mutate(detail.id, {
+                  onSuccess: (sent) =>
+                    sent
+                      ? toast.success(t('billing.reminded', { count: 1 }))
+                      : toast.success(t('billing.remindTooSoon')),
+                  onError: (cause) => toast.failure((cause as Error).message),
+                }),
             },
             detail?.status === 'sent' && {
               label: t('billing.cancel'),

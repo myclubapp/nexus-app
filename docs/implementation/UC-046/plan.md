@@ -131,8 +131,33 @@ Verbindlich aus `docs/guidelines.md`:
 - [x] 8. Verhaltensprüfung gegen die laufende Datenbank
 - [x] 9. Testplan `docs/test-plans/uc-046-rechnungsstellung.md`
 - [x] 10. Statusabgleich in `requirements.md`, UC-046, UC-047 und `use_cases/README.md`
+- [x] 11. `0090_invoice_reminder.sql`: an eine offene Rechnung erinnern (FR-176, A8, BR-236)
+- [x] 12. End-zu-End gegen die deployten Functions: erzeugen, versenden, PDF ansehen, verbuchen, erinnern – mit einem Probe-Konto, danach vollständig abgeräumt
 
 ---
+
+## Was der End-zu-End-Lauf gezeigt hat (14.09.2026)
+
+Ein Probe-Verein mit eigenem Konto, gegen die **deployten** Functions gefahren
+und danach restlos abgeräumt (Verein, PDF, Konto). Belegt sind damit:
+Entwurf erzeugen über REST mit dem Token der Kassier:in, Versand samt PDF im
+Vereinsspeicher, Spiegel auf `open` ohne Punktebuchung, Probelauf der
+Bankdatei ohne Wirkung, Verbuchen mit 40 Punkten, zweiter Lauf derselben Datei
+ohne zweite Buchung, Erinnerung und ihre Wochengrenze, und die Abweisung
+jedes dieser Wege ohne Vorstandsrolle.
+
+Drei Mängel hat erst der Augenschein am fertigen Blatt gezeigt:
+
+| Was | Warum es auffiel |
+| --- | --- |
+| Die Referenz stand im Kopf **links** gruppiert, auf dem Einzahlungsschein rechts | Dieselbe Zahl in zwei Formen auf einem Blatt |
+| Das Rechnungsdatum stand als `2026-09-14` | Eine Schweizer Rechnung schreibt `14.9.2026` |
+| Das Blatt war einsprachig deutsch | Die Mail war schon vierprachig; die Rechnung ist derselbe Benutzertext (CLAUDE.md) |
+
+Beim Beheben des dritten fand der Typcheck einen vierten: `language` gehört
+**nicht** in die Daten des QR-Bills, sondern in die Optionen – im Datenobjekt
+hätte ihn die Bibliothek verschluckt, und der Schein wäre deutsch geblieben,
+ohne dass irgendetwas gemeldet hätte.
 
 ## Entscheide, die beim Bauen gefallen sind
 
@@ -150,6 +175,13 @@ ehrlichere Form.
 gleichzeitig zu bauen spart nichts und riskiert das Zeitlimit der Function bei
 allen gleichzeitig. Jede Rechnung quittiert für sich; ein Abbruch in der Mitte
 lässt die bereits versendeten versendet.
+
+**Das Blatt spricht die Sprache der Person.** `swissqrbill` übersetzt den
+Einzahlungsschein selbst, sobald es `language` als **Option** bekommt – in den
+Daten würde der Wert stillschweigend verschluckt. Was darüber steht (Referenz,
+Datum, Positionstabelle, der Hinweis auf eine unvollständige Adresse), kommt
+aus `PDF_LABELS` in `mail.ts`; die Sprache liest `invoice_payload()` aus
+`notification_settings.locale` der Person.
 
 **Der Zahlungsabgleich zählt Differenzen.** Die Antwort nennt zugeordnete,
 bereits bezahlte und nicht gefundene Referenzen einzeln – eine Zahl «12
