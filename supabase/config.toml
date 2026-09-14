@@ -19,10 +19,19 @@ port = 54323
 
 [auth]
 enabled = true
+# Nur für die **lokale** Instanz. Im verknüpften Projekt muss `site_url` die
+# betriebene Adresse sein (https://app.my-club.ch) – `supabase config push`
+# würde sie mit dem Wert dieser Zeile überschreiben und jeden Magic Link auf
+# den Entwicklungsrechner umleiten. Vor einem Push also site_url prüfen.
 site_url = "http://localhost:5173"
 additional_redirect_urls = [
   "http://localhost:5173/auth/callback",
   "ch.myclub.nexus://auth/callback",
+  # Die betriebene PWA. `env.webRedirectUrl` fällt auf `window.location.origin`
+  # zurück, der Magic Link kehrt also hierhin zurück – ohne diesen Eintrag
+  # weist GoTrue ihn ab. Dieselbe Adresse steht im Dashboard des verknüpften
+  # Projekts und als Secret `APP_URL` der Function `send-mail` (UC-044).
+  "https://app.my-club.ch/auth/callback",
 ]
 jwt_expiry = 3600
 enable_refresh_token_rotation = true

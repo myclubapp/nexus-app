@@ -106,9 +106,10 @@ ein SMTP-Fehler den Aufrufer als 502 mit Text erreicht statt als leeres 503.
 
 ## Offene Punkte
 
-- **`APP_URL`** ist nicht gesetzt: Ohne die öffentliche Adresse der PWA
-  enthält die Mail keine Links («In der App öffnen» und «Benachrichtigungen
-  einstellen» fehlen). Sobald die Adresse steht: `supabase secrets set APP_URL=…`.
+- ~~`APP_URL` ist nicht gesetzt~~ — **erledigt am 2026-09-14**:
+  `APP_URL=https://app.my-club.ch`. Die Mail trägt seither beide Links
+  (`/tabs/agenda?event=…` und `/tabs/profile/notifications`), gemessen an der
+  gerenderten Vorlage und mit einer Probemail bestätigt.
 - **Bestandskonten aus der Übernahme (UC-040):** Der alte Wert `settingsEmail`
   wird nicht mitgenommen; alle Konten starten mit «täglich». Betroffen sind
   nur Konten mit `user_id`, also registrierte Personen.
