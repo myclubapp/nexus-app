@@ -316,7 +316,19 @@
     "emergency": "Emergency contact",
     "emergencyName": "Name of the contact person",
     "emergencyPhone": "Phone of the contact person",
-    "emergencyHint": "Seen only by you, the board and the coaches of your teams, in case something happens on match day."
+    "emergencyHint": "Seen only by you, the board and the coaches of your teams, in case something happens on match day.",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "birthDate": "Date of birth",
+    "street": "Street",
+    "houseNumber": "Number",
+    "postalCode": "Postal code",
+    "city": "City",
+    "country": "Country",
+    "countryPlaceholder": "CH",
+    "problem": {
+      "countryCode": "The country is two letters, for example CH or DE."
+    }
   },
   "clubSettings": {
     "title": "Club settings",
@@ -392,7 +404,8 @@
     "goal": "Season goal",
     "goalPoints": "Goal in points",
     "goalHint": "How many points from volunteering and the marketplace each member should gather per season. Leaving it empty means no goal.",
-    "goalHintWithSuggestion": "How many points from volunteering and the marketplace each member should gather per season. {{shifts}} shifts add up to {{points}} points. Leaving it empty means no goal."
+    "goalHintWithSuggestion": "How many points from volunteering and the marketplace each member should gather per season. {{shifts}} shifts add up to {{points}} points. Leaving it empty means no goal.",
+    "logoUrlHint": "Or enter the address of a logo that already lives on your website."
   },
   "health": {
     "title": "Club health",
@@ -1922,5 +1935,46 @@
       "reachedHint": "Thank you. Further contributions still count, but nothing more is asked."
     },
     "copied": "Copied to the clipboard"
+  },
+  "memberExport": {
+    "title": "Export members",
+    "action": "Export members",
+    "teamAction": "Export team",
+    "submit": "Export",
+    "fields": "Fields",
+    "fieldsHint": "Name, role, status and joining date are always included. You choose the rest here.",
+    "trainerHint": "Address and date of birth stay with the board. Email and phone are only included where the member made them visible.",
+    "footnote": "The list goes out the way the filter shows it.",
+    "empty": "This selection contains no member.",
+    "copied": "The list is on the clipboard.",
+    "teams": "Teams",
+    "offices": "Offices",
+    "field": {
+      "email": "Email",
+      "phone": "Phone",
+      "birthDate": "Date of birth",
+      "address": "Address",
+      "teams": "Teams",
+      "offices": "Offices"
+    },
+    "done_one": "{{count}} member exported.",
+    "done_other": "{{count}} members exported."
+  },
+  "media": {
+    "choose": "Choose",
+    "change": "Change",
+    "remove": "Remove image",
+    "none": "No image yet",
+    "uploaded": "Image uploaded.",
+    "tooLarge": "The image is too large. Pick a smaller one.",
+    "avatar": "Profile picture",
+    "avatarHint": "Your picture appears in lists and leaderboards of this club. It is scaled down before upload.",
+    "teamPhoto": "Team photo",
+    "teamPhotoHint": "The team photo belongs to the team. Everyone who plans for it can change it.",
+    "present": "Image set",
+    "removeHint": "Without an image the initials show.",
+    "unsupported": "This image format cannot be used here. Pick a JPEG or PNG.",
+    "saved": "Image saved.",
+    "removed": "Image removed."
   }
 }

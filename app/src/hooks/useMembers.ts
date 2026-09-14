@@ -1,6 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isConfigured, supabase } from '../lib/supabase';
-import type { ClubMember, MemberRole, TablesUpdate } from '../lib/database.types';
+import type {
+  ClubMember,
+  MemberExportRecord,
+  MemberRole,
+  TablesUpdate,
+} from '../lib/database.types';
 import type { MemberStatus } from '../lib/member';
 import { useClub } from './useClub';
 
@@ -134,11 +139,16 @@ export function useCreateTeam() {
   });
 }
 
-/** Was der Vorstand zu einem Mitglied an Kontaktangaben sieht (0013, 0063). */
+/** Was der Vorstand zu einem Mitglied an Kontaktangaben sieht (0013, 0063, 0081). */
 export interface MemberContactCard {
   email: string | null;
   phone: string | null;
-  address: string | null;
+  birthDate: string | null;
+  street: string | null;
+  houseNumber: string | null;
+  postalCode: string | null;
+  city: string | null;
+  country: string | null;
   emergencyName: string | null;
   emergencyPhone: string | null;
 }
@@ -156,7 +166,9 @@ export function useMemberContacts(memberId: string | null) {
     queryFn: async (): Promise<MemberContactCard | null> => {
       const { data, error } = await supabase
         .from('member_contacts')
-        .select('email, phone, address, emergency_name, emergency_phone')
+        .select(
+          'email, phone, birth_date, street, house_number, postal_code, city, country, emergency_name, emergency_phone',
+        )
         .eq('member_id', memberId!)
         .maybeSingle();
       if (error) throw new Error(error.message);
@@ -164,10 +176,44 @@ export function useMemberContacts(memberId: string | null) {
       return {
         email: data.email,
         phone: data.phone,
-        address: data.address,
+        birthDate: data.birth_date,
+        street: data.street,
+        houseNumber: data.house_number,
+        postalCode: data.postal_code,
+        city: data.city,
+        country: data.country,
         emergencyName: data.emergency_name,
         emergencyPhone: data.emergency_phone,
       };
+    },
+  });
+}
+
+/**
+ * Die Mitgliederliste zum Herausgeben (UC-043, FR-130).
+ *
+ * Kein `select` auf `club_members`, sondern `export_members()`: Die Reichweite
+ * und der Umfang gehören an den Server (BR-205, BR-206). Ein Team gibt auch
+ * die Trainer:in heraus, den ganzen Verein nur der Vorstand – die Funktion
+ * entscheidet das, nicht dieser Hook.
+ *
+ * Als Mutation, nicht als Query: Ein Export geschieht auf Knopfdruck und wird
+ * nicht im Hintergrund aktuell gehalten (BR-209).
+ */
+export function useMemberExport() {
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (teamId: string | null): Promise<MemberExportRecord[]> => {
+      if (!activeClub) throw new Error('Kein aktiver Verein');
+      const { data, error } = await supabase.rpc('export_members', {
+        p_club_id: activeClub.id,
+        // Kein Team heisst «der ganze Verein» (0082) – als fehlender
+        // Parameter, nicht als `null`.
+        p_team_id: teamId ?? undefined,
+      });
+      if (error) throw new Error(error.message);
+      return data ?? [];
     },
   });
 }

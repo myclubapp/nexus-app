@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   ASSIGNABLE_ROLES,
   EMPTY_MEMBER_FILTER,
+  addressLines,
   firstName,
   initials,
   MEMBER_STATUSES,
@@ -180,5 +181,48 @@ describe('firstName', () => {
     expect(firstName('   ')).toBe('');
     expect(firstName(null)).toBe('');
     expect(firstName(undefined)).toBe('');
+  });
+});
+
+describe('addressLines', () => {
+  const empty = {
+    street: null,
+    houseNumber: null,
+    postalCode: null,
+    city: null,
+    country: null,
+  };
+
+  it('setzt Strasse und Nummer auf eine Zeile, Postleitzahl und Ort auf die nächste', () => {
+    expect(
+      addressLines({
+        street: 'Musterstrasse',
+        houseNumber: '12a',
+        postalCode: '8000',
+        city: 'Zürich',
+        country: null,
+      }),
+    ).toEqual(['Musterstrasse 12a', '8000 Zürich']);
+  });
+
+  it('stellt das Land als eigene Zeile dahinter, nicht vor die Postleitzahl', () => {
+    const lines = addressLines({
+      street: 'Hauptstr.',
+      houseNumber: '1',
+      postalCode: '01067',
+      city: 'Dresden',
+      country: 'DE',
+    });
+    expect(lines).toEqual(['Hauptstr. 1', '01067 Dresden', 'DE']);
+  });
+
+  it('lässt eine fehlende Hausnummer kein Leerzeichen hinterlassen', () => {
+    expect(
+      addressLines({ ...empty, street: 'Postfach', postalCode: '3000', city: 'Bern' }),
+    ).toEqual(['Postfach', '3000 Bern']);
+  });
+
+  it('gibt ohne jede Angabe keine Zeile zurück', () => {
+    expect(addressLines(empty)).toEqual([]);
   });
 });

@@ -114,11 +114,12 @@ describe('AppMenu', () => {
       '/tabs/profile',
       // Seit UC-023 zuoberst: die Vereins-Gesundheit.
       '/tabs/profile/health',
+      // Seit UC-045 vor dem Vorstandsblock: Teams führen auch Trainer:innen.
+      '/tabs/profile/teams',
       // Seit UC-027: der Vereins-Puls.
       '/tabs/profile/pulse',
       '/tabs/profile/club',
       '/tabs/profile/members',
-      '/tabs/profile/teams',
       // Seit UC-031: die Ämter – der Verteiler hinter jedem Gremium (BR-133).
       '/tabs/profile/offices',
       '/tabs/profile/rules',
@@ -131,9 +132,10 @@ describe('AppMenu', () => {
     ]);
   });
 
-  it('zeigt Trainer:innen die Vereins-Gesundheit, aber nichts vom Vorstand', () => {
-    // BR-096: Trainer:innen sehen die Hinweise ihres Teams. Die
-    // Vereinsverwaltung bleibt dem Vorstand.
+  it('zeigt Trainer:innen Gesundheit und Teams, aber nichts vom Vorstand', () => {
+    // BR-096: Trainer:innen sehen die Hinweise ihres Teams. Seit UC-043/UC-045
+    // führen sie ihre Teams auch selbst – Kader exportieren, Teambild setzen.
+    // Die Vereinsverwaltung bleibt trotzdem beim Vorstand.
     club.isAdmin = false;
     club.isTrainer = true;
     const { container } = renderWithProviders(<AppMenu />);
@@ -141,6 +143,7 @@ describe('AppMenu', () => {
     expect(routerLinks(container)).toEqual([
       '/tabs/profile',
       '/tabs/profile/health',
+      '/tabs/profile/teams',
     ]);
   });
 
@@ -158,12 +161,15 @@ describe('AppMenu', () => {
     expect(links).toContain('/tabs/profile/members');
   });
 
-  it('lässt Trainer:innen ohne das Modul «Gesundheit» ganz ohne Abschnitt', () => {
+  it('lässt Trainer:innen ohne das Modul «Gesundheit» die Teams', () => {
+    // Seit UC-045 hängt ihre Gruppe nicht mehr am Gesundheitsmodul: Die
+    // Teamliste steht ihnen immer offen, was sie dort dürfen, entscheidet
+    // `can_plan_for_team()`.
     club.isTrainer = true;
     club.activeClub = { id: 'c1', name: 'TV Musterhausen', settings: { modules: {} } };
     const { container } = renderWithProviders(<AppMenu />);
 
-    expect(routerLinks(container)).toEqual(['/tabs/profile']);
+    expect(routerLinks(container)).toEqual(['/tabs/profile', '/tabs/profile/teams']);
   });
 
   it('zeigt das Vereinslogo neben dem Namen (FR-111)', () => {

@@ -19,6 +19,7 @@ import { EmptyState, ErrorState } from '../../components/StateViews';
 import { SkeletonList } from '../../components/Skeletons';
 import { useClub } from '../../hooks/useClub';
 import { useToast } from '../../hooks/useToast';
+import { deliverCsv } from '../../lib/csv';
 import { canShareNatively } from '../../lib/invite';
 import {
   useContributionOverview,
@@ -100,35 +101,23 @@ export function ContributionPage() {
       t('seasonGoal.csvState'),
     ]);
 
-    if (canShareNatively()) {
-      try {
-        await Share.share({ title: t('seasonGoal.title'), text: csv });
-        return;
-      } catch {
-        // Ein Abbruch im Teilen-Blatt und ein echter Fehlschlag sehen von hier
-        // gleich aus. Statt zu raten, bleibt der zweite Weg offen – wie beim
-        // Einladungslink (`InvitePage`), der auf die Zwischenablage ausweicht.
-        // Was nicht passieren darf: dass ein Tippen gar nichts tut.
-        try {
-          await navigator.clipboard?.writeText(csv);
-          toast.success(t('seasonGoal.copied'));
-        } catch {
-          toast.failure(t('common.error'));
-        }
-        return;
-      }
-    }
+    // Teilen, Zwischenablage und Datei stehen seit UC-043 einmal in
+    // `lib/csv.ts` – der Mitglieder-Export braucht denselben Ablauf.
+    const outcome = await deliverCsv({
+      csv,
+      fileName: `${activeClub?.slug ?? 'club'}-beitraege.csv`,
+      title: t('seasonGoal.title'),
+      canShareNatively: canShareNatively(),
+      share: (input) => Share.share(input),
+    });
 
-    // Im Browser als Datei. Das BOM davor, weil Excel eine CSV ohne BOM als
-    // Latin-1 liest und aus «Müller» «MÃ¼ller» macht.
-    const blob = new Blob([`﻿${csv}`], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${activeClub?.slug ?? 'club'}-beitraege.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
-    toast.success(t('seasonGoal.exported'));
+    if (outcome === 'failed') {
+      toast.failure(t('common.error'));
+      return;
+    }
+    toast.success(
+      outcome === 'copied' ? t('seasonGoal.copied') : t('seasonGoal.exported'),
+    );
   }
 
   if (!isAdmin) {

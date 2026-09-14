@@ -23,6 +23,34 @@ export type {
   TablesUpdate,
 } from './database.generated';
 
+/**
+ * Eine Zeile von `export_members()` (0082).
+ *
+ * Handgepflegt, obwohl der Generator die Funktion kennt: Er gibt für die
+ * Rückgabe einer `returns table`-Funktion die Spalten einzeln und ohne die
+ * Aufzählungen dahinter. Diese Form ist die, mit der `lib/memberExport.ts`
+ * rechnet.
+ */
+export type MemberExportRecord = {
+  member_id: string;
+  first_name: string | null;
+  last_name: string | null;
+  display_name: string;
+  email: string | null;
+  phone: string | null;
+  birth_date: string | null;
+  street: string | null;
+  house_number: string | null;
+  postal_code: string | null;
+  city: string | null;
+  country: string | null;
+  role: string;
+  status: string;
+  member_since: string | null;
+  teams: string | null;
+  offices: string | null;
+};
+
 // --- Aufzählungen ----------------------------------------------------------
 // Die Datenbank hält diese Spalten als `text` mit check-Constraint, generiert
 // daraus also `string`. Die Constraints stehen in den Migrationen; laufen die

@@ -236,7 +236,7 @@ export function ProfilePage() {
           rendert ohne Rolle nichts, die Überschrift bliebe aber als leere
           Gruppe stehen. Beides ist Bequemlichkeit, kein Schutz – der liegt in
           `is_club_admin()` und den RLS-Policies. */}
-      {hasAdminLinks(isAdmin, isTrainer, activeClub?.settings) && (
+      {hasAdminLinks(isAdmin, isTrainer) && (
         <ListSection title={t('menu.administration')}>
           <ClubAdminLinks />
         </ListSection>

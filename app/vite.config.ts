@@ -55,6 +55,10 @@ export default defineConfig({
         // ungecacht: Ein Punktestand aus dem Vorrat wäre falsch, und ein
         // zwischengespeichertes Token wäre ein Sicherheitsproblem.
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // Der App-Bundle liegt über den 2 MiB, die Workbox voreingestellt
+        // precacht. Ohne diese Grenze bricht `vite build` ab. Sobald das
+        // Bundle aufgeteilt ist, kann der Wert wieder sinken.
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         cleanupOutdatedCaches: true,
       },
     }),

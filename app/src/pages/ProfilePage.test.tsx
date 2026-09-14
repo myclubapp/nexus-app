@@ -130,10 +130,11 @@ describe('ProfilePage', () => {
     const administration = sectionLinks(container, 'Verwaltung');
     expect(administration).toEqual([
       '/tabs/profile/health',
+      // Seit UC-045 vor dem Vorstandsblock: Teams führen auch Trainer:innen.
+      '/tabs/profile/teams',
       '/tabs/profile/pulse',
       '/tabs/profile/club',
       '/tabs/profile/members',
-      '/tabs/profile/teams',
       // Seit UC-031: die Ämter – der Verteiler hinter jedem Gremium (BR-133).
       '/tabs/profile/offices',
       '/tabs/profile/rules',
@@ -154,15 +155,19 @@ describe('ProfilePage', () => {
     }
   });
 
-  it('gibt Trainer:innen die eigene Gruppe mit nur der Vereins-Gesundheit', () => {
+  it('gibt Trainer:innen die eigene Gruppe mit Gesundheit und Teams', () => {
     // BR-096: Die Hinweise ihres Teams gehören ihnen, die Vereinsverwaltung
-    // nicht. Der Abschnitt erscheint trotzdem – sonst wäre der Weg dorthin
-    // wieder gebaut und unerreichbar.
+    // nicht. Seit UC-043/UC-045 kommt die Teamliste dazu – dort exportieren
+    // sie ihr Kader und setzen das Teambild. Der Abschnitt erscheint
+    // ohnehin – sonst wäre der Weg dorthin gebaut und unerreichbar.
     club.isTrainer = true;
     const { container } = renderWithProviders(<ProfilePage />);
 
     expect(headings(container)).toContain('Verwaltung');
-    expect(sectionLinks(container, 'Verwaltung')).toEqual(['/tabs/profile/health']);
+    expect(sectionLinks(container, 'Verwaltung')).toEqual([
+      '/tabs/profile/health',
+      '/tabs/profile/teams',
+    ]);
   });
 
   it('zeigt keinen Modulweg, solange das Modul aus ist (UC-034, FR-115)', () => {
@@ -185,13 +190,15 @@ describe('ProfilePage', () => {
     expect(settings).not.toContain('/tabs/profile/mood');
   });
 
-  it('lässt Trainer:innen ohne das Modul «Gesundheit» ganz ohne Abschnitt', () => {
-    // Sonst bliebe eine Überschrift «Verwaltung» über einer leeren Liste
-    // stehen – `hasAdminLinks()` fängt genau das ab.
+  it('lässt Trainer:innen ohne das Modul «Gesundheit» die Teams', () => {
+    // Bis UC-045 hing ihre Gruppe am Gesundheitsmodul und verschwand ohne es
+    // ganz. Jetzt bleibt die Teamliste – eine Überschrift über einer leeren
+    // Liste entsteht dabei nicht, weil immer mindestens dieser Weg steht.
     club.isTrainer = true;
     club.settings = { modules: {} };
     const { container } = renderWithProviders(<ProfilePage />);
 
-    expect(headings(container)).not.toContain('Verwaltung');
+    expect(headings(container)).toContain('Verwaltung');
+    expect(sectionLinks(container, 'Verwaltung')).toEqual(['/tabs/profile/teams']);
   });
 });

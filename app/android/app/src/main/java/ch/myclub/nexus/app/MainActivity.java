@@ -1,4 +1,4 @@
-package ch.myclub.nexus;
+package ch.myclub.nexus.app;
 
 import com.getcapacitor.BridgeActivity;
 

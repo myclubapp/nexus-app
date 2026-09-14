@@ -60,17 +60,22 @@ export function isModuleOn(
  * ohne eigene Farbe zeigt wieder die Basisfarben. Bliebe ein leerer Wert
  * stehen, wäre das eine Einstellung, die etwas verspricht und nichts bewirkt.
  *
+ * **Was fehlt, bleibt stehen.** Jedes Feld der Eingabe ist wahlfrei: Eine Seite,
+ * die nur die Begriffe führt, schickt nur die Begriffe – Farben, Module und DNA
+ * bleiben unangetastet. Ein fehlendes Feld heisst «nicht angefasst», ein leeres
+ * heisst «weg».
+ *
  * Reine Funktion, weil die Entscheidung sonst in einem Ereignis-Handler
  * steckte, den kein Test bedienen kann (guidelines.md §9).
  */
 export function buildClubSettings(
   current: ClubSettings | null | undefined,
   input: {
-    labels: Partial<Record<EventType, LabelSet>>;
-    theme: ClubSettings['theme'];
-    modules: Partial<Record<ClubModule, boolean>>;
-    dna: NonNullable<ClubSettings['dna']>;
-    logoUrl: string;
+    labels?: Partial<Record<EventType, LabelSet>>;
+    theme?: ClubSettings['theme'];
+    modules?: Partial<Record<ClubModule, boolean>>;
+    dna?: NonNullable<ClubSettings['dna']>;
+    logoUrl?: string;
     /** Konzept §7.2: Ausschnitt und Ränge ohne Punktzahl. */
     leaderboard?: { topOnly: string; hidePoints: boolean };
     /** UC-042: das Saisonziel für den Beitrag, in Punkten. */
@@ -79,47 +84,61 @@ export function buildClubSettings(
 ): ClubSettings {
   const settings: ClubSettings = { ...current };
 
-  // Je Terminart bleiben nur die Sprachen stehen, in denen etwas steht – und
-  // eine Terminart ohne einzige Sprache verschwindet ganz.
-  const cleanLabels = Object.fromEntries(
-    Object.entries(input.labels)
-      .map(([type, set]) => [
-        type,
-        Object.fromEntries(
-          Object.entries(set ?? {}).filter(([, value]) => value?.trim()),
-        ),
-      ])
-      .filter(([, set]) => Object.keys(set as object).length > 0),
-  );
+  // Was der Aufrufer nicht mitschickt, fasst diese Funktion nicht an: Seit die
+  // Begriffe auf einer eigenen Seite stehen, speichert jede Seite nur ihren
+  // eigenen Ausschnitt – und dürfte den Rest nicht mit einem leeren Entwurf
+  // überschreiben.
+  if (input.labels) {
+    // Je Terminart bleiben nur die Sprachen stehen, in denen etwas steht – und
+    // eine Terminart ohne einzige Sprache verschwindet ganz.
+    const cleanLabels = Object.fromEntries(
+      Object.entries(input.labels)
+        .map(([type, set]) => [
+          type,
+          Object.fromEntries(
+            Object.entries(set ?? {}).filter(([, value]) => value?.trim()),
+          ),
+        ])
+        .filter(([, set]) => Object.keys(set as object).length > 0),
+    );
 
-  const cleanTheme = Object.fromEntries(
-    Object.entries(input.theme ?? {}).filter(([, value]) => value?.trim()),
-  );
+    if (Object.keys(cleanLabels).length > 0) settings.labels = cleanLabels;
+    else delete settings.labels;
+  }
 
-  // Nur eingeschaltete Module werden abgelegt. Ein `false` wäre dasselbe wie
-  // ein fehlender Eintrag und machte die Einstellung nur länger.
-  const cleanModules = Object.fromEntries(
-    Object.entries(input.modules).filter(([, value]) => value === true),
-  );
+  if (input.theme) {
+    const cleanTheme = Object.fromEntries(
+      Object.entries(input.theme).filter(([, value]) => value?.trim()),
+    );
 
-  const cleanDna = Object.fromEntries(
-    Object.entries(input.dna).filter(([, value]) => value?.trim()),
-  );
+    if (Object.keys(cleanTheme).length > 0) settings.theme = cleanTheme;
+    else delete settings.theme;
+  }
 
-  if (Object.keys(cleanLabels).length > 0) settings.labels = cleanLabels;
-  else delete settings.labels;
+  if (input.modules) {
+    // Nur eingeschaltete Module werden abgelegt. Ein `false` wäre dasselbe wie
+    // ein fehlender Eintrag und machte die Einstellung nur länger.
+    const cleanModules = Object.fromEntries(
+      Object.entries(input.modules).filter(([, value]) => value === true),
+    );
 
-  if (Object.keys(cleanTheme).length > 0) settings.theme = cleanTheme;
-  else delete settings.theme;
+    if (Object.keys(cleanModules).length > 0) settings.modules = cleanModules;
+    else delete settings.modules;
+  }
 
-  if (Object.keys(cleanModules).length > 0) settings.modules = cleanModules;
-  else delete settings.modules;
+  if (input.dna) {
+    const cleanDna = Object.fromEntries(
+      Object.entries(input.dna).filter(([, value]) => value?.trim()),
+    );
 
-  if (Object.keys(cleanDna).length > 0) settings.dna = cleanDna;
-  else delete settings.dna;
+    if (Object.keys(cleanDna).length > 0) settings.dna = cleanDna;
+    else delete settings.dna;
+  }
 
-  if (input.logoUrl.trim()) settings.logoUrl = input.logoUrl.trim();
-  else delete settings.logoUrl;
+  if (input.logoUrl !== undefined) {
+    if (input.logoUrl.trim()) settings.logoUrl = input.logoUrl.trim();
+    else delete settings.logoUrl;
+  }
 
   // Rangliste: Ein Ausschnitt unter 1 ist keiner (dann gilt die Vorgabe), und
   // ein `false` ist dasselbe wie kein Eintrag.

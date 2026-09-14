@@ -15,6 +15,8 @@ import { personRemoveOutline } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { useSetMemberTeams, type ClubMemberWithTeams } from '../hooks/useMembers';
 import { useDeleteTeam, useLinkTeam, useUpdateTeam } from '../hooks/useTeamAdmin';
+import { usePlanningScope } from '../hooks/usePlanningScope';
+import { useSetTeamPhoto, useSignedMediaUrl } from '../hooks/useMedia';
 import { useSheetProps } from '../hooks/useSheetProps';
 import { useToast } from '../hooks/useToast';
 import { FederationTeamSection, type FederationPick } from './FederationTeamSection';
@@ -22,6 +24,8 @@ import { FormModal } from './FormModal';
 import { ListSection } from './ListSection';
 import { ManageSection } from './ManageSection';
 import { MemberAvatar } from './MemberAvatar';
+import { ImagePicker } from './ImagePicker';
+import { MemberExportModal } from './MemberExportModal';
 import { InlineError } from './StateViews';
 import type { Team } from '../lib/database.types';
 import { composeTeamName, isLinked, validateNameAddition, validateTeamName } from '../lib/team';
@@ -71,10 +75,20 @@ export function TeamDetail({
   const remove = useDeleteTeam();
   const link = useLinkTeam();
   const setMemberTeams = useSetMemberTeams();
+  const setPhoto = useSetTeamPhoto();
+  const scope = usePlanningScope();
+  // C-032: Dieselbe Frage, die `can_plan_for_team()` am Server stellt.
+  const mayPlan = scope.canPlanFor(team.id);
 
   const [name, setName] = useState(team.name);
   const [area, setArea] = useState(team.area ?? '');
   const [askDelete, setAskDelete] = useState(false);
+  const [isExporting, setExporting] = useState(false);
+  // Das Bild wird sofort gespeichert; die Vorschau muss trotzdem gleich
+  // stimmen. `team` ist ein Abzug aus dem Zustand der Seite und ändert sich
+  // erst beim nächsten Öffnen.
+  const [photoUrl, setPhotoUrl] = useState(team.photo_url);
+  const teamPhotoSrc = useSignedMediaUrl(photoUrl) ?? '';
   const [pick, setPick] = useState<FederationPick | null>(null);
   const [addition, setAddition] = useState(team.name_addition ?? '');
 
@@ -139,6 +153,51 @@ export function TeamDetail({
       // Die Meldung eines Fehlschlags kommt über `error` aus dem Mutationszustand.
       onSubmit={() => void save().catch(() => undefined)}
     >
+      {/* UC-045: Das Mannschaftsfoto. **Sehen** dürfen es alle, die das Team
+          sehen – FR-167 sagt «damit das Team ein Gesicht bekommt», und ein
+          Bild, das nur die Trainer:in kennt, gibt niemandem ein Gesicht.
+          **Ändern** darf es, wer für dieses Team plant; der Server prüft
+          dasselbe in `set_team_photo()`. */}
+      {!mayPlan && teamPhotoSrc && (
+        <ListSection title={t('media.teamPhoto')}>
+          <IonItem lines="none">
+            <img className="app-image-wide" src={teamPhotoSrc} alt="" />
+          </IonItem>
+        </ListSection>
+      )}
+
+      {mayPlan && (
+        <ImagePicker
+          title={t('media.teamPhoto')}
+          footnote={t('media.teamPhotoHint')}
+          kind="teams"
+          ownerId={team.id}
+          url={photoUrl}
+          shape="wide"
+          disabled={setPhoto.isPending}
+          onChange={(value) => {
+            // In die Spalte geht der **Pfad** (0083).
+            const next = value?.path ?? null;
+            const previousUrl = photoUrl;
+            setPhotoUrl(next);
+            setPhoto.mutate(
+              { teamId: team.id, url: next, previousUrl },
+              {
+                // Das Blatt bleibt offen – der `ImagePicker` hat nur gemeldet,
+                // dass die Datei liegt. Gespeichert ist es hier.
+                onSuccess: () =>
+                  toast.success(next ? t('media.saved') : t('media.removed')),
+                // Schlägt das Setzen fehl, fällt die Vorschau zurück.
+                onError: (cause) => {
+                  setPhotoUrl(previousUrl);
+                  toast.failure((cause as Error).message);
+                },
+              },
+            );
+          }}
+        />
+      )}
+
       <ListSection footnote={t('teams.areaHint')}>
         {!linked && (
           <IonItem>
@@ -245,13 +304,32 @@ export function TeamDetail({
         )}
       </ListSection>
 
-      {/* Der Abschnitt «Verwalten» an derselben Stelle wie in jedem Detail;
-          das Team hat hier nur die eine Zeile, weil das Blatt selbst das
-          Formular ist. */}
+      {/* Der Abschnitt «Verwalten» an derselben Stelle wie in jedem Detail.
+          Der Export steht hier, weil er zum Team gehört und nicht zum
+          Verein – und weil ihn die Trainer:in braucht, die die
+          Mitgliederseite gar nicht öffnen kann (UC-043 A1). */}
       <ManageSection
         actions={[
+          // Wer nicht für dieses Team planen darf, bekommt von
+          // `export_members()` null Zeilen (BR-205). Dann steht der Weg auch
+          // nicht da – ein Knopf, der nur einen Hinweis erzeugt, ist keiner.
+          mayPlan && {
+            label: t('memberExport.teamAction'),
+            detail: true,
+            onClick: () => setExporting(true),
+            disabled: inTeam.length === 0,
+          },
           { label: t('teams.delete'), onClick: () => setAskDelete(true), disabled: isBusy, destructive: true },
         ]}
+      />
+
+      <MemberExportModal
+        isOpen={isExporting}
+        teamId={team.id}
+        teamName={team.name}
+        // Das Team-Blatt filtert nicht; was im Team ist, geht heraus.
+        memberIds={null}
+        onDismiss={() => setExporting(false)}
       />
 
       {/* Das Löschen braucht eine Rückfrage; der Riegel gegen ein Team mit

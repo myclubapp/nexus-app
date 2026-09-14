@@ -118,3 +118,63 @@ export function initials(displayName: string | null | undefined): string {
 export function firstName(displayName: string | null | undefined): string {
   return (displayName ?? '').trim().split(/\s+/)[0] ?? '';
 }
+
+/** Die Adressfelder aus `member_contacts` (0081). */
+export interface PostalAddress {
+  street: string | null;
+  houseNumber: string | null;
+  postalCode: string | null;
+  city: string | null;
+  country: string | null;
+}
+
+/**
+ * Die Adresse als Zeilen, wie sie auf einem Briefumschlag stehen (BR-207).
+ *
+ * Zeile 1 Strasse und Hausnummer, Zeile 2 Postleitzahl und Ort, Zeile 3 das
+ * Land – und zwar nur, wenn eines eingetragen ist. Kein «CH-» vor die
+ * Postleitzahl: Ob das Land fremd ist, weiss diese Funktion nicht, und ein
+ * Länderkürzel vor der eigenen Postleitzahl ist in der Schweiz falsch.
+ *
+ * Leere Zeilen fallen weg. Ohne jede Angabe kommt eine leere Liste zurück –
+ * die Ansicht zeigt dann gar nichts, nicht eine leere Zeile.
+ */
+export function addressLines(address: PostalAddress): string[] {
+  const lines = [
+    [address.street, address.houseNumber].map(clean).filter(Boolean).join(' '),
+    [address.postalCode, address.city].map(clean).filter(Boolean).join(' '),
+    clean(address.country),
+  ];
+  return lines.filter((line) => line.length > 0);
+}
+
+function clean(value: string | null | undefined): string {
+  return (value ?? '').trim();
+}
+
+/**
+ * Was an den Stammdaten nicht stimmt (UC-043, FR-163).
+ *
+ * Die Datenbank hat für alle drei Felder einen `check` (0081). Ohne diese
+ * Prüfung erführe die Person davon erst als roher Postgres-Fehler im Toast –
+ * «new row violates check constraint» ist keine Antwort auf «warum geht das
+ * nicht?». Reine Funktion, damit die Entscheidung nicht im Ereignis-Handler
+ * steckt (guidelines §9).
+ */
+export type ProfileProblem = 'countryCode' | 'firstNameLong' | 'lastNameLong';
+
+export const NAME_MAX = 80;
+
+export function validateProfileFields(input: {
+  firstName: string;
+  lastName: string;
+  country: string;
+}): ProfileProblem[] {
+  const problems: ProfileProblem[] = [];
+  // Zwei Buchstaben oder gar nichts – ein einzelnes «C» ist kein Land.
+  const country = input.country.trim();
+  if (country && !/^[A-Za-z]{2}$/.test(country)) problems.push('countryCode');
+  if (input.firstName.trim().length > NAME_MAX) problems.push('firstNameLong');
+  if (input.lastName.trim().length > NAME_MAX) problems.push('lastNameLong');
+  return problems;
+}

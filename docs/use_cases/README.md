@@ -56,6 +56,8 @@ synchron gehalten werden können.
 | [UC-022](UC-022-leaderboard-einsehen.md) | Leaderboard einsehen | Mitglied | FR-046, FR-047, FR-048, FR-049 | Implemented |
 | [UC-041](UC-041-funktionaersamt-mit-factsheet.md) | Funktionärsamt mit Factsheet hinterlegen und im Marktplatz anbieten | Vorstand | FR-126, FR-127 | Implemented |
 | [UC-042](UC-042-saisonziel-beitrag.md) | Saisonziel für den Beitrag setzen und verfolgen | Vorstand, Mitglied | FR-158, FR-159, FR-160, FR-161, FR-162 | Implemented |
+| [UC-043](../implementation/UC-043/plan.md) | Mitgliederdaten strukturieren und exportieren | Vorstand, Trainer:in | FR-130, FR-163 | Implemented |
+| [UC-045](../implementation/UC-045/plan.md) | Bilder des Vereins pflegen (Logo, Teambild, Profilbild) | Vorstand, Trainer:in, Mitglied | FR-166, FR-167, FR-168 | Implemented |
 
 ### Vereins-Gesundheit
 
@@ -104,7 +106,7 @@ synchron gehalten werden können.
 |---|---|
 | **M1 – Fundament** | UC-001 bis UC-008, UC-034, UC-037 |
 | **M2 – Agenda-Loop** | UC-009 bis UC-016, UC-020 |
-| **M3 – Gemeinschaft** | UC-017 bis UC-019, UC-021 bis UC-033, UC-041 und UC-042 (vorgezogen aus Ausbaustufe 2) |
+| **M3 – Gemeinschaft** | UC-017 bis UC-019, UC-021 bis UC-033, UC-041 bis UC-043 und UC-045 (vorgezogen aus Ausbaustufe 2) |
 | **M4 – Anschlüsse** | UC-035, UC-036, UC-039, UC-040 |
 
 ---
@@ -119,7 +121,7 @@ Diese Anforderungen sind bewusst nach dem MVP eingeplant und tragen im Katalog d
 | Badges, Level, Challenges, Rewards | FR-122 bis FR-125 |
 | Meisterschaft | FR-128 |
 | Eltern und Kinder | FR-129 |
-| Exporte und Bulk-Import | FR-130 bis FR-132 |
+| Exporte und Bulk-Import | FR-131, FR-132 – FR-130 ist seit UC-043 gebaut |
 | Kalender-Publishing | FR-133 |
 
 Ebenfalls ohne eigene Spezifikation, weil vollständig systemseitig: FR-060, FR-061, FR-068, FR-069
@@ -133,7 +135,7 @@ Ablauf steht in UC-008, die Gliederung der Seite in [`../guidelines.md`](../guid
 
 ## Geschäftsregeln
 
-Die Regeln BR-001 bis BR-187 sind fortlaufend und über alle Use Cases hinweg eindeutig vergeben.
+Die Regeln BR-001 bis BR-218 sind fortlaufend und über alle Use Cases hinweg eindeutig vergeben. **Wer eine neue vergibt, prüft zuerst den höchsten Stand** – zuletzt kollidierten UC-044 und UC-045 auf BR-210 bis BR-213.
 Die vier nicht verhandelbaren Regeln des Projekts sind über mehrere Use Cases verteilt:
 
 | Prinzip | Regeln |

@@ -4,13 +4,21 @@ import { useClub } from './useClub';
 
 export interface MyProfile {
   displayName: string;
+  /** Der Name getrennt (FR-163). Beide optional – der Bestand hat sie nicht. */
+  firstName: string | null;
+  lastName: string | null;
   email: string | null;
   phone: string | null;
   emailPublic: boolean;
   phonePublic: boolean;
   leaderboardOptIn: boolean;
   /** Konzept §3.1: Adresse und Notfallkontakt – nur für die Person und den Vorstand (0063). */
-  address: string | null;
+  birthDate: string | null;
+  street: string | null;
+  houseNumber: string | null;
+  postalCode: string | null;
+  city: string | null;
+  country: string | null;
   emergencyName: string | null;
   emergencyPhone: string | null;
 }
@@ -40,7 +48,9 @@ export function useMyProfile() {
 
       const { data: card, error: cardError } = await supabase
         .from('member_contacts')
-        .select('address, emergency_name, emergency_phone')
+        .select(
+          'birth_date, street, house_number, postal_code, city, country, emergency_name, emergency_phone',
+        )
         .eq('member_id', activeMembership!.id)
         .maybeSingle();
       if (cardError) throw new Error(cardError.message);
@@ -48,12 +58,19 @@ export function useMyProfile() {
       const privacy = (activeMembership!.privacy ?? {}) as Record<string, boolean>;
       return {
         displayName: data.display_name ?? '',
+        firstName: activeMembership!.first_name,
+        lastName: activeMembership!.last_name,
         email: data.email,
         phone: data.phone,
         emailPublic: privacy.email === true,
         phonePublic: privacy.phone === true,
         leaderboardOptIn: activeMembership!.leaderboard_opt_in,
-        address: card?.address ?? null,
+        birthDate: card?.birth_date ?? null,
+        street: card?.street ?? null,
+        houseNumber: card?.house_number ?? null,
+        postalCode: card?.postal_code ?? null,
+        city: card?.city ?? null,
+        country: card?.country ?? null,
         emergencyName: card?.emergency_name ?? null,
         emergencyPhone: card?.emergency_phone ?? null,
       };
@@ -63,14 +80,26 @@ export function useMyProfile() {
 
 export interface ProfilePatch {
   displayName?: string;
+  firstName?: string;
+  lastName?: string;
   email?: string;
   phone?: string;
   emailPublic?: boolean;
   phonePublic?: boolean;
   /** Leer heisst löschen, `undefined` heisst unverändert (0063). */
-  address?: string;
+  street?: string;
+  houseNumber?: string;
+  postalCode?: string;
+  city?: string;
+  country?: string;
   emergencyName?: string;
   emergencyPhone?: string;
+  /**
+   * Ein `date` kennt kein «leer»: Zum Setzen `birthDate`, zum Austragen
+   * `clearBirthDate` (0081).
+   */
+  birthDate?: string;
+  clearBirthDate?: boolean;
 }
 
 /**
@@ -94,9 +123,17 @@ export function useUpdateMyProfile() {
         p_phone: patch.phone,
         p_email_public: patch.emailPublic,
         p_phone_public: patch.phonePublic,
-        p_address: patch.address,
         p_emergency_name: patch.emergencyName,
         p_emergency_phone: patch.emergencyPhone,
+        p_first_name: patch.firstName,
+        p_last_name: patch.lastName,
+        p_birth_date: patch.birthDate,
+        p_clear_birth_date: patch.clearBirthDate,
+        p_street: patch.street,
+        p_house_number: patch.houseNumber,
+        p_postal_code: patch.postalCode,
+        p_city: patch.city,
+        p_country: patch.country,
       });
       if (error) throw new Error(error.message);
     },

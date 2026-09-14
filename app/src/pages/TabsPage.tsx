@@ -29,6 +29,7 @@ import { ProfilePage } from './ProfilePage';
 import { ClubSettingsPage } from './ClubSettingsPage';
 import { InvitePage } from './club/InvitePage';
 import { JoinRequestPage } from './club/JoinRequestPage';
+import { EventLabelPage } from './club/EventLabelPage';
 import { MemberPage } from './club/MemberPage';
 import { NewsSourcePage } from './club/NewsSourcePage';
 import { FederationPage } from './club/FederationPage';
@@ -99,6 +100,9 @@ export function TabsPage() {
         <Route path="profile/invite" element={<InvitePage />} />
         <Route path="profile/requests" element={<JoinRequestPage />} />
         <Route path="profile/members" element={<MemberPage />} />
+        {/* Die Begriffe je Terminart (BR-148) – eine eigene Seite, weil zwanzig
+            Felder in den Einstellungen alles Übrige nach unten schoben. */}
+        <Route path="profile/labels" element={<EventLabelPage />} />
         <Route path="profile/rules" element={<PointRulePage />} />
         {/* UC-042: die Beiträge der Saison, neben den Punkteregeln. */}
         <Route path="profile/contribution" element={<ContributionPage />} />

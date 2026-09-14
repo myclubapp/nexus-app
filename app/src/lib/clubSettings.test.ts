@@ -92,6 +92,30 @@ describe('buildClubSettings', () => {
     expect(settings.logoUrl).toBe('https://verein.example/logo.svg');
   });
 
+  it('fasst nur an, was die Seite mitschickt', () => {
+    // Seit die Begriffe auf einer eigenen Seite stehen, speichert jede Seite
+    // nur ihren Ausschnitt. Ein fehlendes Feld heisst «nicht angefasst» – ein
+    // leerer Entwurf der Begriffsseite dürfte sonst Farben, Module, DNA und
+    // Logo des Vereins löschen.
+    const before: ClubSettings = {
+      labels: { training: { de: 'Probe' } },
+      theme: { primary: '#112233' },
+      modules: { voice: true },
+      dna: { why: 'Damit alle mitmachen können.' },
+      logoUrl: 'https://verein.example/logo.svg',
+    };
+
+    const settings = buildClubSettings(before, {
+      labels: { training: { de: 'Übung' } },
+    });
+
+    expect(settings.labels).toEqual({ training: { de: 'Übung' } });
+    expect(settings.theme).toEqual({ primary: '#112233' });
+    expect(settings.modules).toEqual({ voice: true });
+    expect(settings.dna).toEqual({ why: 'Damit alle mitmachen können.' });
+    expect(settings.logoUrl).toBe('https://verein.example/logo.svg');
+  });
+
   it('lässt fremde Einstellungen unangetastet', () => {
     // In `settings` stehen auch Werte, die diese Seite nicht kennt.
     const settings = buildClubSettings({ newsSource: 'wordpress' } as never, input());

@@ -2,7 +2,6 @@ import { IonBadge, IonItem, IonLabel, IonNote } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import { useClub } from "../hooks/useClub";
 import { isModuleOn } from "../lib/clubSettings";
-import type { ClubSettings } from "../lib/database.types";
 import { usePendingJoinRequests } from "../hooks/useJoinRequests";
 
 /**
@@ -27,14 +26,12 @@ import { usePendingJoinRequests } from "../hooks/useJoinRequests";
  * Das ist Bequemlichkeit, kein Schutz: Die Berechtigung liegt in den
  * RLS-Policies und in `is_club_admin()` (guidelines §9).
  */
-export function hasAdminLinks(
-  isAdmin: boolean,
-  isTrainer: boolean,
-  settings: ClubSettings | null | undefined,
-): boolean {
+export function hasAdminLinks(isAdmin: boolean, isTrainer: boolean): boolean {
   if (isAdmin) return true;
-  // Die Vereins-Gesundheit gehört auch Trainer:innen – für ihr Team (BR-096).
-  return isTrainer && isModuleOn(settings, "health");
+  // Trainer:innen haben seit UC-043 immer mindestens die Teamliste: Dort
+  // führen sie ihr Team und geben ihr Kader heraus (A1). Die Vereins-
+  // Gesundheit kommt dazu, wenn das Modul läuft (BR-096).
+  return isTrainer;
 }
 
 export function ClubAdminLinks() {
@@ -42,7 +39,7 @@ export function ClubAdminLinks() {
   const { activeClub, isAdmin, isTrainer } = useClub();
   const pendingRequests = usePendingJoinRequests();
 
-  if (!hasAdminLinks(isAdmin, isTrainer, activeClub?.settings)) return null;
+  if (!hasAdminLinks(isAdmin, isTrainer)) return null;
 
   const pending = pendingRequests.data?.length ?? 0;
 
@@ -54,6 +51,16 @@ export function ClubAdminLinks() {
           <IonLabel>{t("health.title")}</IonLabel>
         </IonItem>
       )}
+
+      {/* Teams sind eine eigene Seite (UC-007 A1, UC-039 Schritt 1) – wie in
+          der bestehenden myclub-App. **Auch für Trainer:innen:** Sie führen
+          ihre Teams, planen für sie (C-032) und geben ihr Kader heraus
+          (UC-043 A1). Bliebe der Weg beim Vorstand, wäre der Team-Export
+          gebaut und unerreichbar. Was sie dort tun dürfen, entscheiden die
+          Policies und `can_plan_for_team()`, nicht dieser Link. */}
+      <IonItem button routerLink="/tabs/profile/teams" detail>
+        <IonLabel>{t("teams.title")}</IonLabel>
+      </IonItem>
 
       {!isAdmin ? null : (
         <>
@@ -72,12 +79,6 @@ export function ClubAdminLinks() {
 
           <IonItem button routerLink="/tabs/profile/members" detail>
             <IonLabel>{t("members.title")}</IonLabel>
-          </IonItem>
-
-          {/* Teams sind eine eigene Seite (UC-007 A1, UC-039 Schritt 1) –
-              wie in der bestehenden myclub-App. */}
-          <IonItem button routerLink="/tabs/profile/teams" detail>
-            <IonLabel>{t("teams.title")}</IonLabel>
           </IonItem>
 
           {/* Die Ämter gehören zum Modul «Sitzungen»: Sie sind der Verteiler,

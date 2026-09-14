@@ -114,7 +114,7 @@ export function AppMenu() {
             ihnen für ihr Team (BR-096). Was darin steht, entscheidet
             `ClubAdminLinks` – hier steht nur, ob der Abschnitt überhaupt
             erscheint. */}
-        {hasAdminLinks(isAdmin, isTrainer, activeClub.settings) && (
+        {hasAdminLinks(isAdmin, isTrainer) && (
           <IonMenuToggle autoHide={false}>
             <ListSection
               title={t('menu.administration')}

@@ -12,6 +12,8 @@ interface DateFieldProps {
   presentation: DatePresentation;
   /** Untere Grenze im selben Format, etwa «nicht vor dem Beginn». */
   min?: string;
+  /** Obere Grenze im selben Format, etwa «ein Geburtstag liegt nicht morgen». */
+  max?: string;
   /** Ein Feld, das leer bleiben darf, zeigt «Löschen». */
   clearable?: boolean;
   /**
@@ -45,6 +47,7 @@ export function DateField({
   onChange,
   presentation,
   min,
+  max,
   clearable = false,
   isDateEnabled,
 }: DateFieldProps) {
@@ -69,6 +72,7 @@ export function DateField({
           presentation={presentation}
           value={toPickerValue(value)}
           min={min ? toPickerValue(min) : undefined}
+          max={max ? toPickerValue(max) : undefined}
           locale={appLocale()}
           {...DATETIME_DEFAULTS}
           isDateEnabled={isDateEnabled}

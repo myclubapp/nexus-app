@@ -9,6 +9,8 @@
  * Diese Datei rechnet nur; sie holt nichts und zeigt nichts.
  */
 
+import { toCsv } from './csv';
+
 /** Die Stufen der Ampel. Dieselben Namen wie `contribution_overview()`. */
 export type GoalState = 'reached' | 'onTrack' | 'open' | 'exempt' | 'unset';
 
@@ -77,27 +79,13 @@ export interface ContributionRow {
 /**
  * Die Übersicht als CSV für den Kassier (BR-203).
  *
- * Semikolon als Trennzeichen: Excel in der Schweiz liest Komma-CSV in einer
- * Spalte. Felder werden gequotet und enthaltene Anführungszeichen verdoppelt –
- * ein Mitgliedsname mit Semikolon darf die Spalten nicht verschieben.
+ * Trennzeichen, Quotierung und Zeilenende stehen seit UC-043 in `lib/csv.ts`
+ * – der Mitglieder-Export braucht dieselben Regeln, und zweimal dieselbe
+ * Quotierung wäre zweimal dieselbe Regel.
  */
 export function contributionCsv(rows: ContributionRow[], header: string[]): string {
-  const cell = (value: string | number | null): string => {
-    const text = value === null || value === undefined ? '' : String(value);
-    return `"${text.replace(/"/g, '""')}"`;
-  };
-
-  const lines = [header.map(cell).join(';')];
-  for (const row of rows) {
-    lines.push(
-      [
-        cell(row.name ?? ''),
-        cell(row.earned),
-        cell(row.goal),
-        cell(row.remaining),
-        cell(row.state),
-      ].join(';'),
-    );
-  }
-  return lines.join('\r\n');
+  return toCsv(
+    header,
+    rows.map((row) => [row.name ?? '', row.earned, row.goal, row.remaining, row.state]),
+  );
 }

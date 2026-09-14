@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       attendance: {
@@ -369,9 +394,11 @@ export type Database = {
           avatar_url: string | null
           club_id: string
           display_name: string
+          first_name: string | null
           health_opt_out: boolean
           id: string
           is_minor: boolean
+          last_name: string | null
           leaderboard_opt_in: boolean
           legacy_user_id: string | null
           member_since: string
@@ -386,9 +413,11 @@ export type Database = {
           avatar_url?: string | null
           club_id: string
           display_name: string
+          first_name?: string | null
           health_opt_out?: boolean
           id?: string
           is_minor?: boolean
+          last_name?: string | null
           leaderboard_opt_in?: boolean
           legacy_user_id?: string | null
           member_since?: string
@@ -403,9 +432,11 @@ export type Database = {
           avatar_url?: string | null
           club_id?: string
           display_name?: string
+          first_name?: string | null
           health_opt_out?: boolean
           id?: string
           is_minor?: boolean
+          last_name?: string | null
           leaderboard_opt_in?: boolean
           legacy_user_id?: string | null
           member_since?: string
@@ -1449,28 +1480,43 @@ export type Database = {
       }
       member_contacts: {
         Row: {
-          address: string | null
+          birth_date: string | null
+          city: string | null
+          country: string | null
           email: string | null
           emergency_name: string | null
           emergency_phone: string | null
+          house_number: string | null
           member_id: string
           phone: string | null
+          postal_code: string | null
+          street: string | null
         }
         Insert: {
-          address?: string | null
+          birth_date?: string | null
+          city?: string | null
+          country?: string | null
           email?: string | null
           emergency_name?: string | null
           emergency_phone?: string | null
+          house_number?: string | null
           member_id: string
           phone?: string | null
+          postal_code?: string | null
+          street?: string | null
         }
         Update: {
-          address?: string | null
+          birth_date?: string | null
+          city?: string | null
+          country?: string | null
           email?: string | null
           emergency_name?: string | null
           emergency_phone?: string | null
+          house_number?: string | null
           member_id?: string
           phone?: string | null
+          postal_code?: string | null
+          street?: string | null
         }
         Relationships: [
           {
@@ -2148,6 +2194,7 @@ export type Database = {
           legacy_team_id: string | null
           name: string
           name_addition: string | null
+          photo_url: string | null
         }
         Insert: {
           area?: string | null
@@ -2162,6 +2209,7 @@ export type Database = {
           legacy_team_id?: string | null
           name: string
           name_addition?: string | null
+          photo_url?: string | null
         }
         Update: {
           area?: string | null
@@ -2176,6 +2224,7 @@ export type Database = {
           legacy_team_id?: string | null
           name?: string
           name_addition?: string | null
+          photo_url?: string | null
         }
         Relationships: [
           {
@@ -2495,6 +2544,7 @@ export type Database = {
         Returns: boolean
       }
       can_see_agenda: { Args: { p_event_id: string }; Returns: boolean }
+      can_write_club_media: { Args: { p_name: string }; Returns: boolean }
       cancel_event: {
         Args: { p_event_id: string; p_reason: string }
         Returns: undefined
@@ -2723,6 +2773,28 @@ export type Database = {
       expire_health_signals: { Args: never; Returns: number }
       expire_sample_content: { Args: never; Returns: number }
       expire_tasks: { Args: { p_limit?: number }; Returns: number }
+      export_members: {
+        Args: { p_club_id: string; p_team_id?: string }
+        Returns: {
+          birth_date: string
+          city: string
+          country: string
+          display_name: string
+          email: string
+          first_name: string
+          house_number: string
+          last_name: string
+          member_id: string
+          member_since: string
+          offices: string
+          phone: string
+          postal_code: string
+          role: string
+          status: string
+          street: string
+          teams: string
+        }[]
+      }
       federation_credentials: {
         Args: { p_club_id?: string }
         Returns: {
@@ -2931,6 +3003,10 @@ export type Database = {
       nudge_low_checkins: { Args: never; Returns: number }
       office_open_seats: { Args: { p_role_id: string }; Returns: number }
       path_club_id: { Args: { p_name: string }; Returns: string }
+      path_uuid: {
+        Args: { p_name: string; p_segment: number }
+        Returns: string
+      }
       pending_mail: {
         Args: { p_user_limit?: number }
         Returns: {
@@ -3158,6 +3234,10 @@ export type Database = {
         Returns: undefined
       }
       set_locale: { Args: { p_locale: string }; Returns: undefined }
+      set_member_avatar: {
+        Args: { p_member_id: string; p_url?: string }
+        Returns: undefined
+      }
       set_member_teams: {
         Args: { p_member_id: string; p_team_ids: string[] }
         Returns: undefined
@@ -3188,6 +3268,10 @@ export type Database = {
       set_signal_status: {
         Args: { p_signal_id: string; p_status: string }
         Returns: string
+      }
+      set_team_photo: {
+        Args: { p_team_id: string; p_url?: string }
+        Returns: undefined
       }
       share_checkin: { Args: { p_response_id: string }; Returns: undefined }
       shift_candidates: {
@@ -3322,15 +3406,23 @@ export type Database = {
       unlink_team: { Args: { p_team_id: string }; Returns: undefined }
       update_my_profile: {
         Args: {
-          p_address?: string
+          p_birth_date?: string
+          p_city?: string
+          p_clear_birth_date?: boolean
+          p_country?: string
           p_display_name?: string
           p_email?: string
           p_email_public?: boolean
           p_emergency_name?: string
           p_emergency_phone?: string
+          p_first_name?: string
+          p_house_number?: string
+          p_last_name?: string
           p_member_id: string
           p_phone?: string
           p_phone_public?: boolean
+          p_postal_code?: string
+          p_street?: string
         }
         Returns: undefined
       }
@@ -3529,6 +3621,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },

@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'ch.myclub.nexus',
-  appName: 'myclub',
+  appId: 'ch.myclub.nexus.app',
+  appName: 'myclub nexus',
   webDir: 'dist',
   ios: {
     scheme: 'App',

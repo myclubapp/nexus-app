@@ -672,6 +672,26 @@ ion-tab-button.tab-selected .app-tab-icon-filled {
   letter-spacing: 0.02em;
 }
 
+/* --- Bildwahl (ImagePicker, UC-045) ------------------------------------------
+   Die kleine Vorschau ist ein `ion-avatar` mit `.app-avatar` – dieselbe
+   Grösse und dieselbe Form wie in jeder Personenzeile, kein zweites Mass.
+   Für das Logo darin `contain` statt `cover`: Ein Vereinswappen darf nicht
+   beschnitten werden. */
+.app-avatar img.app-image-contain {
+  object-fit: contain;
+}
+
+/* Das Teambild füllt die Breite des Blattes. `aspect-ratio` statt einer
+   Pixelhöhe: So bleibt der Ausschnitt auf jedem Bildschirm derselbe, und die
+   Zeile springt nicht, während das Bild lädt. */
+.app-image-wide {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--app-space-2);
+  background: var(--ion-color-light);
+}
+
 /* --- Filter-Chips (AgendaFilterModal) ------------------------------------- */
 /* Die Chips liegen in einer Inset-Liste, damit sie den Rand der iOS-Gruppe
    teilen; die Gruppe umbricht statt zu schieben, jede Art bleibt sichtbar. */

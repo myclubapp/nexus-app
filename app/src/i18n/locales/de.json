@@ -316,7 +316,19 @@
     "emergency": "Notfallkontakt",
     "emergencyName": "Name der Kontaktperson",
     "emergencyPhone": "Telefon der Kontaktperson",
-    "emergencyHint": "Sehen nur du, der Vorstand und die Trainer:innen deiner Teams – für den Fall, dass am Spieltag etwas passiert."
+    "emergencyHint": "Sehen nur du, der Vorstand und die Trainer:innen deiner Teams – für den Fall, dass am Spieltag etwas passiert.",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "birthDate": "Geburtsdatum",
+    "street": "Strasse",
+    "houseNumber": "Nummer",
+    "postalCode": "Postleitzahl",
+    "city": "Ort",
+    "country": "Land",
+    "countryPlaceholder": "CH",
+    "problem": {
+      "countryCode": "Das Land steht als zwei Buchstaben, zum Beispiel CH oder DE."
+    }
   },
   "clubSettings": {
     "title": "Vereinseinstellungen",
@@ -392,7 +404,8 @@
     "goal": "Saisonziel",
     "goalPoints": "Ziel in Punkten",
     "goalHint": "Wie viele Punkte aus freiwilligem Engagement und Marktplatz je Mitglied und Saison zusammenkommen sollen. Leer lassen heisst: kein Ziel.",
-    "goalHintWithSuggestion": "Wie viele Punkte aus freiwilligem Engagement und Marktplatz je Mitglied und Saison zusammenkommen sollen. {{shifts}} Einsätze entsprechen {{points}} Punkten. Leer lassen heisst: kein Ziel."
+    "goalHintWithSuggestion": "Wie viele Punkte aus freiwilligem Engagement und Marktplatz je Mitglied und Saison zusammenkommen sollen. {{shifts}} Einsätze entsprechen {{points}} Punkten. Leer lassen heisst: kein Ziel.",
+    "logoUrlHint": "Oder trage die Adresse eines Logos ein, das schon auf eurer Website liegt."
   },
   "health": {
     "title": "Vereins-Gesundheit",
@@ -1922,5 +1935,46 @@
       "reachedHint": "Danke. Weitere Beiträge zählen weiter, verlangt wird nichts mehr."
     },
     "copied": "In die Zwischenablage kopiert"
+  },
+  "memberExport": {
+    "title": "Mitglieder exportieren",
+    "action": "Mitglieder exportieren",
+    "teamAction": "Team exportieren",
+    "submit": "Exportieren",
+    "fields": "Felder",
+    "fieldsHint": "Name, Rolle, Status und Eintritt gehen immer mit. Alles andere wählst du hier.",
+    "trainerHint": "Adresse und Geburtsdatum bleiben beim Vorstand. E-Mail und Telefon gehen nur mit, wo das Mitglied sie freigegeben hat.",
+    "footnote": "Die Liste geht so heraus, wie der Filter sie zeigt.",
+    "empty": "Diese Auswahl enthält kein Mitglied.",
+    "copied": "Die Liste liegt in der Zwischenablage.",
+    "teams": "Teams",
+    "offices": "Ämter",
+    "field": {
+      "email": "E-Mail",
+      "phone": "Telefonnummer",
+      "birthDate": "Geburtsdatum",
+      "address": "Adresse",
+      "teams": "Teams",
+      "offices": "Ämter"
+    },
+    "done_one": "{{count}} Mitglied exportiert.",
+    "done_other": "{{count}} Mitglieder exportiert."
+  },
+  "media": {
+    "choose": "Wählen",
+    "change": "Ändern",
+    "remove": "Bild entfernen",
+    "none": "Noch kein Bild",
+    "uploaded": "Bild hochgeladen.",
+    "tooLarge": "Das Bild ist zu gross. Nimm ein kleineres.",
+    "avatar": "Profilbild",
+    "avatarHint": "Dein Bild erscheint in Listen und Ranglisten dieses Vereins. Es wird vor dem Hochladen verkleinert.",
+    "teamPhoto": "Teambild",
+    "teamPhotoHint": "Das Mannschaftsfoto steht im Team. Es ändern alle, die für dieses Team planen.",
+    "present": "Bild hinterlegt",
+    "removeHint": "Ohne Bild stehen die Initialen.",
+    "unsupported": "Dieses Bildformat lässt sich hier nicht verwenden. Nimm ein JPEG oder PNG.",
+    "saved": "Bild gespeichert.",
+    "removed": "Bild entfernt."
   }
 }

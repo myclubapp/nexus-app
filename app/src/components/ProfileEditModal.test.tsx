@@ -6,6 +6,7 @@ import { renderWithProviders } from '../test/utils';
 import type { MyProfile } from '../hooks/useProfile';
 
 const save = vi.fn();
+const setAvatar = vi.fn();
 let profile: MyProfile | undefined;
 
 vi.mock('../hooks/useProfile', () => ({
@@ -14,10 +15,47 @@ vi.mock('../hooks/useProfile', () => ({
 }));
 
 /**
+ * Seit UC-045 steht der Bildabschnitt im Blatt. `useClub` braucht sonst einen
+ * `ClubProvider`, und `useMedia` spräche mit dem Vereinsspeicher – beides
+ * gehört nicht in einen Test über das Formular (docs/TESTING.md).
+ */
+vi.mock('../hooks/useClub', () => ({
+  useClub: () => ({
+    activeMembership: { id: 'm1', avatar_url: null },
+    activeClub: { id: 'c1', slug: 'sc-muster' },
+  }),
+}));
+
+vi.mock('../hooks/useMedia', () => ({
+  useSetMemberAvatar: () => ({ mutate: setAvatar, isPending: false, error: null }),
+  useUploadMedia: () => ({ mutateAsync: vi.fn(), isPending: false, error: null }),
+  pickImage: vi.fn(),
+  // Seit UC-045 steht in `avatar_url` ein Pfad; die Adresse dazu wird
+  // signiert. Im Test genügt der Wert selbst.
+  useSignedMediaUrl: (value: string | null | undefined) => value ?? null,
+  logoUrl: (value: string | null | undefined) => value ?? null,
+}));
+
+vi.mock('../hooks/useToast', () => ({
+  useToast: () => ({ success: vi.fn(), failure: vi.fn() }),
+}));
+
+/**
  * `FormModal` steckt in einem `IonModal`, das in jsdom nichts rendert. Die
  * Hülle wird deshalb durch gewöhnliches HTML ersetzt – damit sind der
  * Bestätigen-Knopf und sein gesperrter Zustand prüfbar (docs/TESTING.md).
  */
+/**
+ * `IonDatetime` nimmt in jsdom keine Eigenschaft an und meldet ohne
+ * verbundene Instanz einen Fehler (docs/TESTING.md). Das Geburtsdatum steht
+ * hier nur als Feld unter vielen – geprüft wird der Wähler in
+ * `DateField.test.tsx`.
+ */
+vi.mock('@ionic/react', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ionic/react')>();
+  return { ...actual, IonDatetime: () => <div />, IonDatetimeButton: () => <div /> };
+});
+
 vi.mock('./FormModal', () => ({
   FormModal: ({
     children,
@@ -46,7 +84,14 @@ describe('ProfileEditForm', () => {
       emailPublic: true,
       phonePublic: false,
       leaderboardOptIn: true,
-      address: null,
+      firstName: null,
+      lastName: null,
+      birthDate: null,
+      street: null,
+      houseNumber: null,
+      postalCode: null,
+      city: null,
+      country: null,
       emergencyName: null,
       emergencyPhone: null,
     };
@@ -63,11 +108,19 @@ describe('ProfileEditForm', () => {
     expect(save).toHaveBeenCalledWith(
       {
         displayName: 'Anna Muster',
+        firstName: '',
+        lastName: '',
         email: 'anna@example.com',
         phone: '079 111 22 33',
         emailPublic: true,
         phonePublic: false,
-        address: '',
+        birthDate: undefined,
+        clearBirthDate: true,
+        street: '',
+        houseNumber: '',
+        postalCode: '',
+        city: '',
+        country: '',
         emergencyName: '',
         emergencyPhone: '',
       },
@@ -84,8 +137,12 @@ describe('ProfileEditForm', () => {
     // Adresse und Notfallkontakt (0063) haben bewusst keinen: Es gibt dort
     // keine Sichtbarkeit zu wählen.
     expect(container.querySelectorAll('ion-toggle')).toHaveLength(2);
-    expect(container.querySelectorAll('ion-input')).toHaveLength(5);
-    expect(container.querySelectorAll('ion-textarea')).toHaveLength(1);
+    // Drei Namensfelder, zwei Kontaktangaben, fünf für die Adresse (BR-207),
+    // zwei für den Notfallkontakt. Das Geburtsdatum ist ein `DateField`, das
+    // Profilbild ein `ImagePicker` – beide bringen kein `ion-input` mit.
+    expect(container.querySelectorAll('ion-input')).toHaveLength(12);
+    // Die Adresse ist seit UC-043 kein Fliesstext mehr (BR-207).
+    expect(container.querySelectorAll('ion-textarea')).toHaveLength(0);
   });
 
   it('erklärt, dass Verborgenes nicht ausgeliefert wird (BR-030, BR-028)', () => {
@@ -123,7 +180,14 @@ describe('ProfileEditForm', () => {
       emailPublic: false,
       phonePublic: false,
       leaderboardOptIn: true,
-      address: null,
+      firstName: null,
+      lastName: null,
+      birthDate: null,
+      street: null,
+      houseNumber: null,
+      postalCode: null,
+      city: null,
+      country: null,
       emergencyName: null,
       emergencyPhone: null,
     };
@@ -136,11 +200,19 @@ describe('ProfileEditForm', () => {
     expect(save).toHaveBeenCalledWith(
       {
         displayName: 'Anna Muster',
+        firstName: '',
+        lastName: '',
         email: '',
         phone: '',
         emailPublic: false,
         phonePublic: false,
-        address: '',
+        birthDate: undefined,
+        clearBirthDate: true,
+        street: '',
+        houseNumber: '',
+        postalCode: '',
+        city: '',
+        country: '',
         emergencyName: '',
         emergencyPhone: '',
       },

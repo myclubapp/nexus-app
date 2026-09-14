@@ -316,7 +316,19 @@
     "emergency": "Contact d’urgence",
     "emergencyName": "Nom de la personne de contact",
     "emergencyPhone": "Téléphone de la personne de contact",
-    "emergencyHint": "Visible uniquement par toi, le comité et les entraîneur·es de tes équipes, au cas où il arriverait quelque chose un jour de match."
+    "emergencyHint": "Visible uniquement par toi, le comité et les entraîneur·es de tes équipes, au cas où il arriverait quelque chose un jour de match.",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "birthDate": "Date de naissance",
+    "street": "Rue",
+    "houseNumber": "Numéro",
+    "postalCode": "Code postal",
+    "city": "Localité",
+    "country": "Pays",
+    "countryPlaceholder": "CH",
+    "problem": {
+      "countryCode": "Le pays s’écrit en deux lettres, par exemple CH ou DE."
+    }
   },
   "clubSettings": {
     "title": "Paramètres du club",
@@ -392,7 +404,8 @@
     "goal": "Objectif de saison",
     "goalPoints": "Objectif en points",
     "goalHint": "Combien de points d'engagement bénévole et de marché chaque membre devrait réunir par saison. Laisser vide signifie: pas d'objectif.",
-    "goalHintWithSuggestion": "Combien de points d'engagement bénévole et de marché chaque membre devrait réunir par saison. {{shifts}} engagements correspondent à {{points}} points. Laisser vide signifie: pas d'objectif."
+    "goalHintWithSuggestion": "Combien de points d'engagement bénévole et de marché chaque membre devrait réunir par saison. {{shifts}} engagements correspondent à {{points}} points. Laisser vide signifie: pas d'objectif.",
+    "logoUrlHint": "Ou saisis l’adresse d’un logo déjà présent sur votre site web."
   },
   "health": {
     "title": "Santé de la société",
@@ -1922,5 +1935,46 @@
       "reachedHint": "Merci. D'autres contributions comptent toujours, mais plus rien n'est demandé."
     },
     "copied": "Copié dans le presse-papiers"
+  },
+  "memberExport": {
+    "title": "Exporter les membres",
+    "action": "Exporter les membres",
+    "teamAction": "Exporter l’équipe",
+    "submit": "Exporter",
+    "fields": "Champs",
+    "fieldsHint": "Le nom, le rôle, le statut et la date d’entrée sont toujours inclus. Tu choisis le reste ici.",
+    "trainerHint": "L’adresse et la date de naissance restent au comité. L’e-mail et le téléphone ne sont inclus que si le membre les a rendus visibles.",
+    "footnote": "La liste sort telle que le filtre l’affiche.",
+    "empty": "Cette sélection ne contient aucun membre.",
+    "copied": "La liste est dans le presse-papiers.",
+    "teams": "Équipes",
+    "offices": "Fonctions",
+    "field": {
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "birthDate": "Date de naissance",
+      "address": "Adresse",
+      "teams": "Équipes",
+      "offices": "Fonctions"
+    },
+    "done_one": "{{count}} membre exporté.",
+    "done_other": "{{count}} membres exportés."
+  },
+  "media": {
+    "choose": "Choisir",
+    "change": "Modifier",
+    "remove": "Retirer l’image",
+    "none": "Pas encore d’image",
+    "uploaded": "Image envoyée.",
+    "tooLarge": "L’image est trop grande. Prends-en une plus petite.",
+    "avatar": "Photo de profil",
+    "avatarHint": "Ton image apparaît dans les listes et les classements de ce club. Elle est réduite avant l’envoi.",
+    "teamPhoto": "Photo d’équipe",
+    "teamPhotoHint": "La photo d’équipe figure dans l’équipe. La modifient toutes les personnes qui planifient pour elle.",
+    "present": "Image déposée",
+    "removeHint": "Sans image, ce sont les initiales qui s’affichent.",
+    "unsupported": "Ce format d’image ne convient pas ici. Prends un JPEG ou un PNG.",
+    "saved": "Image enregistrée.",
+    "removed": "Image retirée."
   }
 }

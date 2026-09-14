@@ -27,7 +27,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="ch.myclub.nexus" />
+                <data android:scheme="ch.myclub.nexus.default" />
             </intent-filter>
 
         </activity>
@@ -49,5 +49,14 @@
 
     <!-- QR-Check-in scannt im WebView, ohne Google ML Kit -->
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- UC-045: Ein Bild aus der Galerie wählen. `READ_MEDIA_IMAGES` gilt ab
+         Android 13, `READ_EXTERNAL_STORAGE` davor – deshalb mit maxSdkVersion,
+         damit neuere Geräte nicht nach der alten, weiteren Berechtigung
+         gefragt werden. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 </manifest>

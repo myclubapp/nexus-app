@@ -49,7 +49,7 @@
 | Funktionärsämter mit Factsheets & Vakanz-Anzeige | Ausbaustufe 2 des Marktplatzes – **vorgezogen am 12.09.2026** (UC-041): Factsheet, Sitze, Belegung, PDF im Vereinsspeicher, Vakanz im Marktplatz |
 | Meisterschaft (Spielpläne, Resultate, Tabellen, Aufstellungen) | Optionales Modul, abhängig von API-Keys (§5) |
 | Eltern/Kids (Verknüpfung, stellvertretend antworten) | Erstes Post-MVP-Inkrement – wichtig für Juniorenvereine, aber nicht Tag-1-kritisch |
-| J+S-Exporte, Mitglieder-Export | Post-MVP; Datengrundlage (Anwesenheiten) entsteht im MVP bereits korrekt |
+| J+S-Exporte, Mitglieder-Export | Post-MVP; Datengrundlage (Anwesenheiten) entsteht im MVP bereits korrekt. **Der Mitglieder-Export ist am 14.09.2026 vorgezogen** (UC-043, FR-130): Verein und Team als CSV, mit wählbaren Feldern und strukturierten Stammdaten. Der J+S-Export (FR-131) bleibt Post-MVP – er braucht AHV-Nummer, Geschlecht und Nationalität, die das Profil bewusst nicht führt |
 | Trainingsübungen, Vereinslinks, Vereinsstatistiken, Spielvorschau im Feed, Follow | Nice-to-have; keine MVP-Rechtfertigung |
 | Bulk-Import (CSV) mit personalisierten Einladungen | Direkt nach MVP – wichtig für Migration der Bestandsvereine |
 

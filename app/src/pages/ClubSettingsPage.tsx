@@ -8,7 +8,6 @@ import {
   IonItemOption,
   IonItemOptions,
   IonItemSliding,
-  IonListHeader,
   IonNote,
   IonSpinner,
   IonTextarea,
@@ -30,16 +29,14 @@ import {
   suggestContrast,
   type ThemeRole,
 } from '../lib/theme';
-import {
-  buildClubSettings,
-  seasonStartChanged,
-  type LabelSet,
-} from '../lib/clubSettings';
-import { SUPPORTED_LANGUAGES } from '../i18n';
+import { buildClubSettings, seasonStartChanged } from '../lib/clubSettings';
 import { seasonLabel } from '../lib/season';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
 import { DateField } from '../components/DateField';
+import { ImagePicker } from '../components/ImagePicker';
+import { useRemoveMediaFile } from '../hooks/useMedia';
+import { isClubMediaUrl } from '../lib/image';
 import { EmptyState, InlineError } from '../components/StateViews';
 import { CLUB_MODULES } from '../lib/database.types';
 import { usePointRules } from '../hooks/useGamification';
@@ -47,23 +44,15 @@ import {
   GOAL_SUGGESTION_SHIFTS,
   suggestedSeasonGoal,
 } from '../lib/contributionGoal';
-import type { ClubModule, ClubSettings, EventType } from '../lib/database.types';
-
-/** Reihenfolge wie in `events.type` (0003_agenda.sql, verengt in 0072). */
-const EVENT_TYPES: EventType[] = [
-  'training',
-  'match',
-  'gv',
-  'social',
-  'helper',
-];
+import type { ClubModule, ClubSettings } from '../lib/database.types';
 
 const THEME_ROLES = Object.keys(BASE_THEME) as ThemeRole[];
 
 /**
- * Vereinseinstellungen: Name, Saisonstart, Vereinsfarben und die eigenen
- * Begriffe je Terminart (MVP-Scope §6 – die Vereinsart setzt nur Vorlagen,
- * alles bleibt nachträglich änderbar).
+ * Vereinseinstellungen: Module, Name, Saisonstart, Vereinsfarben, Logo,
+ * Rangliste und Vereins-DNA (MVP-Scope §6 – die Vereinsart setzt nur Vorlagen,
+ * alles bleibt nachträglich änderbar). Die vereinseigenen Begriffe je
+ * Terminart stehen auf `EventLabelPage`; von hier führt ein Weg dorthin.
  *
  * Geschrieben wird über `useSaveClubSettings()`; die Berechtigung prüft die
  * Policy `clubs_update` über `is_club_admin()`. Das Ausblenden hier ist nur
@@ -81,10 +70,10 @@ export function ClubSettingsPage() {
   const [name, setName] = useState('');
   const [seasonStart, setSeasonStart] = useState('');
   const [theme, setTheme] = useState<ClubSettings['theme']>({});
-  const [labels, setLabels] = useState<Partial<Record<EventType, LabelSet>>>({});
   const [modules, setModules] = useState<Partial<Record<ClubModule, boolean>>>({});
   const [dna, setDna] = useState<NonNullable<ClubSettings['dna']>>({});
   const [logoUrl, setLogoUrl] = useState('');
+  const removeFile = useRemoveMediaFile();
   const [topOnly, setTopOnly] = useState('');
   const [hidePoints, setHidePoints] = useState(false);
   // UC-042: das Saisonziel in Punkten. Leer heisst «kein Ziel».
@@ -107,7 +96,6 @@ export function ClubSettingsPage() {
     setName(activeClub.name);
     setSeasonStart(activeClub.season_start ?? '');
     setTheme(activeClub.settings?.theme ?? {});
-    setLabels(activeClub.settings?.labels ?? {});
     setModules(activeClub.settings?.modules ?? {});
     setDna(activeClub.settings?.dna ?? {});
     setLogoUrl(activeClub.settings?.logoUrl ?? '');
@@ -145,12 +133,23 @@ export function ClubSettingsPage() {
   );
 
   function persist() {
+    // Welche Datei nach dem Speichern wegzuräumen ist: die bisherige, sofern
+    // sie ein **Logo** dieses Vereins war. `isClubMediaUrl` prüft auch die
+    // Art des Bildes – sonst löschte das Ersetzen des Logos ein Teambild,
+    // dessen Adresse jemand von Hand ins Adressfeld getippt hat.
+    const previousLogo = activeClub?.settings?.logoUrl ?? '';
+    const stale =
+      previousLogo &&
+      previousLogo !== logoUrl &&
+      isClubMediaUrl(previousLogo, activeClub?.id ?? '', 'logo')
+        ? previousLogo
+        : null;
+
     save.mutate(
       {
         name,
         seasonStart: seasonStart || null,
         settings: buildClubSettings(activeClub?.settings, {
-          labels,
           theme,
           modules,
           dna,
@@ -160,7 +159,10 @@ export function ClubSettingsPage() {
         }),
       },
       {
-        onSuccess: () => toast.success(t('clubSettings.saved')),
+        onSuccess: () => {
+          if (stale) removeFile.mutate(stale);
+          toast.success(t('clubSettings.saved'));
+        },
         onError: (cause) => toast.failure(cause.message),
       },
     );
@@ -206,6 +208,35 @@ export function ClubSettingsPage() {
               value={seasonStart}
               onChange={setSeasonStart}
             />
+          </ListSection>
+
+          {/* A1 und FR-115: die Module. Was hier aus ist, gibt es für dieses
+              Mitglied nicht – und der Server sagt dasselbe (`module_enabled()`).
+
+              Sie stehen **oben**: Ein Modul entscheidet, ob es einen Bereich
+              überhaupt gibt – auch auf dieser Seite (das Saisonziel weiter
+              unten erscheint erst mit `modules.goal`). Wer etwas sucht, das
+              fehlt, schaltet es hier ein; das darf nicht hinter zwanzig
+              Farb- und Textfeldern liegen. */}
+          <ListSection
+            title={t('clubSettings.modules')}
+            footnote={t('clubSettings.modulesHint')}
+          >
+            {CLUB_MODULES.map((module) => (
+              <IonItem key={module}>
+                <IonToggle
+                  checked={modules[module] === true}
+                  onIonChange={(e) =>
+                    setModules((current) => ({ ...current, [module]: e.detail.checked }))
+                  }
+                >
+                  <IonLabel className="ion-text-wrap">
+                    <h2>{t(`clubSettings.module.${module}.title`)}</h2>
+                    <IonNote>{t(`clubSettings.module.${module}.body`)}</IonNote>
+                  </IonLabel>
+                </IonToggle>
+              </IonItem>
+            ))}
           </ListSection>
 
           <ListSection
@@ -273,12 +304,29 @@ export function ClubSettingsPage() {
             ))}
           </ListSection>
 
-          {/* FR-111: das Logo. Als Adresse, nicht als Upload – dafür fehlt
-              Supabase Storage (offen seit UC-026). */}
-          <ListSection
+          {/* FR-111: das Logo. Seit UC-045 als Upload **und** als Adresse:
+              Der Upload legt die Datei im Vereinsspeicher ab und schreibt
+              seine Adresse in dasselbe Feld – ein Verein, dessen Logo schon
+              auf seiner Website liegt, trägt weiterhin einfach den Link ein.
+              Ein Feld, zwei Wege dorthin; nicht zwei Felder. */}
+          <ImagePicker
             title={t('clubSettings.logo')}
             footnote={t('clubSettings.logoHint')}
-          >
+            kind="logo"
+            ownerId={null}
+            url={logoUrl || null}
+            // Nur den Entwurf setzen. Die alte Datei fällt erst, wenn
+            // gespeichert ist – wer ein Logo wählt und die Seite ohne
+            // Speichern verlässt, hätte sonst in `settings.logoUrl` eine
+            // Adresse, hinter der nichts mehr liegt. Und das Logo lädt vor
+            // der Anmeldung (Einladungsseite, White-Label).
+            // Das Logo führt die **Adresse**, nicht den Pfad: Das Feld
+            // darunter nimmt auch eine fremde Adresse an (UC-034), und beide
+            // Wege müssen dasselbe hineinschreiben.
+            onChange={(value) => setLogoUrl(value?.url ?? '')}
+          />
+
+          <ListSection footnote={t('clubSettings.logoUrlHint')}>
             <IonItem>
               <IonInput
                 type="url"
@@ -292,62 +340,17 @@ export function ClubSettingsPage() {
             </IonItem>
           </ListSection>
 
-          {/* BR-148: je Terminart vier Felder – ein Verein, der «Probe»
-              sagt, sagt auf Französisch «répétition». Leer bleibende
-              Sprachen fallen auf eine ausgefüllte zurück, nicht auf die
-              Standardübersetzung (`resolveLabel()`).
-
-              Ein Abschnitt je Terminart, eine Zeile je Sprache: Ein Item ist
-              eine Listenzeile mit höchstens zwei Bedienelementen, kein
-              Container für vier Felder nebeneinander – auf 390 px wäre das
-              nicht bedienbar. */}
-          <IonListHeader>
-            <IonLabel>{t('clubSettings.labels')}</IonLabel>
-          </IonListHeader>
-          {EVENT_TYPES.map((type) => (
-            <ListSection key={type} title={t(`agenda.type.${type}`)}>
-              {SUPPORTED_LANGUAGES.map((code, index) => (
-                <IonItem key={code}>
-                  <IonInput
-                    label={t(`language.${code}`)}
-                    labelPlacement="stacked"
-                    placeholder={t(`agenda.type.${type}`)}
-                    enterkeyhint={index === SUPPORTED_LANGUAGES.length - 1 ? 'done' : 'next'}
-                    value={labels[type]?.[code] ?? ''}
-                    onIonInput={(e) =>
-                      setLabels((current) => ({
-                        ...current,
-                        [type]: { ...current[type], [code]: e.detail.value ?? '' },
-                      }))
-                    }
-                  />
-                </IonItem>
-              ))}
-            </ListSection>
-          ))}
-          <IonNote className="app-footnote">{t('clubSettings.labelsHint')}</IonNote>
-
-          {/* A1 und FR-115: die Module. Was hier aus ist, gibt es für dieses
-              Mitglied nicht – und der Server sagt dasselbe (`module_enabled()`). */}
-          <ListSection
-            title={t('clubSettings.modules')}
-            footnote={t('clubSettings.modulesHint')}
-          >
-            {CLUB_MODULES.map((module) => (
-              <IonItem key={module}>
-                <IonToggle
-                  checked={modules[module] === true}
-                  onIonChange={(e) =>
-                    setModules((current) => ({ ...current, [module]: e.detail.checked }))
-                  }
-                >
-                  <IonLabel className="ion-text-wrap">
-                    <h2>{t(`clubSettings.module.${module}.title`)}</h2>
-                    <IonNote>{t(`clubSettings.module.${module}.body`)}</IonNote>
-                  </IonLabel>
-                </IonToggle>
-              </IonItem>
-            ))}
+          {/* BR-148 steht auf einer eigenen Seite: Fünf Terminarten mal vier
+              Sprachen sind zwanzig Felder, die einmal eingerichtet und dann
+              kaum mehr angefasst werden – hier schoben sie alles Übrige nach
+              unten. Die Begriffsseite speichert ihren Ausschnitt selbst
+              (`buildClubSettings()` lässt unangetastet, was eine Seite nicht
+              mitschickt); wer ihr folgt, verlässt diese Seite wie mit dem
+              Zurück-Knopf und nimmt einen ungespeicherten Entwurf nicht mit. */}
+          <ListSection footnote={t('clubSettings.labelsHint')}>
+            <IonItem button detail routerLink="/tabs/profile/labels">
+              <IonLabel>{t('clubSettings.labels')}</IonLabel>
+            </IonItem>
           </ListSection>
 
           {/* Konzept §7.2 und UC-022 A3: der Ausschnitt der Rangliste und

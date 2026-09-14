@@ -32,6 +32,7 @@ import { EmptyState, ErrorState } from '../../components/StateViews';
 import { MemberAvatar } from '../../components/MemberAvatar';
 import {
   ASSIGNABLE_ROLES,
+  addressLines,
   hasArea,
   EMPTY_MEMBER_FILTER,
   MEMBER_STATUSES,
@@ -44,6 +45,8 @@ import type { MemberRole, PointTransaction } from '../../lib/database.types';
 import { formatDate, formatDateTime } from '../../lib/format';
 import { bookingLabel } from '../../lib/points';
 import { BookPointsModal } from '../../components/BookPointsModal';
+import { ManageSection } from '../../components/ManageSection';
+import { MemberExportModal } from '../../components/MemberExportModal';
 import {
   useMemberPoints,
   useRuleLabels,
@@ -78,6 +81,7 @@ export function MemberPage() {
 
   const [isTeamFormOpen, setTeamFormOpen] = useState(false);
   const [teamName, setTeamName] = useState('');
+  const [isExporting, setExporting] = useState(false);
 
   // UC-021: Buchen und Korrigieren laufen über **dasselbe** Blatt; welcher
   // Weg gemeint ist, entscheidet, ob eine Buchung mitgegeben wird.
@@ -87,6 +91,9 @@ export function MemberPage() {
 
   const all = useMemo(() => members.data ?? [], [members.data]);
   const visible = useMemo(() => filterMembers(all, filter), [all, filter]);
+  const exportTeamName = filter.teamId
+    ? ((teams.data ?? []).find((team) => team.id === filter.teamId)?.name ?? null)
+    : null;
 
   function openMember(member: ClubMemberWithTeams) {
     setOpen(member);
@@ -283,8 +290,33 @@ export function MemberPage() {
               })}
             </ListSection>
           )}
+
+          {/* UC-043: Der Export steht am Ende der Liste, nicht in der
+              Kopfzeile (guidelines §11 Nr. 19). Steht der Filter auf einem
+              Team, geht dieses Team heraus (A2). */}
+          <ManageSection
+            actions={[
+              {
+                label: t('memberExport.action'),
+                detail: true,
+                onClick: () => setExporting(true),
+                disabled: visible.length === 0,
+              },
+            ]}
+            footnote={t('memberExport.footnote')}
+          />
         </>
       )}
+
+      <MemberExportModal
+        isOpen={isExporting}
+        teamId={filter.teamId}
+        teamName={exportTeamName}
+        // Der Export folgt der gefilterten Liste, wie in der bestehenden
+        // myclub-App («Get currently filtered members»).
+        memberIds={visible.map((member) => member.id)}
+        onDismiss={() => setExporting(false)}
+      />
 
       {/* UC-021: Buchen und Korrigieren – dasselbe Blatt, zwei Wege. */}
       <BookPointsModal
@@ -342,7 +374,17 @@ export function MemberPage() {
                     <h2>{t('members.contact')}</h2>
                     {contacts.data.email && <p>{contacts.data.email}</p>}
                     {contacts.data.phone && <p>{contacts.data.phone}</p>}
-                    {contacts.data.address && <p>{contacts.data.address}</p>}
+                    {contacts.data.birthDate && (
+                      <p>
+                        {t('profile.birthDate')}: {formatDate(contacts.data.birthDate)}
+                      </p>
+                    )}
+                    {/* Der Index als Schlüssel: Strasse und Ort können
+                        denselben Text tragen («Zürich»), und die Zeilen einer
+                        Adresse werden nie umsortiert. */}
+                    {addressLines(contacts.data).map((line, index) => (
+                      <p key={index}>{line}</p>
+                    ))}
                     {(contacts.data.emergencyName || contacts.data.emergencyPhone) && (
                       <p>
                         {t('members.emergencyLabel')}:{' '}

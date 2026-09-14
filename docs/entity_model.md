@@ -142,7 +142,9 @@ Die Mitgliedschaft einer Person in einem Verein samt Rolle und Sichtbarkeitsents
 | user_id            | Anmeldekonto der Person                                  | UUID      | 36               | Optional, Foreign Key (USER_ACCOUNT.id)      |
 | legacy_user_id     | Kennung der Person in der bisherigen myclub-App (UC-040)  | String    | 80               | Optional, Unique je Verein                   |
 | display_name       | Im Verein angezeigter Name                               | String    | 80               | Not Null                                     |
-| avatar_url         | Verweis auf das Profilbild                               | String    | 500              | Optional                                     |
+| first_name         | Vorname (UC-043, FR-163)                                 | String    | 80               | Optional                                     |
+| last_name          | Nachname; Sortierschlüssel des Exports (UC-043)          | String    | 80               | Optional                                     |
+| avatar_url         | Profilbild: **Pfad** im privaten Bucket `club-photos` (UC-045) | String    | 500              | Optional, geschrieben nur über `set_member_avatar()`; sichtbar nur im Verein |
 | role               | Rolle im Verein                                          | String    | 20               | Not Null, Values: member, trainer, sportchef, admin, superadmin |
 | area               | Bereich der Sportchef:in; leer heisst alle Teams (0059)  | String    | 40               | Optional                                          |
 | status             | Zustand der Mitgliedschaft                               | String    | 20               | Not Null, Values: active, passive, honorary, left |
@@ -163,11 +165,16 @@ Die Kontaktangaben einer Mitgliedschaft – in einer eigenen Tabelle, weil `club
 | member_id       | Mitgliedschaft, zu der die Angaben gehören              | UUID      | 36               | Primary Key, Foreign Key (CLUB_MEMBER.id)    |
 | email           | E-Mail-Adresse; Sichtbarkeit über `privacy.email`        | String    | 200              | Optional                                     |
 | phone           | Telefonnummer; Sichtbarkeit über `privacy.phone`         | String    | 40               | Optional                                     |
-| address         | Postadresse (Konzept §3.1)                               | String    | 200              | Optional                                     |
+| birth_date      | Geburtsdatum (UC-043)                                    | Date      | -                | Optional, nach 1900 und nicht in der Zukunft |
+| street          | Strasse der Postadresse (Konzept §3.1, BR-207)           | String    | 120              | Optional                                     |
+| house_number    | Hausnummer; als Text, wegen «12a» und «3/2»              | String    | 20               | Optional                                     |
+| postal_code     | Postleitzahl; als Text, wegen führender Nullen           | String    | 12               | Optional                                     |
+| city            | Ort                                                      | String    | 80               | Optional                                     |
+| country         | Land nach ISO 3166-1, zwei Grossbuchstaben               | String    | 2                | Optional                                     |
 | emergency_name  | Name der Notfall-Kontaktperson                           | String    | 80               | Optional                                     |
 | emergency_phone | Telefon der Notfall-Kontaktperson                        | String    | 40               | Optional                                     |
 
-**Constraints:** Die Zeile lesen die Person selbst und der Vorstand. Andere Mitglieder sehen E-Mail und Telefon nur über die Sicht `club_directory` und nur, wenn `privacy` sie freigibt (BR-030). Adresse steht in keiner Sicht. Den Notfallkontakt gibt `emergency_contact()` zusätzlich an Trainer:innen eines gemeinsamen Teams heraus – Name und Nummer, sonst nichts. Geschrieben wird ausschliesslich über `update_my_profile()`: `null` heisst unverändert, ein leerer Text löscht.
+**Constraints:** Die Zeile lesen die Person selbst und der Vorstand. Andere Mitglieder sehen E-Mail und Telefon nur über die Sicht `club_directory` und nur, wenn `privacy` sie freigibt (BR-030). Die Adresse steht in keiner Sicht; sie verlässt den Verein nur über `export_members()` und nur für den Vorstand (BR-206). Sie steht seit `0081` in Feldern statt als Fliesstext (BR-207). Den Notfallkontakt gibt `emergency_contact()` zusätzlich an Trainer:innen eines gemeinsamen Teams heraus – Name und Nummer, sonst nichts. Geschrieben wird ausschliesslich über `update_my_profile()`: `null` heisst unverändert, ein leerer Text löscht.
 
 ### TEAM
 
@@ -179,6 +186,7 @@ Eine Gruppe innerhalb eines Vereins, an der Termine, Ranglisten und Reichweiten 
 | club_id             | Verein des Teams                                 | UUID      | 36               | Not Null, Foreign Key (CLUB.id) |
 | name                | Bezeichnung des Teams                            | String    | 80               | Not Null                        |
 | area                | Bereich, den eine Sportchef:in führt – ein Wort, kein Objekt (0059) | String | 40 | Optional |
+| photo_url           | Mannschaftsfoto: **Pfad** im privaten Bucket `club-photos` (UC-045) | String | 500 | Optional, nur über `set_team_photo()` |
 | sort                | Reihenfolge in Auswahllisten                     | Integer   | 10               | Optional                        |
 | federation          | Verband des verknüpften Teams                    | String    | 40               | Optional                        |
 | federation_team_id  | Kennung des Teams beim Verband                   | String    | 60               | Optional                        |
