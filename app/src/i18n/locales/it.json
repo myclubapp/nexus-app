@@ -1231,6 +1231,16 @@
     "inboxWhy": "Non si può disattivare: è il canale che raggiunge tutti, anche senza push.",
     "push": "Push per categoria",
     "pushPending": "Il push non è ancora in funzione. La tua scelta vale già e sarà rispettata all’avvio.",
+    "email": "E-mail",
+    "emailMode": "Invio per e-mail",
+    "emailModes": {
+      "immediate": "Subito",
+      "daily": "Raggruppato ogni giorno alle 18:00",
+      "weekly": "Ogni settimana, domenica alle 18:00",
+      "off": "Nessuna e-mail"
+    },
+    "emailHint": "Annullamenti, la decisione sull’adesione e il polso della società arrivano sempre subito. Le segnalazioni di attenzione e la domanda sul tuo stato non partono mai per e-mail. L’e-mail va all’indirizzo del tuo accesso.",
+    "emailOff": "Non parte nessuna e-mail. La posta in arrivo contiene sempre tutto.",
     "quiet": "Ore di silenzio",
     "quietOn": "Di notte nessun push",
     "quietFrom": "Dalle",

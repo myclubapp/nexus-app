@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
+  EMAIL_CATEGORIES,
   EMPTY_SETTINGS,
+  MAIL_EXCLUDED_CATEGORIES,
   PUSH_CATEGORIES,
   hasQuietHours,
+  isEmailEnabled,
   isPushEnabled,
   isQuietWindowValid,
+  toEmailMode,
   type NotificationSettings,
 } from './notifications';
 
@@ -67,5 +71,46 @@ describe('PUSH_CATEGORIES', () => {
       // Seit UC-035 kommt `system` dazu: technische Meldungen zu Anschlüssen.
       'input', 'checkin', 'system', 'join_request',
     ]);
+  });
+});
+
+describe('isEmailEnabled (UC-044)', () => {
+  it('erlaubt eine Kategorie, die nicht dasteht – wie bei Push', () => {
+    expect(isEmailEnabled(settings(), 'event')).toBe(true);
+  });
+
+  it('lässt Fürsorge und Befinden nie per E-Mail hinaus (BR-210), auch nicht ausdrücklich erlaubt', () => {
+    const chosen = settings({ email: { health: true, checkin: true }, emailMode: 'immediate' });
+    expect(isEmailEnabled(chosen, 'health')).toBe(false);
+    expect(isEmailEnabled(chosen, 'checkin')).toBe(false);
+  });
+
+  it('schaltet mit dem Modus «aus» alles ab', () => {
+    const off = settings({ emailMode: 'off', email: { event: true } });
+    expect(isEmailEnabled(off, 'event')).toBe(false);
+  });
+
+  it('achtet die Abwahl je Kategorie', () => {
+    const chosen = settings({ email: { task: false } });
+    expect(isEmailEnabled(chosen, 'task')).toBe(false);
+    expect(isEmailEnabled(chosen, 'news')).toBe(true);
+  });
+});
+
+describe('toEmailMode', () => {
+  it('nimmt nur bekannte Modi und fällt sonst auf «täglich» – die Vorgabe des Servers', () => {
+    expect(toEmailMode('weekly')).toBe('weekly');
+    expect(toEmailMode('sometimes')).toBe('daily');
+    expect(toEmailMode(null)).toBe('daily');
+  });
+});
+
+describe('EMAIL_CATEGORIES', () => {
+  it('sind alle Kategorien ohne die zwei ausgeschlossenen', () => {
+    expect(EMAIL_CATEGORIES).toEqual(
+      PUSH_CATEGORIES.filter((c) => !MAIL_EXCLUDED_CATEGORIES.includes(c)),
+    );
+    expect(EMAIL_CATEGORIES).not.toContain('health');
+    expect(EMAIL_CATEGORIES).not.toContain('checkin');
   });
 });

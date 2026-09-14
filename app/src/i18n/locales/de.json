@@ -1231,6 +1231,16 @@
     "inboxWhy": "Sie ist nicht abschaltbar: Sie ist der Weg, der alle erreicht – auch ohne Push.",
     "push": "Push je Kategorie",
     "pushPending": "Push selbst ist noch nicht in Betrieb. Deine Wahl gilt trotzdem ab sofort und wird beim Start des Versands beachtet.",
+    "email": "E-Mail",
+    "emailMode": "Zustellung per E-Mail",
+    "emailModes": {
+      "immediate": "Sofort",
+      "daily": "Täglich um 18:00 gebündelt",
+      "weekly": "Wöchentlich, Sonntag 18:00",
+      "off": "Keine E-Mail"
+    },
+    "emailHint": "Absagen, der Beitritts-Entscheid und der Vereins-Puls kommen immer sofort. Fürsorge-Hinweise und die Frage nach dem Befinden gehen nie per E-Mail. Die Mail geht an die Adresse deiner Anmeldung.",
+    "emailOff": "Es geht keine E-Mail hinaus. Die Inbox enthält weiterhin alles.",
     "quiet": "Stille Zeiten",
     "quietOn": "Nachts kein Push",
     "quietFrom": "Ab",

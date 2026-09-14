@@ -28,15 +28,41 @@ export const PUSH_CATEGORIES = [
 
 export type PushCategory = (typeof PUSH_CATEGORIES)[number];
 
+/**
+ * Was nie per E-Mail geht (UC-044, BR-210): Ein Postfach lesen auch andere;
+ * «Ein Hinweis wartet auf dich» und die Frage nach dem Befinden gehören nicht
+ * dorthin (NFR-022). Dieselbe Liste steht in `email_decision()` (0084) –
+ * hier, damit die Seite die Zeilen gar nicht erst anbietet.
+ */
+export const MAIL_EXCLUDED_CATEGORIES: readonly PushCategory[] = ['health', 'checkin'];
+
+/** Die Kategorien, die die E-Mail-Matrix zeigt. */
+export const EMAIL_CATEGORIES: readonly PushCategory[] = PUSH_CATEGORIES.filter(
+  (category) => !MAIL_EXCLUDED_CATEGORIES.includes(category),
+);
+
+/**
+ * Wie E-Mails gebündelt werden (BR-211). `daily` ist die Vorgabe – auch für
+ * Konten, die die Seite nie geöffnet haben; `email_decision()` nimmt
+ * denselben Wert, wenn keine Zeile existiert.
+ */
+export const EMAIL_MODES = ['immediate', 'daily', 'weekly', 'off'] as const;
+export type EmailMode = (typeof EMAIL_MODES)[number];
+
 export interface NotificationSettings {
   /** Fehlt eine Kategorie, gilt sie als erlaubt – neue sind nie stumm. */
   push: Partial<Record<PushCategory, boolean>>;
+  /** Dieselbe Regel für den E-Mail-Kanal (UC-044). */
+  email: Partial<Record<PushCategory, boolean>>;
+  emailMode: EmailMode;
   quietFrom: string | null;
   quietTo: string | null;
 }
 
 export const EMPTY_SETTINGS: NotificationSettings = {
   push: {},
+  email: {},
+  emailMode: 'daily',
   quietFrom: null,
   quietTo: null,
 };
@@ -47,6 +73,28 @@ export function isPushEnabled(
   category: PushCategory,
 ): boolean {
   return settings.push[category] !== false;
+}
+
+/**
+ * Geht diese Kategorie per E-Mail hinaus?
+ *
+ * Drei Stufen, in dieser Reihenfolge – wortgleich zu `email_decision()`:
+ * ausgeschlossene Kategorie, Modus «aus», Abwahl je Kategorie.
+ */
+export function isEmailEnabled(
+  settings: NotificationSettings,
+  category: PushCategory,
+): boolean {
+  if (MAIL_EXCLUDED_CATEGORIES.includes(category)) return false;
+  if (settings.emailMode === 'off') return false;
+  return settings.email[category] !== false;
+}
+
+/** Ein Wert aus der Datenbank, auf die bekannten Modi verengt. */
+export function toEmailMode(value: string | null | undefined): EmailMode {
+  return (EMAIL_MODES as readonly string[]).includes(value ?? '')
+    ? (value as EmailMode)
+    : 'daily';
 }
 
 /**

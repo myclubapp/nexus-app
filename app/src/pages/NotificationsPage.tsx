@@ -5,6 +5,8 @@ import {
   IonLabel,
   IonListHeader,
   IonNote,
+  IonSelect,
+  IonSelectOption,
   IonToggle,
 } from "@ionic/react";
 import { useTranslation } from "react-i18next";
@@ -27,11 +29,15 @@ import {
 import { useToast } from "../hooks/useToast";
 import { formatDate } from "../lib/format";
 import {
+  EMAIL_CATEGORIES,
+  EMAIL_MODES,
   EMPTY_SETTINGS,
   PUSH_CATEGORIES,
   hasQuietHours,
+  isEmailEnabled,
   isPushEnabled,
   isQuietWindowValid,
+  toEmailMode,
   type NotificationSettings,
   type PushCategory,
 } from "../lib/notifications";
@@ -46,6 +52,11 @@ import {
  * Push selbst gibt es noch nicht (FR-079). Die Seite sagt das offen, statt
  * Schalter anzubieten, die ins Leere führen – aber die Einstellungen wirken
  * bereits: `notify()` vermerkt an jeder Zeile, ob sie hinausgehen dürfte.
+ *
+ * E-Mail gibt es seit UC-044: ein Modus (sofort, täglich, wöchentlich, aus)
+ * und dieselbe Matrix je Kategorie – ohne Fürsorge und Befinden, die nie per
+ * Mail gehen (BR-210). Die zwei Zeilen fehlen bewusst, statt ausgegraut
+ * dazustehen: Ein Schalter, der nichts schaltet, erklärt nichts.
  */
 export function NotificationsPage() {
   const { t } = useTranslation();
@@ -78,6 +89,13 @@ export function NotificationsPage() {
     setDraft((current) => ({
       ...current,
       push: { ...current.push, [category]: enabled },
+    }));
+  }
+
+  function setEmailCategory(category: PushCategory, enabled: boolean) {
+    setDraft((current) => ({
+      ...current,
+      email: { ...current.email, [category]: enabled },
     }));
   }
 
@@ -124,6 +142,57 @@ export function NotificationsPage() {
                 </IonToggle>
               </IonItem>
             ))}
+          </ListSection>
+
+          {/* UC-044: E-Mail. Der Modus zuerst – er entscheidet, ob die
+              Kategorien darunter überhaupt etwas bewirken. */}
+          <ListSection
+            title={t("notifications.email")}
+            footnote={
+              draft.emailMode === "off"
+                ? t("notifications.emailOff")
+                : t("notifications.emailHint")
+            }
+          >
+            <IonItem>
+              <IonSelect
+                label={t("notifications.emailMode")}
+                labelPlacement="stacked"
+                value={draft.emailMode}
+                cancelText={t('common.cancel')}
+                okText={t('common.ok')}
+                onIonChange={(e) =>
+                  setDraft((current) => ({
+                    ...current,
+                    emailMode: toEmailMode(String(e.detail.value)),
+                  }))
+                }
+              >
+                {EMAIL_MODES.map((mode) => (
+                  <IonSelectOption key={mode} value={mode}>
+                    {t(`notifications.emailModes.${mode}`)}
+                  </IonSelectOption>
+                ))}
+              </IonSelect>
+            </IonItem>
+            {draft.emailMode !== "off" &&
+              EMAIL_CATEGORIES.map((category) => (
+                <IonItem key={category}>
+                  <IonToggle
+                    checked={isEmailEnabled(draft, category)}
+                    onIonChange={(e) =>
+                      setEmailCategory(category, e.detail.checked)
+                    }
+                  >
+                    <IonLabel className="ion-text-wrap">
+                      <h2>{t(`notifications.category.${category}.title`)}</h2>
+                      <IonNote>
+                        {t(`notifications.category.${category}.body`)}
+                      </IonNote>
+                    </IonLabel>
+                  </IonToggle>
+                </IonItem>
+              ))}
           </ListSection>
 
           {/* A3: stille Zeiten. */}

@@ -1231,6 +1231,16 @@
     "inboxWhy": "It cannot be turned off: it is the channel that reaches everyone, even without push.",
     "push": "Push per category",
     "pushPending": "Push itself is not in service yet. Your choice applies already and will be honoured when sending starts.",
+    "email": "Email",
+    "emailMode": "Delivery by email",
+    "emailModes": {
+      "immediate": "Immediately",
+      "daily": "Bundled daily at 18:00",
+      "weekly": "Weekly, Sunday 18:00",
+      "off": "No email"
+    },
+    "emailHint": "Cancellations, the membership decision and the club pulse always arrive immediately. Care signals and the check-in question never go by email. The email goes to your sign-in address.",
+    "emailOff": "No email goes out. The inbox still holds everything.",
     "quiet": "Quiet hours",
     "quietOn": "No push at night",
     "quietFrom": "From",

@@ -1231,6 +1231,16 @@
     "inboxWhy": "Elle ne se désactive pas : c’est le canal qui atteint tout le monde, même sans push.",
     "push": "Push par catégorie",
     "pushPending": "Le push n’est pas encore en service. Ton choix s’applique déjà et sera respecté au démarrage.",
+    "email": "E-mail",
+    "emailMode": "Envoi par e-mail",
+    "emailModes": {
+      "immediate": "Immédiatement",
+      "daily": "Groupé chaque jour à 18h00",
+      "weekly": "Chaque semaine, dimanche 18h00",
+      "off": "Pas d’e-mail"
+    },
+    "emailHint": "Les annulations, la décision d’adhésion et le pouls du club arrivent toujours immédiatement. Les signaux d’attention et la question sur ton état ne partent jamais par e-mail. L’e-mail est envoyé à l’adresse de ta connexion.",
+    "emailOff": "Aucun e-mail n’est envoyé. La boîte de réception contient toujours tout.",
     "quiet": "Heures calmes",
     "quietOn": "Pas de push la nuit",
     "quietFrom": "De",

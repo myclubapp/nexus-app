@@ -1688,6 +1688,9 @@ export type Database = {
       }
       notification_settings: {
         Row: {
+          email: Json
+          email_mode: string
+          locale: string | null
           push: Json
           quiet_from: string | null
           quiet_to: string | null
@@ -1695,6 +1698,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          email?: Json
+          email_mode?: string
+          locale?: string | null
           push?: Json
           quiet_from?: string | null
           quiet_to?: string | null
@@ -1702,6 +1708,9 @@ export type Database = {
           user_id: string
         }
         Update: {
+          email?: Json
+          email_mode?: string
+          locale?: string | null
           push?: Json
           quiet_from?: string | null
           quiet_to?: string | null
@@ -1716,6 +1725,12 @@ export type Database = {
           category: string
           club_id: string | null
           created_at: string
+          email_after: string | null
+          email_attempts: number
+          email_claimed_at: string | null
+          email_error: string | null
+          email_sent_at: string | null
+          email_wanted: boolean
           id: string
           link: string | null
           push_after: string | null
@@ -1730,6 +1745,12 @@ export type Database = {
           category?: string
           club_id?: string | null
           created_at?: string
+          email_after?: string | null
+          email_attempts?: number
+          email_claimed_at?: string | null
+          email_error?: string | null
+          email_sent_at?: string | null
+          email_wanted?: boolean
           id?: string
           link?: string | null
           push_after?: string | null
@@ -1744,6 +1765,12 @@ export type Database = {
           category?: string
           club_id?: string | null
           created_at?: string
+          email_after?: string | null
+          email_attempts?: number
+          email_claimed_at?: string | null
+          email_error?: string | null
+          email_sent_at?: string | null
+          email_wanted?: boolean
           id?: string
           link?: string | null
           push_after?: string | null
@@ -2574,6 +2601,10 @@ export type Database = {
         Args: { p_club_id: string; p_member_id: string; p_season?: string }
         Returns: number
       }
+      contribution_state: {
+        Args: { p_earned: number; p_goal: number }
+        Returns: string
+      }
       convert_note_to_task: {
         Args: {
           p_category: string
@@ -2660,6 +2691,18 @@ export type Database = {
         Returns: undefined
       }
       drop_sample_content: { Args: { p_club_id: string }; Returns: number }
+      email_decision: {
+        Args: {
+          p_at?: string
+          p_category: string
+          p_urgent?: boolean
+          p_user_id: string
+        }
+        Returns: {
+          after_at: string
+          wanted: boolean
+        }[]
+      }
       emergency_contact: {
         Args: { p_member_id: string }
         Returns: {
@@ -2777,6 +2820,11 @@ export type Database = {
         Args: { p_event_id: string; p_member_id: string; p_present?: boolean }
         Returns: number
       }
+      mark_mail_failed: {
+        Args: { p_error: string; p_ids: string[] }
+        Returns: undefined
+      }
+      mark_mail_sent: { Args: { p_ids: string[] }; Returns: undefined }
       matching_tasks: {
         Args: { p_club_id: string; p_limit?: number }
         Returns: {
@@ -2874,6 +2922,7 @@ export type Database = {
           p_club_id?: string
           p_link?: string
           p_title: string
+          p_urgent?: boolean
           p_user_id: string
         }
         Returns: undefined
@@ -2882,6 +2931,25 @@ export type Database = {
       nudge_low_checkins: { Args: never; Returns: number }
       office_open_seats: { Args: { p_role_id: string }; Returns: number }
       path_club_id: { Args: { p_name: string }; Returns: string }
+      pending_mail: {
+        Args: { p_user_limit?: number }
+        Returns: {
+          body: string
+          category: string
+          club_color: string
+          club_id: string
+          club_name: string
+          created_at: string
+          display_name: string
+          email: string
+          email_mode: string
+          id: string
+          link: string
+          locale: string
+          title: string
+          user_id: string
+        }[]
+      }
       preview_invite: {
         Args: { p_code: string }
         Returns: {
@@ -3076,6 +3144,7 @@ export type Database = {
       }
       seed_sample_content: { Args: { p_club_id: string }; Returns: number }
       send_due_reminders: { Args: { p_limit?: number }; Returns: number }
+      send_pending_mail: { Args: never; Returns: number }
       set_contribution_goal: {
         Args: { p_goal: number; p_member_id: string }
         Returns: undefined
@@ -3088,6 +3157,7 @@ export type Database = {
         Args: { p_club_id: string; p_roles: string[]; p_signal_type: string }
         Returns: undefined
       }
+      set_locale: { Args: { p_locale: string }; Returns: undefined }
       set_member_teams: {
         Args: { p_member_id: string; p_team_ids: string[] }
         Returns: undefined
@@ -3097,7 +3167,14 @@ export type Database = {
         Returns: undefined
       }
       set_notification_settings: {
-        Args: { p_push?: Json; p_quiet_from?: string; p_quiet_to?: string }
+        Args: {
+          p_email?: Json
+          p_email_mode?: string
+          p_locale?: string
+          p_push?: Json
+          p_quiet_from?: string
+          p_quiet_to?: string
+        }
         Returns: undefined
       }
       set_pillar_active: {

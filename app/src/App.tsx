@@ -35,6 +35,7 @@ import { JoinByInvitePage } from './pages/onboarding/JoinByInvitePage';
 import { TabsPage } from './pages/TabsPage';
 import { AppMenu, APP_CONTENT_ID } from './components/AppMenu';
 import { HardwareBackExit } from './components/HardwareBackExit';
+import { LocaleSync } from './components/LocaleSync';
 import { SkeletonPage } from './components/Skeletons';
 import {
   RedirectIfClubMember,
@@ -61,6 +62,9 @@ export default function App() {
                 (Ionic-Doku «Hardware Back Button»). Muss im Router stehen,
                 weil sie `useIonRouter` braucht. */}
             <HardwareBackExit />
+            {/* UC-044: die Sprache der App auf dem Server, damit E-Mails in
+                ihr geschrieben werden. */}
+            <LocaleSync />
             {/* Ab lg (992 px) steht das Menü als Spalte neben dem Inhalt,
                 darunter fährt es über den IonMenuButton ein. Das Hauptfeld
                 muss ein direktes Kind mit genau dieser id sein – sonst warnt

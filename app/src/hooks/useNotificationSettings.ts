@@ -4,9 +4,12 @@ import { useAuth } from './useAuth';
 import type { PushPlatform } from '../lib/push';
 import {
   EMPTY_SETTINGS,
+  toEmailMode,
   type NotificationSettings,
   type PushCategory,
 } from '../lib/notifications';
+import { toLanguage } from './useLocaleSync';
+import i18n from '../i18n';
 
 /**
  * Die Benachrichtigungs-Einstellungen des Kontos (UC-028).
@@ -24,7 +27,7 @@ export function useNotificationSettings() {
     queryFn: async (): Promise<NotificationSettings> => {
       const { data, error } = await supabase
         .from('notification_settings')
-        .select('push, quiet_from, quiet_to')
+        .select('push, quiet_from, quiet_to, email, email_mode')
         .eq('user_id', user!.id)
         .maybeSingle();
       if (error) throw new Error(error.message);
@@ -32,6 +35,8 @@ export function useNotificationSettings() {
 
       return {
         push: (data.push ?? {}) as Partial<Record<PushCategory, boolean>>,
+        email: (data.email ?? {}) as Partial<Record<PushCategory, boolean>>,
+        emailMode: toEmailMode(data.email_mode),
         quietFrom: data.quiet_from,
         quietTo: data.quiet_to,
       };
@@ -56,6 +61,11 @@ export function useSaveNotificationSettings() {
         p_push: settings.push,
         p_quiet_from: settings.quietFrom ?? undefined,
         p_quiet_to: settings.quietTo ?? undefined,
+        p_email: settings.email,
+        p_email_mode: settings.emailMode,
+        // UC-044: Die Sprache der Oberfläche fährt mit – die Mail soll in
+        // ihr geschrieben sein.
+        p_locale: toLanguage(i18n.language),
       });
       if (error) throw new Error(error.message);
     },

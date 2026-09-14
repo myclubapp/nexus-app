@@ -441,9 +441,12 @@ Die Zustellwünsche eines Kontos. Sie hängen am Konto und nicht an der Mitglied
 | push       | Erlaubnis je Kategorie                             | JSON      | -                | Not Null; eine fehlende Kategorie gilt als erlaubt              |
 | quiet_from | Beginn der stillen Zeit                            | Time      | -                | Optional; nur zusammen mit `quiet_to`                           |
 | quiet_to   | Ende der stillen Zeit                              | Time      | -                | Optional; nur zusammen mit `quiet_from`                         |
+| email      | E-Mail-Erlaubnis je Kategorie (UC-044)             | JSON      | -                | Not Null; eine fehlende Kategorie gilt als erlaubt              |
+| email_mode | Zustellung per E-Mail (UC-044)                     | String    | 20               | Not Null, Values: immediate, daily, weekly, off; Default daily  |
+| locale     | Sprache der App, für E-Mails (UC-044)              | String    | 2                | Optional, Values: de, fr, it, en                                |
 | updated_at | Zeitpunkt der letzten Änderung                     | DateTime  | -                | Not Null                                                        |
 
-**Constraints:** Die Inbox ist nicht abschaltbar; die Einstellungen betreffen ausschliesslich den Push-Kanal. Ein Fenster über Mitternacht ist zulässig, ein halbes Fenster nicht. Anmeldelinks und Hinweise zur Kontolöschung laufen über E-Mail und bleiben unberührt.
+**Constraints:** Die Inbox ist nicht abschaltbar; die Einstellungen betreffen ausschliesslich Push und E-Mail. Ein Fenster über Mitternacht ist zulässig, ein halbes Fenster nicht. Fürsorge-Hinweise und die Frage nach dem Befinden gehen nie per E-Mail, unabhängig von `email` (BR-210). Anmeldelinks und Hinweise zur Kontolöschung laufen über Supabase Auth und bleiben unberührt.
 
 ### HEALTH_SIGNAL
 
@@ -527,8 +530,17 @@ Ein Eintrag der In-App-Inbox; sie erreicht alle Mitglieder unabhängig von Push.
 | link      | Ziel beim Antippen                | String    | 500              | Optional                                |
 | read_at   | Zeitpunkt des Lesens              | DateTime  | -                | Optional                                |
 | created_at| Zeitpunkt der Zustellung          | DateTime  | -                | Not Null                                |
+| push_wanted | Darf als Push hinaus (UC-028)   | Boolean   | -                | Not Null, Default true                  |
+| push_after | Frühester Push-Zeitpunkt (stille Zeit) | DateTime | -            | Optional                                |
+| push_sent_at | Zeitpunkt des Push-Versands    | DateTime  | -                | Optional                                |
+| email_wanted | Darf per E-Mail hinaus (UC-044) | Boolean  | -                | Not Null, Default false                 |
+| email_after | Frühester Mail-Zeitpunkt (Bündelung) | DateTime | -             | Optional; leer heisst sofort            |
+| email_sent_at | Zeitpunkt des Mail-Versands   | DateTime  | -                | Optional                                |
+| email_attempts | Zahl der Versandversuche     | Integer   | -                | Not Null, Default 0; ab 5 kein Versuch mehr |
+| email_claimed_at | Sperre des laufenden Versands | DateTime | -               | Optional; verfällt nach 10 Minuten      |
+| email_error | Letzter Versandfehler           | String    | 500              | Optional                                |
 
-**Constraints:** Jede Zustellung entsteht hier, unabhängig davon, ob zusätzlich ein Push versendet wird.
+**Constraints:** Jede Zustellung entsteht hier, unabhängig davon, ob zusätzlich ein Push oder eine E-Mail versendet wird. Die Vermerke `push_*` und `email_*` werden beim Entstehen aus NOTIFICATION_SETTINGS berechnet; der Versand holt nur die offenen Zeilen ab und quittiert an ihnen.
 
 ### NOTIFICATION_PREF
 
