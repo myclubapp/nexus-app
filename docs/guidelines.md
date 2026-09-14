@@ -60,6 +60,7 @@ Daraus folgen die Muster:
 | Mehrschrittige Erfassung      | `Wizard` – eine Frage je Schritt, Fortschrittsbalken                    |
 | Blatt über der Seite          | `presentingElement` aus `usePresentingElement()` – Karte statt Vollbild |
 | Zeilenaktion                  | `IonItemSliding` + `IonItemOption`, nicht ein drittes Icon in der Zeile |
+| **Verwalten in einem Blatt**  | **`ManageSection`** am Ende des Inhalts: Bearbeiten, Ausschreiben, Erinnern … als Zeilen, **Löschen rot und zuletzt**, mit `IonAlert` davor. Nie ein Dreipunkt in der Kopfzeile, nie ein loser Knopf im Inhalt |
 | Zu-/Absage-Status             | `AttendanceStatusIcon` am Zeilenanfang, Wischen nach rechts für die Gegenantwort, Zusagen-Zahl als `IonBadge` rechts, Namen im `EventDetailModal` – der Schnitt der bestehenden myclub-App |
 | News                          | `NewsCard` im `IonGrid` (12 / 6 / 6 / 4 Spalten), Volltext im `NewsDetailModal` – der Schnitt der bestehenden myclub-App |
 | **Etwas Neues anlegen**       | **`AppPage createActions=…`** – Plus unten rechts, nie ein Symbol in der Kopfzeile |
@@ -373,6 +374,7 @@ Bestand in `src/components/`. Vor jedem neuen Bauteil hier nachsehen.
 | `CheckInModal`     | QR-Scan über `html5-qrcode`                                                                                                       |
 | `OfficeDetailModal` | Ein Amt als Factsheet-Blatt: Vakanz-Badge, Warum, Pflichten, Eckdaten, Belegung, «Factsheet öffnen (PDF)» über eine signierte Adresse; «Bearbeiten» nur für den Vorstand (UC-041) |
 | `OfficeFormModal`  | Amt anlegen und ändern: Felder, Belegung mit oder ohne Konto, PDF wählen/ersetzen/entfernen – gespeichert über `save_office()`, das PDF danach (UC-041) |
+| `ContributionGoalCard` | Der eigene Fortschritt zum Saisonziel: `IonProgressBar` in der Ampelfarbe, Ist/Soll als Badge, darunter bis zu drei passende Beiträge aus `next_contributions()`. Rendert **nichts**, solange kein Ziel gilt – ohne Modul, ohne Zahl oder bei Ziel null (UC-042 A2, A3, A7) |
 | `QrCode`           | QR-Code als Data-URL, ohne fremden Dienst (C-003)                                                                                 |
 
 Dazu zwei Hooks, die zum UI gehören und nicht zum Datenzugriff:

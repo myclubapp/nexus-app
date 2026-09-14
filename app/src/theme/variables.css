@@ -503,3 +503,14 @@
   font-weight: 600;
   letter-spacing: 0.02em;
 }
+
+/* --- Fortschritt zum Saisonziel (UC-042) ---------------------------------- */
+/* Der Balken steht im `IonLabel` einer Zeile, unter Titel und Erklärung. Ohne
+   eigenen Abstand klebte er am Text darüber, und ohne die Rundung wirkt er wie
+   ein Trennstrich statt wie ein Mass. Die Farbe kommt aus der Ampelstufe
+   (`goalColor()`), nicht von hier. */
+.app-goal-bar {
+  margin-top: var(--app-space-2);
+  border-radius: 999px;
+  overflow: hidden;
+}

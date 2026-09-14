@@ -24,7 +24,6 @@ export interface LegacyShift {
   starts_at: string;
   ends_at: string;
   needed: number;
-  points: number;
 }
 
 export interface LegacyEvent {
@@ -149,6 +148,12 @@ export function shiftTimeToIso(hhmm: unknown, eventStartsAt: string): string | n
  * Tippfehler mit vertauschten Feldern – die Zeiten werden getauscht. Fehlt
  * das Ende oder ist es gleich dem Beginn, dauert die Schicht zwei Stunden:
  * Eine Schicht ohne Dauer nimmt das Schema nicht an (`event_shifts_time_check`).
+ *
+ * **Der Punktwert der alten App wird nicht übernommen** (BR-204). Dort zählte
+ * eine Schicht meist 1, hier zählt sie 25 bis 100 – zwei Skalen, die im selben
+ * Ledger landen würden. `upsert_legacy_event()` leitet den Wert aus der Dauer
+ * ab, mit derselben Staffel, die das Formular vorschlägt. Deshalb steht hier
+ * kein `points`: Ein Feld, das niemand liest, wäre eine zweite Wahrheit.
  */
 export function mapShift(shift: LegacyDoc, eventStartsAt: string): LegacyShift {
   let startsAt = shiftTimeToIso(shift.timeFrom, eventStartsAt) ?? new Date(eventStartsAt).toISOString();
@@ -167,7 +172,6 @@ export function mapShift(shift: LegacyDoc, eventStartsAt: string): LegacyShift {
     starts_at: startsAt,
     ends_at: endsAt,
     needed: Math.max(1, integer(shift.countNeeded) ?? 1),
-    points: Math.max(0, integer(shift.points) ?? 0),
   };
 }
 

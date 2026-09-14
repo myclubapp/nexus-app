@@ -92,6 +92,14 @@ export function ClubAdminLinks() {
             <IonLabel>{t("pointRules.title")}</IonLabel>
           </IonItem>
 
+          {/* UC-042: Das Saisonziel ist ein Modul (BR-199) – ohne es bleibt
+              der Weg zu, und der MVP-Schnitt gilt unverändert. */}
+          {isModuleOn(activeClub?.settings, "goal") && (
+            <IonItem button routerLink="/tabs/profile/contribution" detail>
+              <IonLabel>{t("seasonGoal.title")}</IonLabel>
+            </IonItem>
+          )}
+
           <IonItem button routerLink="/tabs/profile/news" detail>
             <IonLabel>{t("newsImport.title")}</IonLabel>
           </IonItem>

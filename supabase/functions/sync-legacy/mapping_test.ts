@@ -48,19 +48,22 @@ Deno.test('shiftTimeToIso: Uhrzeit in Zürcher Ortszeit am Tag des Termins', () 
   assertStrictEquals(shiftTimeToIso('25:00', '2026-10-17T16:45:00Z'), null);
 });
 
-Deno.test('mapShift: Zeiten, Bedarf, Punkte', () => {
+Deno.test('mapShift: Zeiten und Bedarf; der fremde Punktwert wird nicht übernommen', () => {
   const shift = mapShift(
     { id: 'Lk0a', name: 'Banden', timeFrom: '18:45', timeTo: '22:30', countNeeded: 2, points: 1 },
     '2026-10-17T16:45:00Z',
   );
+  // BR-204: kein `points` im Ergebnis. Der Wert 1 der alten App wäre in dieser
+  // Skala ein Achtzigstel eines halben Tages; `upsert_legacy_event()` rechnet
+  // ihn aus der Dauer.
   assertEquals(shift, {
     external_id: 'Lk0a',
     title: 'Banden',
     starts_at: '2026-10-17T16:45:00.000Z',
     ends_at: '2026-10-17T20:30:00.000Z',
     needed: 2,
-    points: 1,
   });
+  assertStrictEquals((shift as unknown as Record<string, unknown>).points, undefined);
 });
 
 Deno.test('mapShift: vertauschte Zeiten werden getauscht, fehlende Dauer wird zwei Stunden', () => {
@@ -75,7 +78,7 @@ Deno.test('mapShift: vertauschte Zeiten werden getauscht, fehlende Dauer wird zw
   const noTimes = mapShift({ id: '3', name: '', countNeeded: 0, points: -3 }, '2026-01-03T18:15:00Z');
   assertEquals(noTimes.title, 'Schicht');
   assertEquals(noTimes.needed, 1);
-  assertEquals(noTimes.points, 0);
+  assertStrictEquals((noTimes as unknown as Record<string, unknown>).points, undefined);
   assertEquals(noTimes.starts_at, '2026-01-03T18:15:00.000Z');
 });
 

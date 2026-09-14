@@ -24,7 +24,8 @@
     "keepEditing": "Keep editing",
     "details": "Details",
     "more": "More",
-    "clear": "Clear"
+    "clear": "Clear",
+    "manage": "Manage"
   },
   "auth": {
     "title": "Welcome",
@@ -344,6 +345,10 @@
       "invoice": {
         "title": "Invoices",
         "body": "Invoice state in the app and points for paying on time. They are still issued by the invoicing service."
+      },
+      "goal": {
+        "title": "Season goal",
+        "body": "A goal in points per member and season, with progress and an overview for the board."
       }
     },
     "dna": "Club DNA",
@@ -358,7 +363,11 @@
     "leaderboardHint": "Without a value the leaderboard shows the first 20; your own row always comes along.",
     "topOnly": "Ranks shown",
     "hidePoints": "Ranks without points",
-    "hidePointsHint": "The order stays, the number goes. Your own points remain on the home screen."
+    "hidePointsHint": "The order stays, the number goes. Your own points remain on the home screen.",
+    "goal": "Season goal",
+    "goalPoints": "Goal in points",
+    "goalHint": "How many points from volunteering and the marketplace each member should gather per season. Leaving it empty means no goal.",
+    "goalHintWithSuggestion": "How many points from volunteering and the marketplace each member should gather per season. {{shifts}} shifts add up to {{points}} points. Leaving it empty means no goal."
   },
   "health": {
     "title": "Club health",
@@ -437,6 +446,14 @@
         "prompt2": "Ask the current holder what they would need to train someone.",
         "prompt3": "Write down what the office actually takes – it is often less than everyone assumes.",
         "definition": "Concerns the club: an office is vacant or has been held by the same person for more than three years."
+      },
+      "contribution_gap": {
+        "title": "Members without a contribution",
+        "body": "{{detail}} members have not contributed yet this season, and the season is drawing to a close.",
+        "prompt1": "Do you know what they would need in order to join in?",
+        "prompt2": "Have you recently explained what these shifts are for?",
+        "prompt3": "Are there contributions that match their strengths that nobody has offered them?",
+        "definition": "Concerns the club: in the last eight weeks of a season, members with a goal have not contributed yet."
       }
     },
     "clubTitle": "The club",
@@ -1798,5 +1815,48 @@
     "importedGames_one": "{{created}} created, {{linked}} linked – {{count}} game in the agenda",
     "importedGames_other": "{{created}} created, {{linked}} linked – {{count}} games in the agenda",
     "importedPending": "{{created}} created, {{linked}} linked. The games arrive with the next sync: {{reason}}"
+  },
+  "seasonGoal": {
+    "title": "Contributions this season",
+    "members": "Members",
+    "listHint": "Tap a row to set an individual goal. Only the board sees this list.",
+    "empty": "No active members yet.",
+    "noGoal": "You have not set a season goal yet. Until then the list only shows what has been done.",
+    "reached": "Reached",
+    "onTrack": "On track",
+    "open": "Open",
+    "exempt": "Exempt",
+    "remaining": "{{points}} points to go",
+    "earnedOnly": "{{points}} points",
+    "export": "Share as CSV",
+    "exported": "File created",
+    "goalTitle": "Individual goal",
+    "goalLabel": "Goal in points",
+    "goalPlaceholder": "Club goal",
+    "goalHint": "Leave empty so the club goal applies.",
+    "goalExempt": "Zero means this person is exempt from the season goal.",
+    "goalInvalid": "The goal must be zero or more.",
+    "csvName": "Name",
+    "csvEarned": "Earned",
+    "csvGoal": "Goal",
+    "csvRemaining": "Open",
+    "csvState": "State",
+    "state": {
+      "reached": "Goal reached",
+      "onTrack": "On track towards the goal",
+      "open": "Goal still open",
+      "exempt": "Exempt from the goal",
+      "unset": "No goal set"
+    },
+    "my": {
+      "title": "Your season goal",
+      "season": "Season {{season}}",
+      "remaining": "{{points}} points to go",
+      "reached": "Your contribution for this season is complete.",
+      "badgeLabel": "{{earned}} of {{goal}} points",
+      "openHint": "These contributions suit you and count towards the goal.",
+      "reachedHint": "Thank you. Further contributions still count, but nothing more is asked."
+    },
+    "copied": "Copied to the clipboard"
   }
 }

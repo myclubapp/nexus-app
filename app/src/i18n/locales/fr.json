@@ -24,7 +24,8 @@
     "keepEditing": "Continuer la modification",
     "details": "Détails",
     "more": "Plus",
-    "clear": "Effacer"
+    "clear": "Effacer",
+    "manage": "Gérer"
   },
   "auth": {
     "title": "Bienvenue",
@@ -344,6 +345,10 @@
       "invoice": {
         "title": "Factures",
         "body": "État des factures dans l'app et points pour un paiement dans les délais. Elles restent émises par le service de facturation."
+      },
+      "goal": {
+        "title": "Objectif de saison",
+        "body": "Un objectif en points par membre et par saison – avec progression et vue d'ensemble pour le comité."
       }
     },
     "dna": "ADN du club",
@@ -358,7 +363,11 @@
     "leaderboardHint": "Sans valeur, le classement affiche les 20 premiers ; ta propre ligne apparaît toujours.",
     "topOnly": "Rangs affichés",
     "hidePoints": "Rangs sans points",
-    "hidePointsHint": "L’ordre reste, le chiffre disparaît. Tes propres points restent sur l’accueil."
+    "hidePointsHint": "L’ordre reste, le chiffre disparaît. Tes propres points restent sur l’accueil.",
+    "goal": "Objectif de saison",
+    "goalPoints": "Objectif en points",
+    "goalHint": "Combien de points d'engagement bénévole et de marché chaque membre devrait réunir par saison. Laisser vide signifie: pas d'objectif.",
+    "goalHintWithSuggestion": "Combien de points d'engagement bénévole et de marché chaque membre devrait réunir par saison. {{shifts}} engagements correspondent à {{points}} points. Laisser vide signifie: pas d'objectif."
   },
   "health": {
     "title": "Santé de la société",
@@ -437,6 +446,14 @@
         "prompt2": "Demandez à la personne en place ce qu’il lui faudrait pour former quelqu’un.",
         "prompt3": "Notez ce que la fonction exige vraiment – c’est souvent moins que ce que l’on croit.",
         "definition": "Concerne le club : une fonction est vacante ou tenue depuis plus de trois ans par la même personne."
+      },
+      "contribution_gap": {
+        "title": "Membres sans contribution",
+        "body": "{{detail}} membres n'ont encore rien contribué cette saison, et la saison touche à sa fin.",
+        "prompt1": "Savez-vous ce qu'il leur faudrait pour participer?",
+        "prompt2": "Avez-vous récemment expliqué à quoi servent ces engagements?",
+        "prompt3": "Y a-t-il des contributions qui correspondent à leurs forces et que personne ne leur a proposées?",
+        "definition": "Concerne le club: durant les huit dernières semaines d'une saison, des membres avec objectif n'ont encore rien contribué."
       }
     },
     "clubTitle": "Le club",
@@ -1798,5 +1815,48 @@
     "importedGames_one": "{{created}} créée(s), {{linked}} liée(s) – {{count}} match dans l’agenda",
     "importedGames_other": "{{created}} créée(s), {{linked}} liée(s) – {{count}} matchs dans l’agenda",
     "importedPending": "{{created}} créée(s), {{linked}} liée(s). Les matchs arrivent avec la prochaine synchronisation : {{reason}}"
+  },
+  "seasonGoal": {
+    "title": "Contributions de la saison",
+    "members": "Membres",
+    "listHint": "Touchez une ligne pour fixer un objectif propre à un membre. Seul le comité voit cette liste.",
+    "empty": "Aucun membre actif pour l'instant.",
+    "noGoal": "Vous n'avez pas encore fixé d'objectif de saison. D'ici là, la liste montre seulement ce qui a été accompli.",
+    "reached": "Atteint",
+    "onTrack": "En bonne voie",
+    "open": "Ouvert",
+    "exempt": "Dispensé",
+    "remaining": "Encore {{points}} points",
+    "earnedOnly": "{{points}} points",
+    "export": "Partager en CSV",
+    "exported": "Fichier créé",
+    "goalTitle": "Objectif propre",
+    "goalLabel": "Objectif en points",
+    "goalPlaceholder": "Objectif du club",
+    "goalHint": "Laissez vide pour appliquer l'objectif du club.",
+    "goalExempt": "Zéro signifie que cette personne est dispensée de l'objectif de saison.",
+    "goalInvalid": "L'objectif doit être zéro ou plus.",
+    "csvName": "Nom",
+    "csvEarned": "Accompli",
+    "csvGoal": "Objectif",
+    "csvRemaining": "Ouvert",
+    "csvState": "État",
+    "state": {
+      "reached": "Objectif atteint",
+      "onTrack": "En bonne voie vers l'objectif",
+      "open": "Objectif encore ouvert",
+      "exempt": "Dispensé de l'objectif",
+      "unset": "Aucun objectif fixé"
+    },
+    "my": {
+      "title": "Ton objectif de saison",
+      "season": "Saison {{season}}",
+      "remaining": "Encore {{points}} points jusqu'à l'objectif",
+      "reached": "Ta contribution pour cette saison est complète.",
+      "badgeLabel": "{{earned}} points sur {{goal}}",
+      "openHint": "Ces contributions te correspondent et comptent pour l'objectif.",
+      "reachedHint": "Merci. D'autres contributions comptent toujours, mais plus rien n'est demandé."
+    },
+    "copied": "Copié dans le presse-papiers"
   }
 }

@@ -24,7 +24,8 @@
     "keepEditing": "Weiter bearbeiten",
     "details": "Details",
     "more": "Mehr",
-    "clear": "Löschen"
+    "clear": "Löschen",
+    "manage": "Verwalten"
   },
   "auth": {
     "title": "Willkommen",
@@ -344,6 +345,10 @@
       "invoice": {
         "title": "Rechnungen",
         "body": "Rechnungsstand in der App und Punkte für pünktliche Zahlung. Gestellt werden sie weiterhin im Rechnungsdienst."
+      },
+      "goal": {
+        "title": "Saisonziel",
+        "body": "Ein Ziel in Punkten je Mitglied und Saison – mit Fortschritt und Übersicht für den Vorstand."
       }
     },
     "dna": "Vereins-DNA",
@@ -358,7 +363,11 @@
     "leaderboardHint": "Ohne Angabe zeigt die Rangliste die ersten 20 – die eigene Zeile kommt immer mit.",
     "topOnly": "Angezeigte Ränge",
     "hidePoints": "Ränge ohne Punktzahl",
-    "hidePointsHint": "Die Reihenfolge bleibt, die Zahl fällt weg. Die eigenen Punkte stehen weiter auf der Startseite."
+    "hidePointsHint": "Die Reihenfolge bleibt, die Zahl fällt weg. Die eigenen Punkte stehen weiter auf der Startseite.",
+    "goal": "Saisonziel",
+    "goalPoints": "Ziel in Punkten",
+    "goalHint": "Wie viele Punkte aus freiwilligem Engagement und Marktplatz je Mitglied und Saison zusammenkommen sollen. Leer lassen heisst: kein Ziel.",
+    "goalHintWithSuggestion": "Wie viele Punkte aus freiwilligem Engagement und Marktplatz je Mitglied und Saison zusammenkommen sollen. {{shifts}} Einsätze entsprechen {{points}} Punkten. Leer lassen heisst: kein Ziel."
   },
   "health": {
     "title": "Vereins-Gesundheit",
@@ -437,6 +446,14 @@
         "prompt2": "Fragt die Amtsinhaber:in, was sie bräuchte, um jemanden einzuarbeiten.",
         "prompt3": "Schreibt auf, was das Amt wirklich verlangt – oft ist es weniger, als alle denken.",
         "definition": "Betrifft den Verein: Ein Amt ist vakant oder wird länger als drei Jahre von derselben Person gehalten."
+      },
+      "contribution_gap": {
+        "title": "Mitglieder ohne Beitrag",
+        "body": "{{detail}} Mitglieder haben diese Saison noch nichts beigetragen, und die Saison geht zu Ende.",
+        "prompt1": "Wisst ihr, was sie bräuchten, um mitzumachen?",
+        "prompt2": "Habt ihr zuletzt erzählt, wofür die Einsätze gut sind?",
+        "prompt3": "Gibt es Beiträge, die zu ihren Stärken passen – und die noch niemand angeboten hat?",
+        "definition": "Betrifft den Verein: In den letzten acht Wochen einer Saison haben Mitglieder mit Ziel noch keinen Beitrag geleistet."
       }
     },
     "clubTitle": "Der Verein",
@@ -1798,5 +1815,48 @@
     "importedGames_one": "{{created}} angelegt, {{linked}} verknüpft – {{count}} Spiel in der Agenda",
     "importedGames_other": "{{created}} angelegt, {{linked}} verknüpft – {{count}} Spiele in der Agenda",
     "importedPending": "{{created}} angelegt, {{linked}} verknüpft. Die Spiele kommen mit dem nächsten Abgleich: {{reason}}"
+  },
+  "seasonGoal": {
+    "title": "Beiträge der Saison",
+    "members": "Mitglieder",
+    "listHint": "Angetippt lässt sich für einzelne Mitglieder ein eigenes Ziel setzen. Diese Liste sieht nur der Vorstand.",
+    "empty": "Noch keine aktiven Mitglieder.",
+    "noGoal": "Ihr habt noch kein Saisonziel gesetzt. Bis dahin zeigt die Liste nur, was geleistet wurde.",
+    "reached": "Erreicht",
+    "onTrack": "Auf dem Weg",
+    "open": "Offen",
+    "exempt": "Befreit",
+    "remaining": "Noch {{points}} Punkte",
+    "earnedOnly": "{{points}} Punkte",
+    "export": "Als CSV teilen",
+    "exported": "Datei erstellt",
+    "goalTitle": "Eigenes Ziel",
+    "goalLabel": "Ziel in Punkten",
+    "goalPlaceholder": "Vereinsziel",
+    "goalHint": "Leer lassen, damit das Ziel des Vereins gilt.",
+    "goalExempt": "Null bedeutet: Diese Person ist vom Saisonziel befreit.",
+    "goalInvalid": "Das Ziel muss null oder grösser sein.",
+    "csvName": "Name",
+    "csvEarned": "Geleistet",
+    "csvGoal": "Ziel",
+    "csvRemaining": "Offen",
+    "csvState": "Stand",
+    "state": {
+      "reached": "Ziel erreicht",
+      "onTrack": "Auf dem Weg zum Ziel",
+      "open": "Ziel noch offen",
+      "exempt": "Vom Ziel befreit",
+      "unset": "Kein Ziel gesetzt"
+    },
+    "my": {
+      "title": "Dein Saisonziel",
+      "season": "Saison {{season}}",
+      "remaining": "Noch {{points}} Punkte bis zum Ziel",
+      "reached": "Dein Beitrag für diese Saison ist beisammen.",
+      "badgeLabel": "{{earned}} von {{goal}} Punkten",
+      "openHint": "Diese Beiträge passen zu dir und zählen aufs Ziel.",
+      "reachedHint": "Danke. Weitere Beiträge zählen weiter, verlangt wird nichts mehr."
+    },
+    "copied": "In die Zwischenablage kopiert"
   }
 }

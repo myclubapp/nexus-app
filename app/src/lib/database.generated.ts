@@ -377,6 +377,7 @@ export type Database = {
           member_since: string
           privacy: Json
           role: string
+          season_goal_points: number | null
           status: string
           user_id: string | null
         }
@@ -393,6 +394,7 @@ export type Database = {
           member_since?: string
           privacy?: Json
           role?: string
+          season_goal_points?: number | null
           status?: string
           user_id?: string | null
         }
@@ -409,6 +411,7 @@ export type Database = {
           member_since?: string
           privacy?: Json
           role?: string
+          season_goal_points?: number | null
           status?: string
           user_id?: string | null
         }
@@ -693,7 +696,9 @@ export type Database = {
           external_id: string | null
           id: string
           is_sample: boolean
+          latitude: number | null
           location: string | null
+          longitude: number | null
           point_rule_code: string | null
           published_at: string | null
           reminded_at: string | null
@@ -717,7 +722,9 @@ export type Database = {
           external_id?: string | null
           id?: string
           is_sample?: boolean
+          latitude?: number | null
           location?: string | null
+          longitude?: number | null
           point_rule_code?: string | null
           published_at?: string | null
           reminded_at?: string | null
@@ -741,7 +748,9 @@ export type Database = {
           external_id?: string | null
           id?: string
           is_sample?: boolean
+          latitude?: number | null
           location?: string | null
+          longitude?: number | null
           point_rule_code?: string | null
           published_at?: string | null
           reminded_at?: string | null
@@ -1537,6 +1546,7 @@ export type Database = {
           author: string | null
           author_image_url: string | null
           body: string | null
+          body_html: string | null
           club_id: string | null
           external_id: string | null
           external_url: string | null
@@ -1553,6 +1563,7 @@ export type Database = {
           author?: string | null
           author_image_url?: string | null
           body?: string | null
+          body_html?: string | null
           club_id?: string | null
           external_id?: string | null
           external_url?: string | null
@@ -1569,6 +1580,7 @@ export type Database = {
           author?: string | null
           author_image_url?: string | null
           body?: string | null
+          body_html?: string | null
           club_id?: string | null
           external_id?: string | null
           external_url?: string | null
@@ -2445,8 +2457,16 @@ export type Database = {
         Returns: number
       }
       call_is_muted: { Args: { p_club_id: string }; Returns: boolean }
+      can_follow_member: {
+        Args: { p_club_id: string; p_member_id: string }
+        Returns: boolean
+      }
       can_handle_input: { Args: { p_input_id: string }; Returns: boolean }
       can_handle_note: { Args: { p_note_id: string }; Returns: boolean }
+      can_plan_for_team: {
+        Args: { p_club_id: string; p_team_id: string }
+        Returns: boolean
+      }
       can_see_agenda: { Args: { p_event_id: string }; Returns: boolean }
       cancel_event: {
         Args: { p_event_id: string; p_reason: string }
@@ -2533,6 +2553,27 @@ export type Database = {
         Args: { p_member_id: string }
         Returns: number
       }
+      contribution_goal: {
+        Args: { p_club_id: string; p_member_id: string }
+        Returns: number
+      }
+      contribution_overview: {
+        Args: { p_club_id: string }
+        Returns: {
+          avatar_url: string
+          earned: number
+          goal: number
+          member_id: string
+          name: string
+          remaining: number
+          state: string
+        }[]
+      }
+      contribution_pillars: { Args: never; Returns: number[] }
+      contribution_points: {
+        Args: { p_club_id: string; p_member_id: string; p_season?: string }
+        Returns: number
+      }
       convert_note_to_task: {
         Args: {
           p_category: string
@@ -2597,9 +2638,15 @@ export type Database = {
       decline_is_early: { Args: { p_starts_at: string }; Returns: boolean }
       default_event_labels: { Args: { p_club_kind: string }; Returns: Json }
       default_season_start: { Args: { p_club_kind: string }; Returns: string }
+      delete_event: { Args: { p_event_id: string }; Returns: undefined }
       delete_my_account: { Args: never; Returns: undefined }
+      delete_point_rule: { Args: { p_rule_id: string }; Returns: undefined }
       delete_team: { Args: { p_team_id: string }; Returns: undefined }
       detect_checkins: { Args: never; Returns: number }
+      detect_contribution_gaps: {
+        Args: { p_club_id?: string }
+        Returns: number
+      }
       detect_health_signals: { Args: { p_club_id?: string }; Returns: number }
       detect_succession_gaps: { Args: { p_club_id?: string }; Returns: number }
       dimension_of_pillar: { Args: { p_pillar: number }; Returns: string }
@@ -2688,6 +2735,7 @@ export type Database = {
         }[]
       }
       is_club_admin: { Args: { p_club_id: string }; Returns: boolean }
+      is_club_board: { Args: { p_club_id: string }; Returns: boolean }
       is_club_member: { Args: { p_club_id: string }; Returns: boolean }
       is_club_trainer: { Args: { p_club_id: string }; Returns: boolean }
       join_demo_club: { Args: never; Returns: string }
@@ -2776,6 +2824,16 @@ export type Database = {
         }[]
       }
       my_contribution_budget: { Args: { p_club_id: string }; Returns: number }
+      my_contribution_goal: {
+        Args: { p_club_id: string }
+        Returns: {
+          earned: number
+          goal: number
+          remaining: number
+          season: string
+          state: string
+        }[]
+      }
       my_health_signals: {
         Args: { p_club_id: string }
         Returns: {
@@ -3003,6 +3061,10 @@ export type Database = {
         }
         Returns: string
       }
+      season_end: {
+        Args: { p_at?: string; p_club_id: string }
+        Returns: string
+      }
       season_label: {
         Args: { p_at?: string; p_club_id: string }
         Returns: string
@@ -3014,6 +3076,10 @@ export type Database = {
       }
       seed_sample_content: { Args: { p_club_id: string }; Returns: number }
       send_due_reminders: { Args: { p_limit?: number }; Returns: number }
+      set_contribution_goal: {
+        Args: { p_goal: number; p_member_id: string }
+        Returns: undefined
+      }
       set_health_opt_out: {
         Args: { p_club_id: string; p_opt_out: boolean }
         Returns: number
@@ -3111,6 +3177,7 @@ export type Database = {
       }
       suggest_modules: { Args: never; Returns: number }
       suggest_task: { Args: { p_task_id: string }; Returns: number }
+      suggested_shift_points: { Args: { p_minutes: number }; Returns: number }
       sync_federations: { Args: never; Returns: number }
       sync_legacy_sources: { Args: never; Returns: number }
       sync_news_sources: { Args: never; Returns: number }
@@ -3193,7 +3260,9 @@ export type Database = {
       upsert_federation_game: {
         Args: {
           p_external_id: string
+          p_latitude?: number
           p_location?: string
+          p_longitude?: number
           p_result?: string
           p_starts_at: string
           p_team_id: string

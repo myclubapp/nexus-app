@@ -73,6 +73,8 @@ export function buildClubSettings(
     logoUrl: string;
     /** Konzept §7.2: Ausschnitt und Ränge ohne Punktzahl. */
     leaderboard?: { topOnly: string; hidePoints: boolean };
+    /** UC-042: das Saisonziel für den Beitrag, in Punkten. */
+    goal?: { seasonPoints: string };
   },
 ): ClubSettings {
   const settings: ClubSettings = { ...current };
@@ -128,6 +130,20 @@ export function buildClubSettings(
     if (input.leaderboard.hidePoints) clean.hidePoints = true;
     if (Object.keys(clean).length > 0) settings.leaderboard = clean;
     else delete settings.leaderboard;
+  }
+
+  // Saisonziel: Ein leeres Feld heisst «kein Ziel» und verschwindet ganz –
+  // dann zeigt die Übersicht nur das Ist, und es gibt keine Ampel ohne
+  // Massstab (UC-042 A2). Die Null bleibt ausdrücklich **nicht** stehen: Ein
+  // Vereinsziel von null hiesse, der ganze Verein wäre befreit, und das sagt
+  // man, indem man kein Ziel setzt.
+  if (input.goal) {
+    const seasonPoints = Math.floor(Number(input.goal.seasonPoints));
+    if (input.goal.seasonPoints.trim() !== '' && Number.isFinite(seasonPoints) && seasonPoints >= 1) {
+      settings.goal = { seasonPoints };
+    } else {
+      delete settings.goal;
+    }
   }
 
   return settings;

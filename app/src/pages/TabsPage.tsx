@@ -43,6 +43,7 @@ import { OfficePage } from './club/OfficePage';
 import { MoodPage } from './MoodPage';
 import { InvoicePage } from './InvoicePage';
 import { PointRulePage } from './club/PointRulePage';
+import { ContributionPage } from './club/ContributionPage';
 
 /**
  * Fünf Tabs nach dem myclub-Vorbild (Architektur §8). Die Kindrouten sind
@@ -78,6 +79,8 @@ export function TabsPage() {
         <Route path="profile/requests" element={<JoinRequestPage />} />
         <Route path="profile/members" element={<MemberPage />} />
         <Route path="profile/rules" element={<PointRulePage />} />
+        {/* UC-042: die Beiträge der Saison, neben den Punkteregeln. */}
+        <Route path="profile/contribution" element={<ContributionPage />} />
         <Route path="profile/news" element={<NewsSourcePage />} />
         <Route path="profile/federation" element={<FederationPage />} />
         <Route path="profile/legacy" element={<LegacyImportPage />} />

@@ -41,6 +41,11 @@ import { ListSection } from '../components/ListSection';
 import { DateField } from '../components/DateField';
 import { EmptyState, InlineError } from '../components/StateViews';
 import { CLUB_MODULES } from '../lib/database.types';
+import { usePointRules } from '../hooks/useGamification';
+import {
+  GOAL_SUGGESTION_SHIFTS,
+  suggestedSeasonGoal,
+} from '../lib/contributionGoal';
 import type { ClubModule, ClubSettings, EventType } from '../lib/database.types';
 
 /** Reihenfolge wie in `events.type` (0003_agenda.sql). */
@@ -83,6 +88,16 @@ export function ClubSettingsPage() {
   const [logoUrl, setLogoUrl] = useState('');
   const [topOnly, setTopOnly] = useState('');
   const [hidePoints, setHidePoints] = useState(false);
+  // UC-042: das Saisonziel in Punkten. Leer heisst «kein Ziel».
+  const [seasonGoal, setSeasonGoal] = useState('');
+
+  // Der Vorschlag für das Saisonziel: vier Einsätze der Regel, die einen
+  // Helfereinsatz bucht. Ohne die Regel gibt es keinen Vorschlag – eine Zahl
+  // aus dem Nichts wäre geraten.
+  const rules = usePointRules();
+  const goalSuggestion = suggestedSeasonGoal(
+    rules.data?.find((rule) => rule.code === 'shift_done' && rule.is_active)?.points,
+  );
   // A4: Die Warnung steht **vor** dem Speichern, nicht als Hinweis danach.
   const [confirmSeason, setConfirmSeason] = useState(false);
   const [confirmDrop, setConfirmDrop] = useState(false);
@@ -99,6 +114,7 @@ export function ClubSettingsPage() {
     setLogoUrl(activeClub.settings?.logoUrl ?? '');
     setTopOnly(activeClub.settings?.leaderboard?.topOnly?.toString() ?? '');
     setHidePoints(activeClub.settings?.leaderboard?.hidePoints === true);
+    setSeasonGoal(activeClub.settings?.goal?.seasonPoints?.toString() ?? '');
   }, [activeClub]);
 
   // Farben sofort anwenden, damit die Wirkung sichtbar ist. Beim Verlassen
@@ -141,6 +157,7 @@ export function ClubSettingsPage() {
           dna,
           logoUrl,
           leaderboard: { topOnly, hidePoints },
+          goal: { seasonPoints: seasonGoal },
         }),
       },
       {
@@ -358,6 +375,37 @@ export function ClubSettingsPage() {
               </IonToggle>
             </IonItem>
           </ListSection>
+
+          {/* UC-042: das Saisonziel. Nur sichtbar, wenn das Modul läuft –
+              ohne Modul kennt der Verein kein Soll, und der MVP-Schnitt gilt
+              unverändert (BR-199). */}
+          {modules.goal === true && (
+            <ListSection
+              title={t('clubSettings.goal')}
+              footnote={
+                goalSuggestion
+                  ? t('clubSettings.goalHintWithSuggestion', {
+                      points: goalSuggestion,
+                      shifts: GOAL_SUGGESTION_SHIFTS,
+                    })
+                  : t('clubSettings.goalHint')
+              }
+            >
+              <IonItem>
+                <IonInput
+                  label={t('clubSettings.goalPoints')}
+                  labelPlacement="stacked"
+                  type="number"
+                  inputmode="numeric"
+                  min={1}
+                  placeholder={goalSuggestion ? String(goalSuggestion) : undefined}
+                  enterkeyhint="done"
+                  value={seasonGoal}
+                  onIonInput={(e) => setSeasonGoal(e.detail.value ?? '')}
+                />
+              </IonItem>
+            </ListSection>
+          )}
 
           {/* A3 und FR-114: die Vereins-DNA. */}
           <ListSection

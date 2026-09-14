@@ -7,7 +7,9 @@
  * Behauptung, also erzeugt der Server sie nicht.
  *
  * `succession_gap` ist seit `0056` dabei: Die Ämter aus UC-031 sind seine
- * Grundlage.
+ * Grundlage. `contribution_gap` seit `0080`: Grundlage ist das Saisonziel
+ * (UC-042). Fehlt ein Typ hier, erzeugt ihn der Server zwar, aber der Vorstand
+ * kann nicht einstellen, wer ihn bekommt – gebaut und unerreichbar.
  */
 export const LIVE_SIGNAL_TYPES = [
   'no_response',
@@ -16,6 +18,7 @@ export const LIVE_SIGNAL_TYPES = [
   'comms_pause',
   'connection_ratio',
   'succession_gap',
+  'contribution_gap',
 ] as const;
 
 export type LiveSignalType = (typeof LIVE_SIGNAL_TYPES)[number];
@@ -49,6 +52,9 @@ export const CLUB_SIGNAL_TYPES: readonly string[] = [
   'comms_pause',
   'connection_ratio',
   'succession_gap',
+  // UC-042: zählt Mitglieder ohne Beitrag, nennt aber keine Namen (BR-202) –
+  // ein Vereinssignal, kein Personensignal.
+  'contribution_gap',
 ];
 
 /** Ampelfarbe – Ionic-Standard, keine eigene Klasse. */

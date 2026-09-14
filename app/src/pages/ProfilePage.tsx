@@ -24,6 +24,7 @@ import { FormModal } from '../components/FormModal';
 import { DeleteAccountModal } from '../components/DeleteAccountModal';
 import { ProfileEditModal } from '../components/ProfileEditModal';
 import { ClubAdminLinks, hasAdminLinks } from '../components/ClubAdminLinks';
+import { ContributionGoalCard } from '../components/ContributionGoalCard';
 import { PASSWORD_MIN_LENGTH, authErrorKey } from '../lib/authError';
 import { SUPPORTED_LANGUAGES } from '../i18n';
 import { formatDate, formatDateTime } from '../lib/format';
@@ -242,6 +243,11 @@ export function ProfilePage() {
           ))}
         </ListSection>
       )}
+
+      {/* UC-042: der eigene Fortschritt zum Saisonziel – vor der Historie,
+          weil er sagt, was noch ansteht, und die Historie, was war. Ohne
+          Modul und ohne Ziel rendert die Karte nichts. */}
+      <ContributionGoalCard />
 
       <ListSection
         title={t('profile.pointHistory')}

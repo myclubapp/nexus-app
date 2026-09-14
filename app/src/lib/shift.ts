@@ -6,6 +6,12 @@ import type { EventShift } from './database.types';
  * Die Spezifikation nennt «eine Punkteregel passend zur Dauer», weil ein
  * halber Tag und ein ganzer Tag unterschiedlich zählen (BR-042). Die Stufen
  * sind bewusst grob: Sie sind ein Vorschlag, den der Vorstand überschreibt.
+ *
+ * **Gegenstück zu `suggested_shift_points()` in `0080`.** Dort leitet die
+ * Übernahme aus der bisherigen App denselben Wert ab, weil ein fremder
+ * Punktwert keine Punktzahl dieser Skala ist (BR-204). Laufen die beiden
+ * auseinander, zählt eine übernommene Schicht anders als eine hier angelegte –
+ * dieselbe Gefahr wie bei `season_label()`/`seasonLabel()`.
  */
 export function suggestedShiftPoints(durationMinutes: number): number {
   if (durationMinutes <= 0) return 0;

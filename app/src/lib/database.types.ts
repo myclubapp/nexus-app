@@ -69,6 +69,9 @@ export const CLUB_MODULES = [
   // Seit UC-036: der Rechnungsdienst. A4 verlangt, dass der Bereich ohne ihn
   // **vollständig** verschwindet.
   'invoice',
+  // Seit UC-042: das Saisonziel für den Beitrag. Voreinstellung aus (BR-199) –
+  // der MVP-Schnitt kennt kein Soll, dies ist die Ausbaustufe.
+  'goal',
 ] as const;
 export type ClubModule = (typeof CLUB_MODULES)[number];
 
@@ -111,6 +114,14 @@ export type ClubSettings = {
     values?: string;
     tone?: string;
     traditions?: string;
+  };
+  /**
+   * UC-042: das Saisonziel für den Beitrag, in Punkten derselben Skala wie
+   * alle Regeln. Fehlt die Zahl, zeigt die Übersicht nur das Ist – eine Ampel
+   * ohne Massstab gibt es nicht (A2).
+   */
+  goal?: {
+    seasonPoints?: number;
   };
   /** UC-022 A3: Anzeige auf die vorderen Ränge begrenzen. */
   leaderboard?: {

@@ -103,6 +103,11 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-057 | Verteilungs-Transparenz        | Als Mitglied möchte ich sehen, wie viele Aufgaben bereits übernommen wurden, damit die Verteilung fair sichtbar ist.                                                | Medium   | Implemented |
 | FR-058 | Beitrags-Profil erfassen       | Als Mitglied möchte ich angeben, womit ich gern beitrage (Interessen, Stärken, Zeitbudget), damit mir passende Beiträge angeboten werden (K3b).                     | High     | Implemented        |
 | FR-059 | Beitrags-Matching              | Als Mitglied möchte ich Aufgaben und Ämter vorgeschlagen bekommen, die zu meinem Beitrags-Profil passen, damit Verantwortung angeboten statt ausgeschrieben wird.   | High     | Implemented|
+| FR-158 | Saisonziel festlegen           | Als Vorstand möchte ich ein Saisonziel in Punkten für den Beitrag festlegen, damit im Verein klar ist, was wir voneinander erwarten (UC-042).                       | Medium   | Implemented |
+| FR-159 | Abweichendes Ziel je Mitglied  | Als Vorstand möchte ich für einzelne Mitglieder ein eigenes oder gar kein Ziel setzen, damit Ehren-, Passiv- und Vorstandsmitglieder richtig behandelt werden.      | Medium   | Implemented |
+| FR-160 | Beitragsübersicht der Saison   | Als Vorstand möchte ich je Mitglied Ist, Soll und Rest mit Ampel sehen und als CSV teilen, damit ich den Verein führen und dem Kassier die Grundlage geben kann.    | Medium   | Implemented |
+| FR-161 | Fortschritt zum Saisonziel     | Als Mitglied möchte ich sehen, wie weit ich beim Saisonziel bin und was ich als Nächstes beitragen kann, damit ich weiss, wo ich stehe.                            | Medium   | Implemented |
+| FR-162 | Hinweis auf fehlende Beiträge  | Als Vorstand möchte ich vor Saisonende erfahren, wie viele Mitglieder noch keinen Beitrag geleistet haben, damit wir rechtzeitig fragen können.                    | Medium   | Implemented |
 
 ### 1.5 Vereins-Gesundheit & Frühwarnung
 
@@ -289,6 +294,7 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | NFR-036 | Generierte Typen getrennt      | Handgepflegte Typen liegen ausserhalb der generierten Datei; ein Lauf von `types:generate` verändert keine handgepflegte Deklaration.                  | Maintainability | High     | Implemented |
 | NFR-037 | Kein leerer Bildschirm         | Jede Listen- und Übersichtsansicht zeigt bei fehlenden Daten einen erklärenden Zustand mit mindestens einem Handlungsangebot; die Zahl der Ansichten ohne solchen Zustand ist null. | Usability       | High     | Implemented   |
 | NFR-038 | Erstbefüllung ohne Aufwand     | Ein neu gegründeter Verein zeigt auf allen fünf Tabs Inhalte, ohne dass der Vorstand etwas erfasst; das Entfernen aller Beispielinhalte kostet höchstens eine Aktion.              | Usability       | High     | Implemented   |
+| NFR-039 | Beitragswerte sind Vorstandssache | Ist, Soll und Rückstand fremder Mitglieder erreichen nur den Vorstand; die Prüfung liegt in der Datenbankfunktion, nicht in einem Filter im Client.                             | Security        | High     | Implemented   |
 ---
 
 ## 3. Rahmenbedingungen (Constraints)
