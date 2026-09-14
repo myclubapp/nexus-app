@@ -44,6 +44,15 @@ export function MeetingPage() {
   const [writing, setWriting] = useState(false);
   const [triagedId, setTriagedId] = useState<string | null>(null);
   const [agendaFor, setAgendaFor] = useState<AppEvent | null>(null);
+  // Zeilen sind kurz (ion-item, Content Types): Ein Vorschlag steht auf drei
+  // Zeilen, der Volltext im Triage-Blatt – oder, wo es keines gibt, nach dem
+  // Antippen der Zeile.
+  const [expanded, setExpanded] = useState<string[]>([]);
+  const toggleExpanded = (id: string) =>
+    setExpanded((current) =>
+      current.includes(id) ? current.filter((entry) => entry !== id) : [...current, id],
+    );
+  const clampClass = (id: string) => (expanded.includes(id) ? undefined : 'app-clamp-3');
 
   const rows = inputs.data ?? [];
   // Zwei Körbe aus **einer** Abfrage: Was überhaupt sichtbar ist, entscheidet
@@ -107,7 +116,7 @@ export function MeetingPage() {
                         ? t('meeting.anonymousInput')
                         : t('meeting.personalInput')}
                     </h2>
-                    <p>{input.body}</p>
+                    <p className="app-clamp-3">{input.body}</p>
                     <IonNote>{formatDateTime(input.createdAt)}</IonNote>
                   </IonLabel>
                   <IonBadge
@@ -126,11 +135,18 @@ export function MeetingPage() {
           {mine.length > 0 && (
             <ListSection title={t('meeting.mine')} footnote={t('meeting.mineHint')}>
               {mine.map((input) => (
-                <IonItem key={input.id}>
+                <IonItem
+                  key={input.id}
+                  button
+                  detail={false}
+                  onClick={() => toggleExpanded(input.id)}
+                >
                   <IonLabel className="ion-text-wrap">
-                    <p>{input.body}</p>
+                    <p className={clampClass(input.id)}>{input.body}</p>
                     <IonNote>{formatDateTime(input.createdAt)}</IonNote>
-                    {input.response && <p>«{input.response}»</p>}
+                    {input.response && (
+                      <p className={clampClass(input.id)}>«{input.response}»</p>
+                    )}
                   </IonLabel>
                   <IonBadge slot="end" color="medium">
                     {t(`meeting.status.${input.status}`)}
@@ -169,9 +185,14 @@ export function MeetingPage() {
               footnote={t('meeting.anonymousTrackHint')}
             >
               {(anonymous.data ?? []).map((row) => (
-                <IonItem key={row.inputId}>
+                <IonItem
+                  key={row.inputId}
+                  button
+                  detail={false}
+                  onClick={() => toggleExpanded(row.inputId)}
+                >
                   <IonLabel className="ion-text-wrap">
-                    <p>{row.body}</p>
+                    <p className={clampClass(row.inputId)}>{row.body}</p>
                     {row.meetingAt && (
                       <IonNote>
                         {t('meeting.scheduledFor', {
@@ -179,7 +200,9 @@ export function MeetingPage() {
                         })}
                       </IonNote>
                     )}
-                    {row.response && <p>«{row.response}»</p>}
+                    {row.response && (
+                      <p className={clampClass(row.inputId)}>«{row.response}»</p>
+                    )}
                   </IonLabel>
                   <IonBadge slot="end" color="medium">
                     {t(`meeting.status.${row.status}`)}

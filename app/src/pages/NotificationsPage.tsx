@@ -3,12 +3,14 @@ import {
   IonButton,
   IonItem,
   IonLabel,
+  IonListHeader,
   IonNote,
   IonToggle,
 } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import { AppPage } from "../components/AppPage";
 import { ListSection } from "../components/ListSection";
+import { TextSection } from "../components/TextSection";
 import { DateField } from '../components/DateField';
 import { ErrorState, InlineError } from "../components/StateViews";
 import { SkeletonList } from "../components/Skeletons";
@@ -85,17 +87,14 @@ export function NotificationsPage() {
       backHref="/tabs/profile"
       onRefresh={() => Promise.all([stored.refetch(), devices.refetch()])}
     >
-      {/* Schritt 3: die Begründung, nicht bloss die Sperre. */}
-      <ListSection
-        title={t("notifications.inbox")}
-        footnote={t("notifications.inboxWhy")}
-      >
-        <IonItem lines="none">
-          <IonLabel className="ion-text-wrap">
-            <p>{t("notifications.inboxAlways")}</p>
-          </IonLabel>
-        </IonItem>
-      </ListSection>
+      {/* Schritt 3: die Begründung, nicht bloss die Sperre – als Text, nicht
+          als Listenzeile, die keine ist. */}
+      <TextSection title={t("notifications.inbox")}>
+        <p>{t("notifications.inboxAlways")}</p>
+        <p>
+          <IonNote>{t("notifications.inboxWhy")}</IonNote>
+        </p>
+      </TextSection>
 
       {stored.isLoading ? (
         <SkeletonList />
@@ -197,42 +196,45 @@ export function NotificationsPage() {
           {/* A1: das Gerät anmelden. Bis heute konnte die App Geräte
               auflisten und abmelden – anmelden konnte sie keines, und die
               Liste blieb deshalb immer leer. */}
-          <ListSection
-            title={t("notifications.devices")}
-            footnote={t("notifications.devicesHint")}
-          >
-            {readiness !== "ready" ? (
-              <IonItem lines="none">
-                <IonLabel className="ion-text-wrap">
-                  {/* A2 und die drei anderen Gründe. Kein Fehler, sondern eine
-                      Auskunft: Die Inbox enthält weiterhin alles (BR-117). */}
-                  <p>{t(`notifications.pushState.${readiness}`)}</p>
-                </IonLabel>
-              </IonItem>
-            ) : (
-              <div className="app-actions">
-                <IonButton
-                  expand="block"
-                  fill="outline"
-                  disabled={registerPush.isPending}
-                  onClick={() =>
-                    registerPush.mutate(undefined, {
-                      onSuccess: (outcome) =>
-                        outcome === "registered"
-                          ? toast.success(t("notifications.deviceRegistered"))
-                          : toast.failure(t("notifications.pushState.denied")),
-                      onError: (cause) => toast.failure(cause.message),
-                    })
-                  }
-                >
-                  {t("notifications.registerDevice")}
-                </IonButton>
-              </div>
-            )}
+          {/* Überschrift, dann Auskunft oder Knopf, dann die Geräteliste:
+              Text und Knopfleiste sind keine Zeilen und stehen deshalb
+              zwischen Kopf und Liste, nicht in der Liste. */}
+          <IonListHeader>
+            <IonLabel>{t("notifications.devices")}</IonLabel>
+          </IonListHeader>
+          {readiness !== "ready" ? (
+            /* A2 und die drei anderen Gründe. Kein Fehler, sondern eine
+               Auskunft: Die Inbox enthält weiterhin alles (BR-117). */
+            <TextSection>
+              <p>{t(`notifications.pushState.${readiness}`)}</p>
+            </TextSection>
+          ) : (
+            <div className="app-actions">
+              <IonButton
+                expand="block"
+                fill="outline"
+                disabled={registerPush.isPending}
+                onClick={() =>
+                  registerPush.mutate(undefined, {
+                    onSuccess: (outcome) =>
+                      outcome === "registered"
+                        ? toast.success(t("notifications.deviceRegistered"))
+                        : toast.failure(t("notifications.pushState.denied")),
+                    onError: (cause) => toast.failure(cause.message),
+                  })
+                }
+              >
+                {t("notifications.registerDevice")}
+              </IonButton>
+            </div>
+          )}
 
+          <ListSection footnote={t("notifications.devicesHint")}>
             {(devices.data ?? []).length === 0 ? (
-              <IonItem>
-                <IonNote>{t("notifications.noDevices")}</IonNote>
+              <IonItem lines="none">
+                <IonLabel color="medium" className="ion-text-wrap">
+                  {t("notifications.noDevices")}
+                </IonLabel>
               </IonItem>
             ) : (
               (devices.data ?? []).map((device) => (

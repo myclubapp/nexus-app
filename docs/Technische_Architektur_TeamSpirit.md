@@ -307,7 +307,7 @@ create table events (
   id          uuid primary key default gen_random_uuid(),
   club_id     uuid not null references clubs(id) on delete cascade,
   team_id     uuid references teams(id),          -- null = Vereinsevent
-  type        text not null,   -- training|match|cup|tournament|gv|social|helper
+  type        text not null,   -- training|match|gv|social|helper|meeting (0072)
   title       text not null,
   starts_at   timestamptz not null,
   ends_at     timestamptz,

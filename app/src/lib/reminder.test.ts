@@ -55,6 +55,11 @@ describe('canRemind', () => {
     expect(canRemind(event({ undecided: null }))).toBe(true);
   });
 
+  it('verbirgt ihn bei einem Termin mit Schichten (BR-196)', () => {
+    // Auf den Anlass antwortet niemand – die Erinnerung ginge an alle.
+    expect(canRemind(event({ viaShifts: true }))).toBe(false);
+  });
+
   it('verbirgt ihn beim Entwurf, bei Absage und nach Beginn', () => {
     expect(canRemind(event({ isDraft: true }))).toBe(false);
     expect(canRemind(event({ isCancelled: true }))).toBe(false);

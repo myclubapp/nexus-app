@@ -41,8 +41,14 @@ describe('usePresentingElement', () => {
     // Ein IonModal ohne presentierendes Element steht als Vollbild über der
     // App – guidelines.md §2. Die Regel lässt sich nur an der Quelle prüfen:
     // IonModal rendert seinen Inhalt in jsdom nicht (docs/TESTING.md).
-    const withModal = sourceFiles('src').filter((path) =>
-      readFileSync(path, 'utf8').includes('<IonModal'),
+    // Ausnahme: das Datumsblatt. Ionic setzt es auf `fit-content`, und aus
+    // einem offenen Formular heraus würde der Karten-Übergang die Seite
+    // darunter zurückstellen, obwohl das Formular noch offen ist (Doku
+    // ion-datetime-button; Ionic-Prüfung 2026-09-11, Befund 7).
+    const withModal = sourceFiles('src').filter(
+      (path) =>
+        readFileSync(path, 'utf8').includes('<IonModal') &&
+        !path.endsWith('components/DateField.tsx'),
     );
 
     expect(withModal.length).toBeGreaterThan(0);

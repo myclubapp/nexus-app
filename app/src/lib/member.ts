@@ -105,3 +105,16 @@ export function initials(displayName: string | null | undefined): string {
   const last = parts.length > 1 ? (parts[parts.length - 1][0] ?? '') : '';
   return (first + last).toUpperCase();
 }
+
+/**
+ * Vorname für die Anrede auf dem Startscreen.
+ *
+ * Die App duzt – und wer duzt, grüsst mit dem Vornamen: «Hallo Sandro», nicht
+ * «Hallo Sandro Scalco». Ein eigenes Feld gibt es nicht: `display_name` ist
+ * ein String, der Altbestand fügt Vor- und Nachname mit Leerzeichen zusammen
+ * (0071). Also der erste Namensteil; Bindestriche bleiben («Jean-Luc»), ein
+ * zweiter Vorname fällt weg. Ohne Namen bleibt die Anrede leer.
+ */
+export function firstName(displayName: string | null | undefined): string {
+  return (displayName ?? '').trim().split(/\s+/)[0] ?? '';
+}

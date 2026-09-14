@@ -74,6 +74,13 @@ function office(overrides: Partial<Office> = {}): Office {
   };
 }
 
+/** `ion-item` trägt den Text, `ion-label` in jsdom nicht (docs/TESTING.md §6.1). */
+function row(container: HTMLElement, text: string): Element | undefined {
+  return Array.from(container.querySelectorAll('ion-item')).find(
+    (element) => element.textContent?.trim() === text,
+  );
+}
+
 describe('OfficeDetail', () => {
   beforeEach(() => {
     club.isAdmin = false;
@@ -139,18 +146,40 @@ describe('OfficeDetail', () => {
 
   it('gibt nur dem Vorstand «Bearbeiten»', () => {
     const onEdit = vi.fn();
-    const { unmount } = renderWithProviders(
+    const { unmount, container } = renderWithProviders(
       <OfficeDetail office={office()} onEdit={onEdit} onDismiss={() => undefined} />,
     );
-    expect(screen.queryByText('Amt bearbeiten')).not.toBeInTheDocument();
+    expect(container.textContent).not.toContain('Verwalten');
+    expect(row(container, 'Amt bearbeiten')).toBeUndefined();
     unmount();
 
     club.isAdmin = true;
-    renderWithProviders(
+    const admin = renderWithProviders(
       <OfficeDetail office={office()} onEdit={onEdit} onDismiss={() => undefined} />,
     );
-    fireEvent.click(screen.getByText('Amt bearbeiten'));
+    fireEvent.click(row(admin.container, 'Amt bearbeiten')!);
     expect(onEdit).toHaveBeenCalledWith(expect.objectContaining({ id: 'o-1' }));
+  });
+
+  it('führt Bearbeiten und Auflösen als Zeilen unter «Verwalten», Auflösen zuletzt', () => {
+    club.isAdmin = true;
+    const onEdit = vi.fn();
+    const onDissolve = vi.fn();
+    const { container } = renderWithProviders(
+      <OfficeDetail
+        office={office()}
+        onEdit={onEdit}
+        onDissolve={onDissolve}
+        onDismiss={() => undefined}
+      />,
+    );
+    expect(container.textContent).toContain('Verwalten');
+    const edit = row(container, 'Amt bearbeiten')!;
+    const remove = row(container, 'Auflösen')!;
+    expect(edit.compareDocumentPosition(remove) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    fireEvent.click(remove);
+    expect(onDissolve).toHaveBeenCalledWith(expect.objectContaining({ id: 'o-1' }));
+    expect(onEdit).not.toHaveBeenCalled();
   });
 
   it('sagt, wenn niemand das Amt trägt', () => {

@@ -5,6 +5,8 @@
     "cancel": "Abbrechen",
     "ok": "OK",
     "close": "Schliessen",
+    "reset": "Zurücksetzen",
+    "noPlannableTeam": "Du bist noch keinem Team zugeordnet. Der Vorstand kann dich einem Team zuweisen.",
     "back": "Zurück",
     "next": "Weiter",
     "loading": "Wird geladen …",
@@ -21,11 +23,11 @@
     "saveFailed": "Das hat nicht geklappt. Bitte nochmals versuchen.",
     "saved": "Gespeichert",
     "discardChanges": "Änderungen verwerfen",
+    "discardTitle": "Ungespeicherte Änderungen",
     "keepEditing": "Weiter bearbeiten",
     "details": "Details",
-    "more": "Mehr",
-    "clear": "Löschen",
-    "manage": "Verwalten"
+    "manage": "Verwalten",
+    "clear": "Löschen"
   },
   "auth": {
     "title": "Willkommen",
@@ -109,6 +111,7 @@
   "menu": {
     "open": "Menü öffnen",
     "administration": "Verwaltung",
+    "administrationHint": "Funktionen für Vorstand und Trainer:innen, um den Verein zu verwalten. Andere Mitglieder sehen diesen Bereich nicht.",
     "switchClub": "Verein wechseln"
   },
   "dashboard": {
@@ -121,6 +124,7 @@
     "nextPointsHint": "Konkrete Beiträge, die gerade offen sind – und zu dir passen.",
     "openTasks": "Offene Aufgaben",
     "upcoming": "Als Nächstes",
+    "upcomingHint": "Deine Teams und alles, was dem ganzen Verein gilt. Den ganzen Kalender zeigt die Agenda.",
     "latestNews": "Neuigkeiten",
     "noNews": "Zurzeit keine Neuigkeiten",
     "careerPoints": "Gesamt seit Eintritt",
@@ -152,7 +156,7 @@
     "urgentHint": "Diese Fristen laufen in den nächsten zwei Tagen ab.",
     "openSection": "Offen",
     "drafts": "Entwürfe",
-    "draftsHint": "Entwürfe sind für Mitglieder nicht sichtbar und benachrichtigen niemanden.",
+    "draftsHint": "Entwürfe sind für Mitglieder nicht sichtbar und benachrichtigen niemanden. Antippen zum Bearbeiten, nach links wischen zum Ausschreiben.",
     "capacity": "{{taken}} von {{total}} übernommen",
     "urgent": "Frist läuft ab",
     "overdue": "Frist abgelaufen",
@@ -186,6 +190,7 @@
     "teamTotal": "{{points}} Punkte · {{count}} Mitglieder",
     "teamsHint": "Der Durchschnitt pro Mitglied – so liegt ein grosses Team nicht allein wegen seiner Grösse vorn. Teams mit weniger als zwei sichtbaren Mitgliedern erscheinen nicht.",
     "teamsEmpty": "Noch kein Team mit Punkten in diesem Zeitraum",
+    "rankGap": "Weitere Ränge dazwischen",
     "currentSeason": "Laufende Saison",
     "teamMembers": "{{count}} Mitglieder"
   },
@@ -210,8 +215,6 @@
     "type": {
       "training": "Training",
       "match": "Spiel",
-      "cup": "Cup",
-      "tournament": "Turnier",
       "gv": "Versammlung",
       "social": "Anlass",
       "helper": "Einsatz",
@@ -231,32 +234,54 @@
     "declineEarly": "Du meldest dich rechtzeitig ab – das zählt für deine Verlässlichkeit.",
     "declineLate": "Der Termin beginnt bald. Eine Absage kostet nie Punkte.",
     "declinedWithPoints": "Absage gespeichert – {{points}} Punkte für die rechtzeitige Abmeldung",
-    "tally": "{{yes}} zugesagt · {{no}} abgesagt · {{open}} offen",
     "cancelledWithReason": "Abgesagt: {{reason}}",
     "draft": "Entwurf",
-    "statusColumn": "Status",
-    "participantsColumn": "Teilnehmer",
     "myStatus": "Mein Status",
     "attendances": "An-/Abwesenheiten",
     "listRegistered": "Zugesagt: {{count}}",
     "listExcused": "Abgesagt: {{count}}",
     "listUndecided": "Keine Antwort: {{count}}",
     "statusLabel": {
-      "open": "Noch offen – tippen zum Zusagen",
-      "registered": "Zugesagt – tippen zum Absagen",
+      "open": "Noch offen",
+      "registered": "Zugesagt",
       "present": "Anwesend",
-      "excused": "Abgesagt – tippen zum Zusagen",
+      "excused": "Abgesagt",
       "absent": "Nicht da",
       "cancelled": "Termin abgesagt",
       "locked": "Termin hat begonnen",
       "notAffected": "Nicht für dich"
     },
+    "statusAction": {
+      "registered": "tippen zum Zusagen",
+      "excused": "tippen zum Absagen"
+    },
+    "shiftStatus": {
+      "held": "Schicht übernommen",
+      "open": "Termin mit Schichten"
+    },
     "undercovered_one": "Noch {{count}} Zusage fehlt",
     "undercovered_other": "Noch {{count}} Zusagen fehlen",
     "teamFilter": "Team",
-    "allTeams": "Alle Teams",
+    "typeFilter": "Terminart",
+    "emptyFiltered": "Keine Termine zu diesem Filter",
+    "resetFilter": "Filter zurücksetzen",
+    "filter": {
+      "title": "Filter",
+      "apply": "Anwenden",
+      "applyCount_one": "{{count}} Filter anwenden",
+      "applyCount_other": "{{count}} Filter anwenden",
+      "typesHint": "Ohne Auswahl zeigt die Agenda alle Terminarten.",
+      "teamsHint": "Vereinstermine ohne Team bleiben immer dabei."
+    },
     "result": "Resultat {{result}}",
-    "fromFederation": "Vom Verband"
+    "navigate": "Navigation starten",
+    "venueMap": "Karte des Spielorts",
+    "cancelled": "Abgesagt",
+    "addToCalendar": "In den Kalender eintragen",
+    "calendarFailed": "Der Kalendereintrag hat nicht geklappt.",
+    "calendar": "Kalender",
+    "calendarLabel": "Monatskalender",
+    "emptyDay": "Keine Termine an diesem Tag"
   },
   "profile": {
     "title": "Profil",
@@ -677,6 +702,9 @@
     "limitShort": "höchstens {{max}} je {{period}}",
     "limitHint": "Ohne Angabe zählt die Regel unbegrenzt. Die Grenze wird beim Buchen auf dem Server geprüft.",
     "addRule": "Eigene Regel",
+    "delete": "Regel löschen",
+    "deleteConfirm": "«{{label}}» wird gelöscht. Eine Regel mit Buchungen oder Terminen bleibt – du erfährst dann, was noch dranhängt.",
+    "deleted": "Regel gelöscht.",
     "ruleCreated": "Regel angelegt",
     "enableAll": "Alle ein",
     "disableAll": "Alle aus",
@@ -708,6 +736,7 @@
     "endBeforeStart": "Das Ende muss nach dem Beginn liegen.",
     "why": "Wozu dient das? Wem hilft es?",
     "whyHint": "Ein Aufruf trägt seinen Sinnzusammenhang. Ohne ihn lässt er sich nicht publizieren.",
+    "scopeHintTeam": "Als Trainer:in schreibst du Termine für deine Teams aus. Vereinstermine legt der Vorstand an.",
     "wholeClub": "Ganzer Verein",
     "scopeHint": "Ein Team-Termin erscheint nur in der Agenda dieses Teams.",
     "rule": "Punkteregel",
@@ -798,17 +827,28 @@
     "open": "Schichten ansehen",
     "take": "Ich übernehme das",
     "release": "Doch nicht",
-    "full": "Voll",
+    "statusLabel": {
+      "open": "Noch frei – tippen zum Übernehmen",
+      "taken": "Übernommen – tippen zum Austragen",
+      "declined": "Abgesagt – tippen zum Übernehmen",
+      "declinedFinal": "Abgesagt",
+      "confirmed": "Einsatz bestätigt",
+      "absent": "Nicht da",
+      "full": "Voll besetzt",
+      "over": "Vorbei"
+    },
     "taken": "Eingetragen – die Punkte kommen nach der Bestätigung durch die Organisation.",
     "released": "Ausgetragen. Der Platz ist wieder frei.",
+    "declined": "Abgesagt. Du kannst die Schicht später trotzdem noch übernehmen.",
     "releasedWarned": "Ausgetragen. Die Organisation ist informiert, weil die Schicht kurzfristig unterbesetzt ist.",
     "pointsHint": "Der Punktwert steht bei jeder Schicht. Gutgeschrieben wird er, wenn die Organisation den Einsatz bestätigt.",
     "overlapTitle": "Das überschneidet sich",
     "overlapMessage": "Du bist zur selben Zeit schon für eine andere Schicht eingetragen. Trotzdem übernehmen?",
     "overlapConfirm": "Trotzdem übernehmen",
-    "over": "Vorbei",
     "marketplaceSection": "Helfereinsätze",
-    "marketplaceHint": "Anlässe, bei denen noch Plätze frei sind. Tippe einen an, um eine Schicht zu übernehmen."
+    "marketplaceHint": "Anlässe, bei denen noch Plätze frei sind. Tippe einen an, um eine Schicht zu übernehmen.",
+    "marketplaceMore": "Mehr anzeigen",
+    "marketplaceMoreHint": "Alle Helfereinsätze in der Agenda – auch die weiter entfernten und die schon besetzten."
   },
   "roster": {
     "title": "Einsätze bestätigen",
@@ -835,6 +875,7 @@
     "absenceTitle": "Wie soll das vermerkt werden?",
     "add": "Person hinzufügen",
     "addHint": "Für Eingesprungene: wird eingetragen und im selben Schritt bestätigt.",
+    "addMessage": "Wer hat mitgeholfen, ohne eingetragen zu sein? Die Person wird eingetragen und im selben Schritt bestätigt.",
     "confirmedNoPoints": "{{name}} bestätigt – diese Schicht vergibt keine Punkte."
   },
   "checkIn": {
@@ -895,7 +936,8 @@
     "all": "Alle Nachrichten",
     "unread_one": "{{count}} ungelesen",
     "unread_other": "{{count}} ungelesen",
-    "hint": "Jede Benachrichtigung steht hier – auch ohne Push. Antippen führt zum Anlass und markiert sie als gelesen."
+    "hint": "Jede Benachrichtigung steht hier – auch ohne Push. Antippen öffnet den Anlass und markiert sie als gelesen.",
+    "gone": "Dieser Eintrag ist nicht mehr da."
   },
   "taskCategory": {
     "organisation": "Organisation",
@@ -909,6 +951,8 @@
   },
   "taskForm": {
     "title": "Aufgabe ausschreiben",
+    "editTitle": "Entwurf bearbeiten",
+    "notDraftAnymore": "Dieser Entwurf ist inzwischen ausgeschrieben und lässt sich nicht mehr ändern.",
     "taskTitle": "Titel der Aufgabe",
     "description": "Beschreibung",
     "category": "Kategorie",
@@ -920,6 +964,7 @@
     "pointsHint": "Die Aufgabe trägt ihren Punktwert selbst. 0 Punkte heisst: Es wird gedankt, nicht gepunktet.",
     "dueAt": "Frist",
     "maxAssignees": "Anzahl Übernehmende",
+    "scopeHintTeam": "Als Trainer:in schreibst du Aufgaben für deine Teams aus. Vereinsaufgaben legt der Vorstand an.",
     "scope": "Geltungsbereich",
     "scopeHint": "Ohne Team sehen alle Mitglieder die Aufgabe.",
     "team": "Team",
@@ -944,8 +989,7 @@
     },
     "deleteDraft": "Entwurf löschen",
     "deleteDraftConfirm": "«{{title}}» wird gelöscht. Der Entwurf war für Mitglieder nie sichtbar.",
-    "draftDeleted": "Entwurf gelöscht.",
-    "notDraftAnymore": "Dieser Entwurf ist inzwischen ausgeschrieben und lässt sich nicht mehr ändern."
+    "draftDeleted": "Entwurf gelöscht."
   },
   "taskDetail": {
     "facts": "Eckdaten",
@@ -1000,7 +1044,9 @@
     "bookings_one": "{{count}} Buchung",
     "bookings_other": "{{count}} Buchungen",
     "sum": "Summe der Auswahl: {{points}}",
-    "empty": "Zu dieser Auswahl gibt es keine Buchung"
+    "empty": "Zu dieser Auswahl gibt es keine Buchung",
+    "bookingsTitle": "Buchungen",
+    "moreBelow": "Weitere Buchungen laden beim Scrollen. Die Summe erscheint, sobald alle geladen sind."
   },
   "bookPoints": {
     "title": "Punkte buchen",
@@ -1126,6 +1172,7 @@
     "imageHint": "Als Link. Einen Vereinsspeicher für Uploads gibt es noch nicht.",
     "scope": "Geltungsbereich",
     "team": "Team",
+    "scopeHintTeam": "Als Trainer:in schreibst du News für deine Teams. Vereinsnews schreibt der Vorstand.",
     "wholeClub": "Ganzer Verein",
     "scopeHint": "Eine Team-News erreicht ausschliesslich dieses Team.",
     "publish": "Publizieren",
@@ -1135,6 +1182,7 @@
     "editHint": "Beim Speichern wird niemand erneut benachrichtigt.",
     "retract": "Zurückziehen",
     "retracted": "Zurückgezogen. In der Inbox bleibt der Eintrag als Verlauf.",
+    "retractConfirm": "«{{title}}» wird für alle entfernt. Rückgängig machen lässt sich das nicht.",
     "problem": {
       "titleMissing": "Die News braucht einen Titel.",
       "imageNotALink": "Das ist kein vollständiger Link. Er beginnt mit http:// oder https://."
@@ -1599,6 +1647,7 @@
     "dropped_one": "{{count}} Beispielinhalt entfernt. Vereinsdaten waren nicht betroffen.",
     "dropped_other": "{{count}} Beispielinhalte entfernt. Vereinsdaten waren nicht betroffen.",
     "adopt": "Als eigenen Inhalt übernehmen",
+    "adoptShort": "Übernehmen",
     "adopted": "Übernommen. Der Inhalt gehört jetzt dem Verein und wirkt wie jeder andere.",
     "blocked": "Das ist ein Beispiel. Es zeigt, wie es aussieht – mitmachen kannst du hier nicht.",
     "kind": {
@@ -1655,7 +1704,8 @@
   },
   "news": {
     "share": "Teilen",
-    "linkCopied": "Link kopiert"
+    "linkCopied": "Link kopiert",
+    "readOnWebsite": "Ganzen Beitrag auf der Website lesen"
   },
   "eventEdit": {
     "title": "Termin bearbeiten",
@@ -1670,6 +1720,9 @@
     "reasonMissing": "Zu einer Absage gehört ihr Grund.",
     "cancelEvent": "Termin absagen",
     "cancelConfirm": "Alle Betroffenen erhalten die Absage samt Grund. Rückgängig machen lässt sie sich nicht.",
+    "delete": "Termin löschen",
+    "deleteConfirm": "«{{title}}» wird endgültig gelöscht, samt Antworten und Schichten. Ein Termin mit gebuchten Punkten bleibt – dann geht nur noch Absagen.",
+    "deleted": "Termin gelöscht.",
     "cancelled": "Abgesagt. Alle Betroffenen wurden benachrichtigt.",
     "changed": "Gespeichert.",
     "open": "Bearbeiten"
@@ -1773,6 +1826,7 @@
     "membersHint": "Nach links wischen nimmt aus dem Team – nicht aus dem Verein. Zuordnen geht im Mitglied.",
     "noMembers": "Noch niemand in diesem Team.",
     "memberRemoved": "Aus dem Team genommen.",
+    "removeMember": "Aus dem Team nehmen",
     "delete": "Team löschen",
     "deleteConfirm": "«{{name}}» wird gelöscht. Ein Team mit Terminen, Aufgaben oder News bleibt – du erfährst dann, was noch dranhängt.",
     "deleted": "Team gelöscht.",

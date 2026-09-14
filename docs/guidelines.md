@@ -56,21 +56,25 @@ Daraus folgen die Muster:
 | Grosser, einklappender Titel  | `AppPage` – nie von Hand `IonHeader`/`IonContent` zusammensetzen        |
 | Gruppierter Abschnitt         | `ListSection` (`IonListHeader` + `IonList inset`)                       |
 | Erklärtext unter einer Liste  | `ListSection footnote=…` (iOS-Fussnote), nicht ein `IonItem` mit Text   |
-| Etwas erfassen                | `FormModal` – Abbrechen links, Bestätigen rechts                        |
+| Etwas erfassen                | `FormModal` – Abbrechen links, Bestätigen rechts. Braucht die Bestätigung mehr als ein Wort («Absage senden»), steht sie mit `submitPlacement="content"` als Block-Knopf am Ende des Inhalts, rechts in der Kopfzeile dann nichts (`DeclineModal`) |
 | Mehrschrittige Erfassung      | `Wizard` – eine Frage je Schritt, Fortschrittsbalken                    |
 | Blatt über der Seite          | `presentingElement` aus `usePresentingElement()` – Karte statt Vollbild |
-| Zeilenaktion                  | `IonItemSliding` + `IonItemOption`, nicht ein drittes Icon in der Zeile |
+| Zeilenaktion                  | `IonItemSliding` + `IonItemOption`, nicht ein drittes Icon in der Zeile – **und** derselbe Weg im Blatt, das die Zeile öffnet (siehe «Verwalten») |
+| **Pfeil am Zeilenende**       | **`detail` an jeder Zeile, die weiterführt** – in ein Blatt, in eine Seite, in die Navigation oder den Kalender des Geräts. Ionic setzt ihn im iOS-Modus von selbst, sobald `button` steht; `detail={false}` ist die Ausnahme und braucht einen Grund in der Zeile darüber: Die Zeile wirkt an Ort und Stelle (auf-/zuklappen, ManageSection-Handlung mit `IonAlert`) oder trägt ein eigenes Symbol am Ende (`openOutline` für einen Link nach draussen, `InvoicePage`) |
 | **Verwalten in einem Blatt**  | **`ManageSection`** am Ende des Inhalts: Bearbeiten, Ausschreiben, Erinnern … als Zeilen, **Löschen rot und zuletzt**, mit `IonAlert` davor. Nie ein Dreipunkt in der Kopfzeile, nie ein loser Knopf im Inhalt |
 | Zu-/Absage-Status             | `AttendanceStatusIcon` am Zeilenanfang, Wischen nach rechts für die Gegenantwort, Zusagen-Zahl als `IonBadge` rechts, Namen im `EventDetailModal` – der Schnitt der bestehenden myclub-App |
-| News                          | `NewsCard` im `IonGrid` (12 / 6 / 6 / 4 Spalten), Volltext im `NewsDetailModal` – der Schnitt der bestehenden myclub-App |
+| News                          | `NewsCard` im `IonGrid` (12 / 6 / 6 / 4 Spalten), Volltext im `NewsDetailModal` – der Schnitt der bestehenden myclub-App. Fremdes HTML (`news.body_html`) nur über `sanitizeNewsHtml` ins DOM, nirgends sonst `dangerouslySetInnerHTML` |
 | **Etwas Neues anlegen**       | **`AppPage createActions=…`** – Plus unten rechts, nie ein Symbol in der Kopfzeile |
 | Auswahl zwischen Sichten      | `IonSegment` in `AppPage subToolbar=…`                                  |
+| **Eine Liste eingrenzen**     | **Filter-Blatt** hinter `optionsOutline` in `toolbarEnd`, Zahl der gesetzten Filter als `IonBadge` am Symbol; im Blatt Chips je Abschnitt, «Anwenden» als Block-Knopf in der Fusszeile (`AgendaFilterModal`, Vorbild: Kundenliste der venova-App). Kein schiebbares `IonSegment` für Kategorien |
+| **Ungelesene Nachrichten**    | **`InboxButton`** in `toolbarEnd` der Start-Seite: Umschlag gefüllt (`mailUnread`), solange etwas ungelesen ist, sonst Umriss (`mailOutline`), die Zahl als `IonBadge` am Symbol – der Schnitt der Glocke in `news.page.html` der bestehenden myclub-App. Ziel ist `/tabs/dashboard/inbox`, nicht der Profil-Tab (FR-078) |
 | Auswahl aus einer Liste       | `IonSelect` **mit `cancelText`/`okText`** – sonst «Cancel»/«OK» (§8)    |
+| **Verweis auf einen Gegenstand** | **Blatt über der Liste, kein Tab-Wechsel.** `linkTarget()` liest am Pfad (`?event=`, `?task=`), ob eine Benachrichtigung einen einzelnen Gegenstand meint; `LinkedDetail` hält die Blätter dazu (`InboxPage`). Ein `routerLink` in einen fremden Tab bleibt nur für ganze Seiten – sonst landet der Zurück-Weg in der Agenda statt in der Inbox, aus der man kam (Ionic, Navigation: Inhalt quer über Tabs gehört ins Modal) |
 | **Datum oder Uhrzeit**        | **`DateField`** – `IonDatetimeButton` + `IonModal` + `IonDatetime`, nie ein rohes `<input type="date">`/`datetime-local` (§8; Fallstrick in `CLAUDE.md`) |
 | Eine Person in einer Zeile    | `MemberAvatar` am Zeilenanfang (Bild, sonst Initialen), die Rolle als `IonBadge` – der Schnitt des `user-list-item` der bestehenden myclub-App |
 | **Ein Zähler als Badge**      | **Nur die Zahl**: `4/5`, `3`, `+50` – nie ein Satz wie «4 von 5 besetzt». Der Wortlaut hängt als `aria-label` am `IonBadge`; wer Worte braucht, schreibt sie in eine `IonNote` oder den `<p>` der Zeile (`AgendaPage`, `MarketplacePage`, `ShiftListModal`) |
 | **Inhalt lädt**               | **Skelett in der Form des Inhalts** (§4), nicht ein Spinner             |
-| **Eine Aktion läuft**         | **`IonSpinner` im auslösenden Knopf** (§4)                              |
+| **Eine Aktion läuft**         | **`IonSpinner` im auslösenden Knopf** (§4) – oder in der angetippten Zeile, wenn ein Tap etwas holt, bevor es sich öffnet (`InboxPage`) |
 | Rückfrage **vor** einer Aktion | `IonAlert` bzw. `IonActionSheet`, nie ein eigener Dialog                |
 | Bestätigung **nach** einer Aktion | **Toast oben** über `useToast()` (§5)                               |
 | Neu laden                     | `AppPage onRefresh=…` (`IonRefresher`)                                  |
@@ -115,6 +119,14 @@ Umgesetzt ist das einmal, in `CreateFab`: `slot="fixed"`, `vertical="bottom"`,
 `IonFab` in einer Seite selbst ist ein Fehler; `CreateFab.test.tsx` hält das
 fest.
 
+Die eine Ausnahme ist das **Teilen auf der News-Karte**: ein `IonFabButton
+size="small"` oben rechts *in* der Karte (`vertical="top"`,
+`horizontal="end"`, ohne `slot="fixed"`), nur wenn die News einen Link trägt.
+Das ist kein Erstellen und kein Knopf über der Seite, sondern der Schnitt der
+bestehenden myclub-App (`news.page.html`), an dem die Mitglieder das Teilen
+suchen. `NewsCard` baut ihn, `Skeletons` den Platzhalter dazu; ein dritter
+Ort bräuchte denselben Grund.
+
 Hat eine Seite **mehrere** Erstellen-Wege, klappen sie aus demselben Plus nach
 oben auf (`IonFabList`): Das Plus trägt dann `common.create`, jeder Weg sein
 eigenes Symbol und seinen eigenen Namen für Bedienhilfen. Der häufigere Weg
@@ -138,6 +150,13 @@ Mit ihm fährt die darunterliegende Seite zurück und dunkelt ab, das Blatt
 bekommt runde Ecken und einen Rand – das Karten-Muster («card modal»), das iOS
 für «etwas erfassen, dann zurück» verwendet. Ionic zeigt es ausschliesslich im
 iOS-Modus, und der gilt hier auf allen Plattformen (§2).
+
+Die eine Ausnahme ist das Datumsblatt in `DateField`: Ionic setzt das Blatt
+hinter einem `IonDatetimeButton` auf `fit-content`, und der Karten-Übergang
+passt dazu nicht. Aus einem offenen Formular heraus würde er zudem die Seite
+darunter zurückstellen, obwohl das Formular noch offen ist. Das Datumsblatt
+öffnet deshalb ohne `presentingElement`, so wie es die Ionic-Doku zu
+`ion-datetime-button` zeigt; `usePresentingElement.test.tsx` nimmt es aus.
 
 Das presentierende Element ist immer dasselbe und wird nie von Hand gesucht:
 
@@ -263,6 +282,30 @@ Inhalts-Komponente (`EventDetail`, `ShiftList`, `EventQr`, …) kennt kein
 `onDismiss`; das gehört allein der Blatt-Hülle, die Kopfzeile und `IonModal`
 stellt.
 
+**Verwalten steht in jedem Blatt an derselben Stelle: als Abschnitt
+«Verwalten» am Ende des Inhalts (`ManageSection`).** Entscheid vom
+2026-09-13: Bearbeiten stand im Termin-Detail als Zeile unter «Verwalten», im
+News-Detail hinter einem Dreipunkt in der Kopfzeile, im Amt-Detail als Knopf im
+Inhalt – wer den Verein verwaltet, musste je Blatt neu suchen. Ab hier gilt:
+
+- Jede Verwaltungshandlung eines Details – Bearbeiten, Ausschreiben, Erinnern,
+  Einsätze bestätigen, Auflösen, Zurückziehen, Löschen – ist eine Zeile in
+  `ManageSection`, und die steht **zuletzt** im Blatt. Kein Dreipunkt, kein
+  `IonActionSheet` als Menü, kein `IonButton` irgendwo dazwischen.
+- **Was sich bearbeiten lässt, lässt sich auch löschen** – als rote, letzte
+  Zeile (`destructive`), und davor fragt ein `IonAlert` «Bist du sicher?» mit
+  dem Namen der Sache. Der Riegel gegen etwas mit Vergangenheit sitzt am Server
+  (`delete_team()`, `delete_event()`, `delete_point_rule()`, `0059`/`0074`);
+  die Meldung sagt, was noch dranhängt.
+- Ein Blatt, das zugleich das Formular ist (`TeamDetail`, `TaskForm` für den
+  Entwurf, die Regel in `PointRulePage`), trägt denselben Abschnitt – auch
+  wenn er nur die eine rote Zeile hat.
+- Die Wischoptionen der Liste bleiben der kurze Weg für die, die ihn kennen.
+  Sie sind nie der einzige: Tastatur, VoiceOver-Rotor und Geräte ohne
+  Wischgeste erreichen sie nicht. Wo die Zeile kein `button` ist und kein
+  Blatt öffnet (Team-Mitglied, Schicht im Formular, Musterdaten), steht die
+  Handlung als Knopf rechts in der Zeile.
+
 Dasselbe gilt für ein `FormModal`, das nur anzeigt – eine Einreichung mit
 Knöpfen je Zeile, ein Fürsorge-Hinweis, die Sammelansicht einer Sitzung: Es
 bekommt **kein `onSubmit`**. Dann trägt die Kopfzeile genau einen Knopf,
@@ -350,7 +393,9 @@ Bestand in `src/components/`. Vor jedem neuen Bauteil hier nachsehen.
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
 | `AppPage`          | Seitengerüst: durchscheinende Kopfzeile, grosser Titel, `fullscreen`-Inhalt, optional Zurück-Knopf, zweite Toolbar, Aktualisieren, Erstellen-Fab |
 | `CreateFab`        | Das Plus unten rechts – der einzige Weg zu einem `IonFab`; eingehängt über `AppPage createActions=…` (§2)                        |
+| `InboxButton`      | Der Eingang zur Inbox in der Kopfzeile der Start-Seite: Umschlag gefüllt oder Umriss, Zahl der ungelesenen Nachrichten als Badge (§2, FR-078) |
 | `ListSection`      | Gruppierter Listenabschnitt mit Überschrift, optionaler Aktion und Fussnote                                                       |
+| `ManageSection`    | Der Abschnitt «Verwalten» am Ende eines Blattes: Verwaltungswege als Zeilen, die zerstörerische rot und zuletzt; ohne Einträge nichts (§2) |
 | `FormModal`        | Erfassungs-Blatt mit Abbrechen/Bestätigen, Ladezustand und Fehleranzeige                                                          |
 | `Wizard`           | Schrittführung mit Fortschrittsbalken; der Formularzustand bleibt bei der Seite                                                   |
 | `StatCard`         | Eine Kennzahl mit Beschriftung; mehrere in `.app-stat-row`                                                                        |
@@ -361,18 +406,21 @@ Bestand in `src/components/`. Vor jedem neuen Bauteil hier nachsehen.
 | `AppMenu`          | Seitenleiste im `IonSplitPane`: Konto, Vereinswechsel, Verwaltung, Sprache, Abmelden – Spalte ab `lg`, sonst Overlay              |
 | `ClubAdminLinks`   | Die Verwaltungswege des Vorstands als Listeneinträge; einmal definiert, in `AppMenu` und auf der Profilseite eingehängt            |
 | `LanguageSwitcher` | Sprachwahl über `IonSelect`                                                                                                       |
-| `DateField`        | Datum, Uhrzeit oder beides über `IonDatetime` im Karten-Blatt; die Formulare behalten ihre Zeichenketten, übersetzt wird in `lib/dateInput.ts` |
+| `DateField`        | Datum, Uhrzeit oder beides über `IonDatetime` in einem Wähler-Blatt (ohne Karten-Übergang, siehe §2); die Formulare behalten ihre Zeichenketten, übersetzt wird in `lib/dateInput.ts`. Jeder Wähler der App trägt `locale={appLocale()}` und `{...DATETIME_DEFAULTS}` aus `lib/format.ts` – Schweizer Sprache, Montag als Wochenstart, Stunden 00–23; `isDateEnabled` nur dort setzen, wo eine Tagesregel fachlich gilt |
 | `MemberAvatar`     | Der Avatar einer Person – Bild aus `avatar_url`, sonst Initialen auf der Vereinsfarbe; in Mitgliederliste, Team und Rangliste dieselbe Zeile |
-| `TeamDetailModal`  | Ein Team als Blatt: Name, Bereich, Mitglieder mit Wischen zum Entfernen, Löschen mit Rückfrage – der Riegel sitzt in `delete_team()` |
+| `TeamDetailModal`  | Ein Team als Blatt: Name, Bereich, Mitglieder mit Wischen zum Entfernen, «Team löschen» unter «Verwalten» mit Rückfrage – der Riegel sitzt in `delete_team()` |
 | `FederationTeamSection` | Der Abschnitt «Verbands-Team» in «Team anlegen» und im Team-Blatt: laden, wählen, Zusatz, lösen – und der Hinweis, wenn kein Verband verbunden ist (UC-039) |
 | `MonthBars`        | Der Saisonverlauf als Balken je Monat (Konzept §7.1) – Gegenstück zu `TrendChart`, Rechnung in `lib/points.ts` |
 | `FederationImportModal` | Teams aus dem Verband übernehmen: die Liste mit Vorschlägen (verknüpft, zuordnen, anlegen) und Kontrollkästchen (UC-039 A1) |
 | `AttendanceStatusIcon` | Der eigene Antwortstand als Ampel-Symbol am Zeilenanfang; ein Tippen schaltet um. Nachbau des `app-status-icon` der bestehenden myclub-App |
-| `EventDetailModal` | Termin-Detail als Blatt: Eckdaten mit Symbol je Zeile, «Mein Status», die Listen Zugesagt / Abgesagt / Keine Antwort              |
-| `NewsCard`         | Eine News als Karte: Bild, Datum, Titel, Anriss, Autoren-Chip, Teilen – im Raster der Startseite und im Detail                   |
-| `NewsDetailModal`  | News-Detail als Blatt mit Volltext; Bearbeiten und Zurückziehen für Trainer:innen hinter dem Dreipunkt                          |
+| `EventDetailModal` | Termin-Detail als Blatt: zuoberst die Karte des Spielorts (`VenueMap`), wo eine Lage vorliegt, Eckdaten mit Symbol je Zeile, «Navigation starten», «Mein Status», «Verwalten» (Erinnern, Bearbeiten, Einsätze, Ausschreiben, Löschen), die Listen Zugesagt / Abgesagt / Keine Antwort |
+| `VenueMap`         | Der Spielort auf der swisstopo-Karte (MapLibre GL, C-006): Zoom 14, Marker in der Vereinsfarbe, Tippen nennt den Ort. Nur über `lazy()` einbinden (rund 800 kB) und nur, wo `events.latitude/longitude` stehen (0076); hält den `touchstart` fest, damit das Blatt darüber nicht zufällt. Den Worker bündelt Vite über `?worker&url`, `setWorkerUrl()` sagt MapLibre die Adresse – ohne das sucht es ihn neben `import.meta.url` und findet ihn weder im Dev-Server noch im Build |
+| `NewsCard`         | Eine News als Karte: Bild, Datum, Titel, Anriss, Autoren-Chip, Teilen – im Raster der Startseite; im Detail (`full`) der entschärfte Volltext mit Bildern |
+| `NewsDetailModal`  | News-Detail als Blatt mit Volltext; Bearbeiten und Zurückziehen für Trainer:innen unter «Verwalten», Zurückziehen mit Rückfrage |
+| `AgendaFilterModal` | Das Filter-Blatt der Agenda: Terminarten als Mehrfach-, Team als Einfachauswahl, Entwurf bis «Anwenden»; `AgendaFilterFields` ist der testbare Inhalt |
+| `AgendaCalendar`   | Die Monatsübersicht der Agenda (dritte Sicht neben «Kommend» und «Vergangen»): ein offenes `IonDatetime` mit eingefärbten Terminetagen (`highlightedDates`, Ionic-Doku «Using Array»), darunter die Liste des gewählten Tages; Tage, Fenster und Farben rechnet `lib/agendaCalendar.ts` |
 | `CheckInModal`     | QR-Scan über `html5-qrcode`                                                                                                       |
-| `OfficeDetailModal` | Ein Amt als Factsheet-Blatt: Vakanz-Badge, Warum, Pflichten, Eckdaten, Belegung, «Factsheet öffnen (PDF)» über eine signierte Adresse; «Bearbeiten» nur für den Vorstand (UC-041) |
+| `OfficeDetailModal` | Ein Amt als Factsheet-Blatt: Vakanz-Badge, Warum, Pflichten, Eckdaten, Belegung, «Factsheet öffnen (PDF)» über eine signierte Adresse; «Bearbeiten» und «Auflösen» unter «Verwalten» nur für den Vorstand (UC-041) |
 | `OfficeFormModal`  | Amt anlegen und ändern: Felder, Belegung mit oder ohne Konto, PDF wählen/ersetzen/entfernen – gespeichert über `save_office()`, das PDF danach (UC-041) |
 | `ContributionGoalCard` | Der eigene Fortschritt zum Saisonziel: `IonProgressBar` in der Ampelfarbe, Ist/Soll als Badge, darunter bis zu drei passende Beiträge aus `next_contributions()`. Rendert **nichts**, solange kein Ziel gilt – ohne Modul, ohne Zahl oder bei Ziel null (UC-042 A2, A3, A7) |
 | `QrCode`           | QR-Code als Data-URL, ohne fremden Dienst (C-003)                                                                                 |
@@ -691,6 +739,7 @@ Komponenten setzt, übersetzt sie im selben Zug:
 | `IonSearchbar`  | `cancelButtonText`                    | «Cancel»                  |
 | `IonBackButton` | `text`                                | «Back»                    |
 | `IonDatetime`   | `doneText`, `cancelText`, `clearText` | «Done», «Cancel», «Clear» |
+| `IonDatetime` offen (`AgendaCalendar`) | – | «Previous month», «Next month», «Show year picker» als `aria-label`: Ionic bietet keine Eigenschaft dafür – bekannte Grenze, Tage und Monatsnamen folgen `locale` |
 
 Für die Auswahl heisst das an **jeder** Stelle:
 
@@ -724,10 +773,15 @@ Für die Auswahl heisst das an **jeder** Stelle:
   ist Bequemlichkeit, nicht Schutz.
 - **Geltungsbereich nach Team, lesend und schreibend** (C-032, `CLAUDE.md`):
   Trägt eine Tabelle einen `team_id`, liest und schreibt sie nur, wer in
-  diesem Team ist – plus Trainer:innen, Sportchef:in ihres Bereichs und
-  Vorstand. Vorlage `event_in_scope()` (`0057`); was an einer solchen Entität
-  hängt, erbt den Geltungsbereich, statt ihn selbst zu formulieren. Ein
-  `is_club_member(club_id)` allein ist in einer Policy ein Befund.
+  diesem Team ist – plus der Vorstand (`is_club_board()`: sportchef, admin,
+  superadmin). Trainer:innen sind wie Mitglieder auf ihre eigenen Teams
+  begrenzt und legen nichts Vereinsweites an. Vorlagen `event_in_scope()`
+  fürs Lesen und `can_plan_for_team()` fürs Schreiben (`0073`); was an einer
+  solchen Entität hängt, erbt den Geltungsbereich, statt ihn selbst zu
+  formulieren. Ein `is_club_member(club_id)` allein ist in einer Policy ein
+  Befund, ein `is_club_trainer()` in einer Reichweiten-Prüfung ebenso. In der
+  App bündelt `usePlanningScope()` Rolle und Teams; `canPlanFor(teamId)`
+  entscheidet, ob ein Knopf erscheint.
 - **Jede neue `security definer`-Funktion** braucht im selben Schritt ein
   `revoke execute … from public, anon` (Vorlage `0007_function_grants.sql`).
 - **Fehler sind sichtbar.** Jede fehlgeschlagene Aktion zeigt eine Rückmeldung
@@ -805,15 +859,15 @@ ist er der Hauptweg. Er ist deshalb als **PWA** eingerichtet
    den Browser, nicht in die nativen Apps (§10).
 10. **Ein `IonModal` ohne `presentingElement`.** Ein Blatt im Vollbild ist
     nicht die iOS-Darstellung; das Element kommt aus `usePresentingElement()`
-    (§2).
+    (§2). Einzige Ausnahme ist das Datumsblatt in `DateField`.
 11. **Ein `IonSelect` ohne `cancelText`/`okText`.** Das Auswahl-Blatt zeigt
     sonst «Cancel» und «OK» – in allen vier Sprachen (§8).
 12. **Ein `color` an einem Knopf in `IonAlert`/`IonActionSheet`.** Die Farbe
     kommt aus der Rolle (§2).
 13. **Ein Erstellen-Symbol in der Kopfzeile** – Plus, Stift oder was sonst
     etwas anlegt. Das gehört in `AppPage createActions=…` (§2).
-14. **Ein `IonFab` ausserhalb von `CreateFab`.** Sonst steht derselbe Knopf
-    zweimal verschieden da (§2).
+14. **Ein `IonFab` ausserhalb von `CreateFab`** – ausser dem Teilen in der
+    News-Karte. Sonst steht derselbe Knopf zweimal verschieden da (§2).
 15. **Ein zweiter Schliessen-Knopf am Ende eines Blattes.** Schliessen steht
     einmal in der Kopfzeile; unten steht nur ein Knopf, der etwas tut (§2).
 16. **Ein `FormModal` mit `submitLabel={t('common.close')}`.** Ein Blatt, das
@@ -827,6 +881,10 @@ ist er der Hauptweg. Er ist deshalb als **PWA** eingerichtet
     ein einzelnes Wort (Rolle, Status) – «4 von 5 besetzt» drückt den Titel
     daneben auf zwei Zeilen. Der Wortlaut gehört als `aria-label` an den
     Badge, als lesbarer Text in eine `IonNote` (§2).
+19. **Ein Verwaltungsweg ausserhalb von `ManageSection`** – ein Dreipunkt in
+    der Kopfzeile, ein `IonActionSheet` als Menü, ein loser «Bearbeiten»-Knopf
+    im Inhalt. Und **Bearbeiten ohne Löschen**: Was sich ändern lässt, hat
+    eine rote letzte Zeile mit Rückfrage (§2).
 
 ---
 

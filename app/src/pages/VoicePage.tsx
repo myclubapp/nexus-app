@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import {
   IonBadge,
   IonButton,
@@ -12,6 +12,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
+import { TextSection } from '../components/TextSection';
 import { FormModal } from '../components/FormModal';
 import { NoteAnswerModal } from '../components/NoteAnswerModal';
 import { EmptyState, ErrorState, InlineError } from '../components/StateViews';
@@ -79,6 +80,15 @@ export function VoicePage() {
   // Segment spränge zurück.
   const [handledId, setHandledId] = useState<string | null>(null);
   const [followText, setFollowText] = useState<Record<string, string>>({});
+  // Zeilen sind kurz (ion-item, Content Types): Ein Anliegen steht auf drei
+  // Zeilen, der Volltext im Antwort-Blatt – oder, wo es keines gibt, nach dem
+  // Antippen der Zeile.
+  const [expanded, setExpanded] = useState<string[]>([]);
+  const toggleExpanded = (id: string) =>
+    setExpanded((current) =>
+      current.includes(id) ? current.filter((entry) => entry !== id) : [...current, id],
+    );
+  const clampClass = (id: string) => (expanded.includes(id) ? undefined : 'app-clamp-3');
   const [draft, setDraft] = useState<VoiceDraft>({
     kind: 'self_reflection',
     text: '',
@@ -165,13 +175,9 @@ export function VoicePage() {
       backHref="/tabs/profile"
       onRefresh={() => Promise.all([notes.refetch(), quota.refetch()])}
     >
-      <ListSection footnote={t('voice.micPending')}>
-        <IonItem lines="none">
-          <IonLabel className="ion-text-wrap">
-            <p>{t('voice.quotaLeft', { count: quotaLeft })}</p>
-          </IonLabel>
-        </IonItem>
-      </ListSection>
+      {/* Ein Satz, keine Listenzeile. */}
+      <TextSection>{t('voice.quotaLeft', { count: quotaLeft })}</TextSection>
+      <IonNote className="app-footnote">{t('voice.micPending')}</IonNote>
 
       {/* FR-144: Ist noch nichts da, trägt der Leerzustand den Knopf – nicht
           beide. */}
@@ -209,7 +215,7 @@ export function VoicePage() {
                 <IonItem key={note.id} button detail onClick={() => setHandledId(note.id)}>
                   <IonLabel className="ion-text-wrap">
                     <h2>{t(`voice.kind.${note.kind}`)}</h2>
-                    <p>{note.transcript}</p>
+                    <p className="app-clamp-3">{note.transcript}</p>
                     <IonNote>{note.createdWeek}</IonNote>
                   </IonLabel>
                   <IonBadge slot="end" color={note.status === 'open' ? 'primary' : 'medium'}>
@@ -223,12 +229,19 @@ export function VoicePage() {
           {mine.length > 0 && (
             <ListSection title={t('voice.mine')} footnote={t('voice.listHint')}>
               {mine.map((note) => (
-                <IonItem key={note.id}>
+                <IonItem
+                  key={note.id}
+                  button
+                  detail={false}
+                  onClick={() => toggleExpanded(note.id)}
+                >
                   <IonLabel className="ion-text-wrap">
                     <h2>{t(`voice.kind.${note.kind}`)}</h2>
-                    <p>{note.transcript}</p>
+                    <p className={clampClass(note.id)}>{note.transcript}</p>
                     <IonNote>{note.createdWeek}</IonNote>
-                    {note.response && <p>«{note.response}»</p>}
+                    {note.response && (
+                      <p className={clampClass(note.id)}>«{note.response}»</p>
+                    )}
                   </IonLabel>
                   {note.status !== 'open' && (
                     <IonBadge slot="end" color="medium">
@@ -243,10 +256,15 @@ export function VoicePage() {
           {flagged.length > 0 && (
             <ListSection title={t('voice.flagged')} footnote={t('voice.flaggedHint')}>
               {flagged.map((note) => (
-                <IonItem key={note.id}>
+                <IonItem
+                  key={note.id}
+                  button
+                  detail={false}
+                  onClick={() => toggleExpanded(note.id)}
+                >
                   <IonLabel className="ion-text-wrap">
                     <h2>{t(`voice.kind.${note.kind}`)}</h2>
-                    <p>{note.transcript}</p>
+                    <p className={clampClass(note.id)}>{note.transcript}</p>
                     <IonNote>{note.createdWeek}</IonNote>
                   </IonLabel>
                 </IonItem>
@@ -258,51 +276,59 @@ export function VoicePage() {
               Geräts – nicht an der angemeldeten Person. Deshalb steht er auch
               dann hier, wenn die Abfrage oben nichts hergibt. */}
           {(threads.data ?? []).map((thread) => (
-            <ListSection
-              key={thread.noteId}
-              title={t('voice.anonThread')}
-              footnote={t('voice.anonThreadHint')}
-            >
-              <IonItem lines="none">
-                <IonLabel className="ion-text-wrap">
-                  <h2>{t('voice.kind.anonymous')}</h2>
-                  <p>{thread.transcript}</p>
-                  <IonNote>{thread.createdWeek}</IonNote>
-                </IonLabel>
-                <IonBadge slot="end" color="medium">
-                  {t(`voice.status.${thread.status}`)}
-                </IonBadge>
-              </IonItem>
-
-              {thread.messages.map((message, index) => (
-                <IonItem key={`${thread.noteId}-${index}`}>
+            <Fragment key={thread.noteId}>
+              <ListSection
+                title={t('voice.anonThread')}
+                footnote={t('voice.anonThreadHint')}
+              >
+                <IonItem
+                  lines="none"
+                  button
+                  detail={false}
+                  onClick={() => toggleExpanded(thread.noteId)}
+                >
                   <IonLabel className="ion-text-wrap">
-                    <h2>{t(`noteAnswer.side.${message.side}`)}</h2>
-                    <p>{message.body}</p>
-                    <IonNote>{formatDateTime(message.at)}</IonNote>
+                    <h2>{t('voice.kind.anonymous')}</h2>
+                    <p className={clampClass(thread.noteId)}>{thread.transcript}</p>
+                    <IonNote>{thread.createdWeek}</IonNote>
                   </IonLabel>
+                  <IonBadge slot="end" color="medium">
+                    {t(`voice.status.${thread.status}`)}
+                  </IonBadge>
                 </IonItem>
-              ))}
 
-              <IonItem>
-                <IonTextarea
-                  label={t('voice.followUp')}
-                  labelPlacement="stacked"
-                  autoGrow
-                  rows={2}
-                  value={followText[thread.noteId] ?? ''}
-                  onIonInput={(e) =>
-                    setFollowText((current) => ({
-                      ...current,
-                      [thread.noteId]: e.detail.value ?? '',
-                    }))
-                  }
-                />
-              </IonItem>
-              <IonItem lines="none">
+                {thread.messages.map((message, index) => (
+                  <IonItem key={`${thread.noteId}-${index}`}>
+                    <IonLabel className="ion-text-wrap">
+                      <h2>{t(`noteAnswer.side.${message.side}`)}</h2>
+                      <p>{message.body}</p>
+                      <IonNote>{formatDateTime(message.at)}</IonNote>
+                    </IonLabel>
+                  </IonItem>
+                ))}
+
+                <IonItem>
+                  <IonTextarea
+                    label={t('voice.followUp')}
+                    labelPlacement="stacked"
+                    autoGrow
+                    rows={2}
+                    value={followText[thread.noteId] ?? ''}
+                    onIonInput={(e) =>
+                      setFollowText((current) => ({
+                        ...current,
+                        [thread.noteId]: e.detail.value ?? '',
+                      }))
+                    }
+                  />
+                </IonItem>
+              </ListSection>
+              {/* Der Knopf steht als Knopfleiste unter der Liste – ein Item ist
+                  eine Zeile, kein Behälter für einen Knopf. */}
+              <div className="app-actions">
                 <IonButton
-                  slot="end"
-                  fill="clear"
+                  expand="block"
+                  fill="outline"
                   disabled={
                     (followText[thread.noteId] ?? '').trim().length === 0 ||
                     followUp.isPending
@@ -311,8 +337,8 @@ export function VoicePage() {
                 >
                   {t('voice.followUpSend')}
                 </IonButton>
-              </IonItem>
-            </ListSection>
+              </div>
+            </Fragment>
           ))}
         </>
       )}

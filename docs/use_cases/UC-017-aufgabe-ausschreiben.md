@@ -48,7 +48,9 @@
 **Flow:**
 
 1. System speichert die Aufgabe als Entwurf, ohne sie sichtbar zu machen.
-2. Use case ends.
+2. System zeigt den Entwurf im Marktplatz im Abschnitt «Entwürfe», den nur Trainer:innen und Vorstand sehen.
+3. Vorstand publiziert den Entwurf später direkt aus diesem Abschnitt, oder bearbeitet ihn zuvor (A5).
+4. Use case continues at step 6.
 
 ### A4: Frist läuft ab
 
@@ -59,12 +61,24 @@
 2. Nach Ablauf setzt das System die Aufgabe auf abgelaufen und informiert die ausschreibende Person.
 3. Use case ends.
 
+### A5: Entwurf bearbeiten
+
+**Trigger:** Vorstand öffnet einen Entwurf im Abschnitt «Entwürfe» (A3, Schritt 3)
+**Flow:**
+
+1. System zeigt das Formular aus Schritt 2 mit den gespeicherten Angaben.
+2. Vorstand ändert die Angaben.
+3. Vorstand sichert erneut als Entwurf oder publiziert.
+4. Use case continues at A3 (Schritt 1) oder at step 6.
+
+**Stand (11.09.2026):** Umgesetzt. Bis dahin war ein Entwurf im Marktplatz nicht antippbar; das einzige Bedienelement daran war «Publizieren», und das Formular kannte nur das Anlegen. Das Bearbeiten war nie gebaut – anders als bei Terminen (UC-009) und News (UC-026). Jetzt öffnet Antippen denselben Bogen wie beim Ausschreiben, mit dem gesicherten Stand als Anfangswert; «Publizieren» daneben schreibt aus, ohne zu öffnen. Die Änderung schreibt die App direkt über die bestehende Policy für Trainer:innen und Vorstand, begrenzt auf den Status Entwurf (BR-182).
+
 ### A6: Entwurf löschen
 
 **Trigger:** Vorstand will einen Entwurf nicht mehr (A3, Schritt 2)
 **Flow:**
 
-1. Vorstand wischt den Entwurf nach links und wählt «Entwurf löschen» – oder wählt denselben Knopf im Bearbeiten-Blatt (A5).
+1. Vorstand wischt den Entwurf nach links und wählt «Entwurf löschen» – oder wählt dieselbe Zeile unter «Verwalten» im Bearbeiten-Blatt (A5).
 2. System fragt nach; der Entwurf war für Mitglieder nie sichtbar.
 3. Vorstand bestätigt.
 4. System löscht den Entwurf. Ist er inzwischen ausgeschrieben, lehnt das System ab und sagt es (BR-182).
@@ -84,6 +98,7 @@
 
 - Es entsteht keine sichtbare Aufgabe.
 - Es erhält niemand einen Vorschlag.
+- Ein bereits gesicherter Entwurf bleibt unverändert erhalten.
 
 ## Business Rules
 
@@ -106,3 +121,7 @@ Eine Aufgabe kann niemandem zugewiesen werden. Sie ist immer ein Angebot.
 ### BR-072: Dringlichkeit ist sichtbar
 
 Aufgaben mit bald ablaufender Frist werden im Marktplatz hervorgehoben.
+
+### BR-182: Ein Entwurf bleibt formbar
+
+Ein Entwurf ist eine noch nicht abgeschickte Aufgabe. Er lässt sich bis zur Publikation vollständig ändern, von derselben Person oder einer anderen mit Trainer- oder Vorstandsrolle. Was publiziert ist, ändert sich nicht mehr still, weil Mitglieder sich darauf verlassen.

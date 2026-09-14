@@ -36,9 +36,9 @@ synchron gehalten werden können.
 | UC | Titel | Primärakteur | Requirements | Status |
 |---|---|---|---|---|
 | [UC-009](UC-009-termin-erstellen.md) | Termin erstellen | Trainer:in | FR-021, FR-022, FR-023, FR-029, FR-051 | Implemented |
-| [UC-010](UC-010-zu-oder-absagen.md) | Auf einen Termin zu- oder absagen | Mitglied | FR-024, FR-025, FR-026 | Implemented |
+| [UC-010](UC-010-zu-oder-absagen.md) | Auf einen Termin zu- oder absagen | Mitglied | FR-024, FR-025, FR-026, FR-156 | Implemented |
 | [UC-011](UC-011-helfer-event-ausschreiben.md) | Helfer-Event mit Schichten ausschreiben | Vorstand | FR-030, FR-051, FR-084 | Implemented |
-| [UC-012](UC-012-schicht-uebernehmen.md) | Helfer-Schicht übernehmen | Mitglied | FR-031 | Implemented |
+| [UC-012](UC-012-schicht-uebernehmen.md) | Helfer-Schicht übernehmen | Mitglied | FR-031, FR-156 | Implemented |
 | [UC-013](UC-013-schicht-bestaetigen.md) | Helfer-Schicht bestätigen | Vorstand | FR-032, FR-039 | Implemented |
 | [UC-014](UC-014-qr-check-in.md) | QR-Check-in am Termin | Mitglied | FR-033, FR-034, FR-039 | Implemented |
 | [UC-015](UC-015-unentschlossene-erinnern.md) | Unentschlossene erinnern | Trainer:in | FR-027, FR-028, FR-078 | Implemented |
@@ -132,7 +132,7 @@ Ablauf steht in UC-008, die Gliederung der Seite in [`../guidelines.md`](../guid
 
 ## Geschäftsregeln
 
-Die Regeln BR-001 bis BR-186 sind fortlaufend und über alle Use Cases hinweg eindeutig vergeben.
+Die Regeln BR-001 bis BR-187 sind fortlaufend und über alle Use Cases hinweg eindeutig vergeben.
 Die vier nicht verhandelbaren Regeln des Projekts sind über mehrere Use Cases verteilt:
 
 | Prinzip | Regeln |

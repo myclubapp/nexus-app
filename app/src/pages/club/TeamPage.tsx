@@ -236,6 +236,7 @@ export function TeamCreate({
             <IonInput
               label={t('members.teamName')}
               labelPlacement="stacked"
+              enterkeyhint="done"
               value={name}
               onIonInput={(e) => setName(e.detail.value ?? '')}
             />

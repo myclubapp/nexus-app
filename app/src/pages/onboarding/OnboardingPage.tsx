@@ -91,6 +91,7 @@ export function OnboardingPage() {
               label={t('onboarding.clubNameLabel')}
               labelPlacement="stacked"
               autocapitalize="words"
+              enterkeyhint="next"
               value={clubName}
               onIonInput={(e) => setClubName(e.detail.value ?? '')}
             />
@@ -126,6 +127,7 @@ export function OnboardingPage() {
                 <IonInput
                   label={t('onboarding.clubKindOther')}
                   labelPlacement="stacked"
+                  enterkeyhint="next"
                   value={kindLabel}
                   onIonInput={(e) => setKindLabel(e.detail.value ?? '')}
                 />
@@ -262,6 +264,10 @@ export function OnboardingPage() {
                     label={t('onboarding.clubSlug')}
                     labelPlacement="stacked"
                     autocapitalize="off"
+                    // Ein Kürzel ist kein Wort – die Autokorrektur bliebe
+                    // sonst an «tv-muster» hängen.
+                    autocorrect={false}
+                    enterkeyhint="search"
                     value={clubSlug}
                     onIonInput={(e) => {
                       setClubSlug(e.detail.value ?? '');
@@ -340,6 +346,8 @@ export function OnboardingPage() {
                 label={t('onboarding.inviteCode')}
                 labelPlacement="stacked"
                 autocapitalize="off"
+                autocorrect={false}
+                enterkeyhint="done"
                 value={inviteCode}
                 onIonInput={(e) => setInviteCode(e.detail.value ?? '')}
               />

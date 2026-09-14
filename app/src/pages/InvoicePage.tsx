@@ -1,4 +1,5 @@
-import { IonBadge, IonItem, IonLabel, IonNote } from '@ionic/react';
+import { IonBadge, IonIcon, IonItem, IonLabel, IonNote } from '@ionic/react';
+import { openOutline } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
@@ -64,8 +65,10 @@ export function InvoicePage() {
                 key={invoice.id}
                 // Schritt 4: der Weg in die Detailansicht. Signiert wird der
                 // Verweis **im Dienst** (BR-159); die App reicht ihn durch.
+                // Der Link verlässt die App – deshalb das Symbol dafür statt
+                // des Chevrons, der eine Unterseite verspricht.
                 button={Boolean(invoice.detailUrl)}
-                detail={Boolean(invoice.detailUrl)}
+                detail={false}
                 href={invoice.detailUrl ?? undefined}
                 target={invoice.detailUrl ? '_blank' : undefined}
                 rel={invoice.detailUrl ? 'noopener noreferrer' : undefined}
@@ -80,6 +83,9 @@ export function InvoicePage() {
                 <IonBadge slot="end" color={statusTone(invoice.status)}>
                   {t(`invoice.status.${invoice.status}`)}
                 </IonBadge>
+                {invoice.detailUrl && (
+                  <IonIcon slot="end" icon={openOutline} color="medium" aria-hidden="true" />
+                )}
               </IonItem>
             ))}
           </ListSection>

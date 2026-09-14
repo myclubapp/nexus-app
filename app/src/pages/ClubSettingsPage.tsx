@@ -8,6 +8,7 @@ import {
   IonItemOption,
   IonItemOptions,
   IonItemSliding,
+  IonListHeader,
   IonNote,
   IonSpinner,
   IonTextarea,
@@ -48,12 +49,10 @@ import {
 } from '../lib/contributionGoal';
 import type { ClubModule, ClubSettings, EventType } from '../lib/database.types';
 
-/** Reihenfolge wie in `events.type` (0003_agenda.sql). */
+/** Reihenfolge wie in `events.type` (0003_agenda.sql, verengt in 0072). */
 const EVENT_TYPES: EventType[] = [
   'training',
   'match',
-  'cup',
-  'tournament',
   'gv',
   'social',
   'helper',
@@ -195,6 +194,7 @@ export function ClubSettingsPage() {
               <IonInput
                 label={t('clubSettings.name')}
                 labelPlacement="stacked"
+                enterkeyhint="next"
                 value={name}
                 onIonInput={(e) => setName(e.detail.value ?? '')}
               />
@@ -285,32 +285,34 @@ export function ClubSettingsPage() {
                 inputmode="url"
                 label={t('clubSettings.logoUrl')}
                 labelPlacement="stacked"
+                enterkeyhint="next"
                 value={logoUrl}
                 onIonInput={(e) => setLogoUrl(e.detail.value ?? '')}
               />
             </IonItem>
           </ListSection>
 
-          <ListSection
-            title={t('clubSettings.labels')}
-            footnote={t('clubSettings.labelsHint')}
-          >
-            {/* BR-148: je Terminart vier Felder – ein Verein, der «Probe»
-                sagt, sagt auf Französisch «répétition». Leer bleibende
-                Sprachen fallen auf eine ausgefüllte zurück, nicht auf die
-                Standardübersetzung (`resolveLabel()`). */}
-            {EVENT_TYPES.map((type) => (
-              <IonItem key={type}>
-                <IonLabel className="ion-text-wrap">
-                  <h2>{t(`agenda.type.${type}`)}</h2>
-                </IonLabel>
-                {SUPPORTED_LANGUAGES.map((code) => (
+          {/* BR-148: je Terminart vier Felder – ein Verein, der «Probe»
+              sagt, sagt auf Französisch «répétition». Leer bleibende
+              Sprachen fallen auf eine ausgefüllte zurück, nicht auf die
+              Standardübersetzung (`resolveLabel()`).
+
+              Ein Abschnitt je Terminart, eine Zeile je Sprache: Ein Item ist
+              eine Listenzeile mit höchstens zwei Bedienelementen, kein
+              Container für vier Felder nebeneinander – auf 390 px wäre das
+              nicht bedienbar. */}
+          <IonListHeader>
+            <IonLabel>{t('clubSettings.labels')}</IonLabel>
+          </IonListHeader>
+          {EVENT_TYPES.map((type) => (
+            <ListSection key={type} title={t(`agenda.type.${type}`)}>
+              {SUPPORTED_LANGUAGES.map((code, index) => (
+                <IonItem key={code}>
                   <IonInput
-                    key={code}
-                    slot="end"
                     label={t(`language.${code}`)}
                     labelPlacement="stacked"
                     placeholder={t(`agenda.type.${type}`)}
+                    enterkeyhint={index === SUPPORTED_LANGUAGES.length - 1 ? 'done' : 'next'}
                     value={labels[type]?.[code] ?? ''}
                     onIonInput={(e) =>
                       setLabels((current) => ({
@@ -319,10 +321,11 @@ export function ClubSettingsPage() {
                       }))
                     }
                   />
-                ))}
-              </IonItem>
-            ))}
-          </ListSection>
+                </IonItem>
+              ))}
+            </ListSection>
+          ))}
+          <IonNote className="app-footnote">{t('clubSettings.labelsHint')}</IonNote>
 
           {/* A1 und FR-115: die Module. Was hier aus ist, gibt es für dieses
               Mitglied nicht – und der Server sagt dasselbe (`module_enabled()`). */}
@@ -362,6 +365,7 @@ export function ClubSettingsPage() {
                 inputmode="numeric"
                 min={1}
                 placeholder="20"
+                enterkeyhint="done"
                 value={topOnly}
                 onIonInput={(e) => setTopOnly(e.detail.value ?? '')}
               />
@@ -434,44 +438,59 @@ export function ClubSettingsPage() {
             footnote={t('sample.sectionHint')}
           >
             {/* A3: einen einzelnen behalten. Nach links wischen, wie bei jeder
-                Zeilenaktion (guidelines §2). */}
-            {(samples.data ?? []).map((item) => (
-              <IonItemSliding key={`${item.kind}-${item.id}`}>
-                <IonItem>
-                  <IonLabel className="ion-text-wrap">
-                    <h2>{item.title}</h2>
-                    <IonNote>{t(`sample.kind.${item.kind}`)}</IonNote>
-                  </IonLabel>
-                </IonItem>
-                <IonItemOptions side="end">
-                  <IonItemOption
-                    onClick={() =>
-                      adopt.mutate(
-                        { kind: item.kind, id: item.id },
-                        {
-                          onSuccess: () => toast.success(t('sample.adopted')),
-                          onError: (cause) => toast.failure((cause as Error).message),
-                        },
-                      )
-                    }
-                  >
-                    {t('sample.adopt')}
-                  </IonItemOption>
-                </IonItemOptions>
-              </IonItemSliding>
-            ))}
-
-            <IonItem lines="none">
-              <IonButton
-                fill="outline"
-                color="danger"
-                disabled={dropSamples.isPending || (samples.data ?? []).length === 0}
-                onClick={() => setConfirmDrop(true)}
-              >
-                {t('sample.drop')}
-              </IonButton>
-            </IonItem>
+                Zeilenaktion (guidelines §2) – und als Knopf in der Zeile, weil
+                die Wischoption weder Tastatur noch VoiceOver erreicht. Die
+                Zeile ist kein `button`, der Knopf steht also nicht in einem. */}
+            {(samples.data ?? []).map((item) => {
+              const adoptItem = () =>
+                adopt.mutate(
+                  { kind: item.kind, id: item.id },
+                  {
+                    onSuccess: () => toast.success(t('sample.adopted')),
+                    onError: (cause) => toast.failure((cause as Error).message),
+                  },
+                );
+              return (
+                <IonItemSliding key={`${item.kind}-${item.id}`}>
+                  <IonItem>
+                    <IonLabel className="ion-text-wrap">
+                      <h2>{item.title}</h2>
+                      <IonNote>{t(`sample.kind.${item.kind}`)}</IonNote>
+                    </IonLabel>
+                    <IonButton
+                      slot="end"
+                      fill="clear"
+                      size="small"
+                      aria-label={t('sample.adopt')}
+                      disabled={adopt.isPending}
+                      onClick={adoptItem}
+                    >
+                      {t('sample.adoptShort')}
+                    </IonButton>
+                  </IonItem>
+                  <IonItemOptions side="end">
+                    <IonItemOption disabled={adopt.isPending} onClick={adoptItem}>
+                      {t('sample.adopt')}
+                    </IonItemOption>
+                  </IonItemOptions>
+                </IonItemSliding>
+              );
+            })}
           </ListSection>
+
+          {/* Ein Item nur mit einem Knopf ist keine Listenzeile: Die Aktion
+              steht als Knopfleiste unter dem Abschnitt. */}
+          <div className="app-actions">
+            <IonButton
+              expand="block"
+              fill="outline"
+              color="danger"
+              disabled={dropSamples.isPending || (samples.data ?? []).length === 0}
+              onClick={() => setConfirmDrop(true)}
+            >
+              {t('sample.drop')}
+            </IonButton>
+          </div>
 
           <IonAlert
             isOpen={confirmDrop}

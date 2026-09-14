@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import {
+  IonAlert,
   IonBadge,
   IonButton,
   IonInput,
@@ -16,15 +17,17 @@ import { useClub } from '../../hooks/useClub';
 import {
   useAllPointRules,
   useCreatePointRule,
+  useDeletePointRule,
   useSetPillarActive,
   useUpdatePointRule,
 } from '../../hooks/usePointRules';
 import { useToast } from '../../hooks/useToast';
 import { AppPage } from '../../components/AppPage';
 import { ListSection } from '../../components/ListSection';
+import { ManageSection } from '../../components/ManageSection';
 import { FormModal } from '../../components/FormModal';
 import { SkeletonList } from '../../components/Skeletons';
-import { EmptyState, ErrorState } from '../../components/StateViews';
+import { EmptyState, ErrorState, InlineError } from '../../components/StateViews';
 import {
   LIMIT_PERIODS,
   PILLARS,
@@ -53,8 +56,10 @@ export function PointRulePage() {
   const updateRule = useUpdatePointRule();
   const setPillar = useSetPillarActive();
   const createRule = useCreatePointRule();
+  const deleteRule = useDeletePointRule();
 
   const [open, setOpen] = useState<PointRule | null>(null);
+  const [askDelete, setAskDelete] = useState(false);
   const [label, setLabel] = useState('');
   const [points, setPoints] = useState('0');
   const [isActive, setActive] = useState(true);
@@ -187,6 +192,8 @@ export function PointRulePage() {
                       </IonNote>
                     </IonLabel>
 
+                    {/* Ein Element rechts, in jeder Zeile dasselbe: ein
+                        Abzeichen – Punkte, «nur Dank» oder «inaktiv». */}
                     {!rule.is_active ? (
                       <IonBadge slot="end" color="medium">
                         {t('pointRules.inactive')}
@@ -197,9 +204,9 @@ export function PointRulePage() {
                         {t('pointRules.thanksOnly')}
                       </IonBadge>
                     ) : (
-                      <IonNote slot="end" color="primary">
+                      <IonBadge slot="end" color="primary">
                         +{rule.points}
-                      </IonNote>
+                      </IonBadge>
                     )}
                   </IonItem>
                 );
@@ -222,6 +229,7 @@ export function PointRulePage() {
             <IonInput
               label={t('pointRules.label')}
               labelPlacement="stacked"
+              enterkeyhint="next"
               value={label}
               onIonInput={(e) => setLabel(e.detail.value ?? '')}
             />
@@ -233,6 +241,7 @@ export function PointRulePage() {
               min={0}
               label={t('pointRules.points')}
               labelPlacement="stacked"
+              enterkeyhint="next"
               value={points}
               onIonInput={(e) => setPoints(e.detail.value ?? '')}
             />
@@ -258,6 +267,7 @@ export function PointRulePage() {
               label={t('pointRules.limitMax')}
               labelPlacement="stacked"
               placeholder={t('pointRules.limitNone')}
+              enterkeyhint="done"
               value={limitMax}
               onIonInput={(e) => setLimitMax(e.detail.value ?? '')}
             />
@@ -265,6 +275,7 @@ export function PointRulePage() {
           <IonItem>
             <IonSelect
               label={t('pointRules.limitPeriod')}
+              labelPlacement="stacked"
               value={limitPeriod}
               onIonChange={(e) => setLimitPeriod(e.detail.value as LimitPeriod)}
               cancelText={t('common.cancel')}
@@ -278,7 +289,45 @@ export function PointRulePage() {
             </IonSelect>
           </IonItem>
         </ListSection>
+
+        {/* Löschen mit Rückfrage; der Riegel gegen eine Regel mit Buchungen
+            oder Terminen sitzt in `delete_point_rule()` (0074). */}
+        <ManageSection
+          actions={[
+            {
+              label: t('pointRules.delete'),
+              onClick: () => setAskDelete(true),
+              disabled: deleteRule.isPending,
+              destructive: true,
+            },
+          ]}
+        />
       </FormModal>
+
+      <IonAlert
+        isOpen={askDelete}
+        header={t('pointRules.delete')}
+        message={t('pointRules.deleteConfirm', { label: open?.label ?? '' })}
+        onDidDismiss={() => setAskDelete(false)}
+        buttons={[
+          { text: t('common.cancel'), role: 'cancel' },
+          {
+            text: t('pointRules.delete'),
+            role: 'destructive',
+            handler: () => {
+              const id = open?.id;
+              if (!id) return;
+              deleteRule.mutate(id, {
+                onSuccess: () => {
+                  setOpen(null);
+                  toast.success(t('pointRules.deleted'));
+                },
+                onError: (cause) => toast.failure(cause.message),
+              });
+            },
+          },
+        ]}
+      />
 
       {/* A3: Eigene Regel anlegen */}
       <FormModal
@@ -312,6 +361,7 @@ export function PointRulePage() {
             <IonInput
               label={t('pointRules.label')}
               labelPlacement="stacked"
+              enterkeyhint="next"
               value={newLabel}
               onIonInput={(e) => setNewLabel(e.detail.value ?? '')}
             />
@@ -321,21 +371,25 @@ export function PointRulePage() {
               label={t('pointRules.code')}
               labelPlacement="stacked"
               autocapitalize="off"
+              // Ein Code ist kein Wort: Die Autokorrektur macht aus
+              // «helfer_einsatz» sonst etwas anderes.
+              autocorrect={false}
+              enterkeyhint="next"
               value={newCode}
               onIonInput={(e) => setNewCode(e.detail.value ?? '')}
             />
           </IonItem>
-          {newCode.trim() !== '' && !isCodeAvailable(all, newCode) && (
-            <IonItem lines="none">
-              <IonNote color="danger">{t('pointRules.codeTaken')}</IonNote>
-            </IonItem>
-          )}
         </ListSection>
+        {/* Die Meldung steht unter der Liste, nicht als Zeile darin. */}
+        {newCode.trim() !== '' && !isCodeAvailable(all, newCode) && (
+          <InlineError message={t('pointRules.codeTaken')} />
+        )}
 
         <ListSection>
           <IonItem>
             <IonSelect
               label={t('pointRules.pillarLabel')}
+              labelPlacement="stacked"
               value={newPillar}
               onIonChange={(e) => setNewPillar(e.detail.value as Pillar)}
               cancelText={t('common.cancel')}
@@ -355,6 +409,7 @@ export function PointRulePage() {
               min={0}
               label={t('pointRules.points')}
               labelPlacement="stacked"
+              enterkeyhint="done"
               value={newPoints}
               onIonInput={(e) => setNewPoints(e.detail.value ?? '')}
             />

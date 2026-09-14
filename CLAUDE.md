@@ -60,12 +60,17 @@ supabase db push            # Migrationen deployen
   verstecktes Button im UI.
 - **Geltungsbereich nach Team, für jede Entität.** Trägt eine Tabelle einen
   `team_id`, dann liest und schreibt sie nur, wer in diesem Team ist – plus
-  Trainer:innen und Vorstand, weil sie ausschreiben. `is_club_member(club_id)`
-  allein ist in einer Policy ein Befund. Vorlage sind `task_in_scope()` (`0034`)
-  und `event_in_scope()` (`0057`); was am Termin hängt (Serie, Schichten,
-  Teilnahmen, QR-Token), erbt seinen Geltungsbereich vom Termin. Das gilt auch
-  für das **Schreiben**: Eine Policy, die nur das Lesen abgrenzt, grenzt nichts
-  ab.
+  der Vorstand (`is_club_board()`: sportchef, admin, superadmin), weil er den
+  ganzen Verein führt. **Trainer:innen sind wie Mitglieder abgegrenzt:** Sie
+  sehen und planen ihre eigenen Teams, nicht den Verein; was keinem Team
+  gehört (`team_id` null), legt nur der Vorstand an. `is_club_member(club_id)`
+  allein ist in einer Policy ein Befund, `is_club_trainer()` in einer
+  Reichweiten-Prüfung ebenso – sie sagt nur «darf planen», nicht «wofür».
+  Vorlage sind `event_in_scope()`/`task_in_scope()` fürs Lesen und
+  `can_plan_for_team()` fürs Schreiben (alle `0073`); was am Termin hängt
+  (Serie, Schichten, Teilnahmen, QR-Token), erbt seinen Geltungsbereich vom
+  Termin. Das gilt auch für das **Schreiben**: Eine Policy, die nur das Lesen
+  abgrenzt, grenzt nichts ab.
 - **Vier Sprachen ab dem ersten Commit.** Neue UI-Texte gehören in alle vier
   Dateien unter `src/i18n/locales/`. `npm run i18n:check` erzwingt das.
 - **Code-Bezeichner auf Englisch**, Benutzertexte über `react-i18next`.

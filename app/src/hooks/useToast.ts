@@ -1,4 +1,5 @@
 import { useIonToast } from '@ionic/react';
+import { alertCircleOutline, checkmarkCircleOutline } from 'ionicons/icons';
 import { useMemo } from 'react';
 
 export interface Toast {
@@ -17,6 +18,9 @@ export interface Toast {
  *
  * Ein Fehler, den die Person durch eine Korrektur beheben soll, gehört
  * dagegen ins Formular – er muss stehen bleiben, solange sie korrigiert.
+ *
+ * Das Symbol trägt die Bedeutung mit: Erfolg und Fehler unterscheiden sich
+ * sonst nur in der Farbe, und die sieht nicht jede Person.
  */
 export function useToast(): Toast {
   const [present] = useIonToast();
@@ -24,10 +28,22 @@ export function useToast(): Toast {
   return useMemo(
     () => ({
       success: (message: string) => {
-        void present({ message, position: 'top', color: 'success', duration: 2000 });
+        void present({
+          message,
+          position: 'top',
+          color: 'success',
+          icon: checkmarkCircleOutline,
+          duration: 2000,
+        });
       },
       failure: (message: string) => {
-        void present({ message, position: 'top', color: 'danger', duration: 3500 });
+        void present({
+          message,
+          position: 'top',
+          color: 'danger',
+          icon: alertCircleOutline,
+          duration: 3500,
+        });
       },
     }),
     [present],

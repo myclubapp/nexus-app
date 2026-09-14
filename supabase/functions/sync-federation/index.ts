@@ -190,7 +190,30 @@ interface FederationGame {
   title: string;
   startsAt: string;
   location: string | null;
+  /** Die Lage des Spielorts (WGS84) – beide oder keiner (`0076`). */
+  latitude: number | null;
+  longitude: number | null;
   result: string | null;
+}
+
+/**
+ * Die Lage aus der Ortszelle: `link.x` ist die Länge, `link.y` die Breite –
+ * WGS84, als Zahlen (belegt 2026-09-13, Team 431869: «Turnhalle Hatzenbühl,
+ * Nürensdorf» bei 8.6474 / 47.4522); `Number()` nimmt auch Zeichenketten. Ein halber,
+ * unlesbarer oder leerer Punkt ist keiner: Die Karte zeigt dann nichts,
+ * statt irgendwo im Golf von Guinea zu stehen.
+ */
+function readCoordinates(
+  y: unknown,
+  x: unknown,
+): { latitude: number; longitude: number } | null {
+  if (y === undefined || y === null || x === undefined || x === null) return null;
+  const latitude = Number(y);
+  const longitude = Number(x);
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+  if (Math.abs(latitude) > 90 || Math.abs(longitude) > 180) return null;
+  if (latitude === 0 && longitude === 0) return null;
+  return { latitude, longitude };
 }
 
 /**
@@ -257,7 +280,8 @@ function readStartsAt(dateText: string, timeText: string, now: Date = new Date()
  * Belegte Form (2026-09-11, Team 431869): `data.regions[0].rows[]` mit
  * `link.ids[0]` als Spielkennung und fünf Zellen – Datum/Zeit, Halle/Ort,
  * Heimteam, Gastteam, Resultat («3:4», «n.V.»). Die Liga steht in
- * `data.title` nach dem Komma («…, Herren NLB Gr. 1»).
+ * `data.title` nach dem Komma («…, Herren NLB Gr. 1»). Die Ortszelle trägt
+ * dazu `link: { type: 'map', x, y }` mit der Lage der Halle.
  */
 function readGames(payload: unknown): { league: string | null; games: FederationGame[] } {
   const data = (payload as {
@@ -274,7 +298,10 @@ function readGames(payload: unknown): { league: string | null; games: Federation
     Array.isArray(cell?.text) ? cell!.text.map((entry) => String(entry ?? '').trim()) : [];
 
   const games: FederationGame[] = [];
-  for (const row of rows as Array<{ cells?: Array<{ text?: unknown }>; link?: { ids?: unknown[] } }>) {
+  for (const row of rows as Array<{
+    cells?: Array<{ text?: unknown; link?: { x?: unknown; y?: unknown } }>;
+    link?: { ids?: unknown[] };
+  }>) {
     const id = row?.link?.ids?.[0];
     if (id === undefined || id === null) continue;
     const cells = row?.cells ?? [];
@@ -284,6 +311,7 @@ function readGames(payload: unknown): { league: string | null; games: Federation
     if (!startsAt) continue;
 
     const [hall = '', city = ''] = text(cells[1]);
+    const place = readCoordinates(cells[1]?.link?.y, cells[1]?.link?.x);
     const home = text(cells[2])[0] ?? '';
     const away = text(cells[3])[0] ?? '';
     const result = text(cells[4]).filter((part) => part.length > 0).join(' ');
@@ -293,6 +321,8 @@ function readGames(payload: unknown): { league: string | null; games: Federation
       title: `${home} – ${away}`.trim(),
       startsAt,
       location: [hall, city].filter((part) => part.length > 0 && part !== '-').join(', ') || null,
+      latitude: place?.latitude ?? null,
+      longitude: place?.longitude ?? null,
       result: result.length > 0 ? result : null,
     });
   }
@@ -356,6 +386,8 @@ async function syncGames(
       p_starts_at: game.startsAt,
       p_location: game.location,
       p_result: game.result,
+      p_latitude: game.latitude,
+      p_longitude: game.longitude,
     });
     if (error) throw new Error(error.message);
   }

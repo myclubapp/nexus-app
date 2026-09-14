@@ -39,7 +39,7 @@ sagt, warum der Status offen bleibt. **Ein Status wechselt nur mit Beleg.**
 | C-008   | Bezeichner englisch, Texte über `react-i18next`, Kommentare deutsch – von der Code-Review-Dimension A geprüft.                                        |
 | C-009   | `events.type` mit `useClub().eventLabel()`; Regelvorlagen je `club_kind` (0059).                                                                     |
 | C-010   | wie NFR-012.                                                                                                                                          |
-| C-011   | `is_club_admin()`/`is_club_trainer()` in Policies und Funktionen; jede Probe prüft die Abweisung serverseitig.                                        |
+| C-011   | `is_club_admin()`/`is_club_board()`/`can_plan_for_team()` in Policies und Funktionen (`0073`); jede Probe prüft die Abweisung serverseitig.            |
 | C-012   | `ch.myclub.nexus` in `capacitor.config.ts`, `Info.plist`, `AndroidManifest.xml`; die Auth-Redirects sind Projekteinstellung (Betrieb).               |
 | C-013   | `lib/theme.ts` setzt Farben zur Laufzeit aus `clubs.settings.theme`; keine Build-Konfiguration je Verein.                                            |
 | C-014   | In der App gibt es keine Rechnungslogik – nur den Spiegel (0054).                                                                                     |

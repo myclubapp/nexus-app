@@ -24,9 +24,9 @@
 6. System ruft die Schnittstelle der Website ab und meldet, was es gefunden hat: den Namen der Website, die Zahl der veröffentlichten Beiträge und die vorhandenen Kategorien.
 7. Vorstand stellt ein, wie viele Beiträge übernommen werden, und wählt bei Bedarf einzelne Kategorien; ohne Auswahl kommen die Beiträge aller Kategorien.
 8. Vorstand bestätigt mit «Beiträge holen».
-9. System ruft die WordPress-Schnittstelle im eingestellten Umfang ab und übernimmt die Beiträge mit Titel, Anrisstext, Beitragsbild, Autorin oder Autor und Datum.
+9. System ruft die WordPress-Schnittstelle im eingestellten Umfang ab und übernimmt die Beiträge mit Titel, Anrisstext, Volltext, Beitragsbild, Autorin oder Autor und Datum.
 10. System speichert die Website samt Einstellungen als Quelle des Vereins und meldet, wie viele Beiträge übernommen wurden.
-11. System zeigt die Beiträge im News-Feed; jeder verlinkt auf den vollständigen Artikel auf der Website.
+11. System zeigt die Beiträge im News-Feed mit dem Anriss; das Detail zeigt den ganzen Artikel mit Absätzen und Bildern, und jeder Beitrag verlinkt zusätzlich auf die Website.
 12. System gleicht die Quelle ab jetzt jede Nacht selbsttätig im selben Umfang ab.
 
 ## Alternative Flows
@@ -110,9 +110,9 @@ Die Website wird nie aus der App heraus abgefragt, sondern ausschliesslich serve
 
 Ein Beitrag der Website erscheint höchstens einmal im Feed. Der Schlüssel ist die Beitrags-ID der Website; ein zweiter Abgleich aktualisiert denselben Beitrag.
 
-### BR-169: Der Volltext bleibt auf der Website
+### BR-169: Der Volltext kommt mit – entschärft
 
-Übernommen werden Titel, Anrisstext, Bild, Autorin oder Autor und das Datum. Der vollständige Artikel wird verlinkt, nicht kopiert: Fremdes HTML in den Feed zu stellen wäre ein Einfallstor, und der Verein pflegt seinen Text weiterhin an einer Stelle.
+Übernommen werden Titel, Anrisstext, Volltext, Bild, Autorin oder Autor und das Datum. Die Liste zeigt den Anriss, das Detail den ganzen Artikel mit Absätzen und den Bildern im Text – wie in der bestehenden myclub-App, deren Mitglieder das so kennen. Fremdes HTML ist ein Einfallstor; deshalb erreicht der Volltext die Ansicht nur durch einen Filter mit fester Liste erlaubter Elemente (Text, Listen, Verweise, Bilder, Tabellen). Skripte, Rahmen, Formulare und Stile der Website fallen weg. Bearbeitet wird der Text weiterhin nur auf der Website; die App zeigt, sie kopiert nicht zum Ändern (A3 in UC-026). Ein Beitrag, dessen Volltext noch fehlt, zeigt den Anriss und einen Verweis auf die Website.
 
 ### BR-170: Trennen löscht nichts
 

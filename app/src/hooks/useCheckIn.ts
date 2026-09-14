@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Preferences } from '@capacitor/preferences';
 import { supabase, isConfigured } from '../lib/supabase';
 import { useClub } from './useClub';
 import {
@@ -15,18 +16,26 @@ import { useToast } from './useToast';
 
 const QUEUE_KEY = 'myclub.checkInQueue';
 
-function readQueue(): PendingCheckIn[] {
+/**
+ * Der Puffer liegt in Capacitor Preferences, nicht in `localStorage`: Auf dem
+ * Gerät sind das UserDefaults bzw. SharedPreferences, die WKWebView unter
+ * Speicherdruck nicht räumt – anders als `localStorage`. Genau dieser Puffer
+ * muss ein Funkloch überleben (NFR-010). Im Browser fällt Preferences von
+ * selbst auf `localStorage` zurück.
+ */
+async function readQueue(): Promise<PendingCheckIn[]> {
   try {
-    return pruneCheckIns(parseQueue(window.localStorage.getItem(QUEUE_KEY)));
+    const { value } = await Preferences.get({ key: QUEUE_KEY });
+    return pruneCheckIns(parseQueue(value));
   } catch {
-    // Privates Fenster oder gesperrter Speicher: dann eben ohne Puffer.
+    // Gesperrter Speicher: dann eben ohne Puffer.
     return [];
   }
 }
 
-function writeQueue(queue: PendingCheckIn[]): void {
+async function writeQueue(queue: PendingCheckIn[]): Promise<void> {
   try {
-    window.localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
+    await Preferences.set({ key: QUEUE_KEY, value: JSON.stringify(queue) });
   } catch {
     // Ohne Speicher bleibt der Check-in eben nur dieser Sitzung erhalten.
   }
@@ -40,12 +49,12 @@ function writeQueue(queue: PendingCheckIn[]): void {
  * Eintrag, obwohl der Person die Zustellung zugesagt worden war. Deshalb wird
  * hier frisch gelesen und gezielt abgezogen.
  */
-function dropFromQueue(eventIds: readonly string[]): void {
-  let queue = readQueue();
+async function dropFromQueue(eventIds: readonly string[]): Promise<void> {
+  let queue = await readQueue();
   for (const eventId of eventIds) {
     queue = removeCheckIn(queue, eventId);
   }
-  writeQueue(queue);
+  await writeQueue(queue);
 }
 
 /**
@@ -167,8 +176,8 @@ export function useCheckIn() {
         // Ein Browser, der sich selbst offline nennt, hat recht – auch wenn
         // die Fehlermeldung nach etwas anderem aussieht.
         if (isRetryable(key) || isKnownOffline()) {
-          writeQueue(
-            enqueueCheckIn(readQueue(), {
+          await writeQueue(
+            enqueueCheckIn(await readQueue(), {
               eventId: input.eventId,
               qrToken: input.qrToken,
               scannedAt: Date.now(),
@@ -219,7 +228,7 @@ export function useCheckInQueue() {
   const { activeClub, activeMembership } = useClub();
 
   const flush = useCallback(async () => {
-    const queue = readQueue();
+    const queue = await readQueue();
     if (queue.length === 0 || !isConfigured) return;
 
     const done: string[] = [];
@@ -246,7 +255,7 @@ export function useCheckInQueue() {
     }
 
     if (done.length === 0) return;
-    dropFromQueue(done);
+    await dropFromQueue(done);
 
     // Der Person wurde die Zustellung zugesagt. Scheitert sie endgültig, muss
     // sie das erfahren – sonst glaubt sie, eingecheckt zu sein, und hat weder

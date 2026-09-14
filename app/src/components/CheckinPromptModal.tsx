@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import {
   IonButton,
   IonItem,
   IonLabel,
+  IonListHeader,
   IonNote,
   IonSegment,
   IonSegmentButton,
@@ -15,6 +16,7 @@ import { useCheckinPrompts, useSkipCheckin, useSubmitCheckin } from '../hooks/us
 import { FormModal } from './FormModal';
 import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
+import { TextSection } from './TextSection';
 import { InlineError } from './StateViews';
 import { SkeletonList } from './Skeletons';
 import {
@@ -98,14 +100,12 @@ export function CheckinPrompt({ invitation, onDone, onDismiss, isOpen = true }: 
         )
       }
     >
+      {/* Der Anlass als Text unter seiner Überschrift – keine Listenzeile,
+          in der nichts zu wählen ist (Befund 13). */}
       {invitation.eventTitle && (
-        <ListSection title={t(`checkin.context.${invitation.context}`)}>
-          <IonItem lines="none">
-            <IonLabel className="ion-text-wrap">
-              <p>{invitation.eventTitle}</p>
-            </IonLabel>
-          </IonItem>
-        </ListSection>
+        <TextSection title={t(`checkin.context.${invitation.context}`)}>
+          {invitation.eventTitle}
+        </TextSection>
       )}
 
       {/* Schritt 4: **zuerst** die Sichtbarkeit. Sie ist die Voraussetzung
@@ -143,9 +143,9 @@ export function CheckinPrompt({ invitation, onDone, onDismiss, isOpen = true }: 
       {prompts.isLoading ? (
         <SkeletonList rows={2} />
       ) : (
-        rows.map((prompt) => (
-          <ListSection key={prompt.id} title={prompt.question}>
-            {prompt.scale === 'freetext' ? (
+        rows.map((prompt) =>
+          prompt.scale === 'freetext' ? (
+            <ListSection key={prompt.id} title={prompt.question}>
               <IonItem>
                 <IonTextarea
                   label={t('checkin.textLabel')}
@@ -156,11 +156,18 @@ export function CheckinPrompt({ invitation, onDone, onDismiss, isOpen = true }: 
                   onIonInput={(e) => setText(prompt.id, e.detail.value ?? '')}
                 />
               </IonItem>
-            ) : (
-              <IonItem lines="none">
-                {/* Fünf Stufen als Segment – die Ionic-Entsprechung einer
-                    kurzen Skala. Ein nachgebauter Sternebalken wäre ein
-                    Eigenbau ohne Not (guidelines §11.6). */}
+            </ListSection>
+          ) : (
+            <Fragment key={prompt.id}>
+              <IonListHeader>
+                <IonLabel>{prompt.question}</IonLabel>
+              </IonListHeader>
+              {/* Fünf Stufen als Segment – die Ionic-Entsprechung einer kurzen
+                  Skala. Ein nachgebauter Sternebalken wäre ein Eigenbau ohne
+                  Not (guidelines §11.6). Das Segment steht frei unter seiner
+                  Überschrift, nicht in einem `IonItem`: Das Item ist eine
+                  Listenzeile, kein Behälter (Muster: `ShiftRosterModal`). */}
+              <div className="ion-padding-horizontal">
                 <IonSegment
                   value={answers[prompt.id]?.value?.toString()}
                   onIonChange={(e) => setValue(prompt.id, Number(e.detail.value))}
@@ -171,10 +178,10 @@ export function CheckinPrompt({ invitation, onDone, onDismiss, isOpen = true }: 
                     </IonSegmentButton>
                   ))}
                 </IonSegment>
-              </IonItem>
-            )}
-          </ListSection>
-        ))
+              </div>
+            </Fragment>
+          ),
+        )
       )}
 
       {problems.map((problem) => (

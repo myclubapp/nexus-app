@@ -1,4 +1,5 @@
 import type { EventType } from './database.types';
+import { toLocalInput } from './format';
 
 /** Rhythmus einer Terminserie (A1). */
 export const SERIES_RHYTHMS = ['weekly', 'biweekly', 'monthly'] as const;
@@ -40,15 +41,6 @@ function addMonths(date: Date, months: number): Date {
   // Der 31. eines Monats fällt im nächsten sonst auf den 1. des übernächsten.
   if (next.getDate() < day) next.setDate(0);
   return next;
-}
-
-/** `Date` als lokales `YYYY-MM-DDTHH:mm` – nie über `toISOString()` (UTC). */
-function toLocalInput(date: Date): string {
-  const pad = (value: number) => String(value).padStart(2, '0');
-  return (
-    `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}` +
-    `T${pad(date.getHours())}:${pad(date.getMinutes())}`
-  );
 }
 
 /**
@@ -114,8 +106,6 @@ export function requiresWhy(type: EventType): boolean {
 const RULE_BY_TYPE: Partial<Record<EventType, string>> = {
   training: 'training_attend',
   match: 'match_attend',
-  cup: 'match_attend',
-  tournament: 'match_attend',
   gv: 'assembly_attend',
   social: 'event_attend',
   helper: 'shift_done',

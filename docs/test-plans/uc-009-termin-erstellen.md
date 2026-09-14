@@ -271,6 +271,40 @@
 
 ---
 
+## TC-015: Termin löschen (A6)
+
+**Priority:** High
+**Preconditions:** Zwei künftige Termine von **T**: einer ohne Buchungen, einer mit einem bestätigten Check-in.
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als **T** den Termin ohne Buchungen öffnen | Unter «Verwalten» steht «Termin löschen» rot und **zuletzt** | | |
+| 2 | Die Zeile wählen | Das Detail schliesst; Rückfrage mit dem Titel, «Termin löschen» rot, «Abbrechen» in der Vereinsfarbe | | |
+| 3 | «Abbrechen» | Nichts passiert, der Termin steht noch | | |
+| 4 | Nochmals, «Termin löschen» bestätigen | Toast «Termin gelöscht.», der Termin ist aus der Agenda weg – ohne Nachricht an die Betroffenen | | |
+| 5 | Als **M** die Agenda öffnen | Der Termin fehlt; keine Inbox-Nachricht | | |
+| 6 | Als **T** den Termin mit Check-in löschen wollen | Abgewiesen: «… Punktebuchungen erfolgt – er lässt sich nur noch absagen»; der Termin bleibt | | |
+| 7 | Als **M** `delete_event` per HTTP-Aufruf | Abgewiesen («Nur Trainer:innen des Teams und der Vorstand …») | | |
+| 8 | Ohne Wischgeste (Tastatur, VoiceOver) bis zur Zeile navigieren | Die Zeile ist erreichbar und auslösbar | | |
+
+---
+
+## TC-016: Das Ende folgt dem Beginn
+
+**Priority:** Medium
+**Preconditions:** Als **T** angemeldet, «Termin erstellen» offen.
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Beginn auf **heute 18:55** setzen, Ende auf **heute 20:30** | Beide stehen so | | |
+| 2 | Beginn auf **in zwei Wochen 18:55** verschieben | Das Ende rückt von selbst auf **denselben Tag 18:55** – kein Ende mehr vor dem Beginn | | |
+| 3 | Beginn auf **heute 17:00** zurücksetzen | Das Ende bleibt stehen (es liegt nach dem Beginn) | | |
+| 4 | Ende leer lassen («Löschen» im Wähler), Beginn verschieben | Das Ende bleibt leer | | |
+| 5 | «Wiederholt sich» einschalten, «bis» auf **heute** setzen, dann Beginn auf **in zwei Wochen** | «bis» rückt auf den Tag des Beginns | | |
+| 6 | Dasselbe im Helfer-Event: Beginn/Ende des Aufrufs und Beginn/Ende einer Schicht | Gleiches Verhalten | | |
+
+---
+
 ## Test Matrix
 
 | Device / Browser | OS / Version | Screen Size | Status |
@@ -303,6 +337,8 @@ Matrix stehen: `datetime-local` sieht auf jeder anders aus.
 | TC-009 | Vier Sprachen | High | |
 | TC-010 | Datum und Zeit auf dem Gerät | High | |
 | TC-011 | Ohne Netz | Medium | |
+| TC-015 | Termin löschen | High | |
+| TC-016 | Das Ende folgt dem Beginn | Medium | |
 
 **Overall Result:** ☐ Pass ☐ Fail
 **Tester:** ******\_\_\_******

@@ -36,6 +36,8 @@ export interface EventResponseState {
   status: AttendanceStatus | null;
   isCancelled: boolean;
   hasStarted: boolean;
+  /** Der Termin hat Schichten – dann ist die Schicht die Antwort (BR-196). */
+  viaShifts?: boolean;
 }
 
 /**
@@ -43,10 +45,45 @@ export interface EventResponseState {
  *
  * A3 sperrt einen abgesagten Termin, BR-038 einen begonnenen. Beides prüft
  * auch `respond_to_event()` – hier geht es darum, die Knöpfe gar nicht erst
- * anzubieten.
+ * anzubieten. BR-196 sperrt dazu den Anlass mit Schichten: Dort gibt es keine
+ * Zusage zum Termin, nur die zur Schicht (`respondsViaShifts()`).
  */
-export function canRespond(state: Pick<EventResponseState, 'isCancelled' | 'hasStarted'>): boolean {
-  return !state.isCancelled && !state.hasStarted;
+export function canRespond(
+  state: Pick<EventResponseState, 'isCancelled' | 'hasStarted' | 'viaShifts'>,
+): boolean {
+  return !state.isCancelled && !state.hasStarted && !state.viaShifts;
+}
+
+/**
+ * Läuft die Verbindlichkeit bei diesem Termin über Schichten (BR-196)?
+ *
+ * Ein Termin mit Schichten kennt keine Zusage zum Anlass. Die Schicht ist die
+ * Antwort (BR-048): Nur sie zählt für die Besetzung, die Punkte (BR-045) und
+ * den Kalender (UC-012, Schritt 7). Ein Haken daneben hätte keine Folge – bei
+ * vollen Schichten sähe er aus wie eine Anmeldung, die es nicht gibt –, und
+ * «Keine Antwort» listete bei einem Anlass ohne Team den ganzen Verein.
+ */
+export function respondsViaShifts(event: { shifts?: readonly unknown[] | null }): boolean {
+  return (event.shifts?.length ?? 0) > 0;
+}
+
+/**
+ * Hält die Person eine Schicht dieses Termins (UC-012)?
+ *
+ * Gezählt wird wie in `shiftCoverage()`: Eintragung oder bestätigte
+ * Anwesenheit. Eine Absage hält keinen Platz.
+ */
+export function holdsShift(
+  entries: readonly { member_id: string; shift_id: string | null; status: string }[],
+  memberId: string | null | undefined,
+): boolean {
+  if (!memberId) return false;
+  return entries.some(
+    (entry) =>
+      entry.member_id === memberId &&
+      entry.shift_id !== null &&
+      (entry.status === 'registered' || entry.status === 'present'),
+  );
 }
 
 export interface AttendanceTally {

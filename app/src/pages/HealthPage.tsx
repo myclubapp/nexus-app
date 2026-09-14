@@ -1,8 +1,17 @@
 import { useState } from 'react';
-import { IonBadge, IonItem, IonLabel, IonNote, IonSelect, IonSelectOption } from '@ionic/react';
+import {
+  IonBadge,
+  IonItem,
+  IonLabel,
+  IonListHeader,
+  IonNote,
+  IonSelect,
+  IonSelectOption,
+} from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
+import { TextSection } from '../components/TextSection';
 import { StatCard } from '../components/StatCard';
 import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
@@ -135,11 +144,13 @@ export function HealthPage() {
       {/* FR-060: die Vereins-Übersicht. Nur der Vorstand – die Abfrage wird
           für Trainer:innen gar nicht erst gestellt, und der Server wiese sie
           ohnehin ab (BR-096). */}
+      {/* Kennzahl-Kacheln sind keine Listenzeilen: Überschrift, Kacheln und
+          Erklärung stehen nebeneinander im Raster, nicht in einer `IonList`. */}
       {club.data && (
-        <ListSection
-          title={t('health.clubTitle')}
-          footnote={t('health.clubHint', { days: club.data.activeDays })}
-        >
+        <>
+          <IonListHeader>
+            <IonLabel>{t('health.clubTitle')}</IonLabel>
+          </IonListHeader>
           <div className="app-stat-row">
             <StatCard value={club.data.members} label={t('health.members')} />
             <StatCard
@@ -153,52 +164,56 @@ export function HealthPage() {
               accent="tertiary"
             />
           </div>
-          {trend !== null && (
-            <IonItem lines="none">
-              <IonLabel className="ion-text-wrap">
-                <IonNote>
-                  {t(trend >= 0 ? 'health.trendUp' : 'health.trendDown', {
-                    count: Math.abs(trend),
-                  })}
-                </IonNote>
-              </IonLabel>
-            </IonItem>
-          )}
+          <TextSection>
+            {trend !== null && (
+              <p>
+                {t(trend >= 0 ? 'health.trendUp' : 'health.trendDown', {
+                  count: Math.abs(trend),
+                })}
+              </p>
+            )}
+            <p>
+              <IonNote>{t('health.clubHint', { days: club.data.activeDays })}</IonNote>
+            </p>
+          </TextSection>
 
           {/* Vision §12: die zwei Erfolgskennzahlen, die bisher fehlten.
               Beide sind Anteile – und ohne Grundgesamtheit kein Anteil. */}
           {(club.data.newcomers > 0 || club.data.leftCount > 0) && (
-            <div className="app-stat-row">
-              {club.data.newcomers > 0 && (
-                <StatCard
-                  value={`${percent(club.data.newcomersActivated, club.data.newcomers) ?? 0} %`}
-                  label={t('health.activation90')}
-                />
-              )}
-              {club.data.leftCount > 0 && (
-                <StatCard
-                  value={`${club.data.leftSignalled}/${club.data.leftCount}`}
-                  label={t('health.churnSeen')}
-                  accent="secondary"
-                />
-              )}
-            </div>
+            <>
+              <div className="app-stat-row">
+                {club.data.newcomers > 0 && (
+                  <StatCard
+                    value={`${percent(club.data.newcomersActivated, club.data.newcomers) ?? 0} %`}
+                    label={t('health.activation90')}
+                  />
+                )}
+                {club.data.leftCount > 0 && (
+                  <StatCard
+                    value={`${club.data.leftSignalled}/${club.data.leftCount}`}
+                    label={t('health.churnSeen')}
+                    accent="secondary"
+                  />
+                )}
+              </div>
+              <TextSection>
+                <p>
+                  <IonNote>{t('health.successHint')}</IonNote>
+                </p>
+              </TextSection>
+            </>
           )}
-          {(club.data.newcomers > 0 || club.data.leftCount > 0) && (
-            <IonItem lines="none">
-              <IonLabel className="ion-text-wrap">
-                <IonNote>{t('health.successHint')}</IonNote>
-              </IonLabel>
-            </IonItem>
-          )}
-        </ListSection>
+        </>
       )}
 
       {/* V5 Symmetrie (MVP-Scope §11.8): Die Führung misst sich mit denselben
           Instrumenten wie die Mitglieder – Antwortzeit, Offenes, Vakanzen.
           Signal, kein Urteil (K5). */}
       {isAdmin && board.data && (
-        <ListSection title={t('health.symmetryTitle')} footnote={t('health.symmetryHint')}>
+        <>
+          <IonListHeader>
+            <IonLabel>{t('health.symmetryTitle')}</IonLabel>
+          </IonListHeader>
           <div className="app-stat-row">
             <StatCard
               value={board.data.inputsAvgHours === null ? '–' : `${board.data.inputsAvgHours} h`}
@@ -215,20 +230,21 @@ export function HealthPage() {
               accent="tertiary"
             />
           </div>
-          <IonItem lines="none">
-            <IonLabel className="ion-text-wrap">
-              <IonNote>
-                {t('health.symmetryDetail', {
-                  answered: board.data.inputsAnswered,
-                  open: board.data.inputsOpen,
-                  signals: board.data.signalsOpen,
-                  vacancies: board.data.vacancies,
-                  days: board.data.vacancyAvgDays ?? 0,
-                })}
-              </IonNote>
-            </IonLabel>
-          </IonItem>
-        </ListSection>
+          <TextSection>
+            <p>
+              {t('health.symmetryDetail', {
+                answered: board.data.inputsAnswered,
+                open: board.data.inputsOpen,
+                signals: board.data.signalsOpen,
+                vacancies: board.data.vacancies,
+                days: board.data.vacancyAvgDays ?? 0,
+              })}
+            </p>
+            <p>
+              <IonNote>{t('health.symmetryHint')}</IonNote>
+            </p>
+          </TextSection>
+        </>
       )}
 
       {/* FR-063: Wer erhält welchen Hinweis. Nur der Vorstand stellt es ein;
@@ -346,18 +362,16 @@ export function HealthPage() {
       {/* FR-075: der Definitionskatalog. Eine Kennzahl, deren Definition
           niemand kennt, ist eine Behauptung. */}
       {(definitions.data ?? []).length > 0 && (
-        <ListSection
-          title={t('health.definitionsTitle')}
-          footnote={t('health.definitionsHint')}
-        >
+        <TextSection title={t('health.definitionsTitle')}>
           {(definitions.data ?? []).map((entry) => (
-            <IonItem key={entry.key} lines="none">
-              <IonLabel className="ion-text-wrap">
-                <p>{t(`health.definition.${entry.key}`, { value: entry.value })}</p>
-              </IonLabel>
-            </IonItem>
+            <p key={entry.key}>
+              {t(`health.definition.${entry.key}`, { value: entry.value })}
+            </p>
           ))}
-        </ListSection>
+          <p>
+            <IonNote>{t('health.definitionsHint')}</IonNote>
+          </p>
+        </TextSection>
       )}
 
       <HealthSignalModal

@@ -50,7 +50,7 @@ export function CreateFab({ actions }: CreateFabProps) {
         aria-label={single ? single.label : t('common.create')}
         onClick={single ? single.onClick : undefined}
       >
-        <IonIcon icon={add} />
+        <IonIcon icon={add} aria-hidden="true" />
       </IonFabButton>
       {!single && (
         <IonFabList side="top">
@@ -61,7 +61,7 @@ export function CreateFab({ actions }: CreateFabProps) {
               aria-label={action.label}
               onClick={action.onClick}
             >
-              <IonIcon icon={action.icon} />
+              <IonIcon icon={action.icon} aria-hidden="true" />
             </IonFabButton>
           ))}
         </IonFabList>

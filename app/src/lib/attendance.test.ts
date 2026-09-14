@@ -7,7 +7,9 @@ import {
   parseCapacity,
   canRespond,
   groupAttendance,
+  holdsShift,
   isEarlyDecline,
+  respondsViaShifts,
   tallyAttendance,
 } from './attendance';
 
@@ -60,6 +62,47 @@ describe('canRespond', () => {
 
   it('sperrt einen begonnenen Termin (BR-038)', () => {
     expect(canRespond({ isCancelled: false, hasStarted: true })).toBe(false);
+  });
+
+  it('sperrt einen Termin mit Schichten (BR-196)', () => {
+    // Die Schicht ist die Antwort – ein Haken daneben wäre eine Anmeldung,
+    // die es nicht gibt.
+    expect(canRespond({ isCancelled: false, hasStarted: false, viaShifts: true })).toBe(false);
+  });
+});
+
+describe('respondsViaShifts (BR-196)', () => {
+  it('erkennt einen Termin mit Schichten', () => {
+    expect(respondsViaShifts({ shifts: [{ id: 's-1' }] })).toBe(true);
+  });
+
+  it('lässt einen Termin ohne Schichten beim Antwortstand', () => {
+    expect(respondsViaShifts({ shifts: [] })).toBe(false);
+    expect(respondsViaShifts({ shifts: null })).toBe(false);
+    expect(respondsViaShifts({})).toBe(false);
+  });
+});
+
+describe('holdsShift', () => {
+  const entry = (member_id: string, shift_id: string | null, status = 'registered') => ({
+    member_id,
+    shift_id,
+    status,
+  });
+
+  it('erkennt eine übernommene oder bestätigte Schicht', () => {
+    expect(holdsShift([entry('me', 's-1')], 'me')).toBe(true);
+    expect(holdsShift([entry('me', 's-1', 'present')], 'me')).toBe(true);
+  });
+
+  it('zählt wie die Besetzung: eine Absage hält keinen Platz', () => {
+    expect(holdsShift([entry('me', 's-1', 'excused')], 'me')).toBe(false);
+  });
+
+  it('zählt weder die Antwort auf den Anlass noch fremde Schichten', () => {
+    expect(holdsShift([entry('me', null)], 'me')).toBe(false);
+    expect(holdsShift([entry('other', 's-1')], 'me')).toBe(false);
+    expect(holdsShift([entry('me', 's-1')], null)).toBe(false);
   });
 });
 

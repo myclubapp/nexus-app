@@ -6,6 +6,7 @@ import { useFactsheetUrl } from '../hooks/useOffices';
 import { FormModal } from './FormModal';
 import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
+import { ManageSection } from './ManageSection';
 import { TextSection } from './TextSection';
 import { InlineError } from './StateViews';
 import { formatDate } from '../lib/format';
@@ -13,8 +14,10 @@ import { isVacant, openSeats, type Office } from '../lib/office';
 
 interface OfficeDetailProps {
   office: Office;
-  /** Der Vorstand öffnet von hier das Formular; ohne Vorstandsrolle kein Knopf. */
+  /** Der Vorstand öffnet von hier das Formular; ohne Vorstandsrolle keine Zeile. */
   onEdit?: (office: Office) => void;
+  /** Auflösen – die Seite fragt zuerst nach, das Blatt schliesst vorher. */
+  onDissolve?: (office: Office) => void;
   onDismiss: () => void;
   /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
   isOpen?: boolean;
@@ -29,10 +32,16 @@ interface OfficeDetailProps {
  * sie sich einlassen, bevor sie jemanden fragen.
  *
  * Das Blatt zeigt nur an: «Schliessen» steht einmal in der Kopfzeile
- * (guidelines §2). Bearbeiten ist ein Knopf im Inhalt, weil er nicht die
- * Bestätigung einer Eingabe ist.
+ * (guidelines §2). Bearbeiten und Auflösen stehen zuletzt im Abschnitt
+ * «Verwalten», an derselben Stelle wie in jedem anderen Detail.
  */
-export function OfficeDetail({ office, onEdit, onDismiss, isOpen = true }: OfficeDetailProps) {
+export function OfficeDetail({
+  office,
+  onEdit,
+  onDissolve,
+  onDismiss,
+  isOpen = true,
+}: OfficeDetailProps) {
   const { t } = useTranslation();
   const { isAdmin } = useClub();
   const factsheet = useFactsheetUrl(office.factsheetPath);
@@ -150,12 +159,17 @@ export function OfficeDetail({ office, onEdit, onDismiss, isOpen = true }: Offic
         </div>
       )}
 
-      {isAdmin && onEdit && (
-        <div className="app-actions">
-          <IonButton expand="block" fill="clear" onClick={() => onEdit(office)}>
-            {t('offices.edit')}
-          </IonButton>
-        </div>
+      {isAdmin && (
+        <ManageSection
+          actions={[
+            onEdit && { label: t('offices.edit'), onClick: () => onEdit(office), detail: true },
+            onDissolve && {
+              label: t('offices.remove'),
+              onClick: () => onDissolve(office),
+              destructive: true,
+            },
+          ]}
+        />
       )}
     </FormModal>
   );

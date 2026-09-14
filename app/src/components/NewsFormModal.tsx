@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   IonInput,
   IonItem,
@@ -8,7 +8,7 @@ import {
   IonTextarea,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
-import { useTeams } from '../hooks/useInvites';
+import { usePlanningScope } from '../hooks/usePlanningScope';
 import { usePublishNews, useUpdateNews } from '../hooks/useNews';
 import { FormModal } from './FormModal';
 import { useSheetProps } from '../hooks/useSheetProps';
@@ -36,7 +36,7 @@ interface NewsFormProps {
  */
 export function NewsForm({ editing = null, onDone, onDismiss, isOpen = true }: NewsFormProps) {
   const { t } = useTranslation();
-  const teams = useTeams();
+  const scope = usePlanningScope();
   const publish = usePublishNews();
   const update = useUpdateNews();
 
@@ -44,6 +44,13 @@ export function NewsForm({ editing = null, onDone, onDismiss, isOpen = true }: N
   const [body, setBody] = useState(editing?.body ?? '');
   const [imageUrl, setImageUrl] = useState(editing?.image_url ?? '');
   const [teamId, setTeamId] = useState<string | null>(editing?.team_id ?? null);
+  // C-032: Eine Trainer:in schreibt für ihr Team, nicht für den Verein. Ihr
+  // erstes Team ist die Vorgabe; «ganzer Verein» steht ihr nicht zur Wahl.
+  useEffect(() => {
+    if (!scope.isBoard && teamId === null && scope.teams.length > 0) {
+      setTeamId(scope.teams[0].id);
+    }
+  }, [scope.isBoard, scope.teams, teamId]);
 
   const draft: NewsDraft = { title, body, imageUrl, teamId };
   const problems = validateNews(draft);
@@ -81,6 +88,7 @@ export function NewsForm({ editing = null, onDone, onDismiss, isOpen = true }: N
           <IonInput
             label={t('newsForm.newsTitle')}
             labelPlacement="stacked"
+            enterkeyhint="next"
             value={title}
             onIonInput={(e) => setTitle(e.detail.value ?? '')}
           />
@@ -103,6 +111,7 @@ export function NewsForm({ editing = null, onDone, onDismiss, isOpen = true }: N
           <IonInput
             type="url"
             inputmode="url"
+            enterkeyhint="done"
             label={t('newsForm.imageLabel')}
             labelPlacement="stacked"
             value={imageUrl}
@@ -111,8 +120,15 @@ export function NewsForm({ editing = null, onDone, onDismiss, isOpen = true }: N
         </IonItem>
       </ListSection>
 
-      {/* Schritt 4: ganzer Verein oder ein Team (BR-109). */}
-      <ListSection title={t('newsForm.scope')} footnote={t('newsForm.scopeHint')}>
+      {/* Schritt 4: ganzer Verein oder ein Team (BR-109) – Ersteres nur für den Vorstand (C-032). */}
+      <ListSection
+        title={t('newsForm.scope')}
+        footnote={
+          !scope.isBoard && !scope.isLoading && scope.teams.length === 0
+            ? t('common.noPlannableTeam')
+            : t(scope.isBoard ? 'newsForm.scopeHint' : 'newsForm.scopeHintTeam')
+        }
+      >
         <IonItem>
           <IonSelect
             label={t('newsForm.team')}
@@ -122,8 +138,10 @@ export function NewsForm({ editing = null, onDone, onDismiss, isOpen = true }: N
             cancelText={t('common.cancel')}
             okText={t('common.ok')}
           >
-            <IonSelectOption value={null}>{t('newsForm.wholeClub')}</IonSelectOption>
-            {(teams.data ?? []).map((team) => (
+            {scope.isBoard && (
+              <IonSelectOption value={null}>{t('newsForm.wholeClub')}</IonSelectOption>
+            )}
+            {scope.teams.map((team) => (
               <IonSelectOption key={team.id} value={team.id}>
                 {team.name}
               </IonSelectOption>

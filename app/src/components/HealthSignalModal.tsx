@@ -12,6 +12,7 @@ import { useSetSignalStatus } from '../hooks/useHealth';
 import { FormModal } from './FormModal';
 import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
+import { TextSection } from './TextSection';
 import { formatDate } from '../lib/format';
 import {
   PROMPTS_PER_SIGNAL,
@@ -61,14 +62,13 @@ export function HealthSignalDetail({ signal, onDone, onDismiss, isOpen = true }:
       error={setStatus.error ? (setStatus.error as Error).message : null}
       onDismiss={onDismiss}
     >
-      {/* Schritt 3 und 5: der Anlass, fürsorglich formuliert. */}
+      {/* Schritt 3 und 5: der Anlass, fürsorglich formuliert. Die Zeile trägt
+          Titel, Datum und Dringlichkeit; der Satz dazu steht als Text darunter,
+          nicht eingezwängt in die Zeile. */}
       <ListSection>
         <IonItem>
           <IonLabel className="ion-text-wrap">
             <h2>{t(signalKey(signal.signalType, 'title'))}</h2>
-            <p>
-              {t(signalKey(signal.signalType, 'body'), { detail: signal.detail })}
-            </p>
             <IonNote>{formatDate(signal.detectedAt)}</IonNote>
           </IonLabel>
           <IonBadge slot="end" color={severityColor(signal.severity)}>
@@ -76,23 +76,22 @@ export function HealthSignalDetail({ signal, onDone, onDismiss, isOpen = true }:
           </IonBadge>
         </IonItem>
       </ListSection>
+      <TextSection>
+        <p>{t(signalKey(signal.signalType, 'body'), { detail: signal.detail })}</p>
+      </TextSection>
 
       {/* FR-065 beziehungsweise FR-066. Ein Signaltyp ohne Impulse – etwa
           einer aus einem Modul, das erst später Texte mitbringt – bekommt hier
           keinen leeren Abschnitt mit Überschrift. */}
       {prompts.length > 0 && (
-        <ListSection
-          title={isClub ? t('health.actionQuestion') : t('health.prompts')}
-          footnote={isClub ? t('health.actionHint') : t('health.promptsHint')}
-        >
+        <TextSection title={isClub ? t('health.actionQuestion') : t('health.prompts')}>
           {prompts.map((prompt) => (
-            <IonItem key={prompt}>
-              <IonLabel className="ion-text-wrap">
-                <p>{prompt}</p>
-              </IonLabel>
-            </IonItem>
+            <p key={prompt}>{prompt}</p>
           ))}
-        </ListSection>
+          <p>
+            <IonNote>{isClub ? t('health.actionHint') : t('health.promptsHint')}</IonNote>
+          </p>
+        </TextSection>
       )}
 
       {/* A1: Wer sich kümmert, steht hier – und wird nicht verdrängt. */}

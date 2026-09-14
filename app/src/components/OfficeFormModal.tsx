@@ -34,8 +34,6 @@ interface OfficeFormProps {
   office?: Office | null;
   onDone: () => void;
   onDismiss: () => void;
-  /** Der zweite Weg zum Auflösen neben der Wischgeste (nur beim Bearbeiten). */
-  onDissolve?: (office: Office) => void;
   /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
   isOpen?: boolean;
 }
@@ -59,7 +57,6 @@ export function OfficeForm({
   office = null,
   onDone,
   onDismiss,
-  onDissolve,
   isOpen = true,
 }: OfficeFormProps) {
   const { t } = useTranslation();
@@ -378,19 +375,6 @@ export function OfficeForm({
         <InlineError key={problem} message={t(`offices.problem.${problem}`)} />
       ))}
 
-      {office && onDissolve && (
-        <div className="app-actions">
-          <IonButton
-            expand="block"
-            fill="clear"
-            color="danger"
-            disabled={isBusy}
-            onClick={() => onDissolve(office)}
-          >
-            {t('offices.remove')}
-          </IonButton>
-        </div>
-      )}
       {/* Ohne Verein gibt es nichts zu sichern – der Fall ist theoretisch,
           das Formular hängt hinter `RequireClub`. */}
       {!activeClub && <InlineError message={t('common.error')} />}

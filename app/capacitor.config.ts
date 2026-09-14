@@ -18,11 +18,14 @@ const config: CapacitorConfig = {
     },
     SplashScreen: {
       launchShowDuration: 800,
-      backgroundColor: '#1d4ed8',
+      // Die Grundfarbe aus theme/variables.css, kein Farbsprung beim Start.
+      backgroundColor: '#339bde',
       showSpinner: false,
     },
     Keyboard: {
-      resize: 'body',
+      // `ionic`: nur `ion-app` wird verkleinert – die Einstellung, die
+      // Capacitor für Ionic-Apps vorsieht.
+      resize: 'ionic',
     },
   },
 };

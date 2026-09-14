@@ -17,6 +17,7 @@ import { useMyPoints, useRuleLabels } from '../hooks/useGamification';
 import { bookingLabel } from '../lib/points';
 import { useMyKudos } from '../hooks/useTasks';
 import { useLeaderboardOptIn } from '../hooks/useProfile';
+import { useRefreshOnEnter } from '../hooks/useRefreshOnEnter';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
 import { useToast } from '../hooks/useToast';
@@ -40,6 +41,21 @@ export function ProfilePage() {
   const toast = useToast();
 
   const optIn = useLeaderboardOptIn();
+
+  // Die Profilseite bleibt als Tab gemountet; beim erneuten Betreten holt
+  // Ionics `ionViewWillEnter` nach, was inzwischen veraltet ist – Punkte,
+  // Dankesworte, Mitgliedschaften und die Zahl der offenen Beitrittsanfragen
+  // aus `ClubAdminLinks`.
+  useRefreshOnEnter([
+    ['points'],
+    ['rule-labels'],
+    ['kudos'],
+    ['memberships'],
+    ['join-requests'],
+    // UC-042: Der Fortschritt zum Saisonziel wächst mit jeder Buchung.
+    ['contribution-goal'],
+    ['next-contributions'],
+  ]);
 
   const [isProfileOpen, setProfileOpen] = useState(false);
   const [isPasswordOpen, setPasswordOpen] = useState(false);
@@ -258,8 +274,10 @@ export function ProfilePage() {
         }
       >
         {points.transactions.length === 0 ? (
-          <IonItem>
-            <IonNote>{t('common.empty')}</IonNote>
+          <IonItem lines="none">
+            <IonLabel color="medium" className="ion-text-wrap">
+              {t('common.empty')}
+            </IonLabel>
           </IonItem>
         ) : (
           points.transactions.slice(0, 20).map((entry) => (
@@ -324,6 +342,7 @@ export function ProfilePage() {
               labelPlacement="stacked"
               type="password"
               autocomplete="new-password"
+              enterkeyhint="done"
               value={newPassword}
               onIonInput={(e) => setNewPassword(e.detail.value ?? '')}
             />

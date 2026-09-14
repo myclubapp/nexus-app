@@ -68,6 +68,17 @@
 2. System prüft die Grenze künftig bei jeder Buchung serverseitig.
 3. Use case continues at step 6.
 
+### A6: Regel löschen
+
+**Trigger:** Vorstand wählt im Regel-Blatt unter «Verwalten» die Zeile «Regel löschen» (Entscheid vom 2026-09-13)
+**Flow:**
+
+1. System fragt mit dem Namen der Regel nach.
+2. Vorstand bestätigt.
+3. System prüft serverseitig, ob zur Regel schon Punkte gebucht sind oder Termine auf sie zeigen. Wenn ja, weist es das Löschen ab und verweist auf das Stilllegen (A1).
+4. System löscht die Regel.
+5. Use case ends.
+
 ## Postconditions
 
 ### Success Postconditions

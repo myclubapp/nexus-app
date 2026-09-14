@@ -92,9 +92,11 @@ erDiagram
 
 ## Entitäten
 
-Für **jede** Entität mit `team_id` gilt derselbe Geltungsbereich: Sie gehört ihrem Team, und
-Trainer:innen und Vorstand sehen sie zusätzlich, weil sie sie ausschreiben. Entitäten, die an einer
-solchen Entität hängen, erben deren Geltungsbereich, statt ihn selbst zu formulieren (C-032).
+Für **jede** Entität mit `team_id` gilt derselbe Geltungsbereich: Sie gehört ihrem Team, und der
+Vorstand (sportchef, admin, superadmin) sieht sie zusätzlich, weil er den Verein führt. Trainer:innen
+sind wie Mitglieder auf ihre eigenen Teams begrenzt; was keinem Team gehört, legt nur der Vorstand
+an (`0073`). Entitäten, die an einer solchen Entität hängen, erben deren Geltungsbereich, statt ihn
+selbst zu formulieren (C-032).
 
 
 ### USER_ACCOUNT
@@ -266,7 +268,7 @@ Ein Termin des Vereins: Training, Wettkampf, Anlass, Helfer-Event, Sitzung oder 
 | club_id          | Verein des Termins                                     | UUID      | 36               | Not Null, Foreign Key (CLUB.id)                                         |
 | team_id          | Team des Termins; leer bedeutet Vereinstermin          | UUID      | 36               | Optional, Foreign Key (TEAM.id)                                         |
 | series_id        | Serie, aus der der Termin stammt                       | UUID      | 36               | Optional, Foreign Key (EVENT_SERIES.id)                                 |
-| type             | Technischer Termintyp; die Bezeichnung ist ein Label   | String    | 20               | Not Null, Values: training, match, cup, tournament, gv, social, helper, meeting |
+| type             | Technischer Termintyp; die Bezeichnung ist ein Label   | String    | 20               | Not Null, Values: training, match, gv, social, helper, meeting (cup und tournament seit 0072 entfernt – ein Wettbewerb ist ein match) |
 | title            | Titel des Termins                                      | String    | 160              | Not Null                                                                |
 | why              | Sinnzusammenhang des Aufrufs                           | String    | 500              | Optional                                                                |
 | starts_at        | Beginn des Termins                                     | DateTime  | -                | Not Null                                                                |
@@ -282,7 +284,7 @@ Ein Termin des Vereins: Training, Wettkampf, Anlass, Helfer-Event, Sitzung oder 
 | result           | Resultat laut Verband, als Text («3:4 n.V.»)            | String    | 40               | Optional                                                                |
 | created_by       | Erfassende Person                                      | UUID      | 36               | Not Null, Foreign Key (CLUB_MEMBER.id)                                  |
 
-**Constraints:** `ends_at` liegt nach `starts_at`. Für die Typen helper, gv und social ist `why` nicht leer. Eine Absage verlangt `cancelled_at` und `cancelled_reason`. **Ein Termin mit `team_id` ist nur für dieses Team sichtbar und beantwortbar** – Trainer:innen und Vorstand ausgenommen, weil sie ihn planen; ein Termin ohne `team_id` gilt dem ganzen Verein (C-032). EVENT_SERIES, EVENT_SHIFT, ATTENDANCE und EVENT_QR_TOKEN erben diesen Geltungsbereich vom Termin. Ein Termin mit `external_id` stammt vom Verband: `title`, `starts_at`, `location` und `result` überschreibt der Abgleich, alles andere gehört dem Verein (BR-180); weder das Lösen der Verknüpfung noch das Trennen der Verbindung löscht ihn (BR-181). Ein Termin mit `external_id` «legacy:…» stammt aus der bisherigen myclub-App (UC-040): Titel, Warum, Zeit, Ort, Bedarf und Absage überschreibt der Abgleich, Zusagen und Schicht-Einträge bleiben (BR-183); der Abgleich löscht nichts (BR-184).
+**Constraints:** `ends_at` liegt nach `starts_at`. Für die Typen helper, gv und social ist `why` nicht leer. Eine Absage verlangt `cancelled_at` und `cancelled_reason`. **Ein Termin mit `team_id` ist nur für dieses Team sichtbar, beantwortbar und planbar** – der Vorstand ausgenommen, weil er den Verein führt; Trainer:innen planen nur für ihre eigenen Teams. Ein Termin ohne `team_id` gilt dem ganzen Verein und wird nur vom Vorstand angelegt (C-032, `0073`). EVENT_SERIES, EVENT_SHIFT, ATTENDANCE und EVENT_QR_TOKEN erben diesen Geltungsbereich vom Termin. Ein Termin mit `external_id` stammt vom Verband: `title`, `starts_at`, `location` und `result` überschreibt der Abgleich, alles andere gehört dem Verein (BR-180); weder das Lösen der Verknüpfung noch das Trennen der Verbindung löscht ihn (BR-181). Ein Termin mit `external_id` «legacy:…» stammt aus der bisherigen myclub-App (UC-040): Titel, Warum, Zeit, Ort, Bedarf und Absage überschreibt der Abgleich, Zusagen und Schicht-Einträge bleiben (BR-183); der Abgleich löscht nichts (BR-184).
 
 ### EVENT_QR_TOKEN
 

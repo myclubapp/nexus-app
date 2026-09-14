@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import {
+  IonButton,
+  IonCard,
+  IonCardContent,
   IonItem,
   IonItemOption,
   IonItemOptions,
   IonItemSliding,
   IonLabel,
+  IonListHeader,
   IonNote,
   IonSelect,
   IonSelectOption,
+  useIonRouter,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { AppPage } from '../components/AppPage';
@@ -24,7 +29,7 @@ import {
   useTeamMood,
 } from '../hooks/useContextCheckin';
 import { useClub } from '../hooks/useClub';
-import { useMyTeams } from '../hooks/useGamification';
+import { usePlanningScope } from '../hooks/usePlanningScope';
 import { useToast } from '../hooks/useToast';
 import { formatDate, formatDateTime } from '../lib/format';
 import { trendAverage, type CheckinInvitation } from '../lib/contextCheckin';
@@ -44,22 +49,25 @@ import { trendAverage, type CheckinInvitation } from '../lib/contextCheckin';
  */
 export function MoodPage() {
   const { t } = useTranslation();
+  const router = useIonRouter();
   const toast = useToast();
   const { isTrainer } = useClub();
   const open = useOpenCheckins();
   const trend = useMyCheckinTrend();
   const given = useMyCheckinResponses();
   const share = useShareCheckin();
-  const myTeams = useMyTeams();
+  // C-032: Der Team-Wert gehört, wer für das Team plant – dem Vorstand für
+  // alle Teams, einer Trainer:in für ihre eigenen; `team_mood()` prüft dasselbe.
+  const scope = usePlanningScope();
 
   const [answering, setAnswering] = useState<CheckinInvitation | null>(null);
   const [teamId, setTeamId] = useState<string | null>(null);
 
-  const teams = myTeams.data ?? [];
-  // Ohne ausdrückliche Wahl der erste eigene Kader – sonst bliebe der
-  // Abschnitt leer, bis jemand eine Auswahl trifft.
+  const teams = scope.teams;
+  // Ohne ausdrückliche Wahl der erste Kader – sonst bliebe der Abschnitt
+  // leer, bis jemand eine Auswahl trifft. Für Mitglieder ist die Liste leer.
   const shownTeam = teamId ?? teams[0]?.id ?? null;
-  const mood = useTeamMood(isTrainer ? shownTeam : null);
+  const mood = useTeamMood(shownTeam);
 
   const rows = open.data ?? [];
   const points = trend.data ?? [];
@@ -99,11 +107,16 @@ export function MoodPage() {
             </ListSection>
           )}
 
-          {/* FR-105: der eigene Verlauf. Für niemanden sonst lesbar. */}
+          {/* FR-105: der eigene Verlauf. Für niemanden sonst lesbar. Das
+              Diagramm steht in einer Karte – ein Item ist eine Zeile, kein
+              Behälter für eine Grafik. */}
           {points.length > 0 ? (
-            <ListSection title={t('checkin.trendTitle')} footnote={t('checkin.trendHint')}>
-              <IonItem lines="none">
-                <IonLabel className="ion-text-wrap">
+            <>
+              <IonListHeader>
+                <IonLabel>{t('checkin.trendTitle')}</IonLabel>
+              </IonListHeader>
+              <IonCard>
+                <IonCardContent>
                   <TrendChart
                     points={points}
                     description={t('checkin.trendDescription', {
@@ -117,14 +130,19 @@ export function MoodPage() {
                       average: average ?? 0,
                     })}
                   </IonNote>
-                </IonLabel>
-              </IonItem>
-            </ListSection>
+                </IonCardContent>
+              </IonCard>
+              <IonNote className="app-footnote">{t('checkin.trendHint')}</IonNote>
+            </>
           ) : (
             rows.length === 0 && (
               <EmptyState
                 message={t('checkin.empty')}
-                action={{ label: t('agenda.title'), routerLink: '/tabs/agenda' }}
+                /* Ein anderer Tab: `root` startet ihn dort, ohne Fremd-History. */
+                action={{
+                  label: t('agenda.title'),
+                  onClick: () => router.push('/tabs/agenda', 'root'),
+                }}
               />
             )
           )}
@@ -134,42 +152,58 @@ export function MoodPage() {
               wählen – und der Ablauf, den A5 beschreibt, wäre unerreichbar. */}
           {(given.data ?? []).length > 0 && (
             <ListSection title={t('checkin.givenTitle')} footnote={t('checkin.givenHint')}>
-              {(given.data ?? []).map((response) => (
-                <IonItemSliding key={response.id}>
-                  <IonItem>
-                    <IonLabel className="ion-text-wrap">
-                      <h2>{response.question}</h2>
-                      {response.value !== null && (
-                        <p>{t(`checkin.step.emoji5.${response.value}`)}</p>
-                      )}
-                      {response.text && <p>{response.text}</p>}
-                      <IonNote>
-                        {t(`checkin.visibility.${response.visibility}`)} ·{' '}
-                        {formatDateTime(response.createdAt)}
-                      </IonNote>
-                    </IonLabel>
-                  </IonItem>
+              {(given.data ?? []).map((response) => {
+                // Teilen geht nur nach vorn: Was einmal gezeigt wurde, lässt
+                // sich nicht zurücknehmen – deshalb erscheint die Aktion nur an
+                // einer noch privaten Antwort, und nur an einer, die zu einem
+                // Termin gehört.
+                const canShare =
+                  response.visibility === 'private' && response.eventId !== null;
+                const shareResponse = () =>
+                  share.mutate(response.id, {
+                    onSuccess: () => toast.success(t('checkin.shared')),
+                    onError: (error) => toast.failure((error as Error).message),
+                  });
 
-                  {/* Teilen geht nur nach vorn: Was einmal gezeigt wurde,
-                      lässt sich nicht zurücknehmen – deshalb erscheint die
-                      Aktion nur an einer noch privaten Antwort, und nur an
-                      einer, die zu einem Termin gehört. */}
-                  {response.visibility === 'private' && response.eventId !== null && (
-                    <IonItemOptions side="end">
-                      <IonItemOption
-                        onClick={() =>
-                          share.mutate(response.id, {
-                            onSuccess: () => toast.success(t('checkin.shared')),
-                            onError: (error) => toast.failure((error as Error).message),
-                          })
-                        }
-                      >
-                        {t('checkin.share')}
-                      </IonItemOption>
-                    </IonItemOptions>
-                  )}
-                </IonItemSliding>
-              ))}
+                return (
+                  <IonItemSliding key={response.id}>
+                    <IonItem>
+                      <IonLabel className="ion-text-wrap">
+                        <h2>{response.question}</h2>
+                        {response.value !== null && (
+                          <p>{t(`checkin.step.emoji5.${response.value}`)}</p>
+                        )}
+                        {response.text && <p>{response.text}</p>}
+                        <IonNote>
+                          {t(`checkin.visibility.${response.visibility}`)} ·{' '}
+                          {formatDateTime(response.createdAt)}
+                        </IonNote>
+                      </IonLabel>
+                      {/* Der zweite Weg neben dem Wischen: Eine Wischoption
+                          ist weder per Tastatur noch per Rotor erreichbar. */}
+                      {canShare && (
+                        <IonButton
+                          slot="end"
+                          fill="clear"
+                          size="small"
+                          disabled={share.isPending}
+                          onClick={shareResponse}
+                        >
+                          {t('checkin.share')}
+                        </IonButton>
+                      )}
+                    </IonItem>
+
+                    {canShare && (
+                      <IonItemOptions side="end">
+                        <IonItemOption onClick={shareResponse}>
+                          {t('checkin.share')}
+                        </IonItemOption>
+                      </IonItemOptions>
+                    )}
+                  </IonItemSliding>
+                );
+              })}
             </ListSection>
           )}
 

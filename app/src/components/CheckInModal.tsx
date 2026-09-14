@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import {
   IonButton,
   IonButtons,
@@ -154,19 +154,26 @@ interface CheckInModalProps {
 export function CheckInModal({ eventId, onDismiss }: CheckInModalProps) {
   const { t } = useTranslation();
   const presentingElement = usePresentingElement();
+  // Das Blatt ist ein `role="dialog"` und braucht einen Namen (ion-modal:
+  // «developers must properly label their modals»); der Titel ist er.
+  const titleId = useId();
 
   return (
     <IonModal
       isOpen={Boolean(eventId)}
       onDidDismiss={onDismiss}
       presentingElement={presentingElement}
+      aria-labelledby={titleId}
     >
       <IonHeader translucent>
         <IonToolbar>
-          <IonTitle>{t('agenda.scanQr')}</IonTitle>
-          <IonButtons slot="end">
+          {/* Schliessen steht links, wie in jedem Blatt (guidelines §2). */}
+          <IonButtons slot="start">
             <IonButton onClick={onDismiss}>{t('common.close')}</IonButton>
           </IonButtons>
+          <IonTitle id={titleId} role="heading" aria-level={2}>
+            {t('agenda.scanQr')}
+          </IonTitle>
         </IonToolbar>
       </IonHeader>
 

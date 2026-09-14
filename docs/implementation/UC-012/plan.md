@@ -175,3 +175,29 @@ Mandantentrennung greift, und eine **fremde** Eintragung kann niemand löschen.
 | --- | ------------------------------------------------------------------------------------------------------------------ | ------ | ----- |
 | 1   | Der Schlüsselwechsel bricht **beide** bestehenden Upserts: `check_in()` (0003) und `respond_to_event()` (0017) nennen `on conflict (event_id, member_id)`. Ohne passenden eindeutigen Index scheitern sie zur Laufzeit mit «no unique or exclusion constraint matching the ON CONFLICT specification». Beide sind in derselben Migration mitzuziehen — und danach gegen die Datenbank nachzumessen. | High | Dev |
 | 2   | `confirm_shift()` bucht weiterhin den **Regelwert** statt `event_shifts.points` — offen aus UC-011, fällig in UC-013. | High | Dev |
+
+---
+
+## Nachtrag 2026-09-12 – FR-156 Kalendereintrag (Schritt 7)
+
+| Was | Wo |
+| --- | --- |
+| Nach «Ich übernehme das» – auch nach der bestätigten Überschneidung (A4) – bietet die Liste die Schicht dem Kalender des Geräts an; eingetragene Personen haben dafür ein Kalender-Symbol an der Zeile, solange die Schicht nicht vorbei ist | `ShiftListModal.tsx`, neue Props `eventTitle` und `location` aus `AgendaPage` und `MarketplacePage` |
+| Der Eintrag trägt das Fenster der **Schicht**, den Anlass im Titel («Aufbau – Sommerfest») und in den Notizen, das Warum dahinter (BR-187) | `src/lib/calendar.ts` → `shiftCalendarEntry()` |
+| Weg je Plattform: Systemblatt (iOS EventKit, Android `ACTION_INSERT`, keine Berechtigung) oder ICS-Download im Browser | `addToDeviceCalendar()`, Plugin `@ebarooni/capacitor-calendar` 8.6 |
+| Tests | `calendar.test.ts`, zwei Fälle in `ShiftListModal.test.tsx`; Gerät: Testplan TC-009 |
+
+
+---
+
+## Nachtrag 2026-09-13 – BR-196 Die Schicht ist die Antwort
+
+Befund aus der Agenda (Sandro, Helfereinsatz «Heimrunde Herren GF 2.Liga», 7/7 besetzt): «Mein Status» liess sich auf Zugesagt stellen, obwohl keine Schicht mehr frei war. Der Haken war die Antwort auf den **Anlass** (`attendance` ohne `shift_id`), nicht auf eine Schicht – ohne Folge für Besetzung, Punkte und Kalender; und «Keine Antwort» hätte bei einem Anlass ohne Team den ganzen Verein gelistet.
+
+| Was | Wo |
+| --- | --- |
+| Regel: Ein Termin mit Schichten kennt keine Zusage zum Anlass | `respondsViaShifts()`, `canRespond({ viaShifts })` in `src/lib/attendance.ts`; `canRemind({ viaShifts })` in `src/lib/reminder.ts` |
+| Detail ohne «Mein Status» und ohne die drei Listen; die Zeile «Schichten» bleibt der Weg | `EventDetailModal.tsx` |
+| Agenda: kein Wischen zum Zu-/Absagen, kein «Erinnern»; die Zeile zeigt den Haken, wenn man eine Schicht hält (`holdsShift()`), sonst einen Platzhalter | `AgendaPage.tsx` → `eventFacts()` |
+| Tests | `attendance.test.ts`, `reminder.test.ts`, `EventDetailModal.test.tsx`; Gerät: Testplan TC-010 |
+| Offen | `remind_undecided()` auf dem Server nimmt einen Termin mit Schichten weiterhin an; der Weg ist nur im UI verborgen. Ein Guard wäre eine eigene Migration (0076 ist inzwischen von den Spielort-Koordinaten belegt). |

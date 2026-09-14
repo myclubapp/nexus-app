@@ -7,15 +7,19 @@ import {
   closeCircle,
   helpCircle,
   informationCircle,
-  personRemoveOutline,
 } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
-import type { AttendanceStatus } from '../lib/database.types';
+import type { AttendanceStatus, EventType } from '../lib/database.types';
+import { eventTypeIcon } from '../lib/eventIcons';
 
 export interface StatusLook {
   icon: string;
   color: 'success' | 'danger' | 'warning' | 'primary';
-  /** Schlüssel unter `agenda.statusLabel` – der Name für Bedienhilfen. */
+  /**
+   * Schlüssel unter `agenda.statusLabel` – der Name für Bedienhilfen. Drei
+   * davon lassen sich umschalten und bekommen als Knopf den Zusatz aus
+   * `agenda.statusAction`.
+   */
   labelKey: 'open' | 'registered' | 'present' | 'excused' | 'absent' | 'cancelled' | 'locked';
 }
 
@@ -63,15 +67,26 @@ export function nextResponse(status: AttendanceStatus | null): 'registered' | 'e
 interface AttendanceStatusIconProps extends StatusContext {
   status: AttendanceStatus | null;
   /**
-   * Der Termin gilt nicht für diese Person (anderes Team). Dann steht ein
-   * kleines «nicht dabei» statt eines Antwortstands.
+   * Der Termin gilt nicht für diese Person (anderes Team). Dann steht statt
+   * des Antwortstands das Symbol der Terminart – es sagt, worum es geht,
+   * wo es nichts zu antworten gibt.
    */
   isAffected?: boolean;
+  /** Die Terminart – nur gebraucht, solange kein Antwortstand zu zeigen ist. */
+  eventType?: EventType | null;
+  /**
+   * Ein eigener Name für Bedienhilfen. Nötig, wo derselbe Stand etwas
+   * anderes heisst als eine Terminzusage – eine Schicht wird «übernommen»,
+   * nicht «zugesagt», und «voll» ist kein begonnener Termin.
+   */
+  label?: string;
   /**
    * Tippen wechselt zur Gegenantwort. Ohne Handler ist das Symbol nur
    * Anzeige – etwa in der Vergangenheit oder für andere Personen.
    */
   onToggle?: (next: 'registered' | 'excused') => void;
+  /** Während die Antwort unterwegs ist, nimmt der Knopf kein zweites Tippen an. */
+  disabled?: boolean;
   slot?: string;
 }
 
@@ -88,38 +103,59 @@ export function AttendanceStatusIcon({
   isCancelled = false,
   isLocked = false,
   isAffected = true,
+  eventType,
+  label,
   onToggle,
+  disabled = false,
   slot,
 }: AttendanceStatusIconProps) {
   const { t } = useTranslation();
 
   if (!isAffected) {
     return (
-      <IonIcon
+      <span
         slot={slot}
-        className="app-status-icon app-status-icon--small"
-        icon={personRemoveOutline}
-        color="primary"
+        className="app-status-slot"
         role="img"
-        aria-label={t('agenda.statusLabel.notAffected')}
-      />
+        aria-label={label ?? t('agenda.statusLabel.notAffected')}
+      >
+        <IonIcon
+          className="app-status-icon app-status-icon--small"
+          icon={eventTypeIcon(eventType)}
+          color="primary"
+          aria-hidden="true"
+        />
+      </span>
     );
   }
 
   const look = statusLook(status, { isCancelled, isLocked });
-  const label = t(`agenda.statusLabel.${look.labelKey}`);
   const clickable = onToggle !== undefined && !isCancelled && !isLocked;
+  // Der Name sagt den Stand, der Zusatz sagt, was ein Tippen täte – und den
+  // gibt es nur, wo sich wirklich tippen lässt. Ein «tippen zum Zusagen» an
+  // einem Symbol, das nur anzeigt (die Startseite, eine gehaltene Schicht),
+  // verspräche Bedienhilfen eine Handlung, die keine ist.
+  const stateName = t(`agenda.statusLabel.${look.labelKey}`);
+  const actionable =
+    look.labelKey === 'open' || look.labelKey === 'registered' || look.labelKey === 'excused';
+  const name =
+    label ??
+    (clickable && actionable
+      ? `${stateName} – ${t(`agenda.statusAction.${nextResponse(status)}`)}`
+      : stateName);
 
   if (!clickable) {
+    // Kein Knopf, aber dieselbe Spalte wie einer: `app-status-slot` hält die
+    // Textkante der Zeile an derselben Stelle (Befund 15).
     return (
-      <IonIcon
-        slot={slot}
-        className="app-status-icon"
-        icon={look.icon}
-        color={look.color}
-        role="img"
-        aria-label={label}
-      />
+      <span slot={slot} className="app-status-slot" role="img" aria-label={name}>
+        <IonIcon
+          className="app-status-icon"
+          icon={look.icon}
+          color={look.color}
+          aria-hidden="true"
+        />
+      </span>
     );
   }
 
@@ -134,10 +170,19 @@ export function AttendanceStatusIcon({
       slot={slot}
       fill="clear"
       className="app-status-button"
-      aria-label={label}
+      aria-label={name}
+      disabled={disabled}
       onClick={toggle}
     >
-      <IonIcon slot="icon-only" className="app-status-icon" icon={look.icon} color={look.color} />
+      {/* Der Knopf trägt den Namen; das Symbol darin ist Schmuck (ion-icon
+          Accessibility: Icons in beschrifteten Knöpfen sind dekorativ). */}
+      <IonIcon
+        slot="icon-only"
+        className="app-status-icon"
+        icon={look.icon}
+        color={look.color}
+        aria-hidden="true"
+      />
     </IonButton>
   );
 }

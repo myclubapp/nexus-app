@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import {
   IonButton,
   IonButtons,
@@ -7,11 +7,9 @@ import {
   IonInput,
   IonItem,
   IonLabel,
-  IonList,
   IonModal,
   IonNote,
   IonSpinner,
-  IonText,
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
@@ -19,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { usePresentingElement } from '../hooks/usePresentingElement';
 import { useAdminBlockers, useDeleteAccount } from '../hooks/useAccount';
 import { ListSection } from './ListSection';
+import { TextSection } from './TextSection';
 import { InlineError } from './StateViews';
 
 interface DeleteAccountModalProps {
@@ -47,11 +46,9 @@ export function DeleteAccountContent({ onDismiss }: { onDismiss: () => void }) {
   return (
     <>
       {/* Schritt 2: in klarer Sprache, was geschieht. */}
-      <div className="app-hint">
-        <IonText>
-          <p>{t('deleteAccount.intro')}</p>
-        </IonText>
-      </div>
+      <TextSection>
+        <p>{t('deleteAccount.intro')}</p>
+      </TextSection>
 
       <ListSection title={t('deleteAccount.removedTitle')}>
         {(['profile', 'contact', 'notifications', 'private'] as const).map((key) => (
@@ -77,13 +74,11 @@ export function DeleteAccountContent({ onDismiss }: { onDismiss: () => void }) {
             title={t('deleteAccount.blockedTitle')}
             footnote={t('deleteAccount.blockedHint')}
           >
-            <IonList>
-              {blockers.data!.map((blocker) => (
-                <IonItem key={blocker.clubId}>
-                  <IonLabel className="ion-text-wrap">{blocker.clubName}</IonLabel>
-                </IonItem>
-              ))}
-            </IonList>
+            {blockers.data!.map((blocker) => (
+              <IonItem key={blocker.clubId}>
+                <IonLabel className="ion-text-wrap">{blocker.clubName}</IonLabel>
+              </IonItem>
+            ))}
           </ListSection>
 
           <div className="app-actions">
@@ -101,6 +96,7 @@ export function DeleteAccountContent({ onDismiss }: { onDismiss: () => void }) {
                 labelPlacement="stacked"
                 autocapitalize="characters"
                 autocomplete="off"
+                enterkeyhint="done"
                 value={confirmation}
                 onIonInput={(e) => setConfirmation(e.detail.value ?? '')}
               />
@@ -143,19 +139,25 @@ export function DeleteAccountContent({ onDismiss }: { onDismiss: () => void }) {
 export function DeleteAccountModal({ isOpen, onDismiss }: DeleteAccountModalProps) {
   const { t } = useTranslation();
   const presentingElement = usePresentingElement();
+  // Ionic verlangt einen zugänglichen Namen für jedes Blatt: Der Titel in
+  // der Kopfzeile ist er, und `aria-labelledby` zeigt darauf.
+  const titleId = useId();
 
   return (
     <IonModal
       isOpen={isOpen}
       onDidDismiss={onDismiss}
       presentingElement={presentingElement}
+      aria-labelledby={titleId}
     >
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
             <IonButton onClick={onDismiss}>{t('common.cancel')}</IonButton>
           </IonButtons>
-          <IonTitle>{t('deleteAccount.title')}</IonTitle>
+          <IonTitle id={titleId} role="heading" aria-level={2}>
+            {t('deleteAccount.title')}
+          </IonTitle>
         </IonToolbar>
       </IonHeader>
 

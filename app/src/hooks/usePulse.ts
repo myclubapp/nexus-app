@@ -113,11 +113,12 @@ export function useDiscardPulse() {
  * ein Vorstand bis heute nicht sah, ob sein Verein nur bittet.
  */
 export function useConnectionRatio(days = 56) {
-  const { activeClub, isTrainer } = useClub();
+  // Eine Vereinszahl: `connection_ratio()` gibt sie seit `0073` nur dem Vorstand.
+  const { activeClub, isBoard } = useClub();
 
   return useQuery({
     queryKey: ['connection-ratio', activeClub?.id, days],
-    enabled: Boolean(activeClub) && isTrainer && isConfigured,
+    enabled: Boolean(activeClub) && isBoard && isConfigured,
     queryFn: async (): Promise<ConnectionRatio> => {
       const { data, error } = await supabase.rpc('connection_ratio', {
         p_club_id: activeClub!.id,

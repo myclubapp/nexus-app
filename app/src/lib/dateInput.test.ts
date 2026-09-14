@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fromPickerValue, toPickerValue } from './dateInput';
+import { clampEnd, fromPickerValue, toPickerValue } from './dateInput';
 
 describe('toPickerValue', () => {
   it('lässt ein leeres Feld leer – nichts gewählt ist nicht «heute»', () => {
@@ -36,5 +36,26 @@ describe('fromPickerValue', () => {
     expect(fromPickerValue(null, 'date')).toBe('');
     expect(fromPickerValue(undefined, 'time')).toBe('');
     expect(fromPickerValue([], 'date-time')).toBe('');
+  });
+});
+
+describe('clampEnd', () => {
+  it('rückt ein Ende vor dem Beginn auf den Beginn nach', () => {
+    expect(clampEnd('2026-09-28T18:55', '2026-09-13T18:55')).toBe('2026-09-28T18:55');
+  });
+
+  it('lässt ein Ende nach dem Beginn stehen', () => {
+    expect(clampEnd('2026-09-28T18:55', '2026-09-28T20:30')).toBe('2026-09-28T20:30');
+    expect(clampEnd('2026-09-28T18:55', '2026-10-01T09:00')).toBe('2026-10-01T09:00');
+  });
+
+  it('lässt ein leeres Ende leer und rührt ohne Beginn nichts an', () => {
+    expect(clampEnd('2026-09-28T18:55', '')).toBe('');
+    expect(clampEnd('', '2026-09-13T18:55')).toBe('2026-09-13T18:55');
+  });
+
+  it('vergleicht ein reines Datum («bis») nur nach dem Tag', () => {
+    expect(clampEnd('2026-09-28T18:55', '2026-09-13')).toBe('2026-09-28');
+    expect(clampEnd('2026-09-28T18:55', '2026-09-28')).toBe('2026-09-28');
   });
 });

@@ -177,6 +177,20 @@
 | 6 | Flugmodus ein, eine Regel speichern | Toast **oben** mit Fehlermeldung; der Wert bleibt im Blatt | | |
 | 7 | Flugmodus aus, erneut speichern | Geht durch; der Wert ist **einmal** angekommen | | |
 
+
+## TC-011: Regel löschen (A6)
+
+**Priority:** High
+**Preconditions:** Eine eigene Regel ohne Buchungen; die Standardregel «Training besucht» mit Buchungen.
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als **V** die eigene Regel öffnen | Unter «Verwalten» steht «Regel löschen» rot und zuletzt | | |
+| 2 | Die Zeile wählen, «Abbrechen» | Rückfrage mit dem Namen; nichts passiert | | |
+| 3 | Nochmals, bestätigen | Toast «Regel gelöscht.», das Blatt schliesst, die Regel fehlt in der Liste | | |
+| 4 | «Training besucht» löschen wollen | Abgewiesen: «… Buchungen und … Termine – lege sie still …»; die Regel bleibt | | |
+| 5 | Als **M** `delete_point_rule` per HTTP-Aufruf | Abgewiesen («Nur der Vorstand …») | | |
+
 ---
 
 ## Test Matrix
@@ -207,6 +221,7 @@
 | TC-008 | Nur der Vorstand konfiguriert | High | |
 | TC-009 | Vier Sprachen | High | |
 | TC-010 | Darstellung und Netz | Medium | |
+| TC-011 | Regel löschen | High | |
 
 **Overall Result:** ☐ Pass ☐ Fail
 **Tester:** ******\_\_\_******

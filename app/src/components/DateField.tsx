@@ -1,8 +1,8 @@
 import { useId } from 'react';
 import { IonDatetime, IonDatetimeButton, IonItem, IonLabel, IonModal } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
-import { usePresentingElement } from '../hooks/usePresentingElement';
 import { fromPickerValue, toPickerValue, type DatePresentation } from '../lib/dateInput';
+import { DATETIME_DEFAULTS, appLocale } from '../lib/format';
 
 interface DateFieldProps {
   label: string;
@@ -14,6 +14,11 @@ interface DateFieldProps {
   min?: string;
   /** Ein Feld, das leer bleiben darf, zeigt «Löschen». */
   clearable?: boolean;
+  /**
+   * Welche Tage wählbar sind, nach ISO-Datum – Ionics `isDateEnabled`. Ohne
+   * Angabe jeder Tag: Spiele und Anlässe fallen auf Wochenenden.
+   */
+  isDateEnabled?: (isoDate: string) => boolean;
 }
 
 /**
@@ -29,6 +34,10 @@ interface DateFieldProps {
  * Zeile, das Blatt dahinter bleibt eingehängt (`keepContentsMounted`), damit
  * der Knopf seinen Wert kennt, bevor das Blatt je offen war. Die Formulare
  * behalten ihre Zeichenketten; übersetzt wird in `lib/dateInput.ts`.
+ *
+ * Sprache, Wochenstart und Stundenzählung sind für alle Wähler dieselben:
+ * `appLocale()` und `DATETIME_DEFAULTS` aus `lib/format.ts` – dort steht auch
+ * die Anzeige, damit Wähler und Anzeige nicht auseinanderlaufen.
  */
 export function DateField({
   label,
@@ -37,10 +46,10 @@ export function DateField({
   presentation,
   min,
   clearable = false,
+  isDateEnabled,
 }: DateFieldProps) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const id = useId();
-  const presentingElement = usePresentingElement();
 
   return (
     <>
@@ -49,14 +58,20 @@ export function DateField({
         <IonDatetimeButton datetime={id} slot="end" />
       </IonItem>
 
-      <IonModal keepContentsMounted presentingElement={presentingElement}>
+      {/* Ohne `presentingElement`: Das Datumsblatt ist kein Erfassungsblatt,
+          sondern ein Wähler, den Ionic auf `fit-content` setzt. Der
+          Karten-Übergang passt dazu nicht – und aus einem offenen Formular
+          heraus würde er die Seite darunter zurückstellen, obwohl das
+          Formular noch offen ist (Doku ion-datetime-button). */}
+      <IonModal keepContentsMounted>
         <IonDatetime
           id={id}
           presentation={presentation}
           value={toPickerValue(value)}
           min={min ? toPickerValue(min) : undefined}
-          locale={i18n.resolvedLanguage ?? i18n.language}
-          firstDayOfWeek={1}
+          locale={appLocale()}
+          {...DATETIME_DEFAULTS}
+          isDateEnabled={isDateEnabled}
           minuteValues="0,5,10,15,20,25,30,35,40,45,50,55"
           showDefaultButtons
           showClearButton={clearable}

@@ -2,8 +2,8 @@
 
 **Use Case:** [UC-012](../use_cases/UC-012-schicht-uebernehmen.md)
 **Geltungsbereich:** Eintragen, Austragen, Besetzungsgrenze, Überschneidung, mehrere Schichten
-**Anforderungen:** FR-031
-**Regeln:** BR-045 bis BR-048
+**Anforderungen:** FR-031, FR-156
+**Regeln:** BR-045 bis BR-048, BR-187
 **Erstellt:** 2026-09-09
 
 ## Vorbereitung
@@ -200,6 +200,38 @@
 
 ---
 
+## TC-009: Kalendereintrag auf dem Gerät (FR-156, BR-187)
+
+**Priority:** High
+**Preconditions:** Als **M** angemeldet; ein Helfer-Event mit Ort, Warum und zwei Schichten zu verschiedenen Zeiten. Auf iOS, Android **und** im Browser durchspielen.
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Bei der ersten Schicht «Ich übernehme das» | Toast; **iOS/Android:** das Systemblatt «Neuer Termin» öffnet sich mit «‹Schicht› – ‹Anlass›» als Titel, dem Ort, dem **Zeitfenster der Schicht** (nicht des Anlasses) in Ortszeit, Anlass und Warum in den Notizen. **Browser:** `.ics`-Download | | |
+| 2 | Im Systemblatt **Abbrechen** | Die Schicht bleibt übernommen («Doch nicht» steht da) | | |
+| 3 | Das Kalender-Symbol neben «Doch nicht» antippen und **Sichern** | Der Eintrag steht im Gerätekalender zur Stunde der Schicht | | |
+| 4 | Die zweite Schicht so wählen, dass sie sich überschneidet, und «Trotzdem übernehmen» (A4) | Auch nach der Rückfrage öffnet sich das Kalenderblatt | | |
+| 5 | Bei einer Schicht «Doch nicht» | Kein Kalenderblatt; der Eintrag im Gerätekalender bleibt und wird von Hand gelöscht (BR-187) | | |
+| 6 | Eine **vergangene** Schicht ansehen, für die man eingetragen war | Kein Kalender-Symbol an der Zeile | | |
+
+---
+
+## TC-010: Keine Zusage zum Anlass (BR-196)
+
+**Priority:** High
+**Preconditions:** Ein publiziertes Helfer-Event ohne Team, dessen Schichten **alle voll** sind (z. B. 7 von 7). Als **M2** angemeldet, ohne eigene Schicht; **M1** hält eine Schicht.
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als **M2** die Agenda-Zeile ansehen | Links kein gelbes «noch offen», sondern ein neutrales Platzhalter-Symbol; rechts «7/7» | | |
+| 2 | Die Zeile nach rechts wischen | Kein grüner Haken und kein rotes Kreuz erscheinen | | |
+| 3 | Das Detail öffnen | Kein «Mein Status», keine Listen «Zugesagt / Abgesagt / Keine Antwort»; die Zeile «Schichten · 7 von 7 besetzt» führt zum Schichtblatt | | |
+| 4 | Als **Trainer:in** oder Vorstand das Detail öffnen | Unter «Verwalten» steht kein «Erinnern» | | |
+| 5 | Als **M1** die Agenda-Zeile ansehen | Links der grüne Haken, weil **M1** eine Schicht hält | | |
+| 6 | Ein gewöhnliches Training daneben öffnen | «Mein Status» und die Listen stehen wie gehabt (TC-006) | | |
+
+---
+
 ## Test Matrix
 
 | Device / Browser | OS / Version | Screen Size | Status |
@@ -228,6 +260,8 @@
 | TC-006b | Punkte je Schicht | High | |
 | TC-007 | Vier Sprachen | High | |
 | TC-008 | Darstellung und Netz | Medium | |
+| TC-009 | Kalendereintrag auf dem Gerät | High | |
+| TC-010 | Keine Zusage zum Anlass | High | |
 
 **Overall Result:** ☐ Pass ☐ Fail
 **Tester:** ******\_\_\_******

@@ -149,6 +149,8 @@ export function MemberPage() {
         <IonSearchbar
           value={filter.search}
           placeholder={t('members.search')}
+          inputmode="search"
+          enterkeyhint="search"
           onIonInput={(e) =>
             setFilter((current) => ({ ...current, search: e.detail.value ?? '' }))
           }
@@ -244,32 +246,41 @@ export function MemberPage() {
               title={t('members.count', { count: visible.length })}
               footnote={t('members.listFootnote')}
             >
-              {visible.map((member) => (
-                <IonItem key={member.id} button detail onClick={() => openMember(member)}>
-                  {/* Wie in der bestehenden myclub-App: links der Avatar,
-                      die Rolle als Abzeichen, nicht als Nebensatz. */}
-                  <MemberAvatar displayName={member.display_name} avatarUrl={member.avatar_url} />
-                  <IonLabel className="ion-text-wrap">
-                    <h2>{member.display_name}</h2>
-                    {member.teamNames.length > 0 && (
-                      <IonNote>{member.teamNames.join(', ')}</IonNote>
-                    )}
-                    {member.role !== 'member' && (
-                      <p>
-                        <IonBadge color="primary">
+              {visible.map((member) => {
+                // Eine Zeile, ein Sekundärtext, ein Abzeichen rechts: Rolle
+                // (mit Bereich) und Teams stehen als Note unter dem Namen;
+                // rechts steht der Status, sonst die Rolle – nie beides.
+                const roleLabel =
+                  member.role === 'member'
+                    ? null
+                    : t(`invite.role.${member.role === 'superadmin' ? 'admin' : member.role}`) +
+                      (hasArea(member.role) && member.area ? ` · ${member.area}` : '');
+                const secondary = [roleLabel, member.teamNames.join(', ')]
+                  .filter((part) => part)
+                  .join(' · ');
+                return (
+                  <IonItem key={member.id} button detail onClick={() => openMember(member)}>
+                    {/* Wie in der bestehenden myclub-App: links der Avatar,
+                        die Rolle als Abzeichen, nicht als Nebensatz. */}
+                    <MemberAvatar displayName={member.display_name} avatarUrl={member.avatar_url} />
+                    <IonLabel className="ion-text-wrap">
+                      <h2>{member.display_name}</h2>
+                      {secondary && <IonNote>{secondary}</IonNote>}
+                    </IonLabel>
+                    {member.status !== 'active' ? (
+                      <IonBadge slot="end" color="medium">
+                        {t(`members.statusValue.${member.status}`)}
+                      </IonBadge>
+                    ) : (
+                      roleLabel && (
+                        <IonBadge slot="end" color="primary">
                           {t(`invite.role.${member.role === 'superadmin' ? 'admin' : member.role}`)}
-                          {hasArea(member.role) && member.area ? ` · ${member.area}` : ''}
                         </IonBadge>
-                      </p>
+                      )
                     )}
-                  </IonLabel>
-                  {member.status !== 'active' && (
-                    <IonBadge slot="end" color="medium">
-                      {t(`members.statusValue.${member.status}`)}
-                    </IonBadge>
-                  )}
-                </IonItem>
-              ))}
+                  </IonItem>
+                );
+              })}
             </ListSection>
           )}
         </>
@@ -347,6 +358,7 @@ export function MemberPage() {
               <IonItem>
                 <IonSelect
                   label={t('invite.roleLabel')}
+                  labelPlacement="stacked"
                   value={role}
                   onIonChange={(e) => setRole(e.detail.value as MemberRole)}
                   cancelText={t('common.cancel')}
@@ -368,6 +380,7 @@ export function MemberPage() {
                     label={t('members.area')}
                     labelPlacement="stacked"
                     placeholder={t('members.areaPlaceholder')}
+                    enterkeyhint="done"
                     value={area}
                     onIonInput={(e) => setArea(e.detail.value ?? '')}
                   />
@@ -377,6 +390,7 @@ export function MemberPage() {
               <IonItem>
                 <IonSelect
                   label={t('members.status')}
+                  labelPlacement="stacked"
                   value={status}
                   onIonChange={(e) => setStatus(e.detail.value as MemberStatus)}
                   cancelText={t('common.cancel')}
@@ -394,8 +408,10 @@ export function MemberPage() {
             {/* BR-025: Mehrere Teams gleichzeitig, deshalb Kästchen statt Auswahl. */}
             <ListSection title={t('members.teams')} footnote={t('members.teamsHint')}>
               {(teams.data ?? []).length === 0 ? (
-                <IonItem>
-                  <IonNote>{t('members.noTeams')}</IonNote>
+                <IonItem lines="none">
+                  <IonLabel color="medium" className="ion-text-wrap">
+                    {t('members.noTeams')}
+                  </IonLabel>
                 </IonItem>
               ) : (
                 (teams.data ?? []).map((team) => (
@@ -453,12 +469,16 @@ export function MemberPage() {
                 }
               >
                 {ledger.isLoading ? (
-                  <IonItem>
-                    <IonNote>{t('common.loading')}</IonNote>
+                  <IonItem lines="none">
+                    <IonLabel color="medium" className="ion-text-wrap">
+                      {t('common.loading')}
+                    </IonLabel>
                   </IonItem>
                 ) : (ledger.data ?? []).length === 0 ? (
-                  <IonItem>
-                    <IonNote>{t('common.empty')}</IonNote>
+                  <IonItem lines="none">
+                    <IonLabel color="medium" className="ion-text-wrap">
+                      {t('common.empty')}
+                    </IonLabel>
                   </IonItem>
                 ) : (
                   (ledger.data ?? []).slice(0, 10).map((entry) => (
@@ -520,6 +540,7 @@ export function MemberPage() {
               label={t('members.teamName')}
               labelPlacement="stacked"
               autocapitalize="words"
+              enterkeyhint="done"
               value={teamName}
               onIonInput={(e) => setTeamName(e.detail.value ?? '')}
             />

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   IonItem,
-  IonLabel,
   IonNote,
   IonSelect,
   IonSelectOption,
@@ -170,12 +169,9 @@ export function MeetingInputForm({ onDone, onDismiss, isOpen = true }: MeetingIn
         </IonItem>
       </ListSection>
 
+      {/* Ein Hinweis, keine Zeile: Er steht unter der Liste, nicht in ihr. */}
       {offices.data?.length === 0 && (
-        <IonItem lines="none">
-          <IonLabel className="ion-text-wrap">
-            <IonNote>{t('meeting.noOffices')}</IonNote>
-          </IonLabel>
-        </IonItem>
+        <IonNote className="app-footnote">{t('meeting.noOffices')}</IonNote>
       )}
 
       {problems.map((problem) => (

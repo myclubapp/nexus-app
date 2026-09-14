@@ -31,6 +31,10 @@ interface DeclineFormProps {
  * Der Hinweis auf die Abmeldeprämie steht hier und nicht erst danach – wer
  * weiss, dass eine rechtzeitige Absage zählt, sagt eher rechtzeitig ab. Das
  * ist der ganze Zweck von BR-040.
+ *
+ * «Absage senden» steht als Block-Knopf unter dem Hinweis, nicht in der
+ * Kopfzeile: Zwei Wörter brechen dort um und drängen den Titel zusammen, und
+ * der Weg Grund → Hinweis → Senden liest sich von oben nach unten.
  */
 export function DeclineForm({
   startsAt,
@@ -53,6 +57,7 @@ export function DeclineForm({
       isOpen={isOpen}
       title={t('agenda.decline')}
       submitLabel={t('agenda.declineConfirm')}
+      submitPlacement="content"
       canSubmit={canSubmit}
       isSubmitting={isSubmitting}
       error={error}
@@ -80,6 +85,7 @@ export function DeclineForm({
             <IonInput
               label={t('agenda.declineFreeText')}
               labelPlacement="stacked"
+              enterkeyhint="done"
               value={freeText}
               onIonInput={(e) => setFreeText(e.detail.value ?? '')}
             />

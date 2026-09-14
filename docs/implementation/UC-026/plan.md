@@ -128,6 +128,7 @@ Verbindungs-Quote – und der Geltungsbereich ist wirkungslos.
 
 | Datum      | Eintrag       |
 | ---------- | ------------- |
+| 2026-09-13 | Bearbeiten und Zurückziehen vom Dreipunkt in der Kopfzeile in den Abschnitt «Verwalten» unter der Karte verlegt (`ManageSection`, guidelines §2); Zurückziehen fragt jetzt über ein `IonAlert` nach |
 | 2026-09-11 | Nachtrag: Der Plan war nie abgeschlossen worden, obwohl `0043`, `lib/news.ts`, `hooks/useNews.ts` und `NewsFormModal` seit dem 10.09. stehen und A3 wie A4 im Feed erreichbar sind. Aufgaben abgehakt, FR-076 und FR-077 auf `Implemented`, Use Case geschlossen |
 | 2026-09-11 | A2 («News aus einer Vorstandsantwort») ist seit `0055` wirklich gebaut: `answer_voice_note()` und `answer_meeting_input()` publizieren mit `news.source = 'board'` |
 | 2026-09-09 | Plan erstellt |

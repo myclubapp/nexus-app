@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   IonButton,
   IonItem,
-  IonLabel,
   IonNote,
   IonSelect,
   IonSelectOption,
@@ -21,6 +20,7 @@ import {
 import { FormModal } from './FormModal';
 import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
+import { TextSection } from './TextSection';
 import { InlineError } from './StateViews';
 import { formatDateTime } from '../lib/format';
 import { publishedTitle } from '../lib/news';
@@ -114,35 +114,30 @@ export function InputTriage({ input, onDone, onDismiss, isOpen = true }: InputTr
       // dann einmal in der Kopfzeile (guidelines.md §2).
       onSubmit={closed ? undefined : applyTriage}
     >
-      {/* Der Vorschlag – ungekürzt, so wie er eingereicht wurde. */}
-      <ListSection
-        title={
-          input.isAnonymous ? t('meeting.anonymousInput') : t('meeting.personalInput')
-        }
-        footnote={formatDateTime(input.createdAt)}
+      {/* Der Vorschlag – ungekürzt, so wie er eingereicht wurde: ein
+          Textblock, keine Listenzeile. */}
+      <TextSection
+        title={input.isAnonymous ? t('meeting.anonymousInput') : t('meeting.personalInput')}
+        preserveLines
       >
-        <IonItem lines="none">
-          <IonLabel className="ion-text-wrap">
-            <p>{input.body}</p>
-            {addressed.length > 0 && (
-              <IonNote>
-                {t('meeting.addressedTo', { offices: addressed.join(', ') })}
-              </IonNote>
-            )}
-          </IonLabel>
-        </IonItem>
-      </ListSection>
+        {input.body}
+      </TextSection>
+      <IonNote className="app-footnote">
+        {formatDateTime(input.createdAt)}
+        {addressed.length > 0 &&
+          ` · ${t('meeting.addressedTo', { offices: addressed.join(', ') })}`}
+      </IonNote>
 
       {closed ? (
-        <ListSection title={t('meeting.answerTitle')} footnote={t('meeting.closedHint')}>
-          <IonItem lines="none">
-            <IonLabel className="ion-text-wrap">
-              <h2>{t(`meeting.status.${input.status}`)}</h2>
-              <p>{input.response}</p>
-              <IonNote>{formatDateTime(input.respondedAt)}</IonNote>
-            </IonLabel>
-          </IonItem>
-        </ListSection>
+        <>
+          <TextSection title={t('meeting.answerTitle')} preserveLines>
+            {input.response}
+          </TextSection>
+          <IonNote className="app-footnote">
+            {t(`meeting.status.${input.status}`)} · {formatDateTime(input.respondedAt)} –{' '}
+            {t('meeting.closedHint')}
+          </IonNote>
+        </>
       ) : (
         <>
           {/* Schritt 7: laufend bearbeiten **oder** einer Sitzung zuordnen. */}

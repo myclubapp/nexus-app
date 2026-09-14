@@ -10,10 +10,15 @@ import { Navigate, Route } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCheckInQueue } from '../hooks/useCheckIn';
 import {
+  calendar,
   calendarOutline,
+  home,
   homeOutline,
+  list,
   listOutline,
+  person,
   personOutline,
+  trophy,
   trophyOutline,
 } from 'ionicons/icons';
 import { DashboardPage } from './DashboardPage';
@@ -46,6 +51,20 @@ import { PointRulePage } from './club/PointRulePage';
 import { ContributionPage } from './club/ContributionPage';
 
 /**
+ * Tab-Symbol in Umriss- und gefüllter Variante. Welche sichtbar ist,
+ * entscheidet `ion-tab-button.tab-selected` per CSS (`variables.css`) –
+ * so braucht es keinen Zustand, der der Route hinterherläuft.
+ */
+function TabIcon({ outline, filled }: { outline: string; filled: string }) {
+  return (
+    <>
+      <IonIcon className="app-tab-icon-outline" icon={outline} aria-hidden="true" />
+      <IonIcon className="app-tab-icon-filled" icon={filled} aria-hidden="true" />
+    </>
+  );
+}
+
+/**
  * Fünf Tabs nach dem myclub-Vorbild (Architektur §8). Die Kindrouten sind
  * relativ zu /tabs.
  *
@@ -68,6 +87,8 @@ export function TabsPage() {
     <IonTabs>
       <IonRouterOutlet>
         <Route path="dashboard" element={<DashboardPage />} />
+        {/* FR-078: die Inbox aus der Kopfzeile der Start-Seite, mit Zurück dorthin. */}
+        <Route path="dashboard/inbox" element={<InboxPage backHref="/tabs/dashboard" />} />
         <Route path="marketplace" element={<MarketplacePage />} />
         {/* UC-041: die Ämterliste aus dem Marktplatz, mit Zurück dorthin. */}
         <Route path="marketplace/offices" element={<OfficePage backHref="/tabs/marketplace" />} />
@@ -101,25 +122,26 @@ export function TabsPage() {
         <Route path="" element={<Navigate to="dashboard" replace />} />
       </IonRouterOutlet>
 
-      <IonTabBar slot="bottom">
+      {/* Die Beschriftung trägt den Namen des Tabs; das Symbol ist Dekor. */}
+      <IonTabBar slot="bottom" translucent>
         <IonTabButton tab="dashboard" href="/tabs/dashboard">
-          <IonIcon icon={homeOutline} />
+          <TabIcon outline={homeOutline} filled={home} />
           <IonLabel>{t('tabs.dashboard')}</IonLabel>
         </IonTabButton>
         <IonTabButton tab="marketplace" href="/tabs/marketplace">
-          <IonIcon icon={listOutline} />
+          <TabIcon outline={listOutline} filled={list} />
           <IonLabel>{t('tabs.marketplace')}</IonLabel>
         </IonTabButton>
         <IonTabButton tab="leaderboard" href="/tabs/leaderboard">
-          <IonIcon icon={trophyOutline} />
+          <TabIcon outline={trophyOutline} filled={trophy} />
           <IonLabel>{t('tabs.leaderboard')}</IonLabel>
         </IonTabButton>
         <IonTabButton tab="agenda" href="/tabs/agenda">
-          <IonIcon icon={calendarOutline} />
+          <TabIcon outline={calendarOutline} filled={calendar} />
           <IonLabel>{t('tabs.agenda')}</IonLabel>
         </IonTabButton>
         <IonTabButton tab="profile" href="/tabs/profile">
-          <IonIcon icon={personOutline} />
+          <TabIcon outline={personOutline} filled={person} />
           <IonLabel>{t('tabs.profile')}</IonLabel>
         </IonTabButton>
       </IonTabBar>

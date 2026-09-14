@@ -128,7 +128,7 @@ describe('requiresWhy', () => {
     expect(requiresWhy(type)).toBe(true);
   });
 
-  it.each(['training', 'match', 'cup', 'tournament'] as const)(
+  it.each(['training', 'match'] as const)(
     'verlangt für %s keines',
     (type) => {
       expect(requiresWhy(type)).toBe(false);
@@ -143,11 +143,6 @@ describe('suggestedRuleCode', () => {
     expect(suggestedRuleCode('training', codes)).toBe('training_attend');
     expect(suggestedRuleCode('helper', codes)).toBe('shift_done');
     expect(suggestedRuleCode('gv', codes)).toBe('assembly_attend');
-  });
-
-  it('schlägt für alle Wettkampfarten dieselbe Regel vor', () => {
-    expect(suggestedRuleCode('cup', codes)).toBe('match_attend');
-    expect(suggestedRuleCode('tournament', codes)).toBe('match_attend');
   });
 
   it('schlägt nichts vor, wenn die Regel im Verein fehlt', () => {

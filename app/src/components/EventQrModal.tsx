@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import {
   IonButton,
   IonButtons,
@@ -61,14 +62,17 @@ export function EventQr({ eventId }: EventQrProps) {
           onRetry={() => void token.refetch()}
         />
       ) : (
-        <ListSection footnote={t('checkIn.qrHint')}>
-          <IonItem lines="none">
-            <div className="app-qr">
-              {/* BR-055: Das Token gehört zu genau diesem Termin. */}
-              <QrCode value={token.data ?? ''} label={t('checkIn.qrLabel')} />
-            </div>
-          </IonItem>
-        </ListSection>
+        // Der Code ist keine Listenzeile, sondern ein Bild – ein `IonItem`
+        // darum wäre das Item als Allzweck-Container (ion-item: «should not
+        // be used as a general purpose container»). Eigener Block, darunter
+        // die Fussnote im selben Stil wie unter einer Liste.
+        <>
+          <div className="app-qr">
+            {/* BR-055: Das Token gehört zu genau diesem Termin. */}
+            <QrCode value={token.data ?? ''} label={t('checkIn.qrLabel')} />
+          </div>
+          <IonNote className="app-footnote">{t('checkIn.qrHint')}</IonNote>
+        </>
       )}
 
       {/* A6: Wer nicht scannen kann, war deswegen nicht weniger anwesend. */}
@@ -146,19 +150,26 @@ export function EventQrModal({
 }) {
   const { t } = useTranslation();
   const presentingElement = usePresentingElement();
+  // Das Blatt ist ein `role="dialog"` und braucht einen Namen (ion-modal:
+  // «developers must properly label their modals»); der Titel ist er.
+  const titleId = useId();
 
   return (
     <IonModal
       isOpen={Boolean(eventId)}
       onDidDismiss={onDismiss}
       presentingElement={presentingElement}
+      aria-labelledby={titleId}
     >
       <IonHeader translucent>
         <IonToolbar>
-          <IonTitle>{t('checkIn.showQr')}</IonTitle>
-          <IonButtons slot="end">
+          {/* Schliessen steht links, wie in jedem Blatt (guidelines §2). */}
+          <IonButtons slot="start">
             <IonButton onClick={onDismiss}>{t('common.close')}</IonButton>
           </IonButtons>
+          <IonTitle id={titleId} role="heading" aria-level={2}>
+            {t('checkIn.showQr')}
+          </IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>

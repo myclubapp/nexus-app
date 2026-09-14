@@ -71,7 +71,7 @@
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
 | 1 | Ein Team verknüpfen (TC-001) – oder für den nächtlichen Weg `select public.sync_federations();` (Vault-Einträge vorhanden) | Der Toast nennt die Zahl der Spiele; beim nächtlichen Weg nennt die Antwort `games > 0` für den Verein | | |
-| 2 | Als **T** die Agenda öffnen | Die Spiele der Saison stehen da: «Heimteam – Gastteam», Halle und Ort, Typ «Spiel · Vom Verband» | | |
+| 2 | Als **T** die Agenda öffnen | Die Spiele der Saison stehen da: «Heimteam – Gastteam», Halle und Ort, Typ «Spiel · Swiss Unihockey» – der Verband beim Namen, nicht «vom Verband» | | |
 | 3 | Ein vergangenes Spiel ansehen | Die Zeile zeigt «Resultat 2:6» (oder «3:4 n.V.») | | |
 | 4 | Die Uhrzeit eines Spiels prüfen | Die Ortszeit des Verbands, im Winter wie im Sommer | | |
 | 5 | Als **M** die Agenda öffnen | Keines dieser Spiele – sie gehören dem Team (C-032) | | |
@@ -202,7 +202,32 @@
 
 ---
 
+## TC-013: Der Spielort auf der Karte (BR-180, C-006)
+
+**Priority:** Medium
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | `0076` deployt, `sync-federation` deployt, ein Lauf durch (TC-004 Schritt 1) | `select count(*) from events where latitude is not null` ist > 0 für den Verein | | |
+| 2 | Als **T** ein Spiel mit Halle öffnen | Zuoberst die swisstopo-Karte (Zoom 14) mit einem Marker in der Vereinsfarbe; unter dem Ort die Zeile «Navigation starten» | | |
+| 3 | Auf den Marker tippen | Der Ballon nennt Halle und Ort – dunkel beschriftet, auch im Dunkelmodus | | |
+| 4 | Die Karte mit dem Finger nach unten verschieben | Die Karte bewegt sich; das Blatt bleibt offen (der Wisch gehört der Karte) | | |
+| 5 | Auf iOS «Navigation starten» tippen | Apple Karten öffnet die Route zur Halle | | |
+| 6 | Auf Android «Navigation starten» tippen | Die installierte Karten-App öffnet die Route (`geo:`), ohne Google-Adresse | | |
+| 7 | Im Browser «Navigation starten» tippen | OpenStreetMap zeigt die Route in einem neuen Tab | | |
+| 8 | Ein Training von Hand öffnen | Keine Karte, keine Zeile «Navigation starten» | | |
+| 9 | Ein Spiel öffnen, bevor die Karte geladen hat (Flugmodus kurz an) | Ein leerer Platzhalter in der Höhe der Karte; nichts springt, der Rest des Blatts steht | | |
+
+---
+
 ## Offen
+
+- **0076 und die Karte (2026-09-13) sind gebaut, aber noch nicht deployt** –
+  TC-013 wartet auf `supabase db push` und `supabase functions deploy
+  sync-federation`; die Koordinaten kommen mit dem nächsten Abgleich.
+- **Kein eigener Standort** auf der Karte (blauer Punkt der alten App): Das
+  bräuchte `@capacitor/geolocation` und einen Berechtigungsprompt – nicht
+  bestellt.
 
 - **Deployt am 2026-09-12**, Vault-Einträge gesetzt. TC-001 bis TC-006 sind
   damit am laufenden Projekt ausführbar; die Datenbankseite ist geprüft

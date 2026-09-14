@@ -13,6 +13,7 @@ import { useClaimTask, useReleaseTask, useSubmitTask } from '../hooks/useTasks';
 import { FormModal } from './FormModal';
 import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
+import { TextSection } from './TextSection';
 import { InlineError } from './StateViews';
 import { formatDate } from '../lib/format';
 import { canActOn, isSample } from '../lib/sample';
@@ -105,34 +106,19 @@ export function TaskDetail({ task, onDone, onDismiss, isOpen = true }: TaskDetai
       onSubmit={isActionable ? run : undefined}
     >
       {/* Schritt 3: Warum zuerst. Es ist der Grund, aus dem jemand zusagt. */}
-      {sample && (
-        <ListSection title={t('sample.badge')}>
-          <IonItem lines="none">
-            <IonLabel className="ion-text-wrap">
-              <p>{t('sample.blocked')}</p>
-            </IonLabel>
-          </IonItem>
-        </ListSection>
-      )}
+      {sample && <TextSection title={t('sample.badge')}>{t('sample.blocked')}</TextSection>}
 
+      {/* Fliesstext ausserhalb der Liste: Ein Absatz ist keine Zeile. */}
       {task.why && (
-        <ListSection title={t('taskForm.whyTitle')}>
-          <IonItem>
-            <IonLabel className="ion-text-wrap">
-              <p>{task.why}</p>
-            </IonLabel>
-          </IonItem>
-        </ListSection>
+        <TextSection title={t('taskForm.whyTitle')} preserveLines>
+          {task.why}
+        </TextSection>
       )}
 
       {task.description && (
-        <ListSection title={t('taskForm.description')}>
-          <IonItem>
-            <IonLabel className="ion-text-wrap">
-              <p>{task.description}</p>
-            </IonLabel>
-          </IonItem>
-        </ListSection>
+        <TextSection title={t('taskForm.description')} preserveLines>
+          {task.description}
+        </TextSection>
       )}
 
       <ListSection title={t('taskDetail.facts')}>
@@ -180,6 +166,7 @@ export function TaskDetail({ task, onDone, onDismiss, isOpen = true }: TaskDetai
             <IonInput
               type="url"
               inputmode="url"
+              enterkeyhint="done"
               label={t('taskDetail.proofLabel')}
               labelPlacement="stacked"
               value={proof}

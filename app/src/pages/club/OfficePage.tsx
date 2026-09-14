@@ -34,8 +34,8 @@ interface OfficePageProps {
  *
  * Seit UC-041 ist die Seite das **Organigramm für alle**: Jedes Mitglied
  * sieht, wer was trägt, und öffnet das Factsheet. Der Vorstand legt an,
- * ändert und löst auf – über das Plus unten rechts, das Detail-Blatt und die
- * Wischgeste. Die Berechtigung dafür liegt in `save_office()` und den
+ * ändert und löst auf – über das Plus unten rechts, den Abschnitt «Verwalten»
+ * im Detail-Blatt und die Wischgeste. Die Berechtigung dafür liegt in `save_office()` und den
  * Policies; das Ausblenden hier ist Bequemlichkeit.
  *
  * Ein Amt ist zugleich der Verteiler für Sitzungs-Inputs (BR-133): Ein
@@ -78,8 +78,12 @@ export function OfficePage({ backHref = '/tabs/profile' }: OfficePageProps) {
         </IonLabel>
         {/* Genau ein Status-Element rechts (BR-183). */}
         {isVacant(office) ? (
-          <IonBadge slot="end" color="warning">
-            {t('offices.openSeats', { count: openSeats(office) })}
+          <IonBadge
+            slot="end"
+            color="warning"
+            aria-label={t('offices.openSeats', { count: openSeats(office) })}
+          >
+            {openSeats(office)}
           </IonBadge>
         ) : (
           <IonNote slot="end">{t('offices.occupied')}</IonNote>
@@ -167,6 +171,15 @@ export function OfficePage({ backHref = '/tabs/profile' }: OfficePageProps) {
       <OfficeDetailModal
         office={openOffice}
         onEdit={isAdmin ? startEdit : undefined}
+        onDissolve={
+          isAdmin
+            ? (office) => {
+                // Das Blatt schliesst zuerst, dann fragt derselbe Alert wie beim Wischen.
+                setOpenId(null);
+                setDissolving(office);
+              }
+            : undefined
+        }
         onDismiss={() => setOpenId(null)}
       />
 
@@ -181,11 +194,6 @@ export function OfficePage({ backHref = '/tabs/profile' }: OfficePageProps) {
           setCreating(false);
           setEditId(null);
           toast.success(t('common.saved'));
-        }}
-        onDissolve={(office) => {
-          // Das Blatt schliesst zuerst, dann fragt derselbe Alert wie beim Wischen.
-          setEditId(null);
-          setDissolving(office);
         }}
       />
     </AppPage>

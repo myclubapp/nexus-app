@@ -164,6 +164,7 @@ export function BookPoints({
                 type="number"
                 inputmode="numeric"
                 min={1}
+                enterkeyhint="done"
                 label={t('bookPoints.points')}
                 labelPlacement="stacked"
                 value={String(points)}

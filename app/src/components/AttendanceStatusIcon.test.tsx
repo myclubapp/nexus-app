@@ -53,6 +53,13 @@ describe('AttendanceStatusIcon', () => {
     expect(onToggle).toHaveBeenCalledWith('registered');
   });
 
+  it('nennt ohne Handler nur den Stand – ein Tippen gäbe es dort nicht', () => {
+    // Die Startseite zeigt die Ampel zum Lesen. Ein «tippen zum Zusagen»
+    // versprächen Bedienhilfen dort eine Handlung, die keine ist.
+    renderWithProviders(<AttendanceStatusIcon status={null} />);
+    expect(screen.getByRole('img', { name: 'Noch offen' })).toBeTruthy();
+  });
+
   it('ist nach der Absage des Termins nur noch Anzeige', () => {
     const onToggle = vi.fn();
     const { container } = renderWithProviders(

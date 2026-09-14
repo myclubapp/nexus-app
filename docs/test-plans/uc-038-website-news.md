@@ -4,15 +4,16 @@
 **Geltungsbereich:** Adresse erfassen, Import, Deduplikation, Fehlerfall, Trennen, Zeitplan
 **Anforderungen:** FR-146, FR-147, FR-149
 **Regeln:** BR-167 bis BR-174
-**Erstellt:** 2026-09-09 · **Erweitert:** 2026-09-10 (Prüfung, Umfang, Kategorien)
+**Erstellt:** 2026-09-09 · **Erweitert:** 2026-09-10 (Prüfung, Umfang, Kategorien), 2026-09-12 (Volltext und Bilder im Detail)
 
 ## Vorbereitung
 
 - Ein **frisch gegründeter** Verein (UC-001), noch ohne Termine und ohne
   weitere Mitglieder — sonst erscheint die «Erste Schritte»-Karte nicht.
 - **V** — Vorstand (admin), **M** — Mitglied ohne Funktion.
-- Migrationen `0022_news_sources.sql` und `0023_news_sync_schedule.sql` sind
-  eingespielt, die Function `import-wordpress-news` ist deployt.
+- Migrationen `0022_news_sources.sql`, `0023_news_sync_schedule.sql` und
+  `0068_news_body_html.sql` sind eingespielt, die Function
+  `import-wordpress-news` ist deployt.
 - Eine erreichbare WordPress-Website mit mindestens drei Beiträgen. Für TC-001
   eignet sich jede öffentliche Vereinsseite, z.B. `kadettensh.ch`.
 - Für TC-007 die Vault-Geheimnisse `project_url` und `service_role_key`
@@ -209,9 +210,26 @@
 
 ---
 
+## TC-013: Volltext und Bilder im Detail (BR-169)
+
+**Priority:** High
+**Preconditions:** Als **M** angemeldet, eine Quelle ist verbunden und nach `0068` mindestens einmal abgeglichen. Ein Beitrag der Website hat mehrere Absätze, einen Zwischentitel und ein Bild **im Text** (nicht nur ein Beitragsbild).
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Startseite öffnen | Die Karte zeigt den Anriss auf höchstens drei Zeilen, kein «[…]» mitten in der Karte | | |
+| 2 | Die Karte antippen | Das Detail zeigt den **ganzen** Artikel: alle Absätze, der Zwischentitel als Überschrift, das Bild im Text in Kartenbreite | | |
+| 3 | Bis ans Ende scrollen | Der Text endet mit dem letzten Satz der Website, nicht mit «[…]»; darunter der Autoren-Chip | | |
+| 4 | Einen Verweis im Text antippen | Auf dem Gerät öffnet der System-Browser, in der PWA ein neuer Tab; das Detail bleibt offen | | |
+| 5 | `select external_id, left(body_html, 200) from news where source = 'website' limit 3;` | `body_html` ist gefüllt und beginnt mit dem HTML der Website | | |
+| 6 | Als **V** einen Beitrag der Website per SQL mit `<script>alert(1)</script><img src=x onerror="alert(2)">` in `body_html` versehen, Detail öffnen | Kein Dialog erscheint; im Detail steht kein Skript, das kaputte Bild zeigt kein Ereignis. Danach den Abgleich erneut laufen lassen – die Website überschreibt den Test | | |
+| 7 | Einen Beitrag, dessen `body_html` per SQL auf `null` gesetzt ist, öffnen | Das Detail zeigt den Anriss und den Knopf «Ganzen Beitrag auf der Website lesen» | | |
+
+---
+
 ## Abnahmekriterien
 
-- TC-001 bis TC-006 und TC-009, TC-010, TC-012 ohne Fehlschlag.
+- TC-001 bis TC-006, TC-009, TC-010, TC-012 und TC-013 ohne Fehlschlag.
 - TC-007 nach der Vault-Einrichtung ohne Fehlschlag; TC-011, sobald eine
   Website ohne sprechende Adressen zur Hand ist.
 - Kein Beitrag steht doppelt im Feed (BR-168).

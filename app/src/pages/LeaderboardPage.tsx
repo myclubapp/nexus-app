@@ -1,6 +1,5 @@
 import { Fragment, useState } from 'react';
 import {
-  IonAvatar,
   IonItem,
   IonLabel,
   IonList,
@@ -9,6 +8,7 @@ import {
   IonSegmentButton,
   IonSelect,
   IonSelectOption,
+  useIonRouter,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -18,8 +18,10 @@ import {
   useTeamRanking,
 } from '../hooks/useGamification';
 import { useClub } from '../hooks/useClub';
+import { useRefreshOnEnter } from '../hooks/useRefreshOnEnter';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
+import { MemberAvatar } from '../components/MemberAvatar';
 import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
 import {
@@ -36,8 +38,12 @@ type Scope = 'club' | 'team' | 'teams';
 
 export function LeaderboardPage() {
   const { t } = useTranslation();
+  const router = useIonRouter();
   const { activeClub, activeMembership } = useClub();
   const myTeams = useMyTeams();
+  // Die Tab-Seite bleibt gemountet; erst das erneute Betreten lädt nach, was
+  // nach `staleTime` veraltet ist (Lifecycle-Kapitel).
+  useRefreshOnEnter([['leaderboard'], ['team-ranking'], ['my-teams'], ['club-seasons']]);
 
   const [scope, setScope] = useState<Scope>('club');
   const [period, setPeriod] = useState<LeaderboardPeriod>('season');
@@ -195,7 +201,11 @@ export function LeaderboardPage() {
         ) : teamRows.length === 0 ? (
           <EmptyState
             message={t('leaderboard.teamsEmpty')}
-            action={{ label: t('agenda.title'), routerLink: '/tabs/agenda' }}
+            /* Ein anderer Tab: `root` startet ihn dort, ohne Fremd-History. */
+            action={{
+              label: t('agenda.title'),
+              onClick: () => router.push('/tabs/agenda', 'root'),
+            }}
           />
         ) : (
           <IonList inset>
@@ -232,7 +242,10 @@ export function LeaderboardPage() {
       ) : rows.length === 0 ? (
         <EmptyState
           message={t('leaderboard.empty')}
-          action={{ label: t('agenda.title'), routerLink: '/tabs/agenda' }}
+          action={{
+            label: t('agenda.title'),
+            onClick: () => router.push('/tabs/agenda', 'root'),
+          }}
         />
       ) : (
         <IonList inset>
@@ -243,16 +256,14 @@ export function LeaderboardPage() {
                   Rang 27 wie eine durchgehende Liste. */}
               {showGap && index === rows.length - 1 && (
                 <IonItem lines="none">
-                  <IonNote>…</IonNote>
+                  <IonLabel color="medium">{t('leaderboard.rankGap')}</IonLabel>
                 </IonItem>
               )}
               <IonItem color={row.isSelf ? 'light' : undefined}>
                 <IonNote slot="start">{row.rank}</IonNote>
-                {row.avatarUrl && (
-                  <IonAvatar slot="start">
-                    <img src={row.avatarUrl} alt="" />
-                  </IonAvatar>
-                )}
+                {/* Jede Zeile trägt einen Avatar – ohne Bild die Initialen –,
+                    damit die Namen in einer Flucht stehen. */}
+                <MemberAvatar displayName={row.displayName} avatarUrl={row.avatarUrl} />
                 <IonLabel>{row.displayName}</IonLabel>
                 {/* Konzept §7.2: Ränge ohne Punktzahl, wenn der Verein es so will. */}
                 {!hidePoints && (

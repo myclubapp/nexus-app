@@ -1,16 +1,23 @@
 import { readFileSync } from 'node:fs';
 import type { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { TaskForm } from './TaskFormModal';
 import { renderWithProviders } from '../test/utils';
+import type { Task } from '../lib/database.types';
 
 const createMutateAsync = vi.fn();
+const updateMutateAsync = vi.fn();
 const publishMutateAsync = vi.fn();
 
 vi.mock('../hooks/useTasks', () => ({
   useCreateTask: () => ({
     mutateAsync: createMutateAsync,
+    isPending: false,
+    error: null,
+  }),
+  useUpdateTask: () => ({
+    mutateAsync: updateMutateAsync,
     isPending: false,
     error: null,
   }),
@@ -21,8 +28,51 @@ vi.mock('../hooks/useTasks', () => ({
   }),
 }));
 
-vi.mock('../hooks/useInvites', () => ({
-  useTeams: () => ({ data: [{ id: 'team-1', name: 'Herren 1' }] }),
+const DRAFT: Task = {
+  id: 'task-1',
+  club_id: 'club-1',
+  team_id: null,
+  title: 'Festbeiz-Bewilligung',
+  description: null,
+  why: 'Ohne Bewilligung keine Beiz',
+  category: 'catering',
+  points: 20,
+  task_type: 'task',
+  due_at: null,
+  max_assignees: 1,
+  status: 'draft',
+  created_by: 'member-1',
+  created_at: '2026-09-01T10:00:00Z',
+  is_sample: false,
+  recurrence_days: null,
+};
+
+/**
+ * Die Reichweite der Planung ist im Test steuerbar (C-032, `0073`): Der
+ * Vorstand sieht alle Teams und den ganzen Verein, eine Trainer:in nur ihre
+ * Teams. Vorgabe ist der Vorstand; einzelne Fälle stellen um.
+ */
+const scope = {
+  isBoard: true,
+  isTrainer: true,
+  isLoading: false,
+  myTeamIds: ['team-1'],
+  teams: [{ id: 'team-1', name: 'Herren 1' }],
+  canPlanFor: () => true,
+};
+
+function withScope(patch: Partial<typeof scope>, run: () => void) {
+  const before = { ...scope };
+  Object.assign(scope, patch);
+  try {
+    run();
+  } finally {
+    Object.assign(scope, before);
+  }
+}
+
+vi.mock('../hooks/usePlanningScope', () => ({
+  usePlanningScope: () => scope,
 }));
 
 vi.mock('../hooks/useGamification', () => ({
@@ -94,10 +144,30 @@ describe('TaskForm', () => {
     expect(container.textContent).toContain('gedankt, nicht gepunktet');
   });
 
-  it('bietet den ganzen Verein und die Teams als Geltungsbereich an (Schritt 4)', () => {
+  it('bietet dem Vorstand den ganzen Verein und die Teams als Geltungsbereich an (Schritt 4)', () => {
     const { container } = render();
     expect(container.textContent).toContain('Ganzer Verein');
     expect(container.textContent).toContain('Herren 1');
+  });
+
+  it('bietet einer Trainer:in nur ihre Teams an – ohne «Ganzer Verein» (C-032)', () => {
+    // Vereinsaufgaben legt der Vorstand an; die Auswahl sagt das, statt die
+    // Option anzubieten und den Server abweisen zu lassen.
+    withScope({ isBoard: false }, () => {
+      const { container } = render();
+      expect(container.textContent).not.toContain('Ganzer Verein');
+      expect(container.textContent).toContain('Herren 1');
+      expect(container.textContent).toContain(
+        'Als Trainer:in schreibst du Aufgaben für deine Teams aus.',
+      );
+    });
+  });
+
+  it('sagt einer Trainer:in ohne Team, warum sie nichts ausschreiben kann (C-032)', () => {
+    withScope({ isBoard: false, myTeamIds: [], teams: [] }, () => {
+      const { container } = render();
+      expect(container.textContent).toContain('Du bist noch keinem Team zugeordnet.');
+    });
   });
 
   it('zeigt den Rhythmus erst, wenn jemand ihn einschaltet (A2)', () => {
@@ -125,5 +195,55 @@ describe('TaskForm', () => {
     render();
     expect(createMutateAsync).not.toHaveBeenCalled();
     expect(publishMutateAsync).not.toHaveBeenCalled();
+  });
+
+  describe('mit einem Entwurf (A5)', () => {
+    function renderDraft() {
+      return renderWithProviders(
+        <TaskForm task={DRAFT} onDone={vi.fn()} onDismiss={vi.fn()} />,
+      );
+    }
+
+    it('nennt sich Bearbeiten, nicht Ausschreiben', () => {
+      // Der Titel des Blattes kommt aus `FormModal`, das hier ersetzt ist –
+      // geprüft wird die Quelle, wie beim Punktevorschlag oben.
+      const source = readFileSync(
+        `${process.cwd()}/src/components/TaskFormModal.tsx`,
+        'utf8',
+      );
+      expect(source).toContain("t(task ? 'taskForm.editTitle' : 'taskForm.title')");
+    });
+
+    it('beginnt mit dem gesicherten Stand: Titel und Warum sind schon da', () => {
+      // Die Sperre aus A1 fällt weg, ohne dass jemand tippt – der Beleg, dass
+      // die Felder aus dem Entwurf kommen.
+      renderDraft();
+      expect(screen.getByRole('button', { name: 'submit' })).toBeEnabled();
+    });
+
+    it('ändert den Entwurf, statt eine zweite Aufgabe anzulegen (BR-182)', async () => {
+      updateMutateAsync.mockResolvedValue(undefined);
+      publishMutateAsync.mockResolvedValue({ notified: 0, muted: false });
+      renderDraft();
+      fireEvent.click(screen.getByRole('button', { name: 'submit' }));
+      await vi.waitFor(() => expect(publishMutateAsync).toHaveBeenCalledWith('task-1'));
+      expect(updateMutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          taskId: 'task-1',
+          draft: expect.objectContaining({ title: 'Festbeiz-Bewilligung' }),
+        }),
+      );
+      expect(createMutateAsync).not.toHaveBeenCalled();
+    });
+
+    it('sichert den Entwurf erneut, ohne ihn auszuschreiben (A3)', async () => {
+      updateMutateAsync.mockResolvedValue(undefined);
+      const onDone = vi.fn();
+      renderWithProviders(<TaskForm task={DRAFT} onDone={onDone} onDismiss={vi.fn()} />);
+      fireEvent.click(screen.getByText('Als Entwurf sichern'));
+      await vi.waitFor(() => expect(onDone).toHaveBeenCalledWith(false, false));
+      expect(updateMutateAsync).toHaveBeenCalledTimes(1);
+      expect(publishMutateAsync).not.toHaveBeenCalled();
+    });
   });
 });

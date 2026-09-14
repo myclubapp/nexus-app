@@ -65,12 +65,13 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **V** die News-Karte antippen, im Detail den Dreipunkt oben rechts und «Bearbeiten» wählen | Das Detail schliesst, das Formular öffnet sich mit den bestehenden Werten | | |
+| 1 | Als **V** die News-Karte antippen, im Detail unter «Verwalten» die Zeile «Bearbeiten» wählen | Das Detail schliesst, das Formular öffnet sich mit den bestehenden Werten | | |
 | 2 | Den Hinweis im Blatt lesen | Er sagt, dass beim Speichern niemand erneut benachrichtigt wird | | |
 | 3 | Speichern | Der Feed zeigt den neuen Text | | |
 | 4 | Die Inbox eines Mitglieds prüfen | **Keine** zweite Nachricht (A3) | | |
 | 5 | `club_message_log` prüfen | **Kein** zweiter Eintrag – eine Korrektur ist keine neue Verbindung | | |
-| 6 | Die Karte antippen, Dreipunkt, «Zurückziehen» (rot) wählen | Das Detail schliesst, Toast oben, die News verschwindet aus dem Feed | | |
+| 6 | Die Karte antippen, unter «Verwalten» die rote letzte Zeile «Zurückziehen» wählen | Rückfrage «Bist du sicher» mit dem Titel; «Zurückziehen» rot, «Abbrechen» in der Vereinsfarbe | | |
+| 6b | «Zurückziehen» bestätigen | Das Detail schliesst, Toast oben, die News verschwindet aus dem Feed | | |
 | 7 | Die Inbox eines Mitglieds prüfen | Der Eintrag **bleibt** als Verlauf (A4) | | |
 | 8 | Ihn antippen | Er führt ins Dashboard; die News ist dort nicht mehr | | |
 
@@ -82,7 +83,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Eine übernommene News antippen und den Dreipunkt öffnen | «Bearbeiten» wird **nicht** angeboten | | |
+| 1 | Eine übernommene News antippen und zu «Verwalten» scrollen | «Bearbeiten» wird **nicht** angeboten | | |
 | 2 | «Zurückziehen» ist verfügbar | Ja – sie lässt sich entfernen | | |
 | 4 | Auf der Karte das Teilen-Symbol antippen | Auf dem Gerät öffnet sich das Teilen-Blatt mit dem Link zur Quelle; im Browser Toast «Link kopiert» | | |
 | 3 | Den Grund verstehen | Eine Änderung ginge beim nächsten Abgleich verloren | | |
@@ -95,7 +96,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **M1** das Dashboard öffnen und eine News antippen | **Kein** Plus unten rechts, **kein** Dreipunkt im Detail | | |
+| 1 | Als **M1** das Dashboard öffnen und eine News antippen | **Kein** Plus unten rechts, **kein** Abschnitt «Verwalten» im Detail | | |
 | 2 | Als **M1** `publish_news` direkt aufrufen | Abgewiesen | | |
 | 3 | Als **V** nach einer Auswertung suchen, wer eine News gelesen hat | Es gibt keine (BR-112) | | |
 | 4 | Als **V** fremde `notifications` abfragen | Leer | | |

@@ -61,8 +61,10 @@ export function FirstStepsCard({ clubName, offerNewsImport = false }: FirstSteps
       title={t('firstSteps.title', { club: clubName })}
       footnote={t('firstSteps.footnote')}
     >
+      {/* Jeder Schritt liegt in einem anderen Tab: `root` startet ihn dort
+          ohne Fremd-History, statt vorwärts hineinzuschieben. */}
       {steps.map((step) => (
-        <IonItem key={step.key} button detail routerLink={step.href}>
+        <IonItem key={step.key} button detail routerLink={step.href} routerDirection="root">
           <IonIcon slot="start" icon={step.icon} color="primary" aria-hidden="true" />
           <IonLabel className="ion-text-wrap">
             <h2>{t(`firstSteps.${step.key}.title`)}</h2>

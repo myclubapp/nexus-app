@@ -140,6 +140,7 @@ export function JoinRequestPage() {
           <IonItem>
             <IonSelect
               label={t('invite.roleLabel')}
+              labelPlacement="stacked"
               value={role}
               onIonChange={(e) => setRole(e.detail.value as Role)}
               cancelText={t('common.cancel')}
@@ -156,6 +157,7 @@ export function JoinRequestPage() {
           <IonItem>
             <IonSelect
               label={t('invite.scope')}
+              labelPlacement="stacked"
               value={teamId}
               onIonChange={(e) => setTeamId((e.detail.value as string | null) ?? null)}
               cancelText={t('common.cancel')}

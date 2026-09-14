@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
 import {
   IonActionSheet,
   IonButton,
@@ -30,6 +30,14 @@ interface FormModalProps {
    * «Schliessen» einmal links, und rechts steht nichts (guidelines.md §2).
    */
   onSubmit?: () => void;
+  /**
+   * Wo die Bestätigung steht. `toolbar` (Standard): rechts in der Kopfzeile,
+   * für ein Wort wie «Speichern» oder «Erstellen». `content`: als Block-Knopf
+   * am Ende des Inhalts – für eine Beschriftung, die in der Kopfzeile
+   * umbricht («Absage senden», «Envoyer le refus»), und wenn der Knopf erst
+   * nach dem letzten Hinweis kommen soll, den die Person gelesen haben sollte.
+   */
+  submitPlacement?: 'toolbar' | 'content';
   onDismiss: () => void;
   children: ReactNode;
 }
@@ -41,6 +49,12 @@ interface FormModalProps {
  * Systemdialogen, damit der Daumen sie nicht suchen muss. Der Fehler des
  * letzten Versuchs steht im Formular und nicht in einem Toast, weil er sich
  * auf ein Feld bezieht, das die Person gerade korrigieren soll.
+ *
+ * Die Kopfzeile trägt ein Wort. Braucht die Bestätigung mehr – «Absage
+ * senden» –, bricht sie dort um und drängt den Titel zusammen; dann steht sie
+ * mit `submitPlacement="content"` als Block-Knopf am Ende des Inhalts, wo ein
+ * Knopf, der etwas tut, ohnehin stehen darf (guidelines.md §2). Abbrechen
+ * bleibt links in der Kopfzeile, rechts steht dann nichts.
  *
  * Ohne `onSubmit` ist es ein Blatt, das **anzeigt** – ein Detail, eine Liste,
  * eine Erklärung, allenfalls mit Knöpfen im Inhalt, die etwas tun. Dann trägt
@@ -68,6 +82,7 @@ export function FormModal({
   isSubmitting = false,
   error,
   onSubmit,
+  submitPlacement = 'toolbar',
   onDismiss,
   children,
 }: FormModalProps) {
@@ -75,6 +90,9 @@ export function FormModal({
   const presentingElement = usePresentingElement();
   const guard = useDiscardGuard(isOpen);
   const modal = useRef<HTMLIonModalElement>(null);
+  // Das Blatt ist ein `role="dialog"`; Ionic verlangt, dass es beschriftet
+  // wird. Der Titel in der Kopfzeile ist die Beschriftung.
+  const titleId = useId();
 
   useEffect(() => {
     const element = modal.current;
@@ -104,6 +122,12 @@ export function FormModal({
     else onDismiss();
   };
 
+  const submitContent = isSubmitting ? (
+    <IonSpinner name="crescent" />
+  ) : (
+    (submitLabel ?? t('common.save'))
+  );
+
   return (
     <>
       <IonModal
@@ -112,6 +136,7 @@ export function FormModal({
         onDidDismiss={onDismiss}
         presentingElement={presentingElement}
         canDismiss={guard.canDismiss}
+        aria-labelledby={titleId}
       >
         <IonHeader>
           <IonToolbar>
@@ -120,19 +145,17 @@ export function FormModal({
                 {onSubmit ? t('common.cancel') : t('common.close')}
               </IonButton>
             </IonButtons>
-            <IonTitle>{title}</IonTitle>
-            {onSubmit && (
+            <IonTitle id={titleId} role="heading" aria-level={2}>
+              {title}
+            </IonTitle>
+            {onSubmit && submitPlacement === 'toolbar' && (
               <IonButtons slot="end">
                 <IonButton
                   strong
                   disabled={!canSubmit || isSubmitting}
                   onClick={onSubmit}
                 >
-                  {isSubmitting ? (
-                    <IonSpinner name="crescent" />
-                  ) : (
-                    (submitLabel ?? t('common.save'))
-                  )}
+                  {submitContent}
                 </IonButton>
               </IonButtons>
             )}
@@ -142,6 +165,17 @@ export function FormModal({
         <IonContent>
           {error && <InlineError message={error} />}
           {children}
+          {onSubmit && submitPlacement === 'content' && (
+            <div className="app-actions">
+              <IonButton
+                expand="block"
+                disabled={!canSubmit || isSubmitting}
+                onClick={onSubmit}
+              >
+                {submitContent}
+              </IonButton>
+            </div>
+          )}
         </IonContent>
       </IonModal>
 
@@ -150,6 +184,7 @@ export function FormModal({
       <IonActionSheet
         isOpen={guard.isAsking}
         onDidDismiss={() => guard.answer(false)}
+        header={t('common.discardTitle')}
         buttons={[
           {
             text: t('common.discardChanges'),

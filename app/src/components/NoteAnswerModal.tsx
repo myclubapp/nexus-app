@@ -4,6 +4,7 @@ import {
   IonInput,
   IonItem,
   IonLabel,
+  IonListHeader,
   IonNote,
   IonSegment,
   IonSegmentButton,
@@ -25,6 +26,7 @@ import {
 import { FormModal } from './FormModal';
 import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
+import { TextSection } from './TextSection';
 import { InlineError } from './StateViews';
 import { formatDateTime } from '../lib/format';
 import { publishedTitle } from '../lib/news';
@@ -146,14 +148,12 @@ export function NoteAnswer({ note, onDone, onDismiss, isOpen = true }: NoteAnswe
       // steht dann einmal in der Kopfzeile (guidelines.md §2).
       onSubmit={closed ? undefined : () => void send(false).catch(() => undefined)}
     >
-      {/* Schritt 3: das Anliegen selbst – Wort für Wort, ungekürzt. */}
-      <ListSection title={t(`voice.kind.${note.kind}`)} footnote={note.createdWeek}>
-        <IonItem lines="none">
-          <IonLabel className="ion-text-wrap">
-            <p>{note.transcript}</p>
-          </IonLabel>
-        </IonItem>
-      </ListSection>
+      {/* Schritt 3: das Anliegen selbst – Wort für Wort, ungekürzt, als
+          Textblock neben der Liste und nicht als Zeile darin. */}
+      <TextSection title={t(`voice.kind.${note.kind}`)} preserveLines>
+        {note.transcript}
+      </TextSection>
+      <IonNote className="app-footnote">{note.createdWeek}</IonNote>
 
       {/* A1, Schritt 2: Wer anonym nachfasst, muss gelesen werden können. */}
       {(thread.data ?? []).length > 0 && (
@@ -171,35 +171,38 @@ export function NoteAnswer({ note, onDone, onDismiss, isOpen = true }: NoteAnswe
       )}
 
       {closed ? (
-        <ListSection title={t('noteAnswer.answerTitle')} footnote={t('noteAnswer.closedHint')}>
-          <IonItem lines="none">
-            <IonLabel className="ion-text-wrap">
-              <p>{note.response}</p>
-            </IonLabel>
-          </IonItem>
-        </ListSection>
+        <>
+          <TextSection title={t('noteAnswer.answerTitle')} preserveLines>
+            {note.response}
+          </TextSection>
+          <IonNote className="app-footnote">{t('noteAnswer.closedHint')}</IonNote>
+        </>
       ) : (
         <>
-          {/* Schritt 4: ein Tipp, kein Formular. */}
-          <ListSection title={t('noteAnswer.statusTitle')} footnote={t('noteAnswer.statusHint')}>
-            <IonItem lines="none">
-              <IonSegment
-                value={NOTE_STATUSES.includes(note.status as NoteStatus) ? note.status : 'open'}
-                onIonChange={(e) =>
-                  setStatus.mutate({
-                    noteId: note.id,
-                    status: e.detail.value as NoteStatus,
-                  })
-                }
-              >
-                {NOTE_STATUSES.map((status) => (
-                  <IonSegmentButton key={status} value={status}>
-                    <IonLabel>{t(`voice.status.${status}`)}</IonLabel>
-                  </IonSegmentButton>
-                ))}
-              </IonSegment>
-            </IonItem>
-          </ListSection>
+          {/* Schritt 4: ein Tipp, kein Formular. Das Segment steht als eigener
+              Block unter der Überschrift – ein Item ist eine Zeile, kein
+              Behälter für ein Bedienelement. */}
+          <IonListHeader>
+            <IonLabel>{t('noteAnswer.statusTitle')}</IonLabel>
+          </IonListHeader>
+          <div className="ion-padding-horizontal ion-padding-bottom">
+            <IonSegment
+              value={NOTE_STATUSES.includes(note.status as NoteStatus) ? note.status : 'open'}
+              onIonChange={(e) =>
+                setStatus.mutate({
+                  noteId: note.id,
+                  status: e.detail.value as NoteStatus,
+                })
+              }
+            >
+              {NOTE_STATUSES.map((status) => (
+                <IonSegmentButton key={status} value={status}>
+                  <IonLabel>{t(`voice.status.${status}`)}</IonLabel>
+                </IonSegmentButton>
+              ))}
+            </IonSegment>
+          </div>
+          <IonNote className="app-footnote">{t('noteAnswer.statusHint')}</IonNote>
 
           {/* Schritt 5: die Antwort. Sie ist Pflicht – auch für die Ablehnung. */}
           <ListSection title={t('noteAnswer.answerTitle')} footnote={t('noteAnswer.answerHint')}>
@@ -239,9 +242,7 @@ export function NoteAnswer({ note, onDone, onDismiss, isOpen = true }: NoteAnswe
               // BR-130: Ein gesperrter Schalter ohne Grund sagt das Falsche –
               // hier steht, warum der Weg zu ist.
               <IonItem lines="none">
-                <IonLabel className="ion-text-wrap">
-                  <p>{t('noteAnswer.taskExists')}</p>
-                </IonLabel>
+                <IonLabel className="ion-text-wrap">{t('noteAnswer.taskExists')}</IonLabel>
               </IonItem>
             )}
           </ListSection>
@@ -252,6 +253,7 @@ export function NoteAnswer({ note, onDone, onDismiss, isOpen = true }: NoteAnswe
                 <IonInput
                   label={t('taskForm.title')}
                   labelPlacement="stacked"
+                  enterkeyhint="next"
                   value={title}
                   onIonInput={(e) => setTitle(e.detail.value ?? '')}
                 />
@@ -284,6 +286,9 @@ export function NoteAnswer({ note, onDone, onDismiss, isOpen = true }: NoteAnswe
               <IonItem>
                 <IonInput
                   type="number"
+                  inputmode="numeric"
+                  min={0}
+                  enterkeyhint="done"
                   label={t('taskForm.points')}
                   labelPlacement="stacked"
                   value={taskPoints}

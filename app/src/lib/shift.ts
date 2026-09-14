@@ -88,6 +88,15 @@ export function shiftCoverage(
 }
 
 /**
+ * Wie viele Einsätze der Marktplatz zeigt, bevor «Mehr anzeigen» übernimmt.
+ *
+ * Der Marktplatz ist eine Übersicht über mehrere Angebote – Aufgaben, Ämter,
+ * Einsätze. Ein einzelner Abschnitt darf sie deshalb nicht ausfüllen; der
+ * Rest steht in der Agenda, gefiltert auf Einsätze.
+ */
+export const MARKETPLACE_SHIFT_LIMIT = 5;
+
+/**
  * Termine mit offenen Schichten (UC-011, Schritt 9 und A3).
  *
  * Die Postcondition verlangt das Helfer-Event «in Agenda **und** Marktplatz».

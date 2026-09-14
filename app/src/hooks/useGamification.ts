@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { supabase, isConfigured } from '../lib/supabase';
 import { seasonLabel } from '../lib/season';
 import type { PointRule, PointTransaction } from '../lib/database.types';
@@ -329,29 +334,47 @@ export function useNextContributions(limit = 5) {
   });
 }
 
+/** Buchungen je Seite der Historie – eine Bildschirmlänge, nicht der ganze Ledger. */
+export const POINTS_PAGE_SIZE = 50;
+
 /**
- * Die vollständige Historie (A2, FR-041) – über alle Saisons.
+ * Die vollständige Historie (A2, FR-041) – über alle Saisons, seitenweise.
  *
  * Eigene Abfrage neben `useMyPoints()`: Das Dashboard braucht die laufende
  * Saison, die Historie alles. Beide über denselben Schlüssel zu führen hiesse,
  * dem Dashboard bei jedem Besuch die ganze Vereinsgeschichte zu laden.
+ *
+ * Seitenweise über `range()`, nachgeladen vom `IonInfiniteScroll` der Seite:
+ * Ein Mitglied, das seit Jahren dabei ist, hat mehr Buchungen, als ein
+ * einziger Abruf sinnvoll trägt. Die Saison filtert der Server, weil sie
+ * sonst über die Seiten hinweg gesucht werden müsste; die Säule bleibt beim
+ * Client, sie hängt an der Regel und nicht an der Zeile.
  */
-export function useAllPoints() {
+export function useAllPoints(season: string | null = null) {
   const { activeMembership } = useClub();
 
-  return useQuery({
-    queryKey: ['points-history', activeMembership?.id],
+  return useInfiniteQuery({
+    queryKey: ['points-history', activeMembership?.id, season],
     enabled: Boolean(activeMembership) && isConfigured,
-    queryFn: async (): Promise<PointTransaction[]> => {
-      const { data, error } = await supabase
+    initialPageParam: 0,
+    queryFn: async ({ pageParam }): Promise<PointTransaction[]> => {
+      let query = supabase
         .from('point_transactions')
         .select('*')
-        .eq('member_id', activeMembership!.id)
+        .eq('member_id', activeMembership!.id);
+      if (season !== null) query = query.eq('season', season);
+      const { data, error } = await query
         .order('created_at', { ascending: false })
-        .limit(500);
+        // Zweiter Schlüssel, damit zwei Buchungen derselben Sekunde nicht
+        // zwischen zwei Seiten hin- und herspringen.
+        .order('id', { ascending: false })
+        .range(pageParam, pageParam + POINTS_PAGE_SIZE - 1);
       if (error) throw new Error(error.message);
       return data ?? [];
     },
+    // Eine volle Seite verspricht eine nächste; eine kürzere war die letzte.
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.length < POINTS_PAGE_SIZE ? undefined : pages.length * POINTS_PAGE_SIZE,
   });
 }
 

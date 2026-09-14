@@ -79,6 +79,7 @@ interface NewsRow {
   external_url: string | null;
   title: string;
   body: string | null;
+  body_html: string | null;
   image_url: string | null;
   author: string | null;
   author_image_url: string | null;
@@ -102,11 +103,15 @@ interface SourceRow {
   categories: Array<{ id?: number }> | null;
 }
 
-// --- HTML aus der Website in Text, den die App anzeigen darf ----------------
-// Die App rendert `news.body` als reinen Text. Rohes HTML aus einer fremden
-// Website dorthin zu reichen wäre eine Einladung an jede Skript-Einbettung –
-// deshalb bleibt der Volltext auf der Website und die News trägt den
-// Anrisstext plus `external_url` als Weg dorthin.
+// --- HTML aus der Website in das, was die App anzeigen darf -----------------
+// Zwei Felder, wie in der bestehenden myclub-App (`leadText` und `text`):
+// `body` ist der Anriss als reiner Text für die Karte in der Liste,
+// `body_html` der Volltext für das Detail – mit Absätzen und den Bildern im
+// Text. Entschärft wird der Volltext nicht hier, sondern beim Anzeigen
+// (app/src/lib/newsHtml.ts, DOMPurify mit fester Liste erlaubter Elemente):
+// Was in der Datenbank steht, kann jede Trainer:in über die Policy auch
+// direkt schreiben, deshalb muss die Sicherung vor dem DOM sitzen, nicht vor
+// der Tabelle. Hier fällt nur weg, was nie gespeichert gehört (BR-169).
 
 const ENTITIES: Record<string, string> = {
   amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ', shy: '',
@@ -133,6 +138,22 @@ function toPlainText(html: string | undefined): string {
   )
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+/**
+ * Der Volltext, wie die Website ihn liefert – ohne Skripte, Stile, Rahmen und
+ * Formulare. Das ist **nicht** die Sicherung (die sitzt in der App), sondern
+ * Entlastung: Ein Skriptrumpf oder ein eingebettetes Video wären totes
+ * Gewicht in jeder Zeile und in jedem Abruf der App.
+ */
+function toArticleHtml(html: string | undefined): string | null {
+  if (!html) return null;
+  const article = html
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<(script|style|iframe|object|embed|form|noscript|template)\b[\s\S]*?<\/\1\s*>/gi, '')
+    .replace(/<(iframe|embed|input|button)\b[^>]*\/?>/gi, '')
+    .trim();
+  return article === '' ? null : article;
 }
 
 /**
@@ -173,6 +194,7 @@ function mapPost(post: WordpressPost, clubId: string, syncedAt: string): NewsRow
     external_url: post.link ?? null,
     title,
     body: toPlainText(post.excerpt?.rendered) || null,
+    body_html: toArticleHtml(post.content?.rendered),
     image_url: featuredImage(post),
     author: author?.name ?? null,
     author_image_url: avatars['96'] ?? avatars['48'] ?? avatars['24'] ?? null,

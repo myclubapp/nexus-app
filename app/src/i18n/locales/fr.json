@@ -5,6 +5,8 @@
     "cancel": "Annuler",
     "ok": "OK",
     "close": "Fermer",
+    "reset": "Réinitialiser",
+    "noPlannableTeam": "Tu n’es encore affecté·e à aucune équipe. Le comité peut t’assigner à une équipe.",
     "back": "Retour",
     "next": "Suivant",
     "loading": "Chargement …",
@@ -21,11 +23,11 @@
     "saveFailed": "Cela n’a pas fonctionné. Veuillez réessayer.",
     "saved": "Enregistré",
     "discardChanges": "Ignorer les modifications",
+    "discardTitle": "Modifications non enregistrées",
     "keepEditing": "Continuer la modification",
     "details": "Détails",
-    "more": "Plus",
-    "clear": "Effacer",
-    "manage": "Gérer"
+    "manage": "Gérer",
+    "clear": "Effacer"
   },
   "auth": {
     "title": "Bienvenue",
@@ -109,6 +111,7 @@
   "menu": {
     "open": "Ouvrir le menu",
     "administration": "Administration",
+    "administrationHint": "Fonctions pour le comité et les entraîneur·euse·s pour gérer le club. Les autres membres ne voient pas cette section.",
     "switchClub": "Changer de société"
   },
   "dashboard": {
@@ -121,6 +124,7 @@
     "nextPointsHint": "Des contributions concrètes actuellement ouvertes – et qui te correspondent.",
     "openTasks": "Missions ouvertes",
     "upcoming": "À venir",
+    "upcomingHint": "Tes équipes et tout ce qui concerne l’ensemble du club. L’agenda montre le calendrier complet.",
     "latestNews": "Actualités",
     "noNews": "Aucune actualité pour l'instant",
     "careerPoints": "Total depuis l’entrée",
@@ -152,7 +156,7 @@
     "urgentHint": "Ces délais expirent dans les deux prochains jours.",
     "openSection": "Ouvertes",
     "drafts": "Brouillons",
-    "draftsHint": "Un brouillon n’est pas visible pour les membres et n’avertit personne.",
+    "draftsHint": "Un brouillon n’est pas visible pour les membres et n’avertit personne. Toucher pour modifier, glisser vers la gauche pour publier.",
     "capacity": "{{taken}} sur {{total}} repris",
     "urgent": "Délai imminent",
     "overdue": "Délai dépassé",
@@ -186,6 +190,7 @@
     "teamTotal": "{{points}} points · {{count}} membres",
     "teamsHint": "La moyenne par membre, pour qu’une grande équipe ne soit pas devant uniquement par sa taille. Les équipes de moins de deux membres visibles n’apparaissent pas.",
     "teamsEmpty": "Aucune équipe avec des points sur cette période",
+    "rankGap": "D’autres rangs entre-deux",
     "currentSeason": "Saison en cours",
     "teamMembers": "{{count}} membres"
   },
@@ -210,8 +215,6 @@
     "type": {
       "training": "Entraînement",
       "match": "Match",
-      "cup": "Coupe",
-      "tournament": "Tournoi",
       "gv": "Assemblée",
       "social": "Événement",
       "helper": "Engagement",
@@ -231,32 +234,54 @@
     "declineEarly": "Vous vous désinscrivez à temps – cela compte pour votre fiabilité.",
     "declineLate": "Le rendez-vous commence bientôt. Un refus ne coûte jamais de points.",
     "declinedWithPoints": "Refus enregistré – {{points}} points pour la désinscription à temps",
-    "tally": "{{yes}} oui · {{no}} non · {{open}} sans réponse",
     "cancelledWithReason": "Annulé: {{reason}}",
     "draft": "Brouillon",
-    "statusColumn": "Statut",
-    "participantsColumn": "Participants",
     "myStatus": "Mon statut",
     "attendances": "Présences et absences",
     "listRegistered": "Inscrits : {{count}}",
     "listExcused": "Absents : {{count}}",
     "listUndecided": "Sans réponse : {{count}}",
     "statusLabel": {
-      "open": "En attente – toucher pour participer",
-      "registered": "Inscrit – toucher pour se désister",
+      "open": "En attente",
+      "registered": "Inscrit",
       "present": "Présent",
-      "excused": "Absent – toucher pour participer",
+      "excused": "Absent",
       "absent": "Pas venu",
       "cancelled": "Rendez-vous annulé",
       "locked": "Le rendez-vous a commencé",
       "notAffected": "Pas pour toi"
     },
+    "statusAction": {
+      "registered": "toucher pour participer",
+      "excused": "toucher pour se désister"
+    },
+    "shiftStatus": {
+      "held": "Créneau pris en charge",
+      "open": "Rendez-vous avec créneaux"
+    },
     "undercovered_one": "Il manque encore {{count}} réponse",
     "undercovered_other": "Il manque encore {{count}} réponses",
     "teamFilter": "Équipe",
-    "allTeams": "Toutes les équipes",
+    "typeFilter": "Type d’événement",
+    "emptyFiltered": "Aucun événement pour ce filtre",
+    "resetFilter": "Réinitialiser le filtre",
+    "filter": {
+      "title": "Filtre",
+      "apply": "Appliquer",
+      "applyCount_one": "Appliquer {{count}} filtre",
+      "applyCount_other": "Appliquer {{count}} filtres",
+      "typesHint": "Sans sélection, l’agenda affiche tous les types d’événements.",
+      "teamsHint": "Les événements du club sans équipe restent toujours inclus."
+    },
     "result": "Résultat {{result}}",
-    "fromFederation": "De la fédération"
+    "navigate": "Lancer la navigation",
+    "venueMap": "Carte du lieu",
+    "cancelled": "Annulé",
+    "addToCalendar": "Ajouter à l’agenda",
+    "calendarFailed": "L’entrée dans l’agenda n’a pas abouti.",
+    "calendar": "Calendrier",
+    "calendarLabel": "Calendrier du mois",
+    "emptyDay": "Aucun événement ce jour-là"
   },
   "profile": {
     "title": "Profil",
@@ -677,6 +702,9 @@
     "limitShort": "au plus {{max}} par {{period}}",
     "limitHint": "Sans indication la règle compte sans limite. La limite est vérifiée sur le serveur.",
     "addRule": "Règle propre",
+    "delete": "Supprimer la règle",
+    "deleteConfirm": "« {{label}} » sera supprimée. Une règle avec des points comptabilisés ou des rendez-vous reste – tu sauras alors ce qui y est encore rattaché.",
+    "deleted": "Règle supprimée.",
     "ruleCreated": "Règle créée",
     "enableAll": "Tout activer",
     "disableAll": "Tout désactiver",
@@ -708,6 +736,7 @@
     "endBeforeStart": "La fin doit se situer après le début.",
     "why": "À quoi cela sert-il? À qui cela aide-t-il?",
     "whyHint": "Un appel porte son sens. Sans lui, il ne peut pas être publié.",
+    "scopeHintTeam": "En tant qu’entraîneur·e, tu publies des rendez-vous pour tes équipes. Les rendez-vous du club sont créés par le comité.",
     "wholeClub": "Toute la société",
     "scopeHint": "Un rendez-vous d’équipe n’apparaît que dans l’agenda de cette équipe.",
     "rule": "Règle de points",
@@ -798,17 +827,28 @@
     "open": "Voir les tranches",
     "take": "Je m'en charge",
     "release": "Finalement non",
-    "full": "Complet",
+    "statusLabel": {
+      "open": "Encore libre – toucher pour s'en charger",
+      "taken": "Pris en charge – toucher pour se retirer",
+      "declined": "Décliné – toucher pour s'en charger",
+      "declinedFinal": "Décliné",
+      "confirmed": "Engagement confirmé",
+      "absent": "Pas venu",
+      "full": "Complet",
+      "over": "Terminé"
+    },
     "taken": "Inscription enregistrée – les points arrivent après la confirmation par l'organisation.",
     "released": "Désinscription effectuée. La place est de nouveau libre.",
+    "declined": "Décliné. Tu peux reprendre la tranche plus tard.",
     "releasedWarned": "Désinscription effectuée. L'organisation est informée, car la tranche manque de monde à court terme.",
     "pointsHint": "La valeur en points figure sur chaque tranche. Elle est créditée lorsque l'organisation confirme l'engagement.",
     "overlapTitle": "Il y a un chevauchement",
     "overlapMessage": "Tu es déjà inscrit·e pour une autre tranche au même moment. Prendre quand même ?",
     "overlapConfirm": "Prendre quand même",
-    "over": "Terminé",
     "marketplaceSection": "Coups de main",
-    "marketplaceHint": "Manifestations où il reste des places. Touches-en une pour prendre un créneau."
+    "marketplaceHint": "Manifestations où il reste des places. Touches-en une pour prendre un créneau.",
+    "marketplaceMore": "Afficher plus",
+    "marketplaceMoreHint": "Tous les coups de main dans l'agenda – y compris ceux plus lointains et ceux déjà complets."
   },
   "roster": {
     "title": "Confirmer les engagements",
@@ -835,6 +875,7 @@
     "absenceTitle": "Comment le noter ?",
     "add": "Ajouter une personne",
     "addHint": "Pour les remplaçant·e·s : inscription et confirmation en une fois.",
+    "addMessage": "Qui a aidé sans être inscrit·e ? La personne est inscrite et confirmée en une seule étape.",
     "confirmedNoPoints": "{{name}} confirmé·e – cette tranche ne donne pas de points."
   },
   "checkIn": {
@@ -895,7 +936,8 @@
     "all": "Tous les messages",
     "unread_one": "{{count}} non lu",
     "unread_other": "{{count}} non lus",
-    "hint": "Chaque notification figure ici, même sans push. Toucher ouvre le sujet et marque le message comme lu."
+    "hint": "Chaque notification figure ici, même sans push. Toucher ouvre l'élément concerné et la marque comme lue.",
+    "gone": "Cette entrée n'existe plus."
   },
   "taskCategory": {
     "organisation": "Organisation",
@@ -909,6 +951,8 @@
   },
   "taskForm": {
     "title": "Publier une tâche",
+    "editTitle": "Modifier le brouillon",
+    "notDraftAnymore": "Ce brouillon a été publié entre-temps et ne peut plus être modifié.",
     "taskTitle": "Titre de la tâche",
     "description": "Description",
     "category": "Catégorie",
@@ -920,6 +964,7 @@
     "pointsHint": "La tâche porte elle-même sa valeur. 0 point signifie : on remercie, on ne compte pas.",
     "dueAt": "Délai",
     "maxAssignees": "Nombre de personnes",
+    "scopeHintTeam": "En tant qu’entraîneur·e, tu publies des tâches pour tes équipes. Les tâches du club sont créées par le comité.",
     "scope": "Portée",
     "scopeHint": "Sans équipe, tous les membres voient la tâche.",
     "team": "Équipe",
@@ -944,8 +989,7 @@
     },
     "deleteDraft": "Supprimer le brouillon",
     "deleteDraftConfirm": "« {{title}} » sera supprimé. Les membres n’ont jamais vu ce brouillon.",
-    "draftDeleted": "Brouillon supprimé.",
-    "notDraftAnymore": "Ce brouillon a été publié entre-temps et ne peut plus être modifié."
+    "draftDeleted": "Brouillon supprimé."
   },
   "taskDetail": {
     "facts": "En bref",
@@ -1000,7 +1044,9 @@
     "bookings_one": "{{count}} écriture",
     "bookings_other": "{{count}} écritures",
     "sum": "Somme de la sélection : {{points}}",
-    "empty": "Aucune écriture pour cette sélection"
+    "empty": "Aucune écriture pour cette sélection",
+    "bookingsTitle": "Écritures",
+    "moreBelow": "D’autres écritures se chargent en faisant défiler. La somme apparaît une fois toutes chargées."
   },
   "bookPoints": {
     "title": "Attribuer des points",
@@ -1126,6 +1172,7 @@
     "imageHint": "Sous forme de lien. Il n’existe pas encore d’espace de stockage du club.",
     "scope": "Portée",
     "team": "Équipe",
+    "scopeHintTeam": "En tant qu’entraîneur·e, tu écris des actualités pour tes équipes. Les actualités du club sont rédigées par le comité.",
     "wholeClub": "Tout le club",
     "scopeHint": "Une actualité d’équipe n’atteint que cette équipe.",
     "publish": "Publier",
@@ -1135,6 +1182,7 @@
     "editHint": "À l’enregistrement, personne n’est averti à nouveau.",
     "retract": "Retirer",
     "retracted": "Retirée. L’entrée reste dans la boîte comme historique.",
+    "retractConfirm": "« {{title}} » sera retirée pour tout le monde. C’est irréversible.",
     "problem": {
       "titleMissing": "L’actualité a besoin d’un titre.",
       "imageNotALink": "Ce n’est pas un lien complet. Il commence par http:// ou https://."
@@ -1599,6 +1647,7 @@
     "dropped_one": "{{count}} contenu d'exemple supprimé. Aucune donnée du club n'a été touchée.",
     "dropped_other": "{{count}} contenus d'exemple supprimés. Aucune donnée du club n'a été touchée.",
     "adopt": "Reprendre comme contenu propre",
+    "adoptShort": "Reprendre",
     "adopted": "Repris. Le contenu appartient désormais au club et agit comme tout autre.",
     "blocked": "C'est un exemple. Il montre à quoi cela ressemble – tu ne peux pas y participer.",
     "kind": {
@@ -1655,7 +1704,8 @@
   },
   "news": {
     "share": "Partager",
-    "linkCopied": "Lien copié"
+    "linkCopied": "Lien copié",
+    "readOnWebsite": "Lire l’article complet sur le site"
   },
   "eventEdit": {
     "title": "Modifier le rendez-vous",
@@ -1670,6 +1720,9 @@
     "reasonMissing": "Une annulation demande son motif.",
     "cancelEvent": "Annuler le rendez-vous",
     "cancelConfirm": "Toutes les personnes concernées reçoivent l’annulation et son motif. C’est irréversible.",
+    "delete": "Supprimer le rendez-vous",
+    "deleteConfirm": "« {{title}} » sera supprimé définitivement, réponses et créneaux compris. Un rendez-vous avec des points comptabilisés reste – il ne peut alors qu’être annulé.",
+    "deleted": "Rendez-vous supprimé.",
     "cancelled": "Annulé. Toutes les personnes concernées ont été averties.",
     "changed": "Enregistré.",
     "open": "Modifier"
@@ -1773,6 +1826,7 @@
     "membersHint": "Glisser vers la gauche retire de l’équipe – pas du club. L’affectation se fait dans le membre.",
     "noMembers": "Personne dans cette équipe pour l’instant.",
     "memberRemoved": "Retiré de l’équipe.",
+    "removeMember": "Retirer de l’équipe",
     "delete": "Supprimer l’équipe",
     "deleteConfirm": "« {{name}} » sera supprimée. Une équipe avec des rendez-vous, des tâches ou des actualités reste – tu sauras alors ce qui y est encore rattaché.",
     "deleted": "Équipe supprimée.",

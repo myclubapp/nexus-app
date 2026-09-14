@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import {
   IonBadge,
   IonButton,
@@ -135,39 +135,39 @@ export function TaskConfirm({ task, onDone, onDismiss, isOpen = true }: TaskConf
       {/* BR-080 sichtbar gemacht, statt den Knopf nur wegzulassen. */}
       {ownPending && <IonNote className="app-footnote">{t('taskConfirm.notYourOwn')}</IonNote>}
 
-      {/* Schritte 4 und 5, je offene Einreichung. */}
+      {/* Schritte 4 und 5, je offene Einreichung. Die Liste trägt nur das
+          Feld; die Knöpfe stehen als Knopfleiste darunter – ein Item ist eine
+          Zeile, kein Behälter für Knöpfe. */}
       {pending.map((entry) => (
-        <ListSection
-          key={entry.assignmentId}
-          title={t('taskConfirm.thanksFor', { name: entry.displayName })}
-          footnote={t('taskConfirm.thanksHint')}
-        >
-          <IonItem>
-            <IonTextarea
-              label={t('taskConfirm.kudos')}
-              labelPlacement="stacked"
-              autoGrow
-              value={kudosFor(entry)}
-              onIonInput={(e) =>
-                setKudos((current) => ({
-                  ...current,
-                  [entry.assignmentId]: e.detail.value ?? '',
-                }))
-              }
-            />
-          </IonItem>
+        <Fragment key={entry.assignmentId}>
+          <ListSection
+            title={t('taskConfirm.thanksFor', { name: entry.displayName })}
+            footnote={t('taskConfirm.thanksHint')}
+          >
+            <IonItem>
+              <IonTextarea
+                label={t('taskConfirm.kudos')}
+                labelPlacement="stacked"
+                autoGrow
+                value={kudosFor(entry)}
+                onIonInput={(e) =>
+                  setKudos((current) => ({
+                    ...current,
+                    [entry.assignmentId]: e.detail.value ?? '',
+                  }))
+                }
+              />
+            </IonItem>
+          </ListSection>
 
           {/* A2: einmalig darauf hinweisen – und nur, solange nichts dasteht. */}
           {needsKudosReminder(kudosFor(entry)) && (
-            <IonItem lines="none">
-              <IonNote>{t('taskConfirm.kudosReminder')}</IonNote>
-            </IonItem>
+            <IonNote className="app-footnote">{t('taskConfirm.kudosReminder')}</IonNote>
           )}
 
-          <IonItem lines="none">
+          <div className="app-actions">
             <IonButton
-              slot="start"
-              size="small"
+              expand="block"
               disabled={isBusy}
               onClick={() =>
                 confirm.mutate(
@@ -190,8 +190,7 @@ export function TaskConfirm({ task, onDone, onDismiss, isOpen = true }: TaskConf
             {/* A1: zurück an die Person – der Hinweis ist Pflicht, weil eine
                 Rückgabe ohne Grund eine Sackgasse wäre. */}
             <IonButton
-              slot="end"
-              size="small"
+              expand="block"
               fill="clear"
               color="medium"
               disabled={isBusy}
@@ -201,25 +200,30 @@ export function TaskConfirm({ task, onDone, onDismiss, isOpen = true }: TaskConf
             >
               {t('taskConfirm.reject')}
             </IonButton>
-          </IonItem>
+          </div>
 
           {openId === entry.assignmentId && (
             <>
-              <IonItem>
-                <IonTextarea
-                  label={t('taskConfirm.note')}
-                  labelPlacement="stacked"
-                  autoGrow
-                  value={noteFor(entry)}
-                  onIonInput={(e) =>
-                    setNotes((current) => ({
-                      ...current,
-                      [entry.assignmentId]: e.detail.value ?? '',
-                    }))
-                  }
-                />
-              </IonItem>
-              <IonItem lines="none">
+              <ListSection>
+                <IonItem>
+                  <IonTextarea
+                    label={t('taskConfirm.note')}
+                    labelPlacement="stacked"
+                    autoGrow
+                    value={noteFor(entry)}
+                    onIonInput={(e) =>
+                      setNotes((current) => ({
+                        ...current,
+                        [entry.assignmentId]: e.detail.value ?? '',
+                      }))
+                    }
+                  />
+                </IonItem>
+              </ListSection>
+              {noteFor(entry).trim().length === 0 && (
+                <InlineError message={t('taskConfirm.noteRequired')} />
+              )}
+              <div className="app-actions">
                 <IonButton
                   expand="block"
                   fill="outline"
@@ -234,13 +238,10 @@ export function TaskConfirm({ task, onDone, onDismiss, isOpen = true }: TaskConf
                 >
                   {t('taskConfirm.sendBack')}
                 </IonButton>
-              </IonItem>
-              {noteFor(entry).trim().length === 0 && (
-                <InlineError message={t('taskConfirm.noteRequired')} />
-              )}
+              </div>
             </>
           )}
-        </ListSection>
+        </Fragment>
       ))}
     </FormModal>
   );

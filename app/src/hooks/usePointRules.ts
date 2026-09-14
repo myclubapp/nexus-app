@@ -132,3 +132,23 @@ export function useCreatePointRule() {
     onSuccess: () => invalidateRuleQueries(queryClient, activeClub?.id),
   });
 }
+
+/**
+ * Eine Regel löschen (Entscheid vom 2026-09-13).
+ *
+ * Der Riegel sitzt in `delete_point_rule()` (0074): Eine Regel mit Buchungen
+ * oder Terminen bleibt, und die Meldung sagt, was noch dranhängt – der Weg
+ * dafür ist das Stilllegen (BR-067).
+ */
+export function useDeletePointRule() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (ruleId: string) => {
+      const { error } = await supabase.rpc('delete_point_rule', { p_rule_id: ruleId });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => invalidateRuleQueries(queryClient, activeClub?.id),
+  });
+}

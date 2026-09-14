@@ -108,6 +108,7 @@ export function EventEdit({ event, onDone, onDismiss, isOpen = true }: EventEdit
           <IonInput
             label={t('eventForm.eventTitle')}
             labelPlacement="stacked"
+            enterkeyhint="next"
             value={title}
             onIonInput={(e) => setTitle(e.detail.value ?? '')}
           />
@@ -117,6 +118,7 @@ export function EventEdit({ event, onDone, onDismiss, isOpen = true }: EventEdit
           <IonInput
             label={t('eventForm.location')}
             labelPlacement="stacked"
+            enterkeyhint={requiresWhy(event.type) ? 'next' : 'done'}
             value={location}
             onIonInput={(e) => setLocation(e.detail.value ?? '')}
           />
@@ -131,6 +133,7 @@ export function EventEdit({ event, onDone, onDismiss, isOpen = true }: EventEdit
             <IonInput
               label={t('eventForm.why')}
               labelPlacement="stacked"
+              enterkeyhint="done"
               value={why}
               onIonInput={(e) => setWhy(e.detail.value ?? '')}
             />
@@ -142,6 +145,7 @@ export function EventEdit({ event, onDone, onDismiss, isOpen = true }: EventEdit
         <IonItem>
           <IonSelect
             label={t('eventForm.rule')}
+            labelPlacement="stacked"
             value={ruleCode}
             cancelText={t('common.cancel')}
             okText={t('common.ok')}
@@ -224,6 +228,9 @@ export function EventEdit({ event, onDone, onDismiss, isOpen = true }: EventEdit
           { text: t('common.cancel'), role: 'cancel' },
           {
             text: t('eventEdit.cancelEvent'),
+            // Die Absage nimmt allen Betroffenen den Termin – ein Wegwerf-
+            // Knopf, und der trägt die rote Rolle (guidelines §2).
+            role: 'destructive',
             handler: () => {
               cancelEvent.mutate(
                 { eventId: event.id, reason },

@@ -38,15 +38,14 @@ export type ClubKind =
   | 'other';
 
 /**
- * `events.type` – Constraint aus `0003_agenda.sql`. Die Beschriftung kommt
- * immer aus `clubs.settings.labels` über `useClub().eventLabel()`, nie aus
- * einem festen Sportvokabular.
+ * `events.type` – Constraint aus `0003_agenda.sql`, zuletzt verengt in
+ * `0072`: `cup` und `tournament` sind weg, ein Wettbewerb ist ein `match`.
+ * Die Beschriftung kommt immer aus `clubs.settings.labels` über
+ * `useClub().eventLabel()`, nie aus einem festen Sportvokabular.
  */
 export type EventType =
   | 'training'
   | 'match'
-  | 'cup'
-  | 'tournament'
   | 'gv'
   | 'social'
   | 'helper'

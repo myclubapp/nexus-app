@@ -117,6 +117,7 @@ export function JoinByInvitePage() {
               label={t('invite.displayName')}
               labelPlacement="stacked"
               autocapitalize="words"
+              enterkeyhint="done"
               value={displayName}
               onIonInput={(e) => setDisplayName(e.detail.value ?? '')}
             />

@@ -2,8 +2,8 @@
 
 **Use Case:** [UC-010](../use_cases/UC-010-zu-oder-absagen.md)
 **Geltungsbereich:** Zusage, Absage mit Grund, Abmeldeprämie, Teilnehmerstand, Sperren
-**Anforderungen:** FR-024, FR-025, FR-026, FR-027
-**Regeln:** BR-037 bis BR-040
+**Anforderungen:** FR-024, FR-025, FR-026, FR-027, FR-156
+**Regeln:** BR-037 bis BR-040, BR-187
 **Erstellt:** 2026-09-09
 
 ## Vorbereitung
@@ -168,6 +168,24 @@
 
 ---
 
+## TC-010: Kalendereintrag auf dem Gerät (FR-156, BR-187)
+
+**Priority:** High
+**Preconditions:** Als **M** angemeldet, **E1** hat einen Ort und ein Warum, noch keine Antwort. Auf iOS, Android **und** im Browser durchspielen.
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Das Detail von **E1** öffnen und das Fragezeichen antippen | Toast «Zugesagt»; **iOS/Android:** das Blatt «Neuer Termin» des Systems öffnet sich ausgefüllt – Titel, Ort, Beginn und Ende in **Ortszeit** wie im Detail, Notizen mit Terminart und Warum. **Browser:** eine `.ics`-Datei wird heruntergeladen (Name = Titel, Umlaute erhalten) | | |
+| 2 | Im Systemblatt **Abbrechen** wählen | Kein Eintrag im Kalender; im Detail steht «Mein Status» weiterhin auf Zugesagt | | |
+| 3 | Unter «Mein Status» die Zeile «In den Kalender eintragen» antippen und diesmal **Sichern** | Der Termin steht im Kalender des Geräts, zur richtigen Stunde | | |
+| 4 | Die `.ics`-Datei aus Schritt 1 am Rechner öffnen | Der Kalender zeigt dieselbe Stunde wie die App | | |
+| 5 | Einen Termin **ohne Ende** zusagen | Der Eintrag dauert eine Stunde | | |
+| 6 | Auf einen Termin **absagen** | Kein Kalenderblatt, kein Download | | |
+| 7 | Als **T** den Termin um eine Stunde verschieben | Der Eintrag im Gerätekalender bleibt beim alten Wert – BR-187, kein Abbild | | |
+| 8 | Keine Kalender-Berechtigung erteilt haben (Einstellungen prüfen) | Das Systemblatt erscheint trotzdem; die App fragt nie nach einer Kalender-Berechtigung | | |
+
+---
+
 ## Test Matrix
 
 | Device / Browser | OS / Version | Screen Size | Status |
@@ -195,6 +213,7 @@
 | TC-007 | Die Regel ist abschaltbar | Medium | |
 | TC-008 | Vier Sprachen | High | |
 | TC-009 | Darstellung und Netz | Medium | |
+| TC-010 | Kalendereintrag auf dem Gerät | High | |
 
 **Overall Result:** ☐ Pass ☐ Fail
 **Tester:** ******\_\_\_******

@@ -125,13 +125,18 @@ export function LoginPage() {
                   </p>
                 </IonText>
 
+                {/* `fill` gibt es nur im Material-Modus; ohne `mode="md"`
+                    stünden die Felder im iOS-Modus als blosse Linien da
+                    (Doku ion-input, «Filled Inputs»). */}
                 <IonInput
                   label={t('auth.email')}
                   labelPlacement="floating"
                   fill="outline"
+                  mode="md"
                   type="email"
                   inputmode="email"
                   autocomplete="email"
+                  enterkeyhint={method === 'link' ? 'send' : 'next'}
                   value={email}
                   onIonInput={(e) => setEmail(e.detail.value ?? '')}
                 />
@@ -141,8 +146,10 @@ export function LoginPage() {
                     label={t('auth.password')}
                     labelPlacement="floating"
                     fill="outline"
+                    mode="md"
                     type="password"
                     autocomplete="current-password"
+                    enterkeyhint="go"
                     value={password}
                     onIonInput={(e) => setPassword(e.detail.value ?? '')}
                   />

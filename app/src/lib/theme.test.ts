@@ -1,9 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
+  adaptForDark,
   BASE_THEME,
   contrastRatio,
+  DARK_SURFACE,
   hasEnoughContrast,
+  MIN_SURFACE_CONTRAST,
   suggestContrast,
 } from './theme';
 
@@ -75,5 +78,33 @@ describe('suggestContrast', () => {
 
     expect(better).toMatch(/^#[0-9a-f]{6}$/);
     expect(better).not.toBe('#000000');
+  });
+});
+
+describe('adaptForDark', () => {
+  it('lässt eine Farbe stehen, die sich vom dunklen Grund schon abhebt', () => {
+    // Das Basisblau trägt auf #222428 – kein Anlass, es zu verändern.
+    expect(adaptForDark('#339bde')).toBe('#339bde');
+  });
+
+  it('hellt ein dunkles Vereinsblau auf, bis es vom Grund abhebt', () => {
+    const adapted = adaptForDark('#0b2a4a');
+
+    expect(adapted).not.toBe('#0b2a4a');
+    expect(contrastRatio(adapted, DARK_SURFACE)).toBeGreaterThanOrEqual(
+      MIN_SURFACE_CONTRAST,
+    );
+  });
+
+  it('bleibt bei der Farbfamilie', () => {
+    // Aufgehellt, nicht ersetzt – und nie Weiss.
+    const adapted = adaptForDark('#0b2a4a');
+
+    expect(adapted).toMatch(/^#[0-9a-f]{6}$/);
+    expect(adapted).not.toBe('#ffffff');
+  });
+
+  it('gibt eine unbrauchbare Farbe unverändert zurück', () => {
+    expect(adaptForDark('kein hex')).toBe('kein hex');
   });
 });

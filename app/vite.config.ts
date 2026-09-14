@@ -31,11 +31,12 @@ export default defineConfig({
         // Kein Hochformat erzwingen: Die App soll auch auf dem Tablet im
         // Querformat und auf dem Laptop brauchbar sein.
         orientation: 'any',
-        background_color: '#1d4ed8',
+        background_color: '#339bde',
         // Die Vereinsfarbe kommt erst zur Laufzeit aus clubs.settings.theme
         // (src/lib/theme.ts); das Manifest ist statisch und trägt deshalb die
-        // Grundfarbe aus theme/variables.css.
-        theme_color: '#1d4ed8',
+        // Grundfarbe aus theme/variables.css – dieselbe wie `--ion-color-primary`,
+        // damit der Start nicht in einer Farbe beginnt, die die App nie zeigt.
+        theme_color: '#339bde',
         icons: [
           { src: 'pwa-64x64.png', sizes: '64x64', type: 'image/png' },
           { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },

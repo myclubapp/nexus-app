@@ -5,6 +5,8 @@
     "cancel": "Cancel",
     "ok": "OK",
     "close": "Close",
+    "reset": "Reset",
+    "noPlannableTeam": "You are not assigned to a team yet. The board can assign you to one.",
     "back": "Back",
     "next": "Next",
     "loading": "Loading …",
@@ -21,11 +23,11 @@
     "saveFailed": "That did not work. Please try again.",
     "saved": "Saved",
     "discardChanges": "Discard changes",
+    "discardTitle": "Unsaved changes",
     "keepEditing": "Keep editing",
     "details": "Details",
-    "more": "More",
-    "clear": "Clear",
-    "manage": "Manage"
+    "manage": "Manage",
+    "clear": "Clear"
   },
   "auth": {
     "title": "Welcome",
@@ -109,6 +111,7 @@
   "menu": {
     "open": "Open menu",
     "administration": "Administration",
+    "administrationHint": "Functions for the board and coaches to manage the club. Other members do not see this section.",
     "switchClub": "Switch club"
   },
   "dashboard": {
@@ -121,6 +124,7 @@
     "nextPointsHint": "Concrete contributions open right now – and a fit for you.",
     "openTasks": "Open tasks",
     "upcoming": "Coming up",
+    "upcomingHint": "Your teams and everything that concerns the whole club. The agenda shows the full calendar.",
     "latestNews": "News",
     "noNews": "No news at the moment",
     "careerPoints": "Total since joining",
@@ -152,7 +156,7 @@
     "urgentHint": "These deadlines fall within the next two days.",
     "openSection": "Open",
     "drafts": "Drafts",
-    "draftsHint": "A draft is invisible to members and notifies nobody.",
+    "draftsHint": "A draft is invisible to members and notifies nobody. Tap to edit, swipe left to publish.",
     "capacity": "{{taken}} of {{total}} taken",
     "urgent": "Deadline near",
     "overdue": "Deadline passed",
@@ -186,6 +190,7 @@
     "teamTotal": "{{points}} points · {{count}} members",
     "teamsHint": "The average per member, so a large team is not ahead just because of its size. Teams with fewer than two visible members are not shown.",
     "teamsEmpty": "No team with points in this period yet",
+    "rankGap": "More ranks in between",
     "currentSeason": "Current season",
     "teamMembers": "{{count}} members"
   },
@@ -210,8 +215,6 @@
     "type": {
       "training": "Training",
       "match": "Match",
-      "cup": "Cup",
-      "tournament": "Tournament",
       "gv": "Assembly",
       "social": "Event",
       "helper": "Volunteer duty",
@@ -231,32 +234,54 @@
     "declineEarly": "You are cancelling in good time – that counts towards your reliability.",
     "declineLate": "The event starts soon. Declining never costs points.",
     "declinedWithPoints": "Decline saved – {{points}} points for cancelling in good time",
-    "tally": "{{yes}} in · {{no}} out · {{open}} open",
     "cancelledWithReason": "Cancelled: {{reason}}",
     "draft": "Draft",
-    "statusColumn": "Status",
-    "participantsColumn": "Participants",
     "myStatus": "My status",
     "attendances": "Attendance",
     "listRegistered": "Attending: {{count}}",
     "listExcused": "Declined: {{count}}",
     "listUndecided": "No reply: {{count}}",
     "statusLabel": {
-      "open": "Open – tap to attend",
-      "registered": "Attending – tap to decline",
+      "open": "Open",
+      "registered": "Attending",
       "present": "Present",
-      "excused": "Declined – tap to attend",
+      "excused": "Declined",
       "absent": "Absent",
       "cancelled": "Event cancelled",
       "locked": "Event has started",
       "notAffected": "Not for you"
     },
+    "statusAction": {
+      "registered": "tap to attend",
+      "excused": "tap to decline"
+    },
+    "shiftStatus": {
+      "held": "Shift taken",
+      "open": "Event with shifts"
+    },
     "undercovered_one": "{{count}} reply still missing",
     "undercovered_other": "{{count}} replies still missing",
     "teamFilter": "Team",
-    "allTeams": "All teams",
+    "typeFilter": "Event type",
+    "emptyFiltered": "No events match this filter",
+    "resetFilter": "Reset filter",
+    "filter": {
+      "title": "Filter",
+      "apply": "Apply",
+      "applyCount_one": "Apply {{count}} filter",
+      "applyCount_other": "Apply {{count}} filters",
+      "typesHint": "With nothing selected, the agenda shows all event types.",
+      "teamsHint": "Club events without a team are always included."
+    },
     "result": "Result {{result}}",
-    "fromFederation": "From the federation"
+    "navigate": "Start navigation",
+    "venueMap": "Map of the venue",
+    "cancelled": "Cancelled",
+    "addToCalendar": "Add to calendar",
+    "calendarFailed": "The calendar entry could not be created.",
+    "calendar": "Calendar",
+    "calendarLabel": "Month calendar",
+    "emptyDay": "No events on this day"
   },
   "profile": {
     "title": "Profile",
@@ -677,6 +702,9 @@
     "limitShort": "at most {{max}} per {{period}}",
     "limitHint": "Left empty the rule counts without limit. The limit is checked on the server.",
     "addRule": "Own rule",
+    "delete": "Delete rule",
+    "deleteConfirm": "“{{label}}” will be deleted. A rule with bookings or events stays – you will be told what still hangs on it.",
+    "deleted": "Rule deleted.",
     "ruleCreated": "Rule created",
     "enableAll": "All on",
     "disableAll": "All off",
@@ -708,6 +736,7 @@
     "endBeforeStart": "The end must be after the start.",
     "why": "What is it for? Who does it help?",
     "whyHint": "A call to action carries its purpose. Without it, it cannot be published.",
+    "scopeHintTeam": "As a coach you publish events for your teams. Club-wide events are created by the board.",
     "wholeClub": "Whole club",
     "scopeHint": "A team event appears only in that team’s agenda.",
     "rule": "Point rule",
@@ -798,17 +827,28 @@
     "open": "View shifts",
     "take": "I'll take this",
     "release": "Actually, no",
-    "full": "Full",
+    "statusLabel": {
+      "open": "Open – tap to take it",
+      "taken": "Taken – tap to sign off",
+      "declined": "Declined – tap to take it",
+      "declinedFinal": "Declined",
+      "confirmed": "Shift confirmed",
+      "absent": "Absent",
+      "full": "Full",
+      "over": "Over"
+    },
     "taken": "You are signed up – points follow once the organisers confirm the shift.",
     "released": "Signed off. The spot is free again.",
+    "declined": "Declined. You can still take the shift later.",
     "releasedWarned": "Signed off. The organisers were told, because the shift is now short-staffed at short notice.",
     "pointsHint": "Each shift carries its own point value. It is credited once the organisers confirm the shift.",
     "overlapTitle": "That overlaps",
     "overlapMessage": "You are already signed up for another shift at the same time. Take it anyway?",
     "overlapConfirm": "Take it anyway",
-    "over": "Over",
     "marketplaceSection": "Helper shifts",
-    "marketplaceHint": "Events that still have places open. Tap one to take a shift."
+    "marketplaceHint": "Events that still have places open. Tap one to take a shift.",
+    "marketplaceMore": "Show more",
+    "marketplaceMoreHint": "All helper shifts in the agenda – including the more distant ones and those already full."
   },
   "roster": {
     "title": "Confirm shifts",
@@ -835,6 +875,7 @@
     "absenceTitle": "How should this be recorded?",
     "add": "Add a person",
     "addHint": "For stand-ins: signed up and confirmed in one step.",
+    "addMessage": "Who helped without being signed up? The person is signed up and confirmed in the same step.",
     "confirmedNoPoints": "{{name}} confirmed – this shift awards no points."
   },
   "checkIn": {
@@ -895,7 +936,8 @@
     "all": "All messages",
     "unread_one": "{{count}} unread",
     "unread_other": "{{count}} unread",
-    "hint": "Every notification appears here, push or not. Tapping opens what it refers to and marks it as read."
+    "hint": "Every notification is listed here – even without push. Tapping opens the item and marks it as read.",
+    "gone": "This entry is no longer there."
   },
   "taskCategory": {
     "organisation": "Organisation",
@@ -909,6 +951,8 @@
   },
   "taskForm": {
     "title": "Post a task",
+    "editTitle": "Edit draft",
+    "notDraftAnymore": "This draft has since been posted and can no longer be changed.",
     "taskTitle": "Task title",
     "description": "Description",
     "category": "Category",
@@ -920,6 +964,7 @@
     "pointsHint": "The task carries its own value. 0 points means: thanks, not points.",
     "dueAt": "Deadline",
     "maxAssignees": "How many people",
+    "scopeHintTeam": "As a coach you publish tasks for your teams. Club-wide tasks are created by the board.",
     "scope": "Scope",
     "scopeHint": "Without a team every member sees the task.",
     "team": "Team",
@@ -944,8 +989,7 @@
     },
     "deleteDraft": "Delete draft",
     "deleteDraftConfirm": "“{{title}}” will be deleted. Members never saw this draft.",
-    "draftDeleted": "Draft deleted.",
-    "notDraftAnymore": "This draft has since been posted and can no longer be changed."
+    "draftDeleted": "Draft deleted."
   },
   "taskDetail": {
     "facts": "At a glance",
@@ -1000,7 +1044,9 @@
     "bookings_one": "{{count}} booking",
     "bookings_other": "{{count}} bookings",
     "sum": "Sum of the selection: {{points}}",
-    "empty": "No booking for this selection"
+    "empty": "No booking for this selection",
+    "bookingsTitle": "Bookings",
+    "moreBelow": "More bookings load as you scroll. The sum appears once all are loaded."
   },
   "bookPoints": {
     "title": "Book points",
@@ -1126,6 +1172,7 @@
     "imageHint": "As a link. There is no club storage for uploads yet.",
     "scope": "Scope",
     "team": "Team",
+    "scopeHintTeam": "As a coach you write news for your teams. Club-wide news is written by the board.",
     "wholeClub": "Whole club",
     "scopeHint": "Team news reaches that team only.",
     "publish": "Publish",
@@ -1135,6 +1182,7 @@
     "editHint": "Saving does not notify anyone again.",
     "retract": "Retract",
     "retracted": "Retracted. The inbox entry stays as history.",
+    "retractConfirm": "“{{title}}” will be removed for everyone. This cannot be undone.",
     "problem": {
       "titleMissing": "The news needs a title.",
       "imageNotALink": "That is not a complete link. It starts with http:// or https://."
@@ -1599,6 +1647,7 @@
     "dropped_one": "{{count}} example removed. No club data was affected.",
     "dropped_other": "{{count}} examples removed. No club data was affected.",
     "adopt": "Adopt as our own content",
+    "adoptShort": "Adopt",
     "adopted": "Adopted. The content now belongs to the club and acts like any other.",
     "blocked": "This is an example. It shows what it looks like – you cannot take part here.",
     "kind": {
@@ -1655,7 +1704,8 @@
   },
   "news": {
     "share": "Share",
-    "linkCopied": "Link copied"
+    "linkCopied": "Link copied",
+    "readOnWebsite": "Read the full article on the website"
   },
   "eventEdit": {
     "title": "Edit event",
@@ -1670,6 +1720,9 @@
     "reasonMissing": "A cancellation needs its reason.",
     "cancelEvent": "Cancel event",
     "cancelConfirm": "Everyone affected receives the cancellation and its reason. This cannot be undone.",
+    "delete": "Delete event",
+    "deleteConfirm": "“{{title}}” will be deleted for good, including replies and shifts. An event with booked points stays – then only cancelling is possible.",
+    "deleted": "Event deleted.",
     "cancelled": "Cancelled. Everyone affected has been notified.",
     "changed": "Saved.",
     "open": "Edit"
@@ -1773,6 +1826,7 @@
     "membersHint": "Swipe left removes from the team – not from the club. Assigning happens on the member.",
     "noMembers": "Nobody in this team yet.",
     "memberRemoved": "Removed from the team.",
+    "removeMember": "Remove from team",
     "delete": "Delete team",
     "deleteConfirm": "“{{name}}” will be deleted. A team with events, tasks or news stays – you will be told what still hangs on it.",
     "deleted": "Team deleted.",

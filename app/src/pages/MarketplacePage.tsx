@@ -8,13 +8,16 @@ import {
   IonItemOptions,
   IonItemSliding,
   IonLabel,
+  IonListHeader,
   IonNote,
+  useIonRouter,
 } from '@ionic/react';
 import { addOutline } from 'ionicons/icons';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
+import { TextSection } from '../components/TextSection';
 import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
 import { TaskConfirmModal } from '../components/TaskConfirmModal';
@@ -23,9 +26,11 @@ import { TaskFormModal } from '../components/TaskFormModal';
 import { ShiftListModal } from '../components/ShiftListModal';
 import { StatCard } from '../components/StatCard';
 import { useClub } from '../hooks/useClub';
+import { usePlanningScope } from '../hooks/usePlanningScope';
+import { useRefreshOnEnter } from '../hooks/useRefreshOnEnter';
 import { useToast } from '../hooks/useToast';
 import { useDeleteTask, useMyTaskCount, usePublishTask, useTasks } from '../hooks/useTasks';
-import { useAgenda } from '../hooks/useAgenda';
+import { useShiftEvents } from '../hooks/useAgenda';
 import {
   useContributionBudget,
   useContributionProfile,
@@ -39,7 +44,7 @@ import { isVacant, openSeats, sortOffices } from '../lib/office';
 import { isBudgetSpent, isProfileFilled } from '../lib/contribution';
 import { canActOn, isSample } from '../lib/sample';
 import { formatDate, formatDateTime } from '../lib/format';
-import { openShiftOffers } from '../lib/shift';
+import { MARKETPLACE_SHIFT_LIMIT, openShiftOffers } from '../lib/shift';
 import {
   groupTasks,
   taskCapacity,
@@ -53,15 +58,35 @@ import {
  * Vier Abschnitte statt einer Liste: Was ich übernommen habe, was drängt
  * (BR-072), was offen ist, und – nur für Trainer:innen und den Vorstand – was
  * noch Entwurf ist (A3). Eine Aufgabe steht in genau einem davon.
+ *
+ * Ein Entwurf hat zwei Wege: antippen öffnet ihn zum Ändern (A5), und dort
+ * schreibt ihn der Hauptknopf aus; wer ihn nicht mehr öffnen will, wischt die
+ * Zeile und schreibt ihn direkt aus. Ein Knopf **in** der antippbaren Zeile
+ * wäre ein Knopf im Knopf (ion-item: keine verschachtelten Interaktiven).
  */
 export function MarketplacePage() {
   const { t } = useTranslation();
+  const router = useIonRouter();
   const { activeMembership, isTrainer } = useClub();
+  const scope = usePlanningScope();
   const toast = useToast();
   const tasks = useTasks();
+  // Die Tab-Seite bleibt gemountet; erst das erneute Betreten lädt nach, was
+  // nach `staleTime` veraltet ist (Lifecycle-Kapitel).
+  useRefreshOnEnter([
+    ['tasks'],
+    ['task-count'],
+    ['agenda'],
+    ['contribution-profile'],
+    ['matching-tasks'],
+    ['matching-vacancies'],
+    ['contribution-budget'],
+    ['offices'],
+  ]);
   // UC-011, Schritt 9: «in Agenda **und** Marktplatz». Dieselbe Abfrage wie die
-  // Agenda – ein zweiter Weg zu denselben Terminen wäre eine zweite Wahrheit.
-  const agenda = useAgenda('upcoming');
+  // Agenda, nur auf Termine mit Schichten verengt – die allgemeine Liste endet
+  // nach 100 Zeilen, und dahinter standen die meisten Einsätze.
+  const shiftEvents = useShiftEvents();
   const [shiftEventId, setShiftEventId] = useState<string | null>(null);
   const profile = useContributionProfile();
   const matching = useMatchingTasks();
@@ -75,9 +100,11 @@ export function MarketplacePage() {
   const taskCount = useMyTaskCount();
 
   const [formOpen, setFormOpen] = useState(false);
-  const [openTaskId, setOpenTaskId] = useState<string | null>(null);
+  // A5: der Entwurf, der gerade im Formular steht.
+  const [editTaskId, setEditTaskId] = useState<string | null>(null);
   // A6: der Entwurf, dessen Löschung gerade zur Rückfrage steht.
   const [deleteTaskId, setDeleteTaskId] = useState<string | null>(null);
+  const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const [confirmTaskId, setConfirmTaskId] = useState<string | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [openOfficeId, setOpenOfficeId] = useState<string | null>(null);
@@ -91,12 +118,12 @@ export function MarketplacePage() {
   // Nur ausgeschriebene, nicht abgesagte und keine Beispiele – dieselbe
   // Bedingung wie in der Agenda, und `canActOn()` sagt den Rest (BR-161).
   const offers = openShiftOffers(
-    (agenda.data ?? []).filter(
+    (shiftEvents.data ?? []).filter(
       (event) =>
         event.published_at !== null && event.cancelled_at === null && canActOn(event),
     ),
   );
-  const shiftEvent = (agenda.data ?? []).find((entry) => entry.id === shiftEventId);
+  const shiftEvent = (shiftEvents.data ?? []).find((entry) => entry.id === shiftEventId);
 
   const items = tasks.data ?? [];
   const groups = groupTasks(items, activeMembership?.id ?? null);
@@ -106,6 +133,10 @@ export function MarketplacePage() {
   // vorhin.
   const openTask = items.find((entry) => entry.id === openTaskId) ?? null;
   const confirmTask = items.find((entry) => entry.id === confirmTaskId) ?? null;
+  // Nur ein Entwurf ist formbar (BR-182): Wird er ausgeschrieben, während das
+  // Blatt offen ist, gilt der nächste Stand aus der Liste.
+  const editTask =
+    items.find((entry) => entry.id === editTaskId && entry.status === 'draft') ?? null;
   const deleteCandidate =
     items.find((entry) => entry.id === deleteTaskId && entry.status === 'draft') ?? null;
 
@@ -124,16 +155,18 @@ export function MarketplacePage() {
   const matchedOfficeIds = new Set(openVacancies.map((vacancy) => vacancy.id));
   const openOffice = (offices.data ?? []).find((office) => office.id === openOfficeId) ?? null;
 
-  const toConfirm = isTrainer
-    ? items.filter((entry) =>
-        entry.assignments.some(
-          (a) =>
-            a.submitted_at !== null &&
-            a.confirmed_at === null &&
-            a.member_id !== activeMembership?.id,
-        ),
-      )
-    : [];
+  // C-032: Bestätigen darf, wer für die Aufgabe plant – der Vorstand jede,
+  // eine Trainer:in die ihres Teams. `confirm_task()` prüft dasselbe.
+  const toConfirm = items.filter(
+    (entry) =>
+      scope.canPlanFor(entry.team_id) &&
+      entry.assignments.some(
+        (a) =>
+          a.submitted_at !== null &&
+          a.confirmed_at === null &&
+          a.member_id !== activeMembership?.id,
+      ),
+  );
 
   const isEmpty =
     groups.mine.length === 0 &&
@@ -142,7 +175,10 @@ export function MarketplacePage() {
     groups.drafts.length === 0 &&
     groups.expired.length === 0 &&
     toConfirm.length === 0 &&
-    vacantOffices.length === 0;
+    vacantOffices.length === 0 &&
+    // Ein offener Helfereinsatz ist ein Angebot wie eine Aufgabe: Solange
+    // einer dasteht, ist der Marktplatz nicht leer.
+    offers.length === 0;
 
   useEffect(() => {
     if (!highlightId) return;
@@ -154,6 +190,15 @@ export function MarketplacePage() {
     return () => window.clearTimeout(timer);
   }, [highlightId, items.length]);
 
+  /** Einen Entwurf ausschreiben, ohne ihn zu öffnen – die Wischoption. */
+  function publishTask(taskId: string) {
+    publish.mutate(taskId, {
+      onSuccess: (result) =>
+        toast.success(t(result.muted ? 'taskForm.publishedMuted' : 'taskForm.published')),
+      onError: (cause) => toast.failure(cause.message),
+    });
+  }
+
   function renderTask(
     task: TaskWithAssignments,
     action: 'open' | 'publish' | 'confirm' | 'none',
@@ -162,95 +207,66 @@ export function MarketplacePage() {
     const urgency = taskUrgency(task.due_at);
     const isHighlighted = task.id === highlightId;
 
+    // Ein Sekundärtext je Zeile (ion-item, Metadata): das Beispiel als
+    // Präfix (BR-160), Kategorie, Frist, Belegung. Das Warum steht im Detail,
+    // dort als Erstes – Schritt 3 von UC-018 liest es, bevor jemand zusagt.
+    const meta = [
+      isSample(task) ? t('sample.badge') : null,
+      t(`taskCategory.${task.category}`),
+      task.due_at ? t('marketplace.dueOn', { date: formatDate(task.due_at) }) : null,
+      task.max_assignees > 1
+        ? t('marketplace.capacity', { taken: capacity.taken, total: task.max_assignees })
+        : null,
+    ]
+      .filter((part): part is string => part !== null)
+      .join(' · ');
+
+    // BR-072: Die Dringlichkeit färbt das Status-Element rechts; die Frist
+    // dazu steht im Sekundärtext.
+    const urgencyColor =
+      urgency === 'expired' ? 'danger' : urgency === 'urgent' ? 'warning' : undefined;
+
     const item = (
       <IonItem
         key={task.id}
         ref={isHighlighted ? highlightRef : undefined}
         color={isHighlighted ? 'light' : undefined}
-        button={action === 'open' || action === 'confirm'}
+        button={action !== 'none'}
         detail={action === 'open' || action === 'confirm'}
         onClick={
           action === 'confirm'
             ? () => setConfirmTaskId(task.id)
             : action === 'open'
               ? () => setOpenTaskId(task.id)
-              : undefined
+              : action === 'publish'
+                ? () => setEditTaskId(task.id)
+                : undefined
         }
       >
         <IonLabel className="ion-text-wrap">
           <h2>{task.title}</h2>
-          {/* BR-069/FR-051: Das Warum steht bei der Aufgabe, nicht hinter
-              einem zweiten Antippen. */}
-          {task.why && <p>{task.why}</p>}
-          <IonNote>
-            {t(`taskCategory.${task.category}`)}
-            {task.due_at ? ` · ${t('marketplace.dueOn', { date: formatDate(task.due_at) })}` : ''}
-            {task.max_assignees > 1
-              ? ` · ${t('marketplace.capacity', {
-                  taken: capacity.taken,
-                  total: task.max_assignees,
-                })}`
-              : ''}
-          </IonNote>
-
-          {/* BR-160: Ein Beispiel, das aussieht wie ein echter Vereinsinhalt,
-              ist schlimmer als eine leere Fläche – es erzeugt eine Erwartung,
-              die niemand einlöst. */}
-          {isSample(task) && (
-            <p>
-              <IonBadge color="medium">{t('sample.badge')}</IonBadge>
-            </p>
-          )}
-
-          {/* BR-072: Dringlichkeit ist sichtbar. */}
-          {urgency === 'urgent' && (
-            <p>
-              <IonBadge color="warning">{t('marketplace.urgent')}</IonBadge>
-            </p>
-          )}
-          {urgency === 'expired' && (
-            <p>
-              <IonBadge color="danger">{t('marketplace.overdue')}</IonBadge>
-            </p>
-          )}
+          <IonNote>{meta}</IonNote>
         </IonLabel>
 
-        {/* Nur-Dank-Modus: eine 0 als Punktzahl wäre eine Aussage über den
-            Wert des Beitrags, die niemand gemeint hat (FR-040). */}
-        {task.points > 0 ? (
-          <IonBadge slot="end" color="primary">
-            +{task.points}
-          </IonBadge>
-        ) : (
-          <IonNote slot="end">{t('marketplace.thanksOnly')}</IonNote>
-        )}
-
-        {action === 'publish' && (
-          <IonButton
-            slot="end"
-            size="small"
-            disabled={publish.isPending}
-            onClick={() =>
-              publish.mutate(task.id, {
-                onSuccess: (result) =>
-                  toast.success(
-                    t(result.muted ? 'taskForm.publishedMuted' : 'taskForm.published'),
-                  ),
-                onError: (cause) => toast.failure(cause.message),
-              })
-            }
-          >
-            {t('taskForm.publish')}
-          </IonButton>
-        )}
-
-        {action === 'none' && (
-          <IonNote slot="end">
+        {/* Genau ein Status-Element rechts: der Stand, wo nichts mehr zu tun
+            ist – sonst der Wert. Nur-Dank-Modus: eine 0 als Punktzahl wäre
+            eine Aussage über den Wert des Beitrags, die niemand gemeint hat
+            (FR-040). */}
+        {action === 'none' ? (
+          <IonNote slot="end" color={urgencyColor}>
             {task.status === 'expired'
               ? t('marketplace.overdue')
               : task.status === 'submitted'
                 ? t('marketplace.awaitingConfirmation')
                 : t('marketplace.claimed')}
+          </IonNote>
+        ) : task.points > 0 ? (
+          <IonBadge slot="end" color={urgencyColor ?? 'primary'}>
+            +{task.points}
+          </IonBadge>
+        ) : (
+          <IonNote slot="end" color={urgencyColor}>
+            {t('marketplace.thanksOnly')}
           </IonNote>
         )}
       </IonItem>
@@ -258,11 +274,19 @@ export function MarketplacePage() {
 
     if (action !== 'publish') return item;
 
-    // A6: Der Entwurf lässt sich wegwischen – das Löschen fragt zuerst nach.
+    // Der Entwurf: antippen öffnet das Formular (A5), wischen schreibt aus
+    // oder löscht (A6) – das Löschen fragt zuerst nach.
     return (
       <IonItemSliding key={task.id}>
         {item}
         <IonItemOptions side="end">
+          <IonItemOption
+            color="primary"
+            disabled={publish.isPending}
+            onClick={() => publishTask(task.id)}
+          >
+            {t('taskForm.publish')}
+          </IonItemOption>
           <IonItemOption
             color="danger"
             disabled={deleteTask.isPending}
@@ -301,7 +325,8 @@ export function MarketplacePage() {
           action={
             isTrainer
               ? { label: t('taskForm.title'), onClick: () => setFormOpen(true) }
-              : { label: t('agenda.title'), routerLink: '/tabs/agenda' }
+              : /* Ein anderer Tab: `root` startet ihn dort, ohne Fremd-History. */
+                { label: t('agenda.title'), onClick: () => router.push('/tabs/agenda', 'root') }
           }
         />
       ) : (
@@ -331,6 +356,21 @@ export function MarketplacePage() {
             </ListSection>
           )}
 
+          {/* BR-143: Ohne Profil bleibt alles nutzbar – die Einladung dazu ist
+              eine Zeile, kein Hindernis. Sie steht auf dem Platz, den mit
+              Profil «Für dich» einnimmt: Das Beitrags-Profil ist der Einstieg
+              in den Marktplatz, nicht eine Zeile unter den Ämtern. */}
+          {!filled && (
+            <ListSection title={t('contribution.inviteTitle')} footnote={t('contribution.voluntary')}>
+              <IonItem button detail onClick={() => setProfileOpen(true)}>
+                <IonLabel className="ion-text-wrap">
+                  <h2>{t('contribution.invite')}</h2>
+                  <IonNote>{t('contribution.inviteHint')}</IonNote>
+                </IonLabel>
+              </IonItem>
+            </ListSection>
+          )}
+
           {/* UC-033: «Für dich» – der Unterschied zwischen ausschreiben und
               anbieten (BR-142). Der Abschnitt steht vor der offenen Liste,
               weil ein Angebot mehr ist als ein Aushang. */}
@@ -354,12 +394,11 @@ export function MarketplacePage() {
                   <IonItem key={suggestion.id}>
                     <IonLabel className="ion-text-wrap">
                       <h2>{suggestion.title}</h2>
-                      {suggestion.why && <p>{suggestion.why}</p>}
-                      <IonNote>
-                        {t(`taskCategory.${suggestion.category}`)} ·{' '}
-                        {t('common.points', { count: suggestion.points })}
-                      </IonNote>
+                      <IonNote>{t(`taskCategory.${suggestion.category}`)}</IonNote>
                     </IonLabel>
+                    <IonNote slot="end" color="primary">
+                      {t('common.points', { count: suggestion.points })}
+                    </IonNote>
                   </IonItem>
                 );
               })}
@@ -369,36 +408,38 @@ export function MarketplacePage() {
           {/* Ein Fehler der Vorschlagsabfrage blendete den Abschnitt bisher
               still aus – er sähe aus wie «nichts passt» (guidelines §9). */}
           {filled && matching.error && (
-            <ListSection title={t('contribution.forYou')}>
+            <>
+              <IonListHeader>
+                <IonLabel>{t('contribution.forYou')}</IonLabel>
+              </IonListHeader>
               <ErrorState
                 error={matching.error as Error}
                 onRetry={() => void matching.refetch()}
               />
-            </ListSection>
+            </>
           )}
 
           {/* A4: Das Budget ist ausgeschöpft. Die Ansicht sagt es, statt eine
-              leere Liste zu zeigen – sonst sähe es aus, als gäbe es nichts. */}
+              leere Liste zu zeigen – sonst sähe es aus, als gäbe es nichts.
+              Ein Satz ist ein Textblock, keine Listenzeile. */}
           {filled && budgetSpent && (
-            <ListSection title={t('contribution.forYou')} footnote={t('contribution.budgetSpentHint')}>
-              <IonItem lines="none">
-                <IonLabel className="ion-text-wrap">
-                  <p>{t('contribution.budgetSpent')}</p>
-                </IonLabel>
-              </IonItem>
-            </ListSection>
+            <>
+              <TextSection title={t('contribution.forYou')}>
+                {t('contribution.budgetSpent')}
+              </TextSection>
+              <IonNote className="app-footnote">{t('contribution.budgetSpentHint')}</IonNote>
+            </>
           )}
 
           {/* A3: Kein Treffer heisst nicht «nichts zu tun» – es heisst, dass
               sich der Verein meldet, sobald etwas passt. */}
           {filled && !budgetSpent && suggestions.length === 0 && openVacancies.length === 0 && (
-            <ListSection title={t('contribution.forYou')} footnote={t('contribution.noMatchHint')}>
-              <IonItem lines="none">
-                <IonLabel className="ion-text-wrap">
-                  <p>{t('contribution.noMatch')}</p>
-                </IonLabel>
-              </IonItem>
-            </ListSection>
+            <>
+              <TextSection title={t('contribution.forYou')}>
+                {t('contribution.noMatch')}
+              </TextSection>
+              <IonNote className="app-footnote">{t('contribution.noMatchHint')}</IonNote>
+            </>
           )}
 
           {/* Der zweite Teil des Ziels: Ämter werden angeboten, nicht
@@ -426,8 +467,12 @@ export function MarketplacePage() {
                         .join(' · ')}
                     </IonNote>
                   </IonLabel>
-                  <IonBadge slot="end" color="warning">
-                    {t('offices.openSeats', { count: openSeats(office) })}
+                  <IonBadge
+                    slot="end"
+                    color="warning"
+                    aria-label={t('offices.openSeats', { count: openSeats(office) })}
+                  >
+                    {openSeats(office)}
                   </IonBadge>
                 </IonItem>
               ))}
@@ -435,19 +480,6 @@ export function MarketplacePage() {
                 <IonLabel className="ion-text-wrap">
                   <h2>{t('offices.allOffices')}</h2>
                   <IonNote>{t('offices.allOfficesHint')}</IonNote>
-                </IonLabel>
-              </IonItem>
-            </ListSection>
-          )}
-
-          {/* BR-143: Ohne Profil bleibt alles nutzbar – die Einladung dazu ist
-              eine Zeile, kein Hindernis. */}
-          {!filled && (
-            <ListSection title={t('contribution.inviteTitle')} footnote={t('contribution.voluntary')}>
-              <IonItem button detail onClick={() => setProfileOpen(true)}>
-                <IonLabel className="ion-text-wrap">
-                  <h2>{t('contribution.invite')}</h2>
-                  <IonNote>{t('contribution.inviteHint')}</IonNote>
                 </IonLabel>
               </IonItem>
             </ListSection>
@@ -483,17 +515,18 @@ export function MarketplacePage() {
               title={t('shifts.marketplaceSection')}
               footnote={t('shifts.marketplaceHint')}
             >
-              {offers.map(({ event, open, needed }) => (
+              {offers.slice(0, MARKETPLACE_SHIFT_LIMIT).map(({ event, open, needed }) => (
                 <IonItem
                   key={event.id}
                   button
                   detail
                   onClick={() => setShiftEventId(event.id)}
                 >
+                  {/* Ein Sekundärtext: der Zeitpunkt. Das Warum steht im
+                      Schichten-Blatt. */}
                   <IonLabel className="ion-text-wrap">
                     <h2>{event.title}</h2>
-                    <p>{formatDateTime(event.starts_at)}</p>
-                    {event.why && <IonNote>{event.why}</IonNote>}
+                    <IonNote>{formatDateTime(event.starts_at)}</IonNote>
                   </IonLabel>
                   {/* BR-041: im Badge nur die Zahl, der Wortlaut für
                       Bedienhilfen – wie in der Agenda (guidelines §2). */}
@@ -506,6 +539,20 @@ export function MarketplacePage() {
                   </IonBadge>
                 </IonItem>
               ))}
+              {/* Der Rest steht in der Agenda: Sie kennt alle Einsätze, auch
+                  die besetzten und die weit entfernten. Der Verweis setzt den
+                  Filter gleich mit – sonst landete man in der vollen Agenda
+                  und müsste die Einsätze darin erst suchen. */}
+              <IonItem
+                button
+                detail
+                onClick={() => router.push('/tabs/agenda?type=helper', 'root')}
+              >
+                <IonLabel className="ion-text-wrap">
+                  <h2>{t('shifts.marketplaceMore')}</h2>
+                  <IonNote>{t('shifts.marketplaceMoreHint')}</IonNote>
+                </IonLabel>
+              </IonItem>
             </ListSection>
           )}
 
@@ -591,6 +638,8 @@ export function MarketplacePage() {
           übernimmt, soll sie überall gleich übernehmen. */}
       <ShiftListModal
         isOpen={shiftEventId !== null}
+        eventTitle={shiftEvent?.title ?? ''}
+        location={shiftEvent?.location ?? null}
         why={shiftEvent?.why ?? null}
         shifts={shiftEvent?.shifts ?? []}
         attendance={shiftEvent?.attendance ?? []}
@@ -627,11 +676,22 @@ export function MarketplacePage() {
         ]}
       />
 
+      {/* Ein Blatt für beides: neu (Schritt 1) und Entwurf ändern (A5). */}
       <TaskFormModal
-        isOpen={formOpen}
-        onDismiss={() => setFormOpen(false)}
+        isOpen={formOpen || editTask !== null}
+        task={editTask}
+        onDelete={(task) => {
+          // Das Blatt schliesst zuerst, dann fragt derselbe Alert wie beim Wischen.
+          setEditTaskId(null);
+          setDeleteTaskId(task.id);
+        }}
+        onDismiss={() => {
+          setFormOpen(false);
+          setEditTaskId(null);
+        }}
         onDone={(published, muted) => {
           setFormOpen(false);
+          setEditTaskId(null);
           if (!published) {
             toast.success(t('taskForm.draftSaved'));
           } else {

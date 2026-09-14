@@ -130,7 +130,7 @@ Team-Zuordnungen, Rollen und der Punkte-Ledger bleiben unverändert. An den Verb
 
 ### BR-180: Importierte Termine gehören dem Verband, Ergänzungen dem Verein
 
-Zeit, Ort, Gegner und Resultat eines importierten Termins kommen vom Verband und werden bei jedem Abgleich überschrieben. Was der Verein ergänzt – Treffpunkt, Abfahrt, Hinweis – bleibt erhalten. In allem anderen ist ein importierter Termin ein Termin wie jeder andere: Zu- und Absage, Erinnerung und Check-in gelten unverändert.
+Zeit, Ort, Gegner und Resultat eines importierten Termins kommen vom Verband und werden bei jedem Abgleich überschrieben. Nennt der Verband zum Ort auch die Lage (swiss unihockey: Koordinaten der Halle), gehört sie ebenso ihm: Das Termin-Detail zeigt sie als Karte auf swisstopo-Kacheln (C-006) und bietet die Route in der Navigation des Geräts an; ein Termin ohne Lage hat keine Karte. Das Detail nennt den Verband beim Namen («Spiel · Swiss Unihockey»), nicht als «vom Verband» – ein Verein kann an zwei Verbänden hängen. Was der Verein ergänzt – Treffpunkt, Abfahrt, Hinweis – bleibt erhalten. In allem anderen ist ein importierter Termin ein Termin wie jeder andere: Zu- und Absage, Erinnerung und Check-in gelten unverändert.
 
 ### BR-181: Ein gelöster Verband löscht nichts
 

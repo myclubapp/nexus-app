@@ -4,7 +4,10 @@ import {
   IonCardHeader,
   IonChip,
   IonCol,
+  IonFab,
+  IonFabButton,
   IonGrid,
+  IonIcon,
   IonItem,
   IonLabel,
   IonList,
@@ -12,6 +15,7 @@ import {
   IonRow,
   IonSkeletonText,
 } from '@ionic/react';
+import { share as shareIcon } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { AppPage } from './AppPage';
 
@@ -128,6 +132,13 @@ export function SkeletonNewsCards({ cards = 2 }: { cards?: number }) {
         {Array.from({ length: cards }, (_, index) => (
           <IonCol key={index} size="12" sizeSm="6" sizeMd="6" sizeLg="4">
             <IonCard className="app-news-card">
+              {/* Platzhalter für das Teilen oben rechts – die Karte springt
+                  beim Laden nicht. */}
+              <IonFab vertical="top" horizontal="end">
+                <IonFabButton size="small" disabled>
+                  <IonIcon icon={shareIcon} size="small" />
+                </IonFabButton>
+              </IonFab>
               <IonSkeletonText animated className="app-news-card__image-skeleton" />
               <IonCardHeader>
                 <IonSkeletonText animated style={{ width: '40%' }} />
@@ -138,13 +149,11 @@ export function SkeletonNewsCards({ cards = 2 }: { cards?: number }) {
                 <IonSkeletonText animated style={{ width: '80%' }} />
                 <IonSkeletonText animated style={{ width: '85%' }} />
               </IonCardContent>
-              <IonRow>
-                <IonCol size="8">
-                  <IonChip>
-                    <IonSkeletonText animated style={{ width: '60px' }} />
-                  </IonChip>
-                </IonCol>
-              </IonRow>
+              <div className="app-news-card__footer">
+                <IonChip>
+                  <IonSkeletonText animated style={{ width: '60px' }} />
+                </IonChip>
+              </div>
             </IonCard>
           </IonCol>
         ))}

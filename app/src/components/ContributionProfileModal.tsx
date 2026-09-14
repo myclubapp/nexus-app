@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   IonItem,
   IonLabel,
+  IonListHeader,
   IonNote,
   IonSegment,
   IonSegmentButton,
@@ -114,38 +115,31 @@ export function ContributionProfileForm({
 
       {/* Schritt 4: das Zeitbudget. Es ist keine Zusage, sondern eine Grenze –
           BR-144 hält sie ein, statt sie einzufordern. */}
-      <ListSection
-        title={t('contribution.budgetTitle')}
-        footnote={
-          timeBudget ? t(`contribution.budgetHint.${timeBudget}`) : t('contribution.budgetHintNone')
-        }
-      >
-        <IonItem lines="none">
-          <IonSegment
-            value={timeBudget ?? ''}
-            onIonChange={(e) => setTimeBudget((e.detail.value as TimeBudget) || null)}
-          >
-            {TIME_BUDGETS.map((budget) => (
-              <IonSegmentButton key={budget} value={budget}>
-                <IonLabel>{t(`contribution.budget.${budget}`)}</IonLabel>
-              </IonSegmentButton>
-            ))}
-          </IonSegment>
-        </IonItem>
-
-        {/* Die Zahl kommt aus `budgetCap()` und nicht aus dem Übersetzungstext:
-            Stünde sie dort, liefe sie irgendwann gegen die Zahl in
-            `contribution_budget_left()` – und der Satz löge. */}
-        {timeBudget && (
-          <IonItem lines="none">
-            <IonLabel className="ion-text-wrap">
-              <IonNote>
-                {t('contribution.budgetCap', { count: budgetCap(timeBudget) })}
-              </IonNote>
-            </IonLabel>
-          </IonItem>
-        )}
-      </ListSection>
+      {/* Das Segment steht als eigener Block unter der Überschrift – ein Item
+          ist eine Zeile, kein Behälter für ein Bedienelement. */}
+      <IonListHeader>
+        <IonLabel>{t('contribution.budgetTitle')}</IonLabel>
+      </IonListHeader>
+      <div className="ion-padding-horizontal ion-padding-bottom">
+        <IonSegment
+          value={timeBudget ?? ''}
+          onIonChange={(e) => setTimeBudget((e.detail.value as TimeBudget) || null)}
+        >
+          {TIME_BUDGETS.map((budget) => (
+            <IonSegmentButton key={budget} value={budget}>
+              <IonLabel>{t(`contribution.budget.${budget}`)}</IonLabel>
+            </IonSegmentButton>
+          ))}
+        </IonSegment>
+      </div>
+      {/* Die Zahl kommt aus `budgetCap()` und nicht aus dem Übersetzungstext:
+          Stünde sie dort, liefe sie irgendwann gegen die Zahl in
+          `contribution_budget_left()` – und der Satz löge. */}
+      <IonNote className="app-footnote">
+        {timeBudget
+          ? `${t('contribution.budgetCap', { count: budgetCap(timeBudget) })} ${t(`contribution.budgetHint.${timeBudget}`)}`
+          : t('contribution.budgetHintNone')}
+      </IonNote>
 
       {problems.map((problem) => (
         <InlineError key={problem} message={t(`contribution.problem.${problem}`)} />

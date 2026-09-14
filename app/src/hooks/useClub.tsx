@@ -35,6 +35,16 @@ interface ClubContextValue {
   /** Wahr für Rollen, die Schichten bestätigen, Punkte buchen und
    *  Fürsorge-Hinweise sehen dürfen. */
   isAdmin: boolean;
+  /**
+   * Vereins-Scope (C-032, `is_club_board()` in `0073`): Vorstand, Admin und
+   * Sportchef:in sehen und planen den ganzen Verein.
+   */
+  isBoard: boolean;
+  /**
+   * Darf überhaupt planen (`is_club_trainer()`): Trainer:innen und alle
+   * Vorstandsrollen. Über die Reichweite sagt das nichts – eine Trainer:in
+   * plant nur für ihre Teams; siehe `canPlanFor()` in `lib/scope.ts`.
+   */
   isTrainer: boolean;
   /**
    * Der vereinseigene Begriff für eine Terminart. Ein Chor nennt das
@@ -130,7 +140,9 @@ export function ClubProvider({ children }: { children: ReactNode }) {
       refetch: refetchMemberships,
       setActiveClub,
       isAdmin: role === 'admin' || role === 'superadmin',
-      isTrainer: role === 'trainer' || role === 'admin' || role === 'superadmin',
+      isBoard: role === 'sportchef' || role === 'admin' || role === 'superadmin',
+      isTrainer:
+        role === 'trainer' || role === 'sportchef' || role === 'admin' || role === 'superadmin',
       eventLabel,
     }),
     [

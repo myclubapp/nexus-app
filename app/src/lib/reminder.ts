@@ -41,6 +41,12 @@ export interface RemindableEvent {
   /** Wie viele noch nicht geantwortet haben – `null`, solange unbekannt. */
   undecided: number | null;
   isTrainer: boolean;
+  /**
+   * Der Termin hat Schichten (BR-196). Dann gibt es keine Antwort auf den
+   * Anlass, also auch niemanden, der sie schuldig bliebe – die Erinnerung
+   * ginge an den ganzen Verein, auch wenn kein Platz mehr frei ist.
+   */
+  viaShifts?: boolean;
 }
 
 /**
@@ -54,5 +60,6 @@ export interface RemindableEvent {
 export function canRemind(event: RemindableEvent): boolean {
   if (!event.isTrainer) return false;
   if (event.isDraft || event.isCancelled || event.hasStarted) return false;
+  if (event.viaShifts) return false;
   return event.undecided === null || event.undecided > 0;
 }

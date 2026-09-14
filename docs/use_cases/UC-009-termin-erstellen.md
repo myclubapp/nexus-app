@@ -75,6 +75,17 @@
 1. System weist das Speichern zurück und markiert das betroffene Feld.
 2. Use case continues at step 4.
 
+### A6: Termin löschen
+
+**Trigger:** Trainer:in wählt im Termin-Detail unter «Verwalten» die Zeile «Termin löschen» (Entscheid vom 2026-09-13: Was sich bearbeiten lässt, lässt sich auch löschen)
+**Flow:**
+
+1. System fragt mit dem Titel des Termins nach («Bist du sicher …»).
+2. Trainer:in bestätigt.
+3. System prüft, ob zum Termin oder seinen Schichten schon Punkte gebucht sind. Wenn ja, weist es das Löschen ab und verweist auf das Absagen (A4).
+4. System löscht den Termin samt Antworten, Schichten und Check-in-Token; Sitzungs-Inputs verlieren nur den Bezug. Niemand wird benachrichtigt – ein Termin, der jemandem gefehlt hätte, wird abgesagt, nicht gelöscht.
+5. Use case ends.
+
 ## Postconditions
 
 ### Success Postconditions

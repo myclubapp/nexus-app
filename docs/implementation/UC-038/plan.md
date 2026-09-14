@@ -49,7 +49,7 @@ alten Backend» stehen.
 | ------ | ------------------------------------ | ----------- | ----------------------------------------------------------------------- |
 | BR-167 | Der Abruf gehört auf den Server      | Implemented | Die App ruft nie `wp-json` auf; sie ruft die Function auf               |
 | BR-168 | Ein Beitrag, eine Zeile              | Implemented | `news_external_key` auf `(club_id, source, external_id)`, Upsert darüber |
-| BR-169 | Der Volltext bleibt auf der Website  | Implemented | `body` trägt den entschärften Anrisstext, `external_url` den Weg dorthin |
+| BR-169 | Der Volltext kommt mit – entschärft  | Implemented | `body` trägt den Anriss (Liste), `body_html` den Volltext (0068), `sanitizeNewsHtml` entschärft ihn im Detail; `external_url` bleibt der Weg zur Website |
 | BR-170 | Trennen löscht nichts                | Implemented | `useDisconnectWebsite` löscht nur `news_sources`                        |
 | BR-171 | Der Import ist ein einmaliges Angebot | Implemented | `FirstStepsCard offerNewsImport`, zwei Tests halten beide Seiten fest    |
 | BR-172 | Ein Import ist keine Verbindungs-Nachricht | Implemented | Der Eintrag entsteht in `publish_news()`; der Import schreibt an dieser Funktion vorbei direkt nach `news` und löst keinen Trigger aus (auf `news` liegt keiner) |
@@ -100,10 +100,14 @@ Zwei Wege, zwei Prüfungen:
    die falsche Zieladresse behauptet.
 3. **`date_gmt` statt `date`.** `date` ist Ortszeit ohne Zeitzone und liegt je
    nach Server um Stunden daneben.
-4. **Kein HTML im Feed und kein Platzhalterbild.** Das alte Backend legte
-   `content.rendered` als `htmlText` ab und setzte notfalls `placehold.co` als
-   Bild. Hier steht der entschärfte Anrisstext im `body`, der Volltext bleibt
-   verlinkt (BR-169), und ein fehlendes Bild bleibt leer.
+4. **Kein Platzhalterbild, und HTML nur durch den Filter.** Das alte Backend
+   setzte notfalls `placehold.co` als Bild und die App zeigte `content.rendered`
+   ungefiltert per `innerHTML`. Hier bleibt ein fehlendes Bild leer, und der
+   Volltext (`body_html`, seit 0068) erreicht das DOM nur durch
+   `sanitizeNewsHtml` – feste Liste erlaubter Elemente, keine Klassen, keine
+   Stile, keine Ereignis-Attribute (BR-169, Entscheid vom 2026-09-12: bis
+   dahin blieb der Volltext auf der Website, und das Detail zeigte den Anriss
+   mit «[…]»).
 
 ---
 

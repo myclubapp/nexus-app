@@ -133,6 +133,26 @@ export function useCancelEvent() {
 }
 
 /**
+ * Termin löschen (Entscheid vom 2026-09-13: Bearbeiten heisst auch Löschen).
+ *
+ * Anders als die Absage ohne Grund und ohne Zustellung – der Termin ist
+ * danach weg. Der Riegel gegen einen Termin mit gebuchten Punkten sitzt in
+ * `delete_event()` (0074); die Meldung sagt dann, dass nur noch Absagen geht.
+ */
+export function useDeleteEvent() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (eventId: string) => {
+      const { error } = await supabase.rpc('delete_event', { p_event_id: eventId });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => invalidateAgenda(queryClient, activeClub?.id),
+  });
+}
+
+/**
  * Einen einzelnen Termin ändern (A2).
  *
  * Die Spezifikation fragt, ob nur dieser Termin oder die ganze Serie geändert

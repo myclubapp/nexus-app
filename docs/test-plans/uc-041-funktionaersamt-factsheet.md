@@ -97,6 +97,7 @@
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
 | 1 | Als **V** «Materialwart:in» nach links wischen, «Auflösen» | Rückfrage mit dem Titel; «Auflösen» rot | | |
+| 1b | Alternativ: das Amt antippen, im Detail unter «Verwalten» die rote letzte Zeile «Auflösen» wählen | Das Detail schliesst, dieselbe Rückfrage erscheint | | |
 | 2 | Bestätigen | Toast «Amt aufgelöst.», Zeile weg, PDF im Bucket gelöscht | | |
 | 3 | Alle Ämter auflösen | Leerzustand mit Knopf «Amt anlegen» | | |
 | 4 | Als **M** die Ämterliste (über den Marktplatz-Link) öffnen, wenn kein Amt besteht | Leerzustand mit Knopf «Marktplatz» | | |

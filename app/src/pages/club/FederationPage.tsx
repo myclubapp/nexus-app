@@ -13,6 +13,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { AppPage } from '../../components/AppPage';
 import { ListSection } from '../../components/ListSection';
+import { TextSection } from '../../components/TextSection';
 import { EmptyState, ErrorState, InlineError } from '../../components/StateViews';
 import { SkeletonList } from '../../components/Skeletons';
 import {
@@ -94,13 +95,9 @@ export function FederationPage() {
       backHref="/tabs/profile/club"
       onRefresh={() => connections.refetch()}
     >
-      <ListSection>
-        <IonItem lines="none">
-          <IonLabel className="ion-text-wrap">
-            <p>{t('federation.intro')}</p>
-          </IonLabel>
-        </IonItem>
-      </ListSection>
+      <TextSection>
+        <p>{t('federation.intro')}</p>
+      </TextSection>
 
       {connections.isLoading ? (
         <SkeletonList />
@@ -118,33 +115,37 @@ export function FederationPage() {
           }}
         />
       ) : (
-        <ListSection title={t('federation.status')}>
-          {(connections.data ?? []).map((entry) => (
-            <IonItem key={entry.federation} lines="full">
-              <IonLabel className="ion-text-wrap">
-                <h2>{t(`federation.name.${entry.federation}`)}</h2>
-                <p>
-                  {entry.lastSyncAt
-                    ? t('federation.lastSync', {
-                        when: formatDateTime(entry.lastSyncAt),
-                      })
-                    : t('federation.neverSynced')}
-                </p>
-                {entry.lastError && (
-                  <IonNote>
-                    {t('federation.lastError', { message: entry.lastError })}
-                  </IonNote>
-                )}
-                {/* BR-155: Der Verband fällt aus, die App nicht. Der Satz
-                    steht nur dort, wo er gebraucht wird. */}
-                {isStale(entry) && <IonNote>{t('federation.errorHint')}</IonNote>}
-              </IonLabel>
-              <IonBadge slot="end" color={statusTone(entry.status)}>
-                {t(`federation.statusLabel.${entry.status}`)}
-              </IonBadge>
-            </IonItem>
-          ))}
+        <>
+          <ListSection title={t('federation.status')}>
+            {(connections.data ?? []).map((entry) => (
+              <IonItem key={entry.federation} lines="full">
+                <IonLabel className="ion-text-wrap">
+                  <h2>{t(`federation.name.${entry.federation}`)}</h2>
+                  <p>
+                    {entry.lastSyncAt
+                      ? t('federation.lastSync', {
+                          when: formatDateTime(entry.lastSyncAt),
+                        })
+                      : t('federation.neverSynced')}
+                  </p>
+                  {entry.lastError && (
+                    <IonNote>
+                      {t('federation.lastError', { message: entry.lastError })}
+                    </IonNote>
+                  )}
+                  {/* BR-155: Der Verband fällt aus, die App nicht. Der Satz
+                      steht nur dort, wo er gebraucht wird. */}
+                  {isStale(entry) && <IonNote>{t('federation.errorHint')}</IonNote>}
+                </IonLabel>
+                <IonBadge slot="end" color={statusTone(entry.status)}>
+                  {t(`federation.statusLabel.${entry.status}`)}
+                </IonBadge>
+              </IonItem>
+            ))}
+          </ListSection>
 
+          {/* Die Knopfleiste steht unter der Liste, nicht darin – eine
+              `IonList` kennt nur Zeilen. */}
           <div className="app-actions">
             {(connections.data ?? []).map((entry) => (
               <IonButton
@@ -159,7 +160,7 @@ export function FederationPage() {
               </IonButton>
             ))}
           </div>
-        </ListSection>
+        </>
       )}
 
       {/* Schritte 2 bis 4. */}
@@ -191,6 +192,7 @@ export function FederationPage() {
             label={t('federation.clubId')}
             labelPlacement="stacked"
             inputmode="numeric"
+            enterkeyhint={requiresKey(federation) ? 'next' : 'done'}
             value={clubId}
             onIonInput={(e) => setClubId(e.detail.value ?? '')}
           />
@@ -212,6 +214,10 @@ export function FederationPage() {
               type="password"
               label={t('federation.apiKey')}
               labelPlacement="stacked"
+              // BR-153: Der Schlüssel soll nirgends hängen bleiben – auch
+              // nicht im Ausfüllspeicher des Browsers.
+              autocomplete="off"
+              enterkeyhint="done"
               value={apiKey}
               onIonInput={(e) => setApiKey(e.detail.value ?? '')}
             />
@@ -243,12 +249,14 @@ export function FederationPage() {
               </IonLabel>
             </IonItem>
           ))}
-          <div className="app-actions">
-            <IonButton expand="block" fill="outline" routerLink="/tabs/profile/teams">
-              {t('federation.toTeams')}
-            </IonButton>
-          </div>
         </ListSection>
+      )}
+      {found && found.length > 0 && (
+        <div className="app-actions">
+          <IonButton expand="block" fill="outline" routerLink="/tabs/profile/teams">
+            {t('federation.toTeams')}
+          </IonButton>
+        </div>
       )}
 
       <div className="app-actions">
@@ -261,7 +269,9 @@ export function FederationPage() {
         </IonButton>
       </div>
 
-      {/* A4: Trennen löscht den Schlüssel, nicht die Vergangenheit. */}
+      {/* A4: Trennen löscht den Schlüssel, nicht die Vergangenheit. Und ein
+          Knopf, der etwas entfernt, trägt `destructive` – auch wenn die
+          Aktion harmlos klingt (guidelines §2). */}
       <IonAlert
         isOpen={dropping !== null}
         header={t('federation.disconnect')}
@@ -271,6 +281,7 @@ export function FederationPage() {
           { text: t('common.cancel'), role: 'cancel' },
           {
             text: t('federation.disconnect'),
+            role: 'destructive',
             handler: () => {
               if (!dropping) return;
               disconnect.mutate(dropping, {

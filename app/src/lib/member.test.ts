@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   ASSIGNABLE_ROLES,
   EMPTY_MEMBER_FILTER,
+  firstName,
   initials,
   MEMBER_STATUSES,
   filterMembers,
@@ -155,5 +156,29 @@ describe('initials', () => {
 
   it('schreibt gross, auch wenn der Name klein geschrieben ist', () => {
     expect(initials('mira keller')).toBe('MK');
+  });
+});
+
+describe('firstName', () => {
+  it('nimmt den ersten Namensteil', () => {
+    // Die App duzt; die Anrede heisst «Hallo Sandro», nicht «Hallo Sandro Scalco».
+    expect(firstName('Sandro Scalco')).toBe('Sandro');
+    expect(firstName('Anna Maria Rossi')).toBe('Anna');
+  });
+
+  it('lässt Bindestriche stehen', () => {
+    expect(firstName('Jean-Luc von Arx')).toBe('Jean-Luc');
+  });
+
+  it('kommt mit einem Wort und mit Leerraum aus', () => {
+    expect(firstName('Cla')).toBe('Cla');
+    expect(firstName('  Mira   Keller ')).toBe('Mira');
+  });
+
+  it('bleibt leer, wenn der Name fehlt', () => {
+    expect(firstName('')).toBe('');
+    expect(firstName('   ')).toBe('');
+    expect(firstName(null)).toBe('');
+    expect(firstName(undefined)).toBe('');
   });
 });

@@ -79,7 +79,15 @@
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Die Kamera wird nur zum Scannen des QR-Codes beim Check-in verwendet.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Der Kalender wird nur gebraucht, um zugesagte Termine und Einsätze als Eintrag anzubieten.</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>Der Kalender wird nur gebraucht, um zugesagte Termine und Einsätze als Eintrag anzubieten.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Der Kalender wird nur gebraucht, um zugesagte Termine und Einsätze als Eintrag anzubieten.</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+	<key>UIDesignRequiresCompatibility</key>
 	<true/>
 </dict>
 </plist>

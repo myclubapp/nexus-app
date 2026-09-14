@@ -3,12 +3,14 @@ import {
   IonBadge,
   IonItem,
   IonLabel,
+  IonListHeader,
   IonNote,
   IonToggle,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
+import { TextSection } from '../components/TextSection';
 import { FormModal } from '../components/FormModal';
 import { ErrorState } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
@@ -54,68 +56,76 @@ export function TransparencyPage() {
       backHref="/tabs/profile"
       onRefresh={() => signals.refetch()}
     >
-      {/* Schritt 2: woraus überhaupt etwas entstehen kann. */}
-      <ListSection
-        title={t('transparency.collected')}
-        footnote={t('transparency.collectedHint')}
-      >
+      {/* Schritt 2: woraus überhaupt etwas entstehen kann. Das sind Absätze,
+          keine Listenzeilen – Fliesstext gehört nicht in ein Item. */}
+      <TextSection title={t('transparency.collected')}>
         {COLLECTED_DATA.map((kind) => (
-          <IonItem key={kind}>
-            <IonLabel className="ion-text-wrap">
-              <h2>{t(`transparency.data.${kind}.title`)}</h2>
-              <p>{t(`transparency.data.${kind}.body`)}</p>
-            </IonLabel>
-          </IonItem>
+          <p key={kind}>
+            <strong>{t(`transparency.data.${kind}.title`)}</strong>{' '}
+            {t(`transparency.data.${kind}.body`)}
+          </p>
         ))}
-      </ListSection>
+        <p>
+          <IonNote>{t('transparency.collectedHint')}</IonNote>
+        </p>
+      </TextSection>
 
       {/* BR-108: und was ausdrücklich nicht. */}
-      <ListSection
-        title={t('transparency.notCollected')}
-        footnote={t('transparency.notCollectedHint')}
-      >
+      <TextSection title={t('transparency.notCollected')}>
         {NOT_COLLECTED.map((kind) => (
-          <IonItem key={kind}>
-            <IonLabel className="ion-text-wrap">
-              <p>{t(`transparency.notData.${kind}`)}</p>
-            </IonLabel>
-          </IonItem>
+          <p key={kind}>{t(`transparency.notData.${kind}`)}</p>
         ))}
-      </ListSection>
+        <p>
+          <IonNote>{t('transparency.notCollectedHint')}</IonNote>
+        </p>
+      </TextSection>
 
-      {/* Schritte 3 und 4: was gerade besteht, und wer es sieht. */}
-      <ListSection
-        title={t('transparency.mySignals')}
-        footnote={t('transparency.signalsHint')}
-      >
-        {signals.isLoading ? (
-          <SkeletonList rows={2} />
-        ) : signals.error ? (
-          <ErrorState
-            error={signals.error as Error}
-            onRetry={() => void signals.refetch()}
-          />
-        ) : rows.length === 0 ? (
-          /* A1: sagen, dass gerade nichts besteht. */
-          <IonItem>
-            <IonNote>{t('transparency.noSignals')}</IonNote>
-          </IonItem>
-        ) : (
-          rows.map((signal) => (
-            <IonItem key={signal.id} button detail onClick={() => setExplain(signal)}>
-              <IonLabel className="ion-text-wrap">
-                <h2>{t(signalKey(signal.signalType, 'title'))}</h2>
-                <IonNote>
-                  {t(signalAudienceKey(signal))} · {formatDate(signal.detectedAt)}
-                </IonNote>
+      {/* Schritte 3 und 4: was gerade besteht, und wer es sieht. Skelett und
+          Fehlerzustand stehen neben der Liste, nicht darin – `SkeletonList`
+          ist selbst eine Liste, `ErrorState` keine Zeile. */}
+      {signals.isLoading || signals.error ? (
+        <>
+          <IonListHeader>
+            <IonLabel>{t('transparency.mySignals')}</IonLabel>
+          </IonListHeader>
+          {signals.isLoading ? (
+            <SkeletonList rows={2} />
+          ) : (
+            <ErrorState
+              error={signals.error as Error}
+              onRetry={() => void signals.refetch()}
+            />
+          )}
+        </>
+      ) : (
+        <ListSection
+          title={t('transparency.mySignals')}
+          footnote={t('transparency.signalsHint')}
+        >
+          {rows.length === 0 ? (
+            /* A1: sagen, dass gerade nichts besteht. */
+            <IonItem lines="none">
+              <IonLabel color="medium" className="ion-text-wrap">
+                {t('transparency.noSignals')}
               </IonLabel>
-              <IonBadge slot="end" color={severityColor(signal.severity)}>
-                {t(`health.severity.${signal.severity}`)}
-              </IonBadge>
             </IonItem>
-          ))
-        )}
-      </ListSection>
+          ) : (
+            rows.map((signal) => (
+              <IonItem key={signal.id} button detail onClick={() => setExplain(signal)}>
+                <IonLabel className="ion-text-wrap">
+                  <h2>{t(signalKey(signal.signalType, 'title'))}</h2>
+                  <IonNote>
+                    {t(signalAudienceKey(signal))} · {formatDate(signal.detectedAt)}
+                  </IonNote>
+                </IonLabel>
+                <IonBadge slot="end" color={severityColor(signal.severity)}>
+                  {t(`health.severity.${signal.severity}`)}
+                </IonBadge>
+              </IonItem>
+            ))
+          )}
+        </ListSection>
+      )}
 
       {/* Schritte 6–8: der Schalter, den die Spalte seit `0013` vermisst. */}
       <ListSection title={t('transparency.optOut')} footnote={t('transparency.optOutHint')}>
@@ -148,20 +158,12 @@ export function TransparencyPage() {
       >
         {explain && (
           <>
-            <ListSection>
-              <IonItem>
-                <IonLabel className="ion-text-wrap">
-                  <p>{t(signalKey(explain.signalType, 'definition'))}</p>
-                </IonLabel>
-              </IonItem>
-            </ListSection>
-            <ListSection title={t('transparency.whoSees')}>
-              <IonItem>
-                <IonLabel className="ion-text-wrap">
-                  <p>{t(signalAudienceKey(explain))}</p>
-                </IonLabel>
-              </IonItem>
-            </ListSection>
+            <TextSection>
+              <p>{t(signalKey(explain.signalType, 'definition'))}</p>
+            </TextSection>
+            <TextSection title={t('transparency.whoSees')}>
+              <p>{t(signalAudienceKey(explain))}</p>
+            </TextSection>
             <ListSection footnote={t('transparency.expiresHint')}>
               <IonItem>
                 <IonLabel>{t('transparency.expires')}</IonLabel>

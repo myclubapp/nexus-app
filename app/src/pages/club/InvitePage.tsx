@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import {
   IonAlert,
   IonBadge,
@@ -57,6 +57,8 @@ import type { Invite, InviteRole } from '../../lib/database.types';
 export function InvitePage() {
   const { t } = useTranslation();
   const presentingElement = usePresentingElement();
+  // Der zugängliche Name des Teilen-Blatts ist sein Titel in der Kopfzeile.
+  const shareTitleId = useId();
   // §5: Ein Widerruf wird vorher gefragt, nicht nachher gemeldet.
   const [revokeId, setRevokeId] = useState<string | null>(null);
   const { isAdmin } = useClub();
@@ -230,6 +232,7 @@ export function InvitePage() {
           <IonItem>
             <IonSelect
               label={t('invite.scope')}
+              labelPlacement="stacked"
               value={teamId}
               onIonChange={(e) => setTeamId((e.detail.value as string | null) ?? null)}
               cancelText={t('common.cancel')}
@@ -247,6 +250,7 @@ export function InvitePage() {
           <IonItem>
             <IonSelect
               label={t('invite.roleLabel')}
+              labelPlacement="stacked"
               value={role}
               onIonChange={(e) => {
                 setRole(e.detail.value as InviteRole);
@@ -295,6 +299,7 @@ export function InvitePage() {
               label={t('invite.maxUsesLabel')}
               labelPlacement="stacked"
               placeholder={t('invite.maxUsesUnlimited')}
+              enterkeyhint="done"
               value={maxUses}
               onIonInput={(e) => setMaxUses(e.detail.value ?? '')}
             />
@@ -324,20 +329,24 @@ export function InvitePage() {
       />
 
       {/* Teilen (Schritt 7 und 8). Kein FormModal: Hier wird nichts erfasst,
-          und zwei Knöpfe, die beide nur schliessen, wären eine Zumutung. */}
+          und zwei Knöpfe, die beide nur schliessen, wären eine Zumutung.
+          «Schliessen» steht links, wie in jedem Blatt (guidelines §2). */}
       <IonModal
         isOpen={shownInvite !== null}
         onDidDismiss={() => setShownInvite(null)}
         presentingElement={presentingElement}
+        aria-labelledby={shareTitleId}
       >
         <IonHeader>
           <IonToolbar>
-            <IonTitle>{t('invite.shareTitle')}</IonTitle>
-            <IonButtons slot="end">
-              <IonButton strong onClick={() => setShownInvite(null)}>
+            <IonButtons slot="start">
+              <IonButton onClick={() => setShownInvite(null)}>
                 {t('common.close')}
               </IonButton>
             </IonButtons>
+            <IonTitle id={shareTitleId} role="heading" aria-level={2}>
+              {t('invite.shareTitle')}
+            </IonTitle>
           </IonToolbar>
         </IonHeader>
 
@@ -364,6 +373,26 @@ export function InvitePage() {
                   />
                   {canShareNatively() ? t('invite.share') : t('invite.copy')}
                 </IonButton>
+
+                {/* Der zweite Weg zum Widerruf neben der Wischgeste: Die
+                    Zeile in der Liste ist ein `button` und öffnet dieses
+                    Blatt – der Knopf gehört deshalb hierher, nicht in die
+                    Zeile. Das Blatt schliesst zuerst, dann fragt der Alert. */}
+                {isInviteActive(shownInvite) && (
+                  <IonButton
+                    expand="block"
+                    fill="clear"
+                    color="danger"
+                    disabled={revokeInvite.isPending}
+                    onClick={() => {
+                      const id = shownInvite.id;
+                      setShownInvite(null);
+                      setRevokeId(id);
+                    }}
+                  >
+                    {t('invite.revoke')}
+                  </IonButton>
+                )}
               </div>
             </>
           )}

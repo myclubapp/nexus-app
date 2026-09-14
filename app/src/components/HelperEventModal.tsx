@@ -10,11 +10,12 @@ import {
   IonLabel,
   IonNote,
 } from '@ionic/react';
-import { addOutline } from 'ionicons/icons';
+import { addOutline, trashOutline } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { useCreateHelperEvent, usePublishEvent } from '../hooks/useHelperEvents';
 import { FormModal } from './FormModal';
 import { DateField } from './DateField';
+import { clampEnd } from '../lib/dateInput';
 import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
@@ -127,15 +128,20 @@ export function HelperEventForm({ onDone, onDismiss, isOpen = true }: HelperEven
           <IonInput
             label={t('eventForm.eventTitle')}
             labelPlacement="stacked"
+            enterkeyhint="next"
             value={title}
             onIonInput={(e) => setTitle(e.detail.value ?? '')}
           />
         </IonItem>
+        {/* Das Ende folgt dem Beginn – wie im Terminformular. */}
         <DateField
           label={t('eventForm.startsAt')}
           presentation="date-time"
           value={startsAt}
-          onChange={setStartsAt}
+          onChange={(value) => {
+            setStartsAt(value);
+            setEndsAt((end) => clampEnd(value, end));
+          }}
         />
         <DateField
           label={t('eventForm.endsAt')}
@@ -149,6 +155,7 @@ export function HelperEventForm({ onDone, onDismiss, isOpen = true }: HelperEven
           <IonInput
             label={t('eventForm.location')}
             labelPlacement="stacked"
+            enterkeyhint="next"
             value={location}
             onIonInput={(e) => setLocation(e.detail.value ?? '')}
           />
@@ -162,6 +169,7 @@ export function HelperEventForm({ onDone, onDismiss, isOpen = true }: HelperEven
           <IonInput
             label={t('eventForm.why')}
             labelPlacement="stacked"
+            enterkeyhint="done"
             value={why}
             onIonInput={(e) => setWhy(e.detail.value ?? '')}
           />
@@ -173,31 +181,43 @@ export function HelperEventForm({ onDone, onDismiss, isOpen = true }: HelperEven
         title={t('helperEvent.shifts', { count: shifts.length })}
         footnote={t('helperEvent.shiftsHint')}
       >
-        {shifts.map((shift, index) => (
-          <IonItemSliding key={`${shift.title}-${shift.startsAt}-${index}`}>
-            <IonItem>
-              <IonLabel className="ion-text-wrap">
-                <h2>{shift.title}</h2>
-                <IonNote>
-                  {formatDateTime(shift.startsAt)} – {formatDateTime(shift.endsAt)}
-                  {' · '}
-                  {t('helperEvent.needed', { count: shift.needed })}
-                  {' · '}+{shift.points}
-                </IonNote>
-              </IonLabel>
-            </IonItem>
-            <IonItemOptions side="end">
-              <IonItemOption
-                color="danger"
-                onClick={() =>
-                  setShifts((current) => current.filter((_, i) => i !== index))
-                }
-              >
-                {t('helperEvent.removeShift')}
-              </IonItemOption>
-            </IonItemOptions>
-          </IonItemSliding>
-        ))}
+        {shifts.map((shift, index) => {
+          const removeShift = () =>
+            setShifts((current) => current.filter((_, i) => i !== index));
+          return (
+            <IonItemSliding key={`${shift.title}-${shift.startsAt}-${index}`}>
+              <IonItem>
+                <IonLabel className="ion-text-wrap">
+                  <h2>{shift.title}</h2>
+                  <IonNote>
+                    {formatDateTime(shift.startsAt)} – {formatDateTime(shift.endsAt)}
+                    {' · '}
+                    {t('helperEvent.needed', { count: shift.needed })}
+                    {' · '}+{shift.points}
+                  </IonNote>
+                </IonLabel>
+                {/* Die Wischgeste erreicht weder Tastatur noch VoiceOver-Rotor;
+                    der sichtbare Knopf ist der zweite Weg. Die Zeile selbst ist
+                    kein `button`, also steckt hier nichts Interaktives in
+                    Interaktivem. */}
+                <IonButton
+                  slot="end"
+                  fill="clear"
+                  color="danger"
+                  aria-label={t('helperEvent.removeShift')}
+                  onClick={removeShift}
+                >
+                  <IonIcon slot="icon-only" icon={trashOutline} aria-hidden="true" />
+                </IonButton>
+              </IonItem>
+              <IonItemOptions side="end">
+                <IonItemOption color="danger" onClick={removeShift}>
+                  {t('helperEvent.removeShift')}
+                </IonItemOption>
+              </IonItemOptions>
+            </IonItemSliding>
+          );
+        })}
 
         {shifts.length === 0 && (
           <IonItem>
@@ -211,6 +231,7 @@ export function HelperEventForm({ onDone, onDismiss, isOpen = true }: HelperEven
           <IonInput
             label={t('helperEvent.shiftTitle')}
             labelPlacement="stacked"
+            enterkeyhint="next"
             value={draft.title}
             onIonInput={(e) => setDraft((d) => ({ ...d, title: e.detail.value ?? '' }))}
           />
@@ -219,7 +240,9 @@ export function HelperEventForm({ onDone, onDismiss, isOpen = true }: HelperEven
           label={t('eventForm.startsAt')}
           presentation="date-time"
           value={draft.startsAt}
-          onChange={(value) => setDraft((d) => ({ ...d, startsAt: value }))}
+          onChange={(value) =>
+            setDraft((d) => ({ ...d, startsAt: value, endsAt: clampEnd(value, d.endsAt) }))
+          }
         />
         <DateField
           label={t('eventForm.endsAt')}
@@ -236,6 +259,7 @@ export function HelperEventForm({ onDone, onDismiss, isOpen = true }: HelperEven
             min={1}
             label={t('helperEvent.neededLabel')}
             labelPlacement="stacked"
+            enterkeyhint="done"
             value={String(draft.needed)}
             onIonInput={(e) =>
               setDraft((d) => ({ ...d, needed: Number(e.detail.value ?? '1') }))
@@ -249,6 +273,7 @@ export function HelperEventForm({ onDone, onDismiss, isOpen = true }: HelperEven
             min={0}
             label={t('helperEvent.pointsLabel')}
             labelPlacement="stacked"
+            enterkeyhint="done"
             value={String(draftPoints)}
             onIonInput={(e) => {
               const raw = e.detail.value ?? '';

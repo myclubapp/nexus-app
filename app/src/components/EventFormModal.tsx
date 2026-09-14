@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   IonInput,
   IonItem,
@@ -11,11 +11,12 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useClub } from '../hooks/useClub';
 import { parseCapacity } from '../lib/attendance';
-import { useTeams } from '../hooks/useInvites';
+import { usePlanningScope } from '../hooks/usePlanningScope';
 import { usePointRules } from '../hooks/useGamification';
 import { useAnnounceEvent, useCreateEvent } from '../hooks/useEvents';
 import { FormModal } from './FormModal';
 import { DateField } from './DateField';
+import { clampEnd } from '../lib/dateInput';
 import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import {
@@ -42,8 +43,6 @@ import type { EventType } from '../lib/database.types';
 const EVENT_TYPES: EventType[] = [
   'training',
   'match',
-  'cup',
-  'tournament',
   'gv',
   'social',
   // FR-095: Vorstandssitzung, Teamsitzung, GV – ein Termin wie jeder andere.
@@ -67,7 +66,7 @@ interface EventFormProps {
 export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) {
   const { t } = useTranslation();
   const { eventLabel } = useClub();
-  const teams = useTeams();
+  const scope = usePlanningScope();
   const rules = usePointRules();
   const createEvent = useCreateEvent();
   const announce = useAnnounceEvent();
@@ -80,6 +79,13 @@ export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) 
   const [capacity, setCapacity] = useState('');
   const [why, setWhy] = useState('');
   const [teamId, setTeamId] = useState<string | null>(null);
+  // C-032: Eine Trainer:in plant für ihr Team, nicht für den Verein. Ihr
+  // erstes Team ist die Vorgabe; «ganzer Verein» steht ihr nicht zur Wahl.
+  useEffect(() => {
+    if (!scope.isBoard && teamId === null && scope.teams.length > 0) {
+      setTeamId(scope.teams[0].id);
+    }
+  }, [scope.isBoard, scope.teams, teamId]);
   const [ruleCode, setRuleCode] = useState<string | null>(null);
   const [ruleTouched, setRuleTouched] = useState(false);
 
@@ -164,6 +170,7 @@ export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) 
         <IonItem>
           <IonSelect
             label={t('eventForm.type')}
+            labelPlacement="stacked"
             value={type}
             onIonChange={(e) => setType(e.detail.value as EventType)}
             cancelText={t('common.cancel')}
@@ -182,16 +189,23 @@ export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) 
           <IonInput
             label={t('eventForm.eventTitle')}
             labelPlacement="stacked"
+            enterkeyhint="next"
             value={title}
             onIonInput={(e) => setTitle(e.detail.value ?? '')}
           />
         </IonItem>
 
+        {/* Ende und «bis» folgen dem Beginn: Wer den Beginn hinter das Ende
+            setzt, bekommt kein Ende vor dem Anfang – das Ende rückt nach. */}
         <DateField
           label={t('eventForm.startsAt')}
           presentation="date-time"
           value={startsAt}
-          onChange={setStartsAt}
+          onChange={(value) => {
+            setStartsAt(value);
+            setEndsAt((end) => clampEnd(value, end));
+            setUntil((date) => clampEnd(value, date));
+          }}
         />
 
         <DateField
@@ -207,6 +221,7 @@ export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) 
           <IonInput
             label={t('eventForm.location')}
             labelPlacement="stacked"
+            enterkeyhint="next"
             value={location}
             onIonInput={(e) => setLocation(e.detail.value ?? '')}
           />
@@ -224,6 +239,7 @@ export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) 
             min={1}
             label={t('eventForm.capacity')}
             labelPlacement="stacked"
+            enterkeyhint="done"
             value={capacity}
             onIonInput={(e) => setCapacity(e.detail.value ?? '')}
           />
@@ -243,6 +259,7 @@ export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) 
             <IonInput
               label={t('eventForm.why')}
               labelPlacement="stacked"
+              enterkeyhint="done"
               value={why}
               onIonInput={(e) => setWhy(e.detail.value ?? '')}
             />
@@ -250,18 +267,27 @@ export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) 
         </ListSection>
       )}
 
-      {/* Schritt 5: Team oder Vereinstermin. */}
-      <ListSection footnote={t('eventForm.scopeHint')}>
+      {/* Schritt 5: Team oder Vereinstermin – Letzteres nur für den Vorstand (C-032). */}
+      <ListSection
+        footnote={
+          !scope.isBoard && !scope.isLoading && scope.teams.length === 0
+            ? t('common.noPlannableTeam')
+            : t(scope.isBoard ? 'eventForm.scopeHint' : 'eventForm.scopeHintTeam')
+        }
+      >
         <IonItem>
           <IonSelect
             label={t('invite.scope')}
+            labelPlacement="stacked"
             value={teamId}
             onIonChange={(e) => setTeamId((e.detail.value as string | null) ?? null)}
             cancelText={t('common.cancel')}
             okText={t('common.ok')}
           >
-            <IonSelectOption value={null}>{t('eventForm.wholeClub')}</IonSelectOption>
-            {(teams.data ?? []).map((team) => (
+            {scope.isBoard && (
+              <IonSelectOption value={null}>{t('eventForm.wholeClub')}</IonSelectOption>
+            )}
+            {scope.teams.map((team) => (
               <IonSelectOption key={team.id} value={team.id}>
                 {team.name}
               </IonSelectOption>
@@ -275,6 +301,7 @@ export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) 
         <IonItem>
           <IonSelect
             label={t('eventForm.rule')}
+            labelPlacement="stacked"
             value={effectiveRuleCode}
             onIonChange={(e) => {
               setRuleTouched(true);
@@ -306,6 +333,7 @@ export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) 
             <IonItem>
               <IonSelect
                 label={t('eventForm.rhythm')}
+                labelPlacement="stacked"
                 value={rhythm}
                 onIonChange={(e) => setRhythm(e.detail.value as SeriesRhythm)}
                 cancelText={t('common.cancel')}

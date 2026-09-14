@@ -1,20 +1,19 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import {
-  IonActionSheet,
+  IonAlert,
   IonButton,
   IonButtons,
   IonContent,
   IonHeader,
-  IonIcon,
   IonModal,
   IonTitle,
   IonToolbar,
 } from '@ionic/react';
-import { ellipsisHorizontal, ellipsisVertical } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { usePresentingElement } from '../hooks/usePresentingElement';
 import { useRetractNews } from '../hooks/useNews';
 import { useToast } from '../hooks/useToast';
+import { ManageSection } from './ManageSection';
 import { NewsCard } from './NewsCard';
 import { isEditable } from '../lib/news';
 import type { News } from '../lib/database.types';
@@ -32,11 +31,13 @@ interface NewsDetailModalProps {
 /**
  * Das News-Detail als Blatt über der Startseite – wie `news-detail` der
  * bestehenden myclub-App: Schliessen links, die Karte mit Bild und Volltext,
- * und für Trainer:innen die Verwaltungswege hinter dem Dreipunkt rechts.
+ * und für Trainer:innen unter der Karte der Abschnitt «Verwalten» – an
+ * derselben Stelle wie im Termin- und im Amt-Detail (guidelines §2), nicht
+ * mehr hinter einem Dreipunkt in der Kopfzeile.
  *
- * Bearbeiten und Zurückziehen stehen im Action Sheet, nicht als Knöpfe in der
- * Karte: Wer liest, soll lesen. Das Zurückziehen ist der eine rote Knopf im
- * Blatt (guidelines §2), und das Sheet ist zugleich die Rückfrage davor.
+ * Bearbeiten und Zurückziehen stehen als Zeilen unter der Karte, nicht als
+ * Knöpfe in ihr: Wer liest, soll lesen. Das Zurückziehen ist die rote Zeile,
+ * und die Rückfrage davor stellt ein `IonAlert`.
  */
 export function NewsDetailModal({
   entry,
@@ -50,7 +51,10 @@ export function NewsDetailModal({
   const toast = useToast();
   const retract = useRetractNews();
   const presentingElement = usePresentingElement();
-  const [isActionsOpen, setActionsOpen] = useState(false);
+  const [askRetract, setAskRetract] = useState(false);
+  // Das Blatt ist ein `role="dialog"` und braucht einen Namen; der Titel in
+  // der Kopfzeile ist er (ion-modal, Accessibility).
+  const titleId = useId();
 
   // A3/A4 (UC-026): Übernommene News der Website werden nicht zum Bearbeiten
   // angeboten – die Änderung ginge beim nächsten Abgleich verloren (UC-038).
@@ -73,50 +77,55 @@ export function NewsDetailModal({
         isOpen={entry !== null}
         onDidDismiss={onDismiss}
         presentingElement={presentingElement}
+        aria-labelledby={titleId}
       >
         <IonHeader translucent>
           <IonToolbar>
             <IonButtons slot="start">
               <IonButton onClick={onDismiss}>{t('common.close')}</IonButton>
             </IonButtons>
-            <IonTitle>{t('common.details')}</IonTitle>
-            {isTrainer && (
-              <IonButtons slot="end">
-                <IonButton aria-label={t('common.more')} onClick={() => setActionsOpen(true)}>
-                  <IonIcon slot="icon-only" ios={ellipsisHorizontal} md={ellipsisVertical} />
-                </IonButton>
-              </IonButtons>
-            )}
+            <IonTitle id={titleId} role="heading" aria-level={2}>
+              {t('common.details')}
+            </IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonContent fullscreen>
           {entry && (
             <NewsCard entry={entry} fallbackAuthor={fallbackAuthor} onShare={onShare} full />
           )}
+          {/* A3/A4 (UC-026): Bearbeiten führt ins Formular der Seite, das
+              Blatt schliesst vorher. Zurückziehen fragt zuerst. */}
+          {entry && isTrainer && (
+            <ManageSection
+              actions={[
+                editable && {
+                  label: t('newsForm.edit'),
+                  onClick: () => onEdit(entry),
+                  detail: true,
+                },
+                {
+                  label: t('newsForm.retract'),
+                  onClick: () => setAskRetract(true),
+                  disabled: retract.isPending,
+                  destructive: true,
+                },
+              ]}
+            />
+          )}
         </IonContent>
       </IonModal>
 
-      {/* Neben dem Blatt, nicht darin: Es überlebt so das Schliessen. */}
-      <IonActionSheet
-        isOpen={isActionsOpen}
-        onDidDismiss={() => setActionsOpen(false)}
+      {/* Die Rückfrage vor dem Zurückziehen (guidelines §2): Die News ist
+          danach für alle weg. Neben dem Blatt, nicht darin – so überlebt sie
+          dessen Schliessen. */}
+      <IonAlert
+        isOpen={askRetract}
+        header={t('newsForm.retract')}
+        message={t('newsForm.retractConfirm', { title: entry?.title ?? '' })}
+        onDidDismiss={() => setAskRetract(false)}
         buttons={[
-          ...(editable
-            ? [
-                {
-                  text: t('newsForm.edit'),
-                  handler: () => {
-                    if (entry) onEdit(entry);
-                  },
-                },
-              ]
-            : []),
-          {
-            text: t('newsForm.retract'),
-            role: 'destructive',
-            handler: retractEntry,
-          },
           { text: t('common.cancel'), role: 'cancel' },
+          { text: t('newsForm.retract'), role: 'destructive', handler: retractEntry },
         ]}
       />
     </>

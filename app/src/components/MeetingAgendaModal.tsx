@@ -55,8 +55,9 @@ export function MeetingAgenda({ meeting, onDismiss, isOpen = true }: MeetingAgen
             >
               {grouped.inputs.map((row) => (
                 <IonItem key={row.refId}>
+                  {/* Der Vorschlag ist der Primärtext der Zeile, der Stand die Notiz. */}
                   <IonLabel className="ion-text-wrap">
-                    <p>{row.title}</p>
+                    <h2 className="app-clamp-3">{row.title}</h2>
                     {row.detail && (
                       <IonNote>{t(`meeting.status.${row.detail}`)}</IonNote>
                     )}

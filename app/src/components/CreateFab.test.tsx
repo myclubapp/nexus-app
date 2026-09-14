@@ -95,7 +95,24 @@ describe('Erstellen-Aktionen', () => {
   );
 
   it('baut den runden Knopf nur an einer Stelle', () => {
-    expect(fabSources).toEqual(['src/components/CreateFab.tsx']);
+    // Die eine Ausnahme ist das Teilen der News-Karte: ein kleiner Fab oben
+    // rechts *in* der Karte, wie in der alten App – kein Erstellen, nicht
+    // über der Seite. Das Skelett trägt den Platzhalter dazu (§2).
+    expect([...fabSources].sort()).toEqual([
+      'src/components/CreateFab.tsx',
+      'src/components/NewsCard.tsx',
+      'src/components/Skeletons.tsx',
+    ]);
+  });
+
+  it('lässt das Teilen der News-Karte in der Karte, nicht über der Seite', () => {
+    for (const path of ['src/components/NewsCard.tsx', 'src/components/Skeletons.tsx']) {
+      for (const fab of openingTags(readFileSync(path, 'utf8'), 'IonFab')) {
+        expect(fab, path).not.toContain('slot="fixed"');
+        expect(fab, path).toContain('vertical="top"');
+        expect(fab, path).toContain('horizontal="end"');
+      }
+    }
   });
 
   it('setzt ihn unten rechts über den Inhalt', () => {

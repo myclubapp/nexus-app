@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
+import { TextSection } from '../components/TextSection';
 import { FormModal } from '../components/FormModal';
 import { RadarChart } from '../components/RadarChart';
 import { ErrorState } from '../components/StateViews';
@@ -123,20 +124,12 @@ export function StrengthsPage() {
       >
         {explain && (
           <>
-            <ListSection title={t('dimensions.madeOf')}>
-              <IonItem>
-                <IonLabel className="ion-text-wrap">
-                  <p>{t(`dimensions.${explain}.source`)}</p>
-                </IonLabel>
-              </IonItem>
-            </ListSection>
-            <ListSection title={t('dimensions.howToGrow')}>
-              <IonItem>
-                <IonLabel className="ion-text-wrap">
-                  <p>{t(`dimensions.${explain}.grow`)}</p>
-                </IonLabel>
-              </IonItem>
-            </ListSection>
+            <TextSection title={t('dimensions.madeOf')}>
+              <p>{t(`dimensions.${explain}.source`)}</p>
+            </TextSection>
+            <TextSection title={t('dimensions.howToGrow')}>
+              <p>{t(`dimensions.${explain}.grow`)}</p>
+            </TextSection>
           </>
         )}
       </FormModal>

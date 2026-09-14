@@ -21,6 +21,7 @@
 4. Mitglied bestätigt «Ich übernehme das».
 5. System trägt das Mitglied für die Schicht ein und erhöht die Besetzung.
 6. System zeigt die Schicht in der persönlichen Agenda des Mitglieds und weist darauf hin, dass die Punkte nach der Bestätigung durch die Organisation gutgeschrieben werden.
+7. System bietet die Schicht dem Kalender des Geräts an – mit dem Zeitfenster der Schicht, dem Anlass im Titel, dem Ort und dem Warum. Das Mitglied sichert oder verwirft; der Eintrag in der Schicht bleibt (BR-187, UC-010).
 
 ## Alternative Flows
 
@@ -65,6 +66,7 @@
 - Das Mitglied ist für die Schicht eingetragen und die Besetzung ist aktualisiert.
 - Die Schicht erscheint in der persönlichen Agenda.
 - Es sind noch keine Punkte gebucht.
+- Die Schicht ist dem Kalender des Geräts angeboten worden.
 
 ### Failure Postconditions
 
@@ -88,3 +90,11 @@ Es gibt keine Sperrfrist und keinen Punkteabzug für ein Austragen. Bei kurzfris
 ### BR-048: Freiwilligkeit
 
 Schichten sind Angebote. Niemand wird einer Schicht zugewiesen.
+
+### BR-196: Die Schicht ist die Antwort
+
+Ein Termin mit Schichten kennt keine Zusage zum Anlass. Die Verbindlichkeit liegt in der Schicht (BR-048): Nur sie zählt für die Besetzung, die Punkte (BR-045) und den Kalender (Schritt 7). Die App bietet bei solchen Terminen weder «Mein Status» noch die Listen «Zugesagt», «Abgesagt» und «Keine Antwort» an, und die Erinnerung an Unentschlossene (UC-015) entfällt – auf den Anlass antwortet niemand, und bei einem Anlass ohne Team stünde sonst der ganze Verein als «ohne Antwort». In der Agenda zeigt die Zeile, ob man eine Schicht hält; die Besetzung steht rechts.
+
+### BR-187 (UC-010): Der Kalendereintrag ist ein Angebot, kein Abbild
+
+Gilt auch für Schichten: Der Eintrag trägt das Fenster der Schicht, nicht des Anlasses. Wer sich austrägt, räumt den Gerätekalender selbst auf – die App greift nicht in ihn hinein.

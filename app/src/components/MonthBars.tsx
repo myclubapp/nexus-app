@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { monthBars, type MonthPoints } from '../lib/points';
+import { appLocale } from '../lib/format';
 
 interface MonthBarsProps {
   months: readonly MonthPoints[];
@@ -19,9 +20,10 @@ interface MonthBarsProps {
  * stehen im Verlauf. Die Monatsnamen kommen aus der Sprache der Person.
  */
 export function MonthBars({ months, description }: MonthBarsProps) {
-  const { i18n } = useTranslation();
+  // Nur wegen des Neu-Renderns beim Sprachwechsel – `appLocale()` liest die Sprache selbst.
+  useTranslation();
   const bars = monthBars(months);
-  const label = new Intl.DateTimeFormat(i18n.language, { month: 'short' });
+  const label = new Intl.DateTimeFormat(appLocale(), { month: 'short' });
 
   return (
     <div className="app-bars" role="img" aria-label={description}>

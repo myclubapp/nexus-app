@@ -12,6 +12,8 @@
  * Schlüssel trägt.
  */
 
+import { LEGACY_EXTERNAL_ID_PREFIX } from './legacy';
+
 /** Die Verbände, die das alte Backend kennt – dieselben Kennungen. */
 export const FEDERATIONS = [
   'swissunihockey',
@@ -133,4 +135,35 @@ export function readGamesSync(
 ): GamesSync {
   if (result?.ok) return { games: result.games ?? 0, error: null };
   return { games: null, error: result?.error?.trim() || fallback };
+}
+
+/**
+ * Stammt ein Termin vom Verband (UC-039)?
+ *
+ * `events.external_id` tragen zwei Quellen: der Verband (`0060`) und die
+ * bisherige myclub-App (`0069`). Nur die erste macht einen Verbandstermin
+ * aus – ein übernommenes Training ist ein gewöhnliches Training und heisst
+ * im Detail auch so.
+ */
+export function isFederationEvent(event: { external_id?: string | null }): boolean {
+  const id = event.external_id;
+  return !!id && !id.startsWith(LEGACY_EXTERNAL_ID_PREFIX);
+}
+
+/**
+ * Welcher Verband einen Termin liefert (UC-039).
+ *
+ * Die Kennung eines Verbandstermins ist `<verband>:<spielkennung>`
+ * (`sync-federation`), und der Verband ist einer der vier bekannten. Das
+ * Detail nennt ihn beim Namen – «Spiel · Swiss Unihockey», nicht «vom
+ * Verband»: Ein Verein kann an zwei Verbänden hängen, und wer das Spiel
+ * liest, soll wissen, wessen Spielplan es ist.
+ */
+export function federationOf(event: { external_id?: string | null }): Federation | null {
+  const id = event.external_id;
+  if (!id) return null;
+  const colon = id.indexOf(':');
+  if (colon < 0) return null;
+  const prefix = id.slice(0, colon);
+  return (FEDERATIONS as readonly string[]).includes(prefix) ? (prefix as Federation) : null;
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import {
   IonActionSheet,
   IonAlert,
@@ -63,6 +63,13 @@ export function ShiftRoster({ shifts }: ShiftRosterProps) {
   const absence = useSetShiftAbsence(shiftId);
 
   const entries = roster.data ?? [];
+  // Seit 0077 steht auch eine Absage in der Liste (`excused`). Sie gehört
+  // hierher – der Vorstand sieht, wer schon entschieden hat –, aber sie ist
+  // keine Eintragung: Die Zahl in der Überschrift zählt nur die Plätze, die
+  // wirklich besetzt sind, wie die Besetzung am Anlass (BR-046).
+  const signedUp = entries.filter(
+    (entry) => entry.status === 'registered' || entry.status === 'present',
+  ).length;
 
   function markAbsence(memberId: string, status: 'excused' | 'absent') {
     absence.mutate(
@@ -132,7 +139,7 @@ export function ShiftRoster({ shifts }: ShiftRosterProps) {
       ) : entries.length === 0 ? (
         <EmptyState message={t('roster.empty')} />
       ) : (
-        <ListSection title={t('roster.registered', { count: entries.length })}>
+        <ListSection title={t('roster.registered', { count: signedUp })}>
           {entries.map((entry) => (
             <IonItem key={entry.memberId}>
               <IonLabel className="ion-text-wrap">
@@ -216,6 +223,7 @@ export function ShiftRoster({ shifts }: ShiftRosterProps) {
       <IonAlert
         isOpen={isAdding}
         header={t('roster.add')}
+        message={t('roster.addMessage')}
         onDidDismiss={() => setAdding(false)}
         inputs={(candidates.data ?? []).map((candidate) => ({
           type: 'radio' as const,
@@ -246,19 +254,26 @@ export function ShiftRosterModal({
 }: ShiftRosterProps & { isOpen: boolean; onDismiss: () => void }) {
   const { t } = useTranslation();
   const presentingElement = usePresentingElement();
+  // Das Blatt ist ein `role="dialog"` und braucht einen Namen (ion-modal:
+  // «developers must properly label their modals»); der Titel ist er.
+  const titleId = useId();
 
   return (
     <IonModal
       isOpen={isOpen}
       onDidDismiss={props.onDismiss}
       presentingElement={presentingElement}
+      aria-labelledby={titleId}
     >
       <IonHeader translucent>
         <IonToolbar>
-          <IonTitle>{t('roster.title')}</IonTitle>
-          <IonButtons slot="end">
+          {/* Schliessen steht links, wie in jedem Blatt (guidelines §2). */}
+          <IonButtons slot="start">
             <IonButton onClick={props.onDismiss}>{t('common.close')}</IonButton>
           </IonButtons>
+          <IonTitle id={titleId} role="heading" aria-level={2}>
+            {t('roster.title')}
+          </IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>

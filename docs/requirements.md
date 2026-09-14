@@ -214,7 +214,9 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-153 | Verknüpfung lösen           | Als Vorstand möchte ich die Verknüpfung eines Teams zum Verband lösen, damit das Team wieder allein von uns gepflegt wird und bereits importierte Termine bestehen bleiben.          | Low      | Implemented   |
 | FR-154 | Termine aus der bisherigen App übernehmen | Als Vorstand möchte ich die aktuellen Anlässe und Helfer-Events samt Schichten aus der bisherigen myclub-App übernehmen, damit wir während der Umstellung nichts zweimal erfassen. | High     | Implemented   |
 | FR-155 | Bisherige App täglich abgleichen | Als System möchte ich die verbundene bisherige App jede Nacht abgleichen, damit neue und geänderte Termine von selbst in der Agenda stehen. | High     | Implemented   |
+| FR-156 | Kalendereintrag auf dem Gerät | Als Mitglied möchte ich einen zugesagten Termin oder eine übernommene Schicht mit Titel, Ort, Zeitfenster und Warum in den Kalender meines Geräts übernehmen, damit der Einsatz dort steht, wo ich meinen Tag plane. | Medium   | Implemented   |
 | FR-156 | Mitglieder, Teams und Zusagen aus der bisherigen App übernehmen | Als Vorstand möchte ich, dass mit den Terminen auch unsere Mitglieder, Teams, Trainings und die Zu- und Absagen aus der bisherigen myclub-App übernommen werden, damit die Umstellung ohne Neuerfassung der Personen gelingt. | High     | Implemented   |
+| FR-157 | Kalenderübersicht der Agenda  | Als Mitglied möchte ich die Agenda auch als Monatskalender sehen, in dem Tage mit Terminen markiert sind, damit ich auf einen Blick sehe, wann etwas ansteht, und einen Tag antippen kann, um seine Termine zu öffnen. | Medium   | Implemented   |
 
 ### 1.12 Erstbefüllung, leere Zustände & Einführung
 
@@ -306,7 +308,7 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | C-003 | Keine Google-Abhängigkeit      | Firebase, FCM, Google Maps, Google ML Kit und Google-Login sind ausgeschlossen; auch «Sign in with Apple» entfällt dadurch.                              | Technical   | High     | Implemented |
 | C-004 | Push-Kanäle                    | Push läuft über ntfy/UnifiedPush (Android), APNs (iOS) und Web Push VAPID (PWA), mit der In-App-Inbox als vollständigem Fallback.                        | Technical   | High     | Partial        |
 | C-005 | QR-Scan ohne Google            | QR-Codes werden mit `html5-qrcode` im WebView gescannt, nicht mit einem nativen Google-SDK.                                                              | Technical   | High     | Implemented |
-| C-006 | Karten                         | Kartendarstellungen nutzen MapLibre GL mit swisstopo- oder OpenStreetMap-Kacheln.                                                                        | Technical   | Low      | Open        |
+| C-006 | Karten                         | Kartendarstellungen nutzen MapLibre GL mit swisstopo-Vektorkacheln (`VenueMap`: der Spielort im Termin-Detail, Lage aus dem Verbandsabgleich, 0076).  | Technical   | Low      | Implemented |
 | C-007 | Vier Sprachen ab Commit eins   | Jeder neue Benutzertext existiert in Deutsch, Französisch, Italienisch und Englisch; `npm run i18n:check` erzwingt die Parität.                          | Technical   | High     | Implemented |
 | C-008 | Sprachtrennung im Code         | Bezeichner im Code sind englisch, Benutzertexte laufen über react-i18next, Kommentare und Dokumentation sind deutsch.                                    | Technical   | High     | Implemented |
 | C-009 | Kein Sport-Vokabular im Kern   | «Training», «Spiel» und «Probe» sind konfigurierbare Vereinslabels; die Datenbank kennt nur `events.type`.                                               | Technical   | High     | Implemented |
@@ -332,7 +334,7 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | C-029 | Inkrement-Reihenfolge          | Die Umsetzung folgt den Inkrementen M1 Fundament, M2 Agenda-Loop, M3 Gemeinschaft, M4 Anschlüsse; Anschlüsse werden nicht vorgezogen.                    | Schedule    | High     | In Progress |
 | C-030 | Sichtbarkeit nach Struktur     | Kalender-Publishing und Grafik-Partner werden erst freigeschaltet, wenn die innere Struktur des Vereins steht, und nie einzeln verkauft (K6a).            | Business    | Medium   | Open        |
 | C-031 | Beispielinhalte sind folgenlos | Beispielinhalte erzeugen keine Punktebuchung, kein Gesundheitssignal und keine Benachrichtigung und hinterlassen dem Vorstand keine Aufräumarbeit (Entlastungs-Test K6b).             | Business    | High     | Implemented        |
-| C-032 | Geltungsbereich nach Team      | Jede Entität mit `team_id` ist nach Team abgegrenzt – lesend **und** schreibend; Trainer:innen und Vorstand ausgenommen. Was am Termin hängt, erbt dessen Geltungsbereich.        | Technical   | High     | Implemented |
+| C-032 | Geltungsbereich nach Team      | Jede Entität mit `team_id` ist nach Team abgegrenzt – lesend **und** schreibend. Vereins-Scope hat nur der Vorstand (sportchef, admin, superadmin); Trainer:innen sind wie Mitglieder auf ihre eigenen Teams begrenzt und legen nichts Vereinsweites an (`0073`). Was am Termin hängt, erbt dessen Geltungsbereich. | Technical   | High     | Implemented |
 ---
 
 ## 4. Offene Punkte

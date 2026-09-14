@@ -167,11 +167,76 @@ export function suggestContrast(hex: string): string | null {
 }
 
 /**
+ * Der Grund, auf dem die Vereinsfarbe im Dunkelmodus stehen muss.
+ *
+ * `dark.system.css` setzt im iOS-Modus die Inhaltsfläche auf `--ion-color-light`
+ * (#222428) – das ist die Fläche, auf der Knöpfe, Avatare und das
+ * Netzdiagramm liegen. Gegen sie wird gemessen, nicht gegen reines Schwarz.
+ */
+export const DARK_SURFACE = '#222428';
+
+/**
+ * Mindestkontrast einer Fläche gegen ihren Grund (WCAG 1.4.11, «non-text
+ * contrast»): Ein Knopf, der sich vom Grund nicht abhebt, ist kein Knopf.
+ */
+export const MIN_SURFACE_CONTRAST = 3;
+
+/**
+ * Hellt eine Vereinsfarbe so weit auf, dass sie im Dunkelmodus vom Grund
+ * abhebt (A5, Dunkelmodus).
+ *
+ * Ein dunkles Vereinsblau ist auf `#222428` unsichtbar; die Farbfamilie bleibt
+ * erhalten, nur die Helligkeit wächst in Schritten, bis der Kontrast reicht.
+ * Farben, die schon reichen, kommen unverändert zurück – derselbe Grundsatz
+ * wie bei `suggestContrast()`.
+ */
+export function adaptForDark(hex: string): string {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return hex;
+
+  let current = rgb;
+  for (let step = 0; step < 20; step += 1) {
+    const candidate = toHex(current);
+    if ((contrastRatio(candidate, DARK_SURFACE) ?? MIN_SURFACE_CONTRAST) >= MIN_SURFACE_CONTRAST) {
+      return candidate;
+    }
+    current = mix(current, WHITE, 0.08);
+  }
+  return toHex(current);
+}
+
+function prefersDark(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+  );
+}
+
+/** Die zuletzt angewandten Einstellungen – für den Wechsel Hell/Dunkel. */
+let lastSettings: ClubSettings | null | undefined;
+let listening = false;
+
+/**
  * Wendet das Vereins-Theme zur Laufzeit an. Wird beim Vereinswechsel erneut
  * aufgerufen; vorher werden die alten Werte entfernt, damit ein Verein ohne
  * eigenes Theme wieder auf die Basisfarben aus variables.css zurückfällt.
+ *
+ * Die Werte stehen inline auf `html` und schlagen damit jede Media-Query aus
+ * `variables.css` – auch den Hell/Dunkel-Tausch dort. Deshalb entscheidet
+ * diese Funktion selbst, was der Dunkelmodus bekommt: dieselbe Farbfamilie,
+ * bei Bedarf aufgehellt (`adaptForDark`). Wechselt das Gerät zur Laufzeit
+ * die Palette, wird das Theme neu angewandt.
  */
 export function applyClubTheme(settings: ClubSettings | null | undefined): void {
+  lastSettings = settings;
+  if (!listening && typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+    listening = true;
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', () => applyClubTheme(lastSettings));
+  }
+
   const root = document.documentElement;
   for (const property of MANAGED_PROPERTIES) {
     root.style.removeProperty(property);
@@ -180,7 +245,10 @@ export function applyClubTheme(settings: ClubSettings | null | undefined): void 
   const theme = settings?.theme;
   if (!theme) return;
 
-  if (theme.primary) setIonicColor(root, 'primary', theme.primary);
-  if (theme.secondary) setIonicColor(root, 'secondary', theme.secondary);
-  if (theme.tertiary) setIonicColor(root, 'tertiary', theme.tertiary);
+  const dark = prefersDark();
+  const adapt = (hex: string) => (dark ? adaptForDark(hex) : hex);
+
+  if (theme.primary) setIonicColor(root, 'primary', adapt(theme.primary));
+  if (theme.secondary) setIonicColor(root, 'secondary', adapt(theme.secondary));
+  if (theme.tertiary) setIonicColor(root, 'tertiary', adapt(theme.tertiary));
 }

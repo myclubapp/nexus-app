@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   FEDERATIONS,
+  federationOf,
+  isFederationEvent,
   isStale,
   requiresKey,
   statusTone,
@@ -99,5 +101,36 @@ describe('readGamesSync (UC-039, Schritt 9 und A7)', () => {
   it('hat auch ohne Antwort und ohne Text eine Begründung', () => {
     expect(readGamesSync(null)).toEqual({ games: null, error: 'Keine Antwort' });
     expect(readGamesSync({ ok: false, error: '' })).toEqual({ games: null, error: 'Keine Antwort' });
+  });
+});
+
+describe('isFederationEvent (UC-039, UC-040)', () => {
+  it('erkennt ein Verbandsspiel an seiner Kennung', () => {
+    expect(isFederationEvent({ external_id: 'swissunihockey:12345' })).toBe(true);
+  });
+
+  it('zählt einen aus der alten App übernommenen Termin nicht zum Verband', () => {
+    expect(isFederationEvent({ external_id: 'legacy:training:tr1' })).toBe(false);
+    expect(isFederationEvent({ external_id: 'legacy:helper:h1' })).toBe(false);
+  });
+
+  it('zählt einen hier angelegten Termin nicht zum Verband', () => {
+    expect(isFederationEvent({ external_id: null })).toBe(false);
+    expect(isFederationEvent({})).toBe(false);
+  });
+});
+
+describe('federationOf (UC-039)', () => {
+  it('liest den Verband aus dem Präfix der Kennung – das Detail nennt ihn beim Namen', () => {
+    expect(federationOf({ external_id: 'swissunihockey:12345' })).toBe('swissunihockey');
+    expect(federationOf({ external_id: 'swissvolley:9' })).toBe('swissvolley');
+  });
+
+  it('kennt weder die bisherige App noch Termine ohne Kennung als Verband', () => {
+    expect(federationOf({ external_id: 'legacy:training:tr1' })).toBeNull();
+    expect(federationOf({ external_id: null })).toBeNull();
+    expect(federationOf({})).toBeNull();
+    expect(federationOf({ external_id: 'swissunihockey' })).toBeNull();
+    expect(federationOf({ external_id: 'unknown:1' })).toBeNull();
   });
 });

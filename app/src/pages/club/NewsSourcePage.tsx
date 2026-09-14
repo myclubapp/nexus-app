@@ -127,6 +127,7 @@ export function NewsSourcePage() {
                 inputmode="url"
                 autocapitalize="off"
                 autocorrect={false}
+                enterkeyhint="done"
                 label={t('newsImport.url')}
                 labelPlacement="stacked"
                 placeholder="verein.ch"

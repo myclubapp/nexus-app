@@ -52,7 +52,9 @@ export function AppMenu() {
 
   return (
     <IonMenu contentId={APP_CONTENT_ID} menuId="app" side="start">
-      <IonHeader translucent>
+      {/* Kein `translucent`: Das wirkt nur mit `fullscreen` am Inhalt, und
+          das Menü scrollt nicht unter seine Kopfzeile. */}
+      <IonHeader>
         <IonToolbar>
           {/* FR-111: Das Logo gehört dorthin, wo der Verein sich selbst
               begegnet – neben seinen Namen. Ohne diese Stelle wäre es eine
@@ -114,7 +116,10 @@ export function AppMenu() {
             erscheint. */}
         {hasAdminLinks(isAdmin, isTrainer, activeClub.settings) && (
           <IonMenuToggle autoHide={false}>
-            <ListSection title={t('menu.administration')}>
+            <ListSection
+              title={t('menu.administration')}
+              footnote={t('menu.administrationHint')}
+            >
               <ClubAdminLinks />
             </ListSection>
           </IonMenuToggle>

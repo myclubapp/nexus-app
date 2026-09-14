@@ -72,11 +72,19 @@ kennt. Sie sind ausgemessen, nicht vermutet:
    | `ion-menu-toggle`   | `autoHide`   | **`true`, obwohl `false` übergeben** |
    | `ion-fab`           | `vertical`   | `undefined`                         |
    | `ion-fab-list`      | `side`       | **`bottom`, obwohl `top` übergeben** |
+   | `ion-datetime`      | alle         | **nichts kommt an** – nicht einmal `presentation` |
 
-   Die letzte Zeile ist die gefährliche: Kommt eine Eigenschaft nicht an, liest
+   Die Fab-Zeile ist die gefährliche: Kommt eine Eigenschaft nicht an, liest
    `ionProp()` **Stencils Vorgabe** – und die sieht aus wie ein echter Wert.
    Ein Test darauf schlägt entweder immer fehl oder, schlimmer, hält die
    Vorgabe für die eigene Absicht.
+
+   `ion-datetime` ist der Extremfall: `ionProp()` liest `0`, `'default'`,
+   `'date-time'` – was immer übergeben wurde. `AgendaCalendar.test.tsx` und
+   `DateField.test.tsx` ersetzen `IonDatetime` deshalb per
+   `vi.mock('@ionic/react', …)` durch einen Stub, der die Props aufzeichnet,
+   und prüfen den Vertrag des Bauteils (Sprache, Wochenstart, Stundenzählung,
+   `onIonChange`) statt des DOM.
 
    **Regel:** Vor einer Zusicherung auf eine Ionic-Eigenschaft einmal
    nachmessen, ob sie ankommt. Kommt sie nicht an, wird stattdessen die

@@ -121,15 +121,65 @@
   }
 }
 
-/* Gruppierte Listen wirken auf getöntem Grund wie in den iOS-Einstellungen. */
-.ios ion-content {
+/* Gruppierte Listen wirken auf getöntem Grund wie in den iOS-Einstellungen.
+   Der grosse Titel liegt im Inhalt und trägt denselben Grund: Ionic gibt ihm
+   `--ion-background-color`, damit er mit dem Inhalt verschmilzt – das stimmt
+   nur, solange der Inhalt diese Farbe behält. Hier ergäbe es im Dunkelmodus
+   ein schwarzes Band zwischen grauer Kopfzeile und grauem Inhalt (und im
+   Hellmodus ein weisses). Die zweite Regel deckt den Moment ab, in dem die
+   äussere Kopfzeile beim Seitenwechsel kurz den Inhaltsgrund übernimmt. */
+.ios ion-content,
+.ios ion-header.header-collapse-condense ion-toolbar,
+.ios ion-header.header-collapse-condense-inactive.header-transitioning:not(.header-collapse-condense)
+  ion-toolbar {
   --background: var(--ion-color-light, #f4f5f8);
+}
+
+/* --- Blatt-Kopfzeile: Titel weicht den Knöpfen ---------------------------- */
+/* Ionic legt den iOS-Titel absolut über die ganze Kopfzeile und hält links
+   und rechts fixe 90 px frei – so breit ist «Abbrechen» oder «Ausschreiben»
+   aber nicht, und ein langer Titel läuft unter die Knöpfe. Sobald ein Blatt
+   auf beiden Seiten Knöpfe trägt, wird der Titel deshalb ein gewöhnliches
+   Flex-Element zwischen ihnen: Die Knöpfe behalten ihre Breite (`flex-shrink:
+   0`), der Titel bekommt den Rest und endet mit «…». Beide Knopfgruppen
+   wachsen gleich stark, deshalb steht der Titel weiterhin in der Mitte,
+   solange er Platz hat, und rückt erst dann von ihr ab, wenn er gekürzt wird.
+   Ein Blatt mit nur «Schliessen» links bleibt bei Ionics Vorgabe: Dort passt
+   der Knopf in die 90 px, und der Titel bleibt exakt zentriert. */
+ion-modal ion-toolbar:has([slot='start']):has([slot='end']) ion-buttons {
+  flex: 1 0 0;
+}
+
+/* Die gewachsene Gruppe rechts hält ihren Knopf am Rand, nicht am Titel. */
+ion-modal ion-toolbar:has([slot='start']):has([slot='end']) ion-buttons[slot='end'] {
+  justify-content: flex-end;
+}
+
+ion-modal ion-toolbar:has([slot='start']):has([slot='end'])::part(content) {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+ion-modal ion-toolbar:has([slot='start']):has([slot='end']) ion-title {
+  position: static;
+  width: auto;
+  padding-inline: 8px;
 }
 
 /* --- Platz für den Erstellen-Fab ------------------------------------------ */
 /* 56 px Knopf, sein eigener Abstand zum Rand und eine Handbreit Luft. */
 .app-content--fab {
   --padding-bottom: 88px;
+}
+
+/* --- Tab-Leiste: gewählter Tab zeigt das gefüllte Symbol ------------------ */
+ion-tab-button .app-tab-icon-filled,
+ion-tab-button.tab-selected .app-tab-icon-outline {
+  display: none;
+}
+
+ion-tab-button.tab-selected .app-tab-icon-filled {
+  display: inline-block;
 }
 
 /* --- Fussnote unter einem Listenabschnitt --------------------------------- */
@@ -199,7 +249,29 @@
   padding: var(--app-space-4);
 }
 
-/* Frei stehender Hinweistext, z.B. über einer Liste. */
+/* --- Karte des Spielorts (VenueMap) ----------------------------------------
+   Im Raster der eingefassten Liste darunter: derselbe Rand, dieselben Ecken.
+   Die Höhe steht fest – MapLibre misst den Behälter, und ein Behälter ohne
+   Höhe ist eine leere Karte. */
+.app-venue-map {
+  height: 220px;
+  margin: var(--app-space-4) var(--app-space-4) 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--ion-color-light);
+}
+
+/* Die Kacheln von swisstopo sind in beiden Modi hell; was darauf liegt –
+   der Ballon am Marker, die Quellenangabe – bleibt deshalb dunkel
+   beschriftet, sonst erbt es im Dunkelmodus die helle Textfarbe des Blatts.
+   Kein Theming-Wert (§6), sondern das Gegenstück zu den Kacheln. MapLibre
+   ist keine Ionic-Komponente; seine Klassen sind der einzige Zugriff. */
+.app-venue-map .maplibregl-popup-content,
+.app-venue-map .maplibregl-ctrl-attrib,
+.app-venue-map .maplibregl-ctrl-attrib a {
+  color: rgb(0 0 0 / 0.85);
+}
+
 /* --- Fliesstext neben einer Liste (TextSection) ----------------------------
    Dieselbe Einrückung wie eine eingefasste Liste, damit Text und Zeilen im
    selben Raster stehen. Zeilenlänge begrenzt, wie ein Absatz gelesen wird. */
@@ -238,7 +310,9 @@
 
 .app-centered--login {
   max-width: 420px;
-  padding-top: 48px;
+  /* Die Anmeldung hat keine Kopfzeile, die den Safe-Area-Rand trüge – auf
+     Geräten mit Dynamic Island liegt der Rand bei rund 59 px. */
+  padding-top: calc(var(--ion-safe-area-top, 0px) + 32px);
 }
 
 /* Natives Farbfeld in den Vereinseinstellungen – Ionic hat keinen Farbwähler. */
@@ -418,16 +492,24 @@
   width: 44px;
 }
 
+/* Dieselbe Spalte für Symbole, die kein Knopf sind: Ein blosses `ion-icon`
+   wäre nur so breit wie sein Glyph, und die Textkante der Zeile spränge je
+   nachdem, ob die Zeile antippbar ist. 44 px wie der Knopf – das Symbol
+   steht darin mittig, unabhängig von seiner Grösse. */
+.app-status-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 44px;
+  margin: 0;
+  margin-inline-end: var(--app-space-2);
+}
+
 /* «Mein Status» im Termin-Detail: der runde Knopf bekommt Luft nach oben und unten. */
 .app-status-row {
   --padding-top: var(--app-space-2);
   --padding-bottom: var(--app-space-2);
-}
-
-/* Symbol vor einer Textzeile (Kalender, Ort, Art) in der Agenda-Zeile. */
-.app-inline-icon {
-  vertical-align: -0.125em;
-  margin-inline-end: var(--app-space-1);
 }
 
 /* --- News-Karten (Schnitt der bestehenden myclub-App) ---------------------- */
@@ -447,8 +529,20 @@
   flex-direction: column;
 }
 
-.app-news-card ion-img {
-  min-width: 100%;
+/* Natives `img` statt `ion-img` (in Ionic 10 entfernt); `loading="lazy"`
+   übernimmt das Nachladen. */
+.app-news-card > img {
+  display: block;
+  width: 100%;
+}
+
+/* Fusszeile der Karte: Autor links, Teilen rechts. */
+.app-news-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--app-space-2);
+  padding: 0 var(--app-space-2) var(--app-space-2);
 }
 
 /* Bildplatzhalter des Skeletts – so hoch wie ein typisches Titelbild. */
@@ -467,9 +561,83 @@
   overflow: hidden;
 }
 
+/* Dasselbe für Listenzeilen mit Fliesstext (Anliegen, Vorschläge): drei
+   Zeilen, dann Auslassung – der Volltext steht im Detail oder erscheint beim
+   Antippen der Zeile. */
+.app-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 /* Volltext im Detail behält seine Absätze. */
 .app-news-card__body {
   white-space: pre-line;
+}
+
+/* Volltext eines übernommenen Website-Beitrags (UC-038, BR-169): HTML der
+   Quelle, entschärft durch `sanitizeNewsHtml`. Klassen und Stile der Website
+   sind abgestreift – was hier steht, ist die ganze Gestaltung. Bilder füllen
+   die Breite der Karte und nicht mehr; `srcset` der Website bleibt wirksam. */
+.app-news-card__article img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-block: var(--app-space-2);
+  border-radius: 8px;
+}
+
+.app-news-card__article figure {
+  margin: 0 0 var(--app-space-2);
+}
+
+.app-news-card__article figcaption {
+  font-size: 0.85em;
+  color: var(--ion-color-medium);
+}
+
+.app-news-card__article p,
+.app-news-card__article ul,
+.app-news-card__article ol,
+.app-news-card__article blockquote,
+.app-news-card__article table {
+  margin: 0 0 var(--app-space-2);
+}
+
+.app-news-card__article h2,
+.app-news-card__article h3,
+.app-news-card__article h4,
+.app-news-card__article h5,
+.app-news-card__article h6 {
+  margin: var(--app-space-3) 0 var(--app-space-1);
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--ion-text-color);
+}
+
+.app-news-card__article blockquote {
+  padding-inline-start: var(--app-space-2);
+  border-inline-start: 3px solid var(--ion-color-primary);
+}
+
+.app-news-card__article a {
+  color: var(--ion-color-primary);
+}
+
+/* Eine Tabelle darf breiter sein als die Karte; die Karte selbst nicht. */
+.app-news-card__article table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.app-news-card__article th,
+.app-news-card__article td {
+  padding: var(--app-space-1);
+  border: 1px solid var(--ion-color-light-shade);
+  text-align: start;
 }
 
 /* Im Detail-Blatt liegt die Karte bündig, wie in der alten App. */
@@ -502,6 +670,60 @@
   font-size: 0.875rem;
   font-weight: 600;
   letter-spacing: 0.02em;
+}
+
+/* --- Filter-Chips (AgendaFilterModal) ------------------------------------- */
+/* Die Chips liegen in einer Inset-Liste, damit sie den Rand der iOS-Gruppe
+   teilen; die Gruppe umbricht statt zu schieben, jede Art bleibt sichtbar. */
+.app-chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--app-space-2);
+  padding: var(--app-space-3) var(--app-space-4);
+}
+
+/* Gewählt: weisse Schrift auf der Vereinsfarbe, wie in der venova-App. */
+.app-chip-group ion-chip[color='primary'] {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+}
+
+/* --- Zähler am Kopfzeilen-Symbol ------------------------------------------ */
+/* Die Zahl der gesetzten Filter bzw. der ungelesenen Nachrichten sitzt als
+   kleine Marke am Symbol. */
+.app-filter-button,
+.app-inbox-button {
+  position: relative;
+}
+
+.app-filter-button__count,
+.app-inbox-button__count {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 1rem;
+  padding: 1px 4px;
+  font-size: 0.6875rem;
+  line-height: 1;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+/* --- Kalenderübersicht der Agenda (AgendaCalendar) ------------------------ */
+/* Der Kalender steht offen in der Seite, gerandet wie eine Inset-Liste:
+   derselbe Seitenabstand, dieselbe Rundung, darunter die Tagesliste. Ionic
+   gibt `ion-datetime` im iOS-Modus den Grund `--ion-color-light` – denselben,
+   den der Inhalt hier trägt (oben); ohne eigene Fläche stünde der Kalender
+   randlos im Grau. Deshalb die Fläche einer Zeile. */
+.app-calendar {
+  margin: var(--app-space-4) var(--app-space-4) 0;
+}
+
+.app-calendar ion-datetime {
+  --background: var(--ion-item-background, var(--ion-background-color, #fff));
+  max-width: none;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 /* --- Fortschritt zum Saisonziel (UC-042) ---------------------------------- */

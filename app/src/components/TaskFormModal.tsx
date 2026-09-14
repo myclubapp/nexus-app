@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   IonButton,
   IonInput,
@@ -12,24 +12,31 @@ import {
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { usePointRules } from '../hooks/useGamification';
-import { useTeams } from '../hooks/useInvites';
-import { useCreateTask, usePublishTask } from '../hooks/useTasks';
+import { usePlanningScope } from '../hooks/usePlanningScope';
+import { useCreateTask, usePublishTask, useUpdateTask } from '../hooks/useTasks';
 import { FormModal } from './FormModal';
 import { DateField } from './DateField';
 import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
+import { ManageSection } from './ManageSection';
 import { InlineError } from './StateViews';
 import {
   TASK_CATEGORIES,
   suggestedTaskPoints,
+  taskToDraft,
   validateTask,
   type TaskCategory,
   type TaskDraft,
 } from '../lib/task';
+import type { Task } from '../lib/database.types';
 
 interface TaskFormProps {
+  /** A5: ein bestehender Entwurf; ohne ihn entsteht eine neue Aufgabe. */
+  task?: Task | null;
   onDone: (published: boolean, muted: boolean) => void;
   onDismiss: () => void;
+  /** A6: der zweite Weg zum Löschen neben der Wischgeste (nur beim Bearbeiten). */
+  onDelete?: (task: Task) => void;
   /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
   isOpen?: boolean;
 }
@@ -43,31 +50,60 @@ const DEFAULT_RECURRENCE_DAYS = 14;
  * und Warum (Schritte 2–3), Geltungsbereich (Schritt 4), dann publizieren
  * (Schritt 5) **oder** als Entwurf sichern (A3).
  *
+ * Dasselbe Blatt öffnet einen gesicherten Entwurf wieder (A5): Die Felder
+ * beginnen mit dem gespeicherten Stand, und die beiden Ausgänge bleiben –
+ * erneut sichern oder ausschreiben. Ein zweites Formular fürs Ändern hätte
+ * dieselben Felder ein zweites Mal, mit der Gefahr, dass sie auseinanderlaufen.
+ *
  * Eigene Komponente, weil `IonModal` seinen Inhalt im Test nicht rendert
  * (docs/TESTING.md).
  */
-export function TaskForm({ onDone, onDismiss, isOpen = true }: TaskFormProps) {
+export function TaskForm({
+  task = null,
+  onDone,
+  onDismiss,
+  onDelete,
+  isOpen = true,
+}: TaskFormProps) {
   const { t } = useTranslation();
-  const teams = useTeams();
+  const scope = usePlanningScope();
   const rules = usePointRules();
   const createTask = useCreateTask();
+  const updateTask = useUpdateTask();
   const publish = usePublishTask();
 
-  const [title, setTitle] = useState('');
-  const [why, setWhy] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState<TaskCategory>('organisation');
+  // A5: Der gespeicherte Stand ist der Anfangswert. Nur beim Aufbau gelesen –
+  // das Blatt entsteht beim Öffnen und fällt beim Schliessen (`useSheetProps`),
+  // ein späterer Stand aus der Liste soll die Eingabe nicht überschreiben.
+  const initial = task ? taskToDraft(task) : null;
+
+  const [title, setTitle] = useState(initial?.title ?? '');
+  const [why, setWhy] = useState(initial?.why ?? '');
+  const [description, setDescription] = useState(initial?.description ?? '');
+  const [category, setCategory] = useState<TaskCategory>(initial?.category ?? 'organisation');
   // Schritt 2: Der Vorschlag folgt der Punkteregel des Vereins, solange
   // niemand selbst wählt. `0` als Sentinel zu verwenden hiesse, den
-  // Nur-Dank-Modus zu verschlucken (FR-040).
-  const [pointsOverride, setPointsOverride] = useState<number | null>(null);
-  const [dueAt, setDueAt] = useState('');
-  const [maxAssignees, setMaxAssignees] = useState(1);
-  const [teamId, setTeamId] = useState<string | null>(null);
+  // Nur-Dank-Modus zu verschlucken (FR-040). Ein Entwurf trägt seinen Wert
+  // schon selbst (BR-068) – der bleibt, was gesichert wurde.
+  const [pointsOverride, setPointsOverride] = useState<number | null>(
+    initial ? initial.points : null,
+  );
+  const [dueAt, setDueAt] = useState(initial?.dueAt ?? '');
+  const [maxAssignees, setMaxAssignees] = useState(initial?.maxAssignees ?? 1);
+  const [teamId, setTeamId] = useState<string | null>(initial?.teamId ?? null);
+  // C-032: Eine Trainer:in schreibt für ihr Team aus, nicht für den Verein.
+  // Ihr erstes Team ist die Vorgabe; «ganzer Verein» steht ihr nicht zur Wahl.
+  useEffect(() => {
+    if (!scope.isBoard && teamId === null && scope.teams.length > 0) {
+      setTeamId(scope.teams[0].id);
+    }
+  }, [scope.isBoard, scope.teams, teamId]);
   // A2: `null` heisst einmalig. Der Rhythmus bekommt erst einen Wert, wenn
   // jemand ihn ausdrücklich einschaltet – sonst entstünde aus jedem Versehen
   // eine Aufgabe, die für immer wiederkehrt.
-  const [recurrenceDays, setRecurrenceDays] = useState<number | null>(null);
+  const [recurrenceDays, setRecurrenceDays] = useState<number | null>(
+    initial?.recurrenceDays ?? null,
+  );
 
   const points = pointsOverride ?? suggestedTaskPoints(rules.data);
 
@@ -86,14 +122,24 @@ export function TaskForm({ onDone, onDismiss, isOpen = true }: TaskFormProps) {
   const publishProblems = validateTask(draft, true);
   const draftProblems = validateTask(draft, false);
 
-  const isBusy = createTask.isPending || publish.isPending;
-  const error =
+  const isBusy = createTask.isPending || updateTask.isPending || publish.isPending;
+  const rawError =
     (createTask.error as Error | null)?.message ??
+    (updateTask.error as Error | null)?.message ??
     (publish.error as Error | null)?.message ??
     null;
+  // BR-182: Wer einen Entwurf ändert, den jemand inzwischen ausgeschrieben
+  // hat, bekommt gesagt, warum nichts geschrieben wurde.
+  const error = rawError === 'task_not_draft' ? t('taskForm.notDraftAnymore') : rawError;
 
   async function submit(shouldPublish: boolean) {
-    const taskId = await createTask.mutateAsync(draft);
+    let taskId: string;
+    if (task) {
+      await updateTask.mutateAsync({ taskId: task.id, draft });
+      taskId = task.id;
+    } else {
+      taskId = await createTask.mutateAsync(draft);
+    }
 
     if (!shouldPublish) {
       onDone(false, false);
@@ -107,7 +153,7 @@ export function TaskForm({ onDone, onDismiss, isOpen = true }: TaskFormProps) {
   return (
     <FormModal
       isOpen={isOpen}
-      title={t('taskForm.title')}
+      title={t(task ? 'taskForm.editTitle' : 'taskForm.title')}
       submitLabel={t('taskForm.publish')}
       canSubmit={publishProblems.length === 0 && !isBusy}
       isSubmitting={isBusy}
@@ -120,6 +166,7 @@ export function TaskForm({ onDone, onDismiss, isOpen = true }: TaskFormProps) {
           <IonInput
             label={t('taskForm.taskTitle')}
             labelPlacement="stacked"
+            enterkeyhint="next"
             value={title}
             onIonInput={(e) => setTitle(e.detail.value ?? '')}
           />
@@ -171,6 +218,7 @@ export function TaskForm({ onDone, onDismiss, isOpen = true }: TaskFormProps) {
             type="number"
             inputmode="numeric"
             min={0}
+            enterkeyhint="next"
             label={t('taskForm.points')}
             labelPlacement="stacked"
             value={String(points)}
@@ -193,6 +241,9 @@ export function TaskForm({ onDone, onDismiss, isOpen = true }: TaskFormProps) {
             type="number"
             inputmode="numeric"
             min={1}
+            // Das letzte Textfeld schliesst die Tastatur – ausser der Rhythmus
+            // hängt noch ein Feld an.
+            enterkeyhint={recurrenceDays !== null ? 'next' : 'done'}
             label={t('taskForm.maxAssignees')}
             labelPlacement="stacked"
             value={String(maxAssignees)}
@@ -201,8 +252,15 @@ export function TaskForm({ onDone, onDismiss, isOpen = true }: TaskFormProps) {
         </IonItem>
       </ListSection>
 
-      {/* Schritt 4: ganzer Verein oder ein Team. */}
-      <ListSection title={t('taskForm.scope')} footnote={t('taskForm.scopeHint')}>
+      {/* Schritt 4: ganzer Verein oder ein Team – Ersteres nur für den Vorstand (C-032). */}
+      <ListSection
+        title={t('taskForm.scope')}
+        footnote={
+          !scope.isBoard && !scope.isLoading && scope.teams.length === 0
+            ? t('common.noPlannableTeam')
+            : t(scope.isBoard ? 'taskForm.scopeHint' : 'taskForm.scopeHintTeam')
+        }
+      >
         <IonItem>
           <IonSelect
             label={t('taskForm.team')}
@@ -212,8 +270,10 @@ export function TaskForm({ onDone, onDismiss, isOpen = true }: TaskFormProps) {
             cancelText={t('common.cancel')}
             okText={t('common.ok')}
           >
-            <IonSelectOption value={null}>{t('taskForm.wholeClub')}</IonSelectOption>
-            {(teams.data ?? []).map((team) => (
+            {scope.isBoard && (
+              <IonSelectOption value={null}>{t('taskForm.wholeClub')}</IonSelectOption>
+            )}
+            {scope.teams.map((team) => (
               <IonSelectOption key={team.id} value={team.id}>
                 {team.name}
               </IonSelectOption>
@@ -241,6 +301,7 @@ export function TaskForm({ onDone, onDismiss, isOpen = true }: TaskFormProps) {
               inputmode="numeric"
               min={1}
               max={730}
+              enterkeyhint="done"
               label={t('taskForm.everyDays')}
               labelPlacement="stacked"
               value={String(recurrenceDays)}
@@ -267,6 +328,21 @@ export function TaskForm({ onDone, onDismiss, isOpen = true }: TaskFormProps) {
         </IonButton>
         <IonNote>{t('taskForm.draftHint')}</IonNote>
       </div>
+
+      {/* A6: Ein Entwurf, der nicht mehr gebraucht wird. Das Blatt schliesst
+          zuerst, dann fragt die Seite nach – derselbe Alert wie beim Wischen. */}
+      {task && onDelete && (
+        <ManageSection
+          actions={[
+            {
+              label: t('taskForm.deleteDraft'),
+              onClick: () => onDelete(task),
+              disabled: isBusy,
+              destructive: true,
+            },
+          ]}
+        />
+      )}
     </FormModal>
   );
 }

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase, isConfigured } from '../lib/supabase';
+import type { TablesUpdate } from '../lib/database.types';
 import type { TaskDraft, TaskWithAssignments } from '../lib/task';
 import { useClub } from './useClub';
 
@@ -30,6 +31,48 @@ export function useTasks() {
       if (error) throw new Error(error.message);
       return (data ?? []) as unknown as TaskWithAssignments[];
     },
+  });
+}
+
+/**
+ * Eine einzelne Aufgabe als Abfrage – für alles, was sie über ihre Kennung
+ * erreicht, ohne den Marktplatz zu kennen: der Verweis aus der Inbox, ein
+ * Deep Link.
+ *
+ * Die Liste taugt dafür nicht: Sie zeigt fünf Zustände, und eine erledigte
+ * oder abgesagte Aufgabe fehlt darin – die Nachricht dazu steht aber weiter
+ * in der Inbox. Was sichtbar ist, entscheidet die Policy aus `0034`.
+ *
+ * Der Schlüssel beginnt mit `['tasks', clubId]` – so trifft ihn jede
+ * Entwertung der Liste mit, ohne dass eine Mutation davon wissen muss.
+ */
+export function taskQuery(clubId: string | undefined, taskId: string) {
+  return {
+    queryKey: ['tasks', clubId, 'one', taskId],
+    queryFn: async (): Promise<TaskWithAssignments | null> => {
+      const { data, error } = await supabase
+        .from('tasks')
+        .select('*, assignments:task_assignments(*)')
+        .eq('id', taskId)
+        .maybeSingle();
+      if (error) throw new Error(error.message);
+      // `null` heisst «gibt es nicht mehr oder nicht für dich».
+      return (data ?? null) as unknown as TaskWithAssignments | null;
+    },
+  };
+}
+
+/**
+ * Dieselbe Aufgabe als Abfrage im Baum – für das Blatt, das sie zeigt. Sie
+ * liest denselben Eintrag im Zwischenspeicher wie `fetchQuery()` und bleibt
+ * deshalb am Stand: Wer im Blatt übernimmt, entwertet `['tasks', clubId]`.
+ */
+export function useTask(taskId: string | null) {
+  const { activeClub } = useClub();
+
+  return useQuery({
+    ...taskQuery(activeClub?.id, taskId ?? ''),
+    enabled: Boolean(activeClub) && isConfigured && taskId !== null,
   });
 }
 
@@ -68,6 +111,52 @@ export function useCreateTask() {
       });
       if (error) throw new Error(error.message);
       return data as string;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['tasks', activeClub?.id] });
+    },
+  });
+}
+
+/**
+ * Entwurf ändern (UC-017, A5).
+ *
+ * Nur ein Entwurf ist formbar (BR-182): Was publiziert ist, haben Mitglieder
+ * gesehen und vielleicht übernommen – das ändert sich nicht still. Die
+ * Bedingung steht in der Abfrage, und ob eine Zeile getroffen wurde, wird
+ * geprüft: Ein Entwurf, den jemand inzwischen ausgeschrieben hat, meldet sich
+ * sonst als «gesichert», obwohl nichts geschrieben wurde.
+ *
+ * Kein `security definer`: Die Policy `tasks_trainer_update` lässt genau die
+ * Personen schreiben, die auch ausschreiben dürfen – und Punkte hängen an der
+ * Bestätigung, nicht am Text der Aufgabe.
+ */
+export function useUpdateTask() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (input: { taskId: string; draft: TaskDraft }): Promise<void> => {
+      const { draft } = input;
+      const patch: TablesUpdate<'tasks'> = {
+        title: draft.title.trim(),
+        why: draft.why.trim() || null,
+        description: draft.description.trim() || null,
+        category: draft.category,
+        points: draft.points,
+        due_at: toTimestamp(draft.dueAt) ?? null,
+        max_assignees: draft.maxAssignees,
+        team_id: draft.teamId,
+        recurrence_days: draft.recurrenceDays,
+      };
+      const { data, error } = await supabase
+        .from('tasks')
+        .update(patch)
+        .eq('id', input.taskId)
+        .eq('status', 'draft')
+        .select('id');
+      if (error) throw new Error(error.message);
+      if (!data || data.length === 0) throw new Error('task_not_draft');
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['tasks', activeClub?.id] });

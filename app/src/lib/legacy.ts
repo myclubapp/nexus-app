@@ -23,6 +23,13 @@ export interface LegacySource {
 export const FIREBASE_CLUB_ID_PATTERN = /^[A-Za-z0-9_-]{2,60}$/;
 
 /**
+ * Womit `events.external_id` bei übernommenen Terminen beginnt – dieselbe
+ * Regel wie `mapEvent()`/`mapTraining()` in `sync-legacy/mapping.ts`
+ * («legacy:<Art>:<Id>»). Verbandsspiele tragen «<Verband>:<Spiel>» (`0060`).
+ */
+export const LEGACY_EXTERNAL_ID_PREFIX = 'legacy:';
+
+/**
  * Die Kennung aus der Eingabe lesen (Schritt 3).
  *
  * Wer die Adresse der alten App einfügt («…/club/su-452800» oder mit

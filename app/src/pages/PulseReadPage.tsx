@@ -1,8 +1,9 @@
-import { IonItem, IonLabel, IonNote } from '@ionic/react';
+import { IonItem, IonLabel, IonListHeader, IonNote } from '@ionic/react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
+import { TextSection } from '../components/TextSection';
 import { StatCard } from '../components/StatCard';
 import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
@@ -39,14 +40,11 @@ export function PulseReadPage() {
         />
       ) : (
         <>
+          {/* Die Einleitung des Vorstands ist Fliesstext, mit ihren Umbrüchen. */}
           {entry.intro && (
-            <ListSection>
-              <IonItem lines="none">
-                <IonLabel className="ion-text-wrap">
-                  <p>{entry.intro}</p>
-                </IonLabel>
-              </IonItem>
-            </ListSection>
+            <TextSection preserveLines>
+              <p>{entry.intro}</p>
+            </TextSection>
           )}
 
           {PULSE_SECTIONS.map((section) => {
@@ -70,15 +68,18 @@ export function PulseReadPage() {
             );
           })}
 
-          {/* BR-114: nachgeordnet – nach den drei Fragen, nie davor. */}
-          <ListSection title={t('pulse.yourPoints')} footnote={t('pulse.pointsHint')}>
-            <div className="app-stat-row">
-              <StatCard
-                value={points.data?.seasonPoints ?? 0}
-                label={t('dashboard.seasonPoints')}
-              />
-            </div>
-          </ListSection>
+          {/* BR-114: nachgeordnet – nach den drei Fragen, nie davor. Die
+              Kachel ist keine Listenzeile und steht deshalb neben der Liste. */}
+          <IonListHeader>
+            <IonLabel>{t('pulse.yourPoints')}</IonLabel>
+          </IonListHeader>
+          <div className="app-stat-row">
+            <StatCard
+              value={points.data?.seasonPoints ?? 0}
+              label={t('dashboard.seasonPoints')}
+            />
+          </div>
+          <IonNote className="app-footnote">{t('pulse.pointsHint')}</IonNote>
         </>
       )}
     </AppPage>

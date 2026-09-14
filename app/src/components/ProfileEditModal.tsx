@@ -86,6 +86,7 @@ export function ProfileEditForm({
             label={t('profile.displayName')}
             labelPlacement="stacked"
             autocapitalize="words"
+            enterkeyhint="next"
             value={displayName}
             onIonInput={(e) => setDisplayName(e.detail.value ?? '')}
           />
@@ -99,6 +100,7 @@ export function ProfileEditForm({
             labelPlacement="stacked"
             type="email"
             inputmode="email"
+            enterkeyhint="next"
             value={email}
             onIonInput={(e) => setEmail(e.detail.value ?? '')}
           />
@@ -115,6 +117,7 @@ export function ProfileEditForm({
             labelPlacement="stacked"
             type="tel"
             inputmode="tel"
+            enterkeyhint="next"
             value={phone}
             onIonInput={(e) => setPhone(e.detail.value ?? '')}
           />
@@ -149,6 +152,7 @@ export function ProfileEditForm({
             label={t('profile.emergencyName')}
             labelPlacement="stacked"
             autocapitalize="words"
+            enterkeyhint="next"
             value={emergencyName}
             onIonInput={(e) => setEmergencyName(e.detail.value ?? '')}
           />
@@ -159,6 +163,7 @@ export function ProfileEditForm({
             labelPlacement="stacked"
             type="tel"
             inputmode="tel"
+            enterkeyhint="done"
             value={emergencyPhone}
             onIonInput={(e) => setEmergencyPhone(e.detail.value ?? '')}
           />

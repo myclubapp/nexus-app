@@ -77,6 +77,7 @@ vi.mock('../hooks/useTasks', () => ({
   useMyKudos: () => emptyQuery,
   useClaimTask: () => ({ mutate: () => {}, isPending: false, error: null }),
   usePublishTask: () => ({ mutate: () => {}, isPending: false, error: null }),
+  useUpdateTask: () => ({ mutateAsync: async () => {}, isPending: false, error: null }),
   useSubmitTask: () => ({ mutate: () => {}, isPending: false, error: null }),
   useReleaseTask: () => ({ mutate: () => {}, isPending: false, error: null }),
   useConfirmTask: () => ({ mutate: () => {}, isPending: false, error: null }),

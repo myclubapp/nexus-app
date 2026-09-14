@@ -11,7 +11,10 @@
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-tap-highlight" content="no" />
     <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#1d4ed8" />
+    <!-- Die Grundfarbe der App (variables.css); im Dunkelmodus tauschen
+         primary und secondary die Plätze, also hier ebenso. -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#339bde" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#795deb" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <!-- Installierte Fassung im Browser. Das Manifest hängt vite-plugin-pwa

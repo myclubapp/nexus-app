@@ -342,11 +342,12 @@ export const ROUTING_ROLES: readonly RoutingRole[] = ['trainer', 'sportchef', 'a
 
 /** Welche Rollen je Signaltyp den Hinweis erhalten – leer heisst «Vorgabe». */
 export function useHealthRouting() {
-  const { activeClub, isTrainer } = useClub();
+  // Eine Vereinseinstellung: Die Policy aus `0073` liest sie nur dem Vorstand vor.
+  const { activeClub, isBoard } = useClub();
 
   return useQuery({
     queryKey: ['health-routing', activeClub?.id],
-    enabled: Boolean(activeClub) && isTrainer && isConfigured,
+    enabled: Boolean(activeClub) && isBoard && isConfigured,
     queryFn: async (): Promise<Record<string, RoutingRole[]>> => {
       const { data, error } = await supabase
         .from('health_alert_routing')

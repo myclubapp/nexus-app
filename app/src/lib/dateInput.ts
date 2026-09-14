@@ -38,3 +38,18 @@ export function fromPickerValue(
   const at = value.indexOf('T');
   return (at >= 0 ? value.slice(at + 1) : value).slice(0, 5);
 }
+
+/**
+ * Das Ende folgt dem Beginn: Wird der Beginn hinter das Ende gesetzt, rückt
+ * das Ende auf den Beginn nach – ein Termin endet nicht vor seinem Anfang.
+ * Ein leeres Ende bleibt leer, ein Ende nach dem Beginn bleibt stehen.
+ *
+ * Verglichen wird in der gemeinsamen Genauigkeit: `YYYY-MM-DD` gegen ein
+ * `YYYY-MM-DDTHH:mm` zählt nur den Tag (die Serie «bis» ist ein reines Datum).
+ * Die Formate sind ISO-artig, die Zeichenfolge ordnet sich wie die Zeit.
+ */
+export function clampEnd(start: string, end: string): string {
+  if (!start || !end) return end;
+  const precision = Math.min(start.length, end.length);
+  return end.slice(0, precision) < start.slice(0, precision) ? start.slice(0, end.length) : end;
+}

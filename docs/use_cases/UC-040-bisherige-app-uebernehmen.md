@@ -152,7 +152,7 @@ Ein Termin der bisherigen App erscheint höchstens einmal. Der Schlüssel ist `l
 
 ### BR-188: Ohne Beschreibung ein Satz zur Herkunft
 
-BR-036 verlangt für Helfer-Events und Anlässe ein Warum. Die bisherige App kennt nur eine Beschreibung; fehlt sie, steht «Aus der bisherigen myclub-App übernommen». Das ist ehrlicher als ein erfundener Sinn, und der Vorstand kann den Satz nach dem Wechsel ersetzen.
+BR-036 verlangt für Helfer-Events und Anlässe ein Warum. Die bisherige App kennt nur eine Beschreibung; fehlt sie, steht «Aus der bisherigen myclub-App übernommen». Das ist ehrlicher als ein erfundener Sinn, und der Vorstand kann den Satz nach dem Wechsel ersetzen. **Trainings bekommen keinen Ersatzsatz:** Für sie verlangt BR-036 kein Warum, und ohne Beschreibung bleibt das Feld leer – die App zeigt den Abschnitt dann nicht (Entscheid 2026-09-13, `0075`).
 
 ### BR-189: Schichtzeiten sind Uhrzeiten am Tag des Termins
 

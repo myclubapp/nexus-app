@@ -39,6 +39,13 @@ interface AppPageProps {
    */
   toolbarEnd?: ReactNode;
   /**
+   * Aktionen rechts in der Zeile des grossen Titels, üblicherweise
+   * `IonButtons`. Für das, was zum Inhalt direkt darunter gehört – etwa
+   * «Heute» über dem Kalender – und mit dem grossen Titel mitscrollt. Der
+   * Knopf steht nur dort, nicht zusätzlich in `toolbarEnd`.
+   */
+  largeTitleEnd?: ReactNode;
+  /**
    * Die Erstellen-Wege der Seite. Sie erscheinen als rundes Plus unten
    * rechts (`CreateFab`), nie als Symbol in der Kopfzeile.
    */
@@ -58,9 +65,11 @@ interface AppPageProps {
  * `collapse="condense"` im Inhalt, und `fullscreen` am `IonContent`. Fehlt
  * eines der drei Teile, bleibt der grosse Titel stehen oder verschwindet ganz.
  *
- * Die Aktionsknöpfe stehen bewusst nur in der äusseren Kopfzeile: eine zweite
- * Kopie im eingeklappten Titel wäre für Bedienhilfen und Tests ein zweiter
- * gleichnamiger Knopf.
+ * Jeder Aktionsknopf steht genau einmal: entweder in der äusseren Kopfzeile
+ * (`toolbarEnd`) oder in der Zeile des grossen Titels (`largeTitleEnd`). Eine
+ * Kopie in beiden wäre für Bedienhilfen und Tests ein zweiter gleichnamiger
+ * Knopf. Was in der Zeile des grossen Titels steht, scrollt mit ihm weg – das
+ * passt für Knöpfe, die zum Inhalt direkt darunter gehören.
  *
  * Was etwas Neues anlegt, steht nicht dort, sondern als Plus unten rechts:
  * `createActions` gibt es an `CreateFab` weiter, das als direktes Kind des
@@ -71,6 +80,7 @@ export function AppPage({
   largeTitle,
   backHref,
   toolbarEnd,
+  largeTitleEnd,
   createActions,
   subToolbar,
   onRefresh,
@@ -97,7 +107,11 @@ export function AppPage({
               <IonMenuButton aria-label={t('menu.open')} />
             )}
           </IonButtons>
-          <IonTitle>{title}</IonTitle>
+          {/* Ionic vergibt dem Titel keine Überschriften-Rolle; die Doku
+              empfiehlt, sie von Hand zu setzen. */}
+          <IonTitle role="heading" aria-level={1}>
+            {title}
+          </IonTitle>
           {toolbarEnd}
         </IonToolbar>
         {subToolbar && <IonToolbar>{subToolbar}</IonToolbar>}
@@ -106,7 +120,13 @@ export function AppPage({
       {/* Der Freiraum unten gehört zum Fab: Ohne ihn liegt die letzte
           Listenzeile unter dem runden Knopf, sobald ganz nach unten
           gescrollt ist. */}
-      <IonContent fullscreen className={createActions ? 'app-content--fab' : undefined}>
+      {/* `fixedSlotPlacement="before"`: Der Fab kommt in der Tab-Reihenfolge
+          vor der Liste, nicht erst nach der letzten Zeile. */}
+      <IonContent
+        fullscreen
+        fixedSlotPlacement="before"
+        className={createActions ? 'app-content--fab' : undefined}
+      >
         {createActions && <CreateFab actions={createActions} />}
 
         {onRefresh && (
@@ -124,6 +144,7 @@ export function AppPage({
           <IonHeader collapse="condense">
             <IonToolbar>
               <IonTitle size="large">{large}</IonTitle>
+              {largeTitleEnd}
             </IonToolbar>
           </IonHeader>
         )}

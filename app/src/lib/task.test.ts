@@ -8,6 +8,7 @@ import {
   suggestedTaskPoints,
   taskAction,
   taskCapacity,
+  taskToDraft,
   taskUrgency,
   validateTask,
   type TaskDraft,
@@ -356,5 +357,57 @@ describe('needsKudosReminder', () => {
   it('verschwindet, sobald jemand zu schreiben beginnt', () => {
     expect(needsKudosReminder('D')).toBe(false);
     expect(needsKudosReminder('Danke dir!')).toBe(false);
+  });
+});
+
+describe('taskToDraft (UC-017 A5)', () => {
+  const task: TaskWithAssignments = {
+    id: 'task-1',
+    club_id: 'club-1',
+    team_id: 'team-1',
+    title: 'Festbeiz-Bewilligung',
+    description: null,
+    why: null,
+    category: 'catering',
+    points: 0,
+    task_type: 'task',
+    due_at: '2026-10-01T10:30:00Z',
+    max_assignees: 3,
+    status: 'draft',
+    created_by: 'member-1',
+    created_at: '2026-09-01T10:00:00Z',
+    is_sample: false,
+    recurrence_days: 14,
+    assignments: [],
+  };
+
+  it('nimmt den gespeicherten Stand als Formularinhalt', () => {
+    const draft = taskToDraft(task);
+    expect(draft).toMatchObject({
+      title: 'Festbeiz-Bewilligung',
+      why: '',
+      description: '',
+      category: 'catering',
+      points: 0,
+      maxAssignees: 3,
+      teamId: 'team-1',
+      recurrenceDays: 14,
+    });
+  });
+
+  it('gibt die Frist als lokale Eingabe zurück, nicht als UTC-Zeitstempel', () => {
+    // Ein `datetime-local`-Feld kennt keine Zeitzone: Es zeigt, was man
+    // eingibt. Der Zeitstempel muss deshalb in die lokale Zeit zurück.
+    const expected = new Date('2026-10-01T10:30:00Z');
+    const pad = (value: number) => String(value).padStart(2, '0');
+    expect(taskToDraft(task).dueAt).toBe(
+      `${expected.getFullYear()}-${pad(expected.getMonth() + 1)}-${pad(expected.getDate())}` +
+        `T${pad(expected.getHours())}:${pad(expected.getMinutes())}`,
+    );
+    expect(taskToDraft({ ...task, due_at: null }).dueAt).toBe('');
+  });
+
+  it('fängt eine unbekannte Kategorie als «other» ab', () => {
+    expect(taskToDraft({ ...task, category: 'legacy' }).category).toBe('other');
   });
 });

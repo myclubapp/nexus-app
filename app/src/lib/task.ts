@@ -1,4 +1,5 @@
 import type { PointRule, Task, TaskAssignment } from './database.types';
+import { toLocalInput } from './format';
 
 /**
  * Die Kategorien des Marktplatzes (UC-017, Schritt 2).
@@ -51,6 +52,31 @@ export interface TaskDraft {
   teamId: string | null;
   /** A2: Rhythmus in Tagen; `null` heisst einmalig. */
   recurrenceDays: number | null;
+}
+
+/**
+ * Eine gespeicherte Aufgabe als Formularinhalt (A5).
+ *
+ * Die Umkehrung von `create_task`: Was die Datenbank als `null` hält, zeigt
+ * das Formular als leeres Feld, und die Frist kommt als lokale Zeit zurück,
+ * so wie sie eingegeben wurde – nicht als UTC-Zeitstempel.
+ */
+export function taskToDraft(task: Task): TaskDraft {
+  const due = task.due_at ? new Date(task.due_at) : null;
+  const category = (TASK_CATEGORIES as readonly string[]).includes(task.category)
+    ? (task.category as TaskCategory)
+    : 'other';
+  return {
+    title: task.title,
+    why: task.why ?? '',
+    description: task.description ?? '',
+    category,
+    points: task.points,
+    dueAt: due && !Number.isNaN(due.getTime()) ? toLocalInput(due) : '',
+    maxAssignees: task.max_assignees,
+    teamId: task.team_id,
+    recurrenceDays: task.recurrence_days,
+  };
 }
 
 export type TaskProblem =
