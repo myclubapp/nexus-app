@@ -5,7 +5,9 @@ project_id = "myclub-nexus"
 [api]
 enabled = true
 port = 54321
-schemas = ["public"]
+# `graphql_public` steht am verknüpften Projekt und wird von `config push`
+# entfernt, wenn es hier fehlt – die Liste ist deklarativ, nicht additiv.
+schemas = ["public", "graphql_public"]
 extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
@@ -19,18 +21,22 @@ port = 54323
 
 [auth]
 enabled = true
-# Nur für die **lokale** Instanz. Im verknüpften Projekt muss `site_url` die
-# betriebene Adresse sein (https://app.my-club.ch) – `supabase config push`
-# würde sie mit dem Wert dieser Zeile überschreiben und jeden Magic Link auf
-# den Entwicklungsrechner umleiten. Vor einem Push also site_url prüfen.
-site_url = "http://localhost:5173"
+# Die betriebene Adresse. Diese Datei ist der deklarative Stand **auch für das
+# verknüpfte Projekt** (`supabase config push`); ein Entwicklungswert hier
+# würde jeden Magic Link auf einen Entwicklungsrechner umleiten.
+#
+# `site_url` ist nur die Rückfalladresse. Die App nennt ihr Ziel bei jeder
+# Anmeldung selbst (`authRedirectUrl()`), und die lokale Entwicklung steht
+# unten auf der Erlaubnisliste – deshalb funktioniert `supabase start` mit
+# diesem Wert unverändert.
+site_url = "https://app.my-club.ch"
 additional_redirect_urls = [
   "http://localhost:5173/auth/callback",
   "ch.myclub.nexus://auth/callback",
   # Die betriebene PWA. `env.webRedirectUrl` fällt auf `window.location.origin`
   # zurück, der Magic Link kehrt also hierhin zurück – ohne diesen Eintrag
-  # weist GoTrue ihn ab. Dieselbe Adresse steht im Dashboard des verknüpften
-  # Projekts und als Secret `APP_URL` der Function `send-mail` (UC-044).
+  # weist GoTrue ihn ab und schickt die Person auf `site_url`. Dieselbe
+  # Adresse steht als Secret `APP_URL` der Function `send-mail` (UC-044).
   "https://app.my-club.ch/auth/callback",
 ]
 jwt_expiry = 3600
