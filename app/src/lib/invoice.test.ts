@@ -16,6 +16,7 @@ function invoice(overrides: Partial<InvoiceRef> = {}): InvoiceRef {
     status: 'open',
     paidAt: null,
     detailUrl: null,
+    pdfPath: null,
     ...overrides,
   };
 }

@@ -1196,6 +1196,226 @@ export type Database = {
           },
         ]
       }
+      invoice_creditors: {
+        Row: {
+          city: string | null
+          club_id: string
+          country: string
+          house_number: string | null
+          iban: string
+          name: string
+          postal_code: string | null
+          street: string | null
+          updated_at: string
+        }
+        Insert: {
+          city?: string | null
+          club_id: string
+          country?: string
+          house_number?: string | null
+          iban: string
+          name: string
+          postal_code?: string | null
+          street?: string | null
+          updated_at?: string
+        }
+        Update: {
+          city?: string | null
+          club_id?: string
+          country?: string
+          house_number?: string | null
+          iban?: string
+          name?: string
+          postal_code?: string | null
+          street?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_creditors_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: true
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_fee_items: {
+        Row: {
+          amount: number
+          club_id: string
+          created_at: string
+          currency: string
+          id: string
+          is_active: boolean
+          name: string
+          team_id: string | null
+        }
+        Insert: {
+          amount: number
+          club_id: string
+          created_at?: string
+          currency?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          team_id?: string | null
+        }
+        Update: {
+          amount?: number
+          club_id?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          team_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_fee_items_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_fee_items_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_payment_imports: {
+        Row: {
+          already: number
+          club_id: string
+          created_at: string
+          created_by: string | null
+          filename: string | null
+          found: number
+          id: string
+          matched: number
+          unmatched: Json
+        }
+        Insert: {
+          already?: number
+          club_id: string
+          created_at?: string
+          created_by?: string | null
+          filename?: string | null
+          found?: number
+          id?: string
+          matched?: number
+          unmatched?: Json
+        }
+        Update: {
+          already?: number
+          club_id?: string
+          created_at?: string
+          created_by?: string | null
+          filename?: string | null
+          found?: number
+          id?: string
+          matched?: number
+          unmatched?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_payment_imports_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_payment_imports_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "invoice_payment_imports_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_periods: {
+        Row: {
+          club_id: string
+          created_at: string
+          currency: string
+          due_date: string
+          id: string
+          name: string
+          reference_prefix: string | null
+        }
+        Insert: {
+          club_id: string
+          created_at?: string
+          currency?: string
+          due_date: string
+          id?: string
+          name: string
+          reference_prefix?: string | null
+        }
+        Update: {
+          club_id?: string
+          created_at?: string
+          currency?: string
+          due_date?: string
+          id?: string
+          name?: string
+          reference_prefix?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_periods_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_positions: {
+        Row: {
+          amount: number
+          id: string
+          invoice_id: string
+          label: string
+          sort_order: number
+        }
+        Insert: {
+          amount: number
+          id?: string
+          invoice_id: string
+          label: string
+          sort_order?: number
+        }
+        Update: {
+          amount?: number
+          id?: string
+          invoice_id?: string
+          label?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_positions_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_refs: {
         Row: {
           amount: number
@@ -1205,6 +1425,7 @@ export type Database = {
           id: string
           member_id: string
           paid_at: string | null
+          pdf_path: string | null
           status: string
           updated_at: string
         }
@@ -1216,6 +1437,7 @@ export type Database = {
           id: string
           member_id: string
           paid_at?: string | null
+          pdf_path?: string | null
           status: string
           updated_at?: string
         }
@@ -1227,6 +1449,7 @@ export type Database = {
           id?: string
           member_id?: string
           paid_at?: string | null
+          pdf_path?: string | null
           status?: string
           updated_at?: string
         }
@@ -1250,6 +1473,95 @@ export type Database = {
             columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          amount: number
+          cancel_reason: string | null
+          cancelled_at: string | null
+          club_id: string
+          created_at: string
+          currency: string
+          due_date: string
+          id: string
+          member_id: string
+          paid_at: string | null
+          payer: string | null
+          pdf_path: string | null
+          period_id: string
+          reference: string
+          sent_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          club_id: string
+          created_at?: string
+          currency?: string
+          due_date: string
+          id?: string
+          member_id: string
+          paid_at?: string | null
+          payer?: string | null
+          pdf_path?: string | null
+          period_id: string
+          reference: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          club_id?: string
+          created_at?: string
+          currency?: string
+          due_date?: string
+          id?: string
+          member_id?: string
+          paid_at?: string | null
+          payer?: string | null
+          pdf_path?: string | null
+          period_id?: string
+          reference?: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "invoices_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_period_id_fkey"
+            columns: ["period_id"]
+            isOneToOne: false
+            referencedRelation: "invoice_periods"
             referencedColumns: ["id"]
           },
         ]
@@ -2431,6 +2743,10 @@ export type Database = {
       }
     }
     Functions: {
+      add_invoice_position: {
+        Args: { p_amount: number; p_invoice_id: string; p_label: string }
+        Returns: string
+      }
       add_legacy_team_members: {
         Args: { p_legacy_user_ids: string[]; p_team_id: string }
         Returns: number
@@ -2543,10 +2859,15 @@ export type Database = {
         Args: { p_club_id: string; p_team_id: string }
         Returns: boolean
       }
+      can_read_invoice_pdf: { Args: { p_name: string }; Returns: boolean }
       can_see_agenda: { Args: { p_event_id: string }; Returns: boolean }
       can_write_club_media: { Args: { p_name: string }; Returns: boolean }
       cancel_event: {
         Args: { p_event_id: string; p_reason: string }
+        Returns: undefined
+      }
+      cancel_invoice: {
+        Args: { p_invoice_id: string; p_reason?: string }
         Returns: undefined
       }
       check_in: {
@@ -2706,6 +3027,7 @@ export type Database = {
         }
         Returns: string
       }
+      creditor_ready: { Args: { p_club_id: string }; Returns: boolean }
       current_member_id: { Args: { p_club_id: string }; Returns: string }
       decide_join_request: {
         Args: {
@@ -2720,6 +3042,14 @@ export type Database = {
       default_event_labels: { Args: { p_club_kind: string }; Returns: Json }
       default_season_start: { Args: { p_club_kind: string }; Returns: string }
       delete_event: { Args: { p_event_id: string }; Returns: undefined }
+      delete_invoice_draft: {
+        Args: { p_invoice_id: string }
+        Returns: undefined
+      }
+      delete_invoice_position: {
+        Args: { p_position_id: string }
+        Returns: undefined
+      }
       delete_my_account: { Args: never; Returns: undefined }
       delete_point_rule: { Args: { p_rule_id: string }; Returns: undefined }
       delete_team: { Args: { p_team_id: string }; Returns: undefined }
@@ -2823,6 +3153,14 @@ export type Database = {
         Args: { p_input_id: string; p_roles: Json }
         Returns: undefined
       }
+      generate_invoices: {
+        Args: {
+          p_fee_item_ids: string[]
+          p_member_ids: string[]
+          p_period_id: string
+        }
+        Returns: Json
+      }
       health_definitions: {
         Args: { p_club_id: string }
         Returns: {
@@ -2849,10 +3187,16 @@ export type Database = {
           linked: number
         }[]
       }
+      invoice_payload: {
+        Args: { p_invoice_id?: string; p_period_id: string }
+        Returns: Json
+      }
       is_club_admin: { Args: { p_club_id: string }; Returns: boolean }
       is_club_board: { Args: { p_club_id: string }; Returns: boolean }
       is_club_member: { Args: { p_club_id: string }; Returns: boolean }
       is_club_trainer: { Args: { p_club_id: string }; Returns: boolean }
+      is_qr_iban: { Args: { p_iban: string }; Returns: boolean }
+      is_valid_iban: { Args: { p_iban: string }; Returns: boolean }
       join_demo_club: { Args: never; Returns: string }
       last_connection_at: { Args: { p_club_id: string }; Returns: string }
       leaderboard_rows: {
@@ -2892,11 +3236,24 @@ export type Database = {
         Args: { p_event_id: string; p_member_id: string; p_present?: boolean }
         Returns: number
       }
+      mark_invoice_sent: {
+        Args: { p_invoice_id: string; p_pdf_path?: string }
+        Returns: undefined
+      }
       mark_mail_failed: {
         Args: { p_error: string; p_ids: string[] }
         Returns: undefined
       }
       mark_mail_sent: { Args: { p_ids: string[] }; Returns: undefined }
+      match_camt_payments: {
+        Args: {
+          p_actor?: string
+          p_club_id: string
+          p_filename?: string
+          p_payments: Json
+        }
+        Returns: Json
+      }
       matching_tasks: {
         Args: { p_club_id: string; p_limit?: number }
         Returns: {
@@ -3068,6 +3425,13 @@ export type Database = {
           after_at: string
           wanted: boolean
         }[]
+      }
+      qr_check_digit: { Args: { p_base: string }; Returns: number }
+      qr_reference: { Args: { p_prefix?: string }; Returns: string }
+      recalc_invoice_amount: { Args: { p_invoice_id: string }; Returns: number }
+      record_invoice_payment: {
+        Args: { p_invoice_id: string; p_paid_at: string; p_payer?: string }
+        Returns: number
       }
       redeem_invite: {
         Args: { p_code: string; p_display_name?: string }

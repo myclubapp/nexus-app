@@ -23,6 +23,9 @@ export const PUSH_CATEGORIES = [
   // Verbandsverbindung. Sie erreicht nur den Vorstand, und auch er soll sie
   // abschalten können; eine Kategorie ohne Schalter wäre die einzige.
   'system',
+  // Seit UC-046: die eigene Rechnung – neu, fällig, storniert. Sie erreicht
+  // jedes Mitglied und muss abschaltbar sein wie jede andere Kategorie.
+  'invoice',
   'join_request',
 ] as const;
 

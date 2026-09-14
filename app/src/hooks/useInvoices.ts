@@ -18,7 +18,7 @@ export function useMyInvoices() {
     queryFn: async (): Promise<InvoiceRef[]> => {
       const { data, error } = await supabase
         .from('invoice_refs')
-        .select('id, amount, due_date, status, paid_at, detail_url')
+        .select('id, amount, due_date, status, paid_at, detail_url, pdf_path')
         .eq('member_id', activeMembership!.id)
         .order('due_date', { ascending: false });
       if (error) throw new Error(error.message);
@@ -30,6 +30,7 @@ export function useMyInvoices() {
         status: row.status as InvoiceStatus,
         paidAt: row.paid_at,
         detailUrl: row.detail_url,
+        pdfPath: row.pdf_path,
       }));
     },
   });

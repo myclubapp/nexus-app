@@ -7,6 +7,8 @@ import { StatCard } from '../components/StatCard';
 import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
 import { useMyInvoices } from '../hooks/useInvoices';
+import { useInvoicePdfUrl } from '../hooks/useInvoicing';
+import { useToast } from '../hooks/useToast';
 import { formatDate } from '../lib/format';
 import { openTotal, sortInvoices, statusTone, wasOnTime } from '../lib/invoice';
 
@@ -24,6 +26,20 @@ import { openTotal, sortInvoices, statusTone, wasOnTime } from '../lib/invoice';
 export function InvoicePage() {
   const { t } = useTranslation();
   const invoices = useMyInvoices();
+  const pdfUrl = useInvoicePdfUrl();
+  const toast = useToast();
+
+  // Seit UC-046 stellt der Verein seine Rechnungen selbst: Das PDF liegt im
+  // Vereinsspeicher (BR-225) und wird je Abruf signiert. `detailUrl` gilt
+  // weiter für Vereine, die auswärts fakturieren – dann führt die Zeile
+  // hinaus statt zur eigenen Datei.
+  async function openPdf(path: string) {
+    try {
+      window.open(await pdfUrl.mutateAsync(path), '_blank', 'noopener');
+    } catch (cause) {
+      toast.failure((cause as Error).message);
+    }
+  }
 
   const rows = sortInvoices(invoices.data ?? []);
   const outstanding = openTotal(rows);
@@ -67,11 +83,16 @@ export function InvoicePage() {
                 // Verweis **im Dienst** (BR-159); die App reicht ihn durch.
                 // Der Link verlässt die App – deshalb das Symbol dafür statt
                 // des Chevrons, der eine Unterseite verspricht.
-                button={Boolean(invoice.detailUrl)}
+                button={Boolean(invoice.detailUrl) || Boolean(invoice.pdfPath)}
                 detail={false}
                 href={invoice.detailUrl ?? undefined}
                 target={invoice.detailUrl ? '_blank' : undefined}
                 rel={invoice.detailUrl ? 'noopener noreferrer' : undefined}
+                onClick={
+                  !invoice.detailUrl && invoice.pdfPath
+                    ? () => void openPdf(invoice.pdfPath!)
+                    : undefined
+                }
               >
                 <IonLabel className="ion-text-wrap">
                   <h2>{t('invoice.amount', { amount: invoice.amount.toFixed(2) })}</h2>
@@ -83,7 +104,7 @@ export function InvoicePage() {
                 <IonBadge slot="end" color={statusTone(invoice.status)}>
                   {t(`invoice.status.${invoice.status}`)}
                 </IonBadge>
-                {invoice.detailUrl && (
+                {(invoice.detailUrl || invoice.pdfPath) && (
                   <IonIcon slot="end" icon={openOutline} color="medium" aria-hidden="true" />
                 )}
               </IonItem>

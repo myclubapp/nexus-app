@@ -29,6 +29,9 @@ import { ProfilePage } from './ProfilePage';
 import { ClubSettingsPage } from './ClubSettingsPage';
 import { InvitePage } from './club/InvitePage';
 import { JoinRequestPage } from './club/JoinRequestPage';
+import { BillingPage } from './club/BillingPage';
+import { BillingPeriodPage } from './club/BillingPeriodPage';
+import { BillingSetupPage } from './club/BillingSetupPage';
 import { EventLabelPage } from './club/EventLabelPage';
 import { MemberPage } from './club/MemberPage';
 import { NewsSourcePage } from './club/NewsSourcePage';
@@ -123,6 +126,12 @@ export function TabsPage() {
         <Route path="profile/offices" element={<OfficePage />} />
         <Route path="profile/mood" element={<MoodPage />} />
         <Route path="profile/invoices" element={<InvoicePage />} />
+        {/* UC-046: die Sicht des Vorstands. Sie liegt neben «Meine
+            Rechnungen», nicht darin – das eine ist die eigene Forderung, das
+            andere die Kasse des Vereins. */}
+        <Route path="profile/billing" element={<BillingPage />} />
+        <Route path="profile/billing/setup" element={<BillingSetupPage />} />
+        <Route path="profile/billing/:periodId" element={<BillingPeriodPage />} />
         <Route path="" element={<Navigate to="dashboard" replace />} />
       </IonRouterOutlet>
 

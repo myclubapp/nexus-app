@@ -89,6 +89,15 @@ export function ClubAdminLinks() {
             </IonItem>
           )}
 
+          {/* UC-046: Rechnungen stellen ist ein Modul wie die anderen – ohne
+              es bleibt der Weg zu, und «Meine Rechnungen» auf der Profilseite
+              hängt am selben Schalter. */}
+          {isModuleOn(activeClub?.settings, "invoice") && (
+            <IonItem button routerLink="/tabs/profile/billing" detail>
+              <IonLabel>{t("billing.title")}</IonLabel>
+            </IonItem>
+          )}
+
           <IonItem button routerLink="/tabs/profile/rules" detail>
             <IonLabel>{t("pointRules.title")}</IonLabel>
           </IonItem>

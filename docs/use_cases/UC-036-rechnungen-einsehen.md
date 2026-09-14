@@ -8,6 +8,12 @@
 **Goal:** Den eigenen Rechnungsstand in der App sehen und für pünktliche Zahlung gewürdigt werden
 **Status:** Implemented
 
+> **Wer der «Rechnungsdienst» ist:** Seit dem Entscheid vom 14.09.2026 läuft er
+> in nexus selbst ([UC-046](UC-046-rechnung-stellen-und-versenden.md)) statt als
+> eigenständiger Dienst. An diesem Ablauf ändert das nichts – BR-156 gilt
+> unverändert, und die Schritte 6 und 7 speist neu der eigene Rechnungslauf.
+> BR-159 ist damit gegenstandslos: Es gibt nur noch ein Login.
+
 ## Preconditions
 
 - Der Verein hat den Rechnungsdienst aktiviert.

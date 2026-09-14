@@ -69,7 +69,8 @@ describe('PUSH_CATEGORIES', () => {
       // Seit UC-030 stellt `notify()` unter `input` zu, seit UC-032 unter
       // `checkin`. Fehlte eine davon hier, liesse sie sich nie abwählen.
       // Seit UC-035 kommt `system` dazu: technische Meldungen zu Anschlüssen.
-      'input', 'checkin', 'system', 'join_request',
+      // Seit UC-046 `invoice`: neue Rechnung, Fälligkeit, Storno.
+      'input', 'checkin', 'system', 'invoice', 'join_request',
     ]);
   });
 });

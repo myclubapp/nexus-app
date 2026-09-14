@@ -55,3 +55,12 @@ enable_confirmations = true
 # geprüfte JWT ist die Voraussetzung dafür und bleibt deshalb Pflicht.
 [functions.import-wordpress-news]
 verify_jwt = true
+
+# UC-046 und UC-047: Beide prüfen **selbst**, ob die aufrufende Person Vorstand
+# dieses Vereins ist (`is_club_admin` mit ihrem Token). `verify_jwt` davor ist
+# die erste Hürde: Ohne gültiges Token kommt der Aufruf gar nicht an.
+[functions.invoice-run]
+verify_jwt = true
+
+[functions.payment-import]
+verify_jwt = true

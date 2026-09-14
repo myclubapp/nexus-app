@@ -216,3 +216,15 @@ export type Notification = Row<'notifications'>;
 // Die Sicht `leaderboard` ist mit `0039` gewichen: Die Rangfolge steht nur
 // noch in `leaderboard_rows()`, damit es nicht zwei Beschreibungen derselben
 // Sache gibt. Die Zeilenform liegt in `src/lib/leaderboard.ts`.
+
+// --- Rechnungsstellung (UC-046, UC-047) ------------------------------------
+
+export type InvoiceCreditor = Row<'invoice_creditors'>;
+export type InvoiceFeeItem = Row<'invoice_fee_items'>;
+export type InvoicePeriod = Row<'invoice_periods'>;
+export type InvoicePosition = Row<'invoice_positions'>;
+
+/** `invoices.status` – Constraint aus `0087_invoicing.sql`. */
+export type InvoiceState = 'draft' | 'sent' | 'paid' | 'cancelled';
+
+export type Invoice = Omit<Row<'invoices'>, 'status'> & { status: InvoiceState };

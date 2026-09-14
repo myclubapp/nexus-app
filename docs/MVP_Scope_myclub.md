@@ -11,7 +11,7 @@
 
 | # | Entscheid | Wirkung |
 |---|---|---|
-| 1 | **Rechnungsstellung wird eigenständiger Dienst** («myclub Billing») | Die komplexeste Domäne (SIX-QR-Spez, MOD10, camt.054, Mahnwesen, Perioden, Positionen) verlässt die App – sauber integriert über API + Webhooks |
+| 1 | **Rechnungsstellung wird eigenständiger Dienst** («myclub Billing») – **am 14.09.2026 revidiert** | Die komplexeste Domäne (SIX-QR-Spez, MOD10, camt.054, Mahnwesen, Perioden, Positionen) sollte die App verlassen. **Entschieden ist nun: Der Dienst wird nach dem Vorbild der bisherigen myclub-App in nexus nachgebaut und läuft dort (UC-046).** Die Abgrenzung des Spiegels bleibt: Was das Mitglied sieht, ist weiterhin Betrag, Fälligkeit, Stand und Link (UC-036, BR-156) |
 | 2 | **Helfer-Modul geht in der Gamification auf** | Kein separates Helferpunkte-Konto, kein Soll-/Schwellwert-Reporting mehr. Es gibt genau **einen** Punkte-Ledger: die Gamification. Helfer-Schichten bleiben als Event-Typ erhalten |
 | 3 | **Verbands-Sync nur noch mit API-Key pro Verein** (swiss unihockey neu wie Handball) | Kein globaler Presync aller Verbandsvereine mehr, kein Vereinsverzeichnis, kein Claiming-Problem – der API-Key **ist** die Verifikation |
 | 4 | **Vereinsart-offen von Tag 1** | Onboarding ohne Sport-Fokus: Sport-, Musik-, Kultur-, Quartier-, Jugendvereine – alles gleichberechtigt. Meisterschaft/Verband ist ein optionales Add-on, kein Kernkonzept |
@@ -37,7 +37,7 @@
 
 | Was | Wohin |
 |---|---|
-| Beitragsverwaltung, QR-Rechnung, Perioden, Zuschläge, Positionen, Mahnwesen, Zahlungsabgleich | → **myclub Billing** (eigenständiger Dienst, §3) |
+| Beitragsverwaltung, QR-Rechnung, Perioden, Zuschläge, Positionen, Mahnwesen, Zahlungsabgleich | → ursprünglich **myclub Billing** (eigenständiger Dienst, §3). **Seit dem 14.09.2026 wieder IN, als eigener Bereich in nexus (UC-046)** |
 | Helferpunkte-Konto, Soll-/Schwellwert-Reporting, Reporting-Zeitraum | → **ersetzt durch Gamification-Ledger** (§4). Vorstands-Sicht = Filter auf Säule 3 statt eigenes Modul |
 | Globaler Verbands-Presync + Vereinsverzeichnis + Kontakt-E-Mail-Claiming | → **entfällt**; Verbands-Anbindung per API-Key (§5) |
 
@@ -56,6 +56,27 @@
 ---
 
 ## 3. myclub Billing – der eigenständige Rechnungsdienst
+
+> **Revidiert am 14.09.2026.** Dieser Abschnitt beschreibt die ursprünglich
+> gewählte Auslagerung. Entschieden ist stattdessen: **Die Rechnungslogik der
+> bisherigen myclub-App wird in nexus nachgebaut und läuft in nexus** –
+> Abrechnungsperioden, Positionen, QR-Einzahlungsschein (`swissqrbill`),
+> Versand. Der Ablauf steht in
+> [`use_cases/UC-046-rechnung-stellen-und-versenden.md`](use_cases/UC-046-rechnung-stellen-und-versenden.md).
+>
+> Was aus diesem Abschnitt gültig bleibt:
+> - die **Grundregel der Abgrenzung** (§3.2) als BR-156 – der Spiegel
+>   `invoice_refs` trägt weiterhin nur Betrag, Fälligkeit, Stand und Link, und
+>   er bleibt der einzige Weg zum Mitglied (UC-036, neu BR-226);
+> - die **Punktequelle**: eine fristgerecht bezahlte Rechnung bucht Säule 6 –
+>   neu aus dem eigenen Zahlungsabgleich statt aus einem Webhook;
+> - der **Ausgangskorb** `billing_outbox`: er bleibt bestehen für den Fall,
+>   dass ein Verein seinen Debitorenbestand doch in einem fremden System führt.
+>
+> Was entfällt: das zweite Supabase-Projekt und die eingebettete fremde
+> Oberfläche. BR-159 («Ein Login für beides») wird damit gegenstandslos – es
+> gibt nur noch ein Login und kein Token zwischen zwei Diensten.
+
 
 ### 3.1 Warum auslagern?
 

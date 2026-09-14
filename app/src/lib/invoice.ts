@@ -18,6 +18,15 @@ export interface InvoiceRef {
   status: InvoiceStatus;
   paidAt: string | null;
   detailUrl: string | null;
+  /**
+   * Der Pfad zur abgelegten Rechnung im Vereinsspeicher (UC-046, BR-225).
+   *
+   * Seit der Rechnungsdienst in nexus läuft, liegt das PDF im eigenen Bucket
+   * statt bei einem fremden Dienst. `detailUrl` bleibt daneben bestehen: Ein
+   * Verein, der seine Rechnungen doch auswärts stellt, meldet weiterhin einen
+   * Link. Der Pfad wird je Abruf signiert – eine gespeicherte Adresse liefe ab.
+   */
+  pdfPath: string | null;
 }
 
 /**
