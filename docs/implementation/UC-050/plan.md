@@ -183,10 +183,10 @@ Verbindlich aus `docs/guidelines.md`:
 - [x] 6. `PulsePage`: Knopf «Vorschau» und Verwaltungsweg «Grussformel einrichten»; `PulseSections` für App-Ansicht und Leseseite, `PulsePreviewModal`, `PulseGreetingModal` (Amt, vier Sprachen, `ImagePicker`)
 - [x] 7. i18n in vier Sprachen, `npm run i18n:check`
 - [x] 8. Verhaltensprüfung gegen die laufende Datenbank: vierte Quelle greift, Team-News bleibt draussen, Vorschau setzt kein `sent_at` und zählt keine Verbindung, Pulszeile trägt `mail_template`
-- [ ] 9. `ai-code-review` als eigener Durchgang, Befunde beheben
-- [ ] 10. Testplan `docs/test-plans/uc-050-vereins-puls-persoenlich.md`
-- [ ] 11. Statusabgleich in `requirements.md`, UC-050, UC-027 und `use_cases/README.md`
-- [ ] 12. Ein Commit, Conventional Commits
+- [x] 9. `ai-code-review` als eigener Durchgang, Befunde beheben
+- [x] 10. Testplan `docs/test-plans/uc-050-vereins-puls-persoenlich.md` (10 Fälle)
+- [x] 11. Statusabgleich in `requirements.md`, UC-050, UC-027 und `use_cases/README.md`
+- [x] 12. Ein Commit, Conventional Commits
 
 ---
 
@@ -254,3 +254,42 @@ Wegwerftabelle, danach `pg_class` befragt). 21 Prüfungen, alle grün; die
 Produktionsdatenbank ist unverändert (`greeting`-Spalte weg, `pulse_payload`
 weg, `save_office` weiter zwölfstellig). Das ersetzt Schritt 3 **nicht** – nach
 dem echten `db push` gehört derselbe Lauf ohne `rollback` wiederholt.
+
+---
+
+## Was der Review gefunden hat (Schritt 9)
+
+Fünf Befunde, alle behoben, alle im eigenen Stand:
+
+1. **Die Sprache fehlte im Abfrageschlüssel.** `usePulsePayload` übergab
+   `p_locale: i18n.language`, der Schlüssel war aber nur `[pulseId]`: Nach einem
+   Sprachwechsel zeigte der Puls den Gruss in der alten Sprache. `usePulsePreview`
+   machte es zwanzig Zeilen weiter richtig – das Fundmuster «dieselbe Regel
+   zweimal, einmal falsch».
+2. **Die Auswahlregel stand zweimal.** Die Mailansicht filtert der Server
+   (`p_keep`), die App-Ansicht filterte der Client. Jetzt filtert beide dieselbe
+   Funktion; der Client hat keine Kopie der Regel mehr.
+3. **Toter Zustand.** `PulsePreview.text` und `.color` kamen aus der Function und
+   wurden nirgends gelesen, ebenso `status` in der Nutzlast. Alle drei sind weg –
+   in der Function **und** in der Migration.
+4. **Stille Fehler in `pulse-preview`.** Drei Lesezugriffe verwarfen ihren
+   `error`; eine Vorschau ohne Vereinsauftritt wäre unerklärlich gewesen. Jetzt
+   `console.warn` je Stelle, ohne den Ablauf abzubrechen – dieselbe Linie wie
+   `removeFile()` in `useMedia`.
+5. **Ein Hex-Wert ohne Begründung.** `#ffffff` in `.app-mail-preview` bricht
+   formal guidelines §6. Er bleibt – ein Mailblatt ist in jedem Postfach weiss –,
+   trägt jetzt aber die Begründung im Stylesheet.
+
+Ein Nit bleibt bewusst stehen: `_shared/pulse_sheet.ts` ist snake_case, während
+die App mehrteilige Dateinamen camelCase schreibt. In `supabase/functions/` gibt
+es kein Gegenbeispiel außer den `*_test.ts`, und die Richtlinien regeln es nicht.
+
+## Was offen bleibt
+
+1. **`supabase db push`** für `0100` – Sandros Entscheid, nicht meiner.
+2. **Deploy von `pulse-preview`** (`supabase functions deploy pulse-preview`);
+   `send-mail` muss ebenfalls neu deployt werden, weil es den Puls-Zweig trägt.
+3. **Danach Schritt 3 echt**: dieselben 21 Prüfungen ohne `rollback`, plus der
+   manuelle Testplan auf dem Gerät (TC-008 braucht zwei Mailprogramme).
+4. `npm run types:generate` und der Übergangsblock in `database.types.ts` –
+   er nennt jetzt `0092`–`0100` und gehört nach dem Push gelöscht.
