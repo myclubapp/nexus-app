@@ -16,6 +16,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { InlineError, NotConfiguredState } from '../../components/StateViews';
 import { LanguageSwitcher } from '../../components/LanguageSwitcher';
 import {
+  PASSWORD_MIN_LENGTH,
   authErrorKey,
   resolveSignInAction,
   type SignInMethod,
@@ -42,7 +43,9 @@ export function LoginPage() {
 
   // A1: Der abgelehnte Link wird gemeldet, sobald diese Seite erscheint. Er
   // steht im Kontext, weil er ausserhalb jeder Seite entstanden ist.
-  const message = error ?? (authError ? t(authErrorKey(authError)) : null);
+  const message =
+    error ??
+    (authError ? t(authErrorKey(authError), { min: PASSWORD_MIN_LENGTH }) : null);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -67,9 +70,9 @@ export function LoginPage() {
       }
     } catch (cause) {
       setStatus('idle');
-      setError(
-        t(authErrorKey(cause instanceof Error ? cause.message : undefined)),
-      );
+      // Der ganze Fehler statt nur sein Text: An ihm hängt der Code von
+      // GoTrue, und der ist eindeutiger als der englische Satz daneben.
+      setError(t(authErrorKey(cause), { min: PASSWORD_MIN_LENGTH }));
     }
   }
 

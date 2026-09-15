@@ -69,7 +69,7 @@ export function ProfilePage() {
   async function savePassword() {
     setPasswordError(null);
     if (newPassword.length < PASSWORD_MIN_LENGTH) {
-      setPasswordError(t('auth.error.passwordTooShort'));
+      setPasswordError(t('auth.error.passwordTooShort', { min: PASSWORD_MIN_LENGTH }));
       return;
     }
     setSavingPassword(true);
@@ -79,13 +79,14 @@ export function ProfilePage() {
       setNewPassword('');
       toast.success(t('profile.passwordSaved'));
     } catch (cause) {
+      // Der ganze Fehler statt nur sein Text: Nur daran hängen der Code von
+      // GoTrue und die Gründe eines abgelehnten Passworts («steht in einem
+      // Datenleck», «zu wenig verschiedene Zeichen»). Ohne sie stand hier für
+      // jeden Fall derselbe Satz – und niemand wusste, was zu ändern ist.
       setPasswordError(
-        t(
-          authErrorKey(
-            cause instanceof Error ? cause.message : undefined,
-            'auth.error.passwordSaveFailed',
-          ),
-        ),
+        t(authErrorKey(cause, 'auth.error.passwordSaveFailed'), {
+          min: PASSWORD_MIN_LENGTH,
+        }),
       );
     } finally {
       setSavingPassword(false);

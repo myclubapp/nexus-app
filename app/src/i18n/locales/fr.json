@@ -53,7 +53,12 @@
       "wrongPassword": "L’adresse e-mail ou le mot de passe ne correspond pas.",
       "rateLimited": "Trop de tentatives. Veuillez patienter un instant.",
       "emailNotConfirmed": "Cette adresse n’est pas encore confirmée. Ouvrez d’abord le lien dans votre boîte mail.",
-      "passwordTooShort": "Le mot de passe est trop court.",
+      "passwordTooShort": "Le mot de passe est trop court. Il faut au moins {{min}} caractères.",
+      "passwordCharacters": "Le mot de passe doit mélanger davantage de types de caractères: majuscules, minuscules, chiffres et caractères spéciaux.",
+      "passwordPwned": "Ce mot de passe figure dans des fuites de données connues et se devine donc facilement. Choisissez-en un autre, que vous n’utilisez nulle part ailleurs.",
+      "passwordWeak": "Ce mot de passe se devine trop facilement. Choisissez-en un plus long ou plus inhabituel.",
+      "passwordSame": "C’est votre mot de passe actuel. Choisissez-en un autre.",
+      "passwordReauth": "Votre connexion date de trop longtemps. Reconnectez-vous, puis définissez le mot de passe.",
       "sessionExpired": "Tu n’es plus connecté. La déconnexion vaut pour tous les appareils – reconnecte-toi.",
       "passwordSaveFailed": "Le mot de passe n’a pas pu être enregistré. Merci de réessayer."
     }
