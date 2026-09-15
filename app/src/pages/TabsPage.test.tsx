@@ -6,11 +6,11 @@
  * Tab-Balken; jeder Screen ist weiss. Deshalb prüft dieser Test nicht nur,
  * dass die Seite gerendert wird, sondern dass keine Seite unsichtbar bleibt.
  */
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { I18nextProvider } from 'react-i18next';
-import type { ReactNode } from 'react';
+import { act, useSyncExternalStore, type ReactNode } from 'react';
 import i18n from '../i18n';
 
 // Der Test misst den Router, nicht das Backend: Anmeldung und Mitgliedschaft
@@ -30,20 +30,60 @@ vi.mock('../hooks/useAuth', () => ({
   }),
 }));
 
+// Die Mitgliedschaft liegt hinter einem winzigen Speicher statt in einem
+// festen Objekt: Nur so lässt sich der Übergang «lädt noch» -> «da» mitten im
+// Lauf auslösen, den der dritte Test braucht.
+interface ClubState {
+  memberships: { id: string; club_id: string; club: { id: string; name: string } }[];
+  activeMembership: { display_name: string; role: string } | null;
+  activeClub: { id: string; name: string } | null;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
+  setActiveClub: () => void;
+  isAdmin: boolean;
+  isTrainer: boolean;
+  eventLabel: (type: string) => string;
+}
+
+const loadedClub: ClubState = {
+  memberships: [{ id: 'm1', club_id: 'c1', club: { id: 'c1', name: 'Testverein' } }],
+  activeMembership: { display_name: 'Alex', role: 'board' },
+  activeClub: { id: 'c1', name: 'Testverein' },
+  isLoading: false,
+  error: null,
+  refetch: () => {},
+  setActiveClub: () => {},
+  isAdmin: true,
+  isTrainer: false,
+  eventLabel: (type: string) => type,
+};
+const loadingClub: ClubState = {
+  ...loadedClub,
+  memberships: [],
+  activeMembership: null,
+  activeClub: null,
+  isLoading: true,
+};
+
+let clubSnapshot: ClubState = loadedClub;
+const clubListeners = new Set<() => void>();
+
+function setClub(next: ClubState) {
+  clubSnapshot = next;
+  clubListeners.forEach((listener) => listener());
+}
+
 vi.mock('../hooks/useClub', () => ({
   ClubProvider: ({ children }: { children: ReactNode }) => children,
-  useClub: () => ({
-    memberships: [{ id: 'm1', club_id: 'c1', club: { id: 'c1', name: 'Testverein' } }],
-    activeMembership: { display_name: 'Alex', role: 'board' },
-    activeClub: { id: 'c1', name: 'Testverein' },
-    isLoading: false,
-    error: null,
-    refetch: () => {},
-    setActiveClub: () => {},
-    isAdmin: true,
-    isTrainer: false,
-    eventLabel: (type: string) => type,
-  }),
+  useClub: () =>
+    useSyncExternalStore(
+      (listener: () => void) => {
+        clubListeners.add(listener);
+        return () => clubListeners.delete(listener);
+      },
+      () => clubSnapshot,
+    ),
 }));
 
 const emptyQuery = { data: [], isLoading: false, error: null, refetch: async () => {} };
@@ -120,6 +160,8 @@ function renderAppAt(path: string) {
 }
 
 describe('TabsPage', () => {
+  beforeEach(() => setClub(loadedClub));
+
   it('blendet die Seite im verschachtelten Outlet tatsächlich ein', async () => {
     const { container } = renderAppAt('/tabs/dashboard');
 
@@ -133,6 +175,40 @@ describe('TabsPage', () => {
 
     expect(await screen.findByText('Hallo Alex')).toBeInTheDocument();
 
+    await waitFor(
+      () => expect(container.querySelectorAll('.ion-page-invisible')).toHaveLength(0),
+      { timeout: 5000 },
+    );
+  }, 20000);
+
+  /**
+   * Der Weg, auf dem nach der Anmeldung «manchmal» ein schwarzer Bildschirm
+   * stand: Die Weiche tauscht im selben Route-Element ihr Zwischenbild gegen
+   * `TabsPage` (siehe `DetachedPage`).
+   *
+   * **Was dieser Test nicht leistet:** Die Unsichtbarkeit selbst fängt er
+   * nicht. Sie entsteht aus Ionics Seitenübergang, und der läuft in jsdom
+   * nicht – mit und ohne `detached` ist das DOM identisch. Geprüft ist hier
+   * nur, dass der Tausch überhaupt zum Ziel führt. Belegt wurde der Fehler im
+   * Browser: `div.ion-page` statt `IonPage` als Zwischenbild, gemessen über
+   * Verzögerungen von 30 bis 2000 ms.
+   */
+  it('kommt über das Zwischenbild hinweg bei den Tabs an', async () => {
+    setClub(loadingClub);
+    const { container } = renderAppAt('/tabs/dashboard');
+
+    // Erst das Skelett – die Tabs gibt es noch nicht.
+    await waitFor(() => expect(container.querySelector('ion-skeleton-text')).toBeTruthy(), {
+      timeout: 5000,
+    });
+
+    // Und jetzt kommen die Mitgliedschaften an, mitten im Übergang.
+    await act(async () => {
+      setClub(loadedClub);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    expect(await screen.findByText('Hallo Alex', undefined, { timeout: 5000 })).toBeInTheDocument();
     await waitFor(
       () => expect(container.querySelectorAll('.ion-page-invisible')).toHaveLength(0),
       { timeout: 5000 },

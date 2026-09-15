@@ -1,8 +1,9 @@
 import { useEffect, type ReactNode } from 'react';
-import { IonContent, IonPage } from '@ionic/react';
+import { IonContent } from '@ionic/react';
 import { Navigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useClub } from '../hooks/useClub';
+import { DetachedPage } from './DetachedPage';
 import { ErrorState, LoadingState } from './StateViews';
 import { peekPendingInvite } from '../lib/invite';
 import { forgetDeepLink, peekDeepLink, rememberDeepLink } from '../lib/deepLink';
@@ -13,14 +14,18 @@ import { forgetDeepLink, peekDeepLink, rememberDeepLink } from '../lib/deepLink'
  * Der Spinner bleibt für die Weichen, bei denen wirklich offen ist, was folgt:
  * Anmeldung oder App, Onboarding oder Tabs (guidelines §4). Wo der Ausgang
  * feststeht, reicht die Route stattdessen ein `pending`-Skelett herein.
+ *
+ * Als {@link DetachedPage} und nicht als `IonPage`: Jedes Zwischenbild einer
+ * Weiche steht im selben Route-Element wie die Seite, die es ablöst. Meldet
+ * es sich beim Outlet an, bleibt die echte Seite unsichtbar.
  */
 function LoadingPage() {
   return (
-    <IonPage>
+    <DetachedPage>
       <IonContent>
         <LoadingState />
       </IonContent>
-    </IonPage>
+    </DetachedPage>
   );
 }
 
@@ -35,13 +40,14 @@ interface GuardProps {
   pending?: ReactNode;
 }
 
+/** Aus demselben Grund losgelöst wie {@link LoadingPage}. */
 function ErrorPage({ error, onRetry }: { error: Error; onRetry: () => void }) {
   return (
-    <IonPage>
+    <DetachedPage>
       <IonContent>
         <ErrorState error={error} onRetry={onRetry} />
       </IonContent>
-    </IonPage>
+    </DetachedPage>
   );
 }
 

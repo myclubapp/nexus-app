@@ -102,6 +102,19 @@ supabase db push            # Migrationen deployen
 - **Ionic 9 verlangt React Router 6.** `<Route element={…}>` statt `component`,
   `<Navigate replace>` statt `<Redirect>`. Ältere Ionic-React-Beispiele im Netz
   zeigen die v5-Syntax und funktionieren hier nicht.
+- **Eine Weiche darf ihr Zwischenbild nicht als `IonPage` zeigen.** Ionic
+  blendet eine Seite nicht über CSS ein, sondern über einen Übergang, den der
+  `StackManager` beim **Routenwechsel** startet; bis dahin trägt jede frisch
+  eingehängte `IonPage` `ion-page-invisible` (`opacity: 0`). Tauscht
+  `RequireAuth`/`RequireClub` innerhalb derselben Route ihr Skelett gegen die
+  echte Seite, wechselt die Route nicht – die Seite steht vollständig im DOM
+  und bleibt unsichtbar. Im Browser gemessen trifft es jeden Tausch, der
+  zwischen etwa 30 und 200 ms nach dem Routenwechsel landet: genau die Dauer
+  einer Supabase-Abfrage, deshalb «manchmal». Zwischenbilder und Fehlerseiten
+  der Weichen laufen darum über `DetachedPage` (`div.ion-page`, meldet sich
+  nicht beim Outlet an), die echte Seite bleibt die einzige `IonPage` der
+  Route. **jsdom fängt das nicht** – dort läuft kein Übergang, und beide
+  Hüllen ergeben dasselbe DOM.
 - **Das verschachtelte Outlet in `TabsPage` darf kein `ionPage` bekommen.**
   `IonTabs` legt selbst einen `PageManager` um sich – das ist die Seite, die
   das äussere Outlet einblendet. Mit `ionPage` wird zusätzlich das
