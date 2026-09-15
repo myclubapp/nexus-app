@@ -153,7 +153,7 @@
 | 4 | Den Gruss am Fuss prüfen | Text, Name, Amt; das Porträt lädt erst auf Klick, Name und Amt stehen ohne Bild da (BR-254) | | |
 | 5 | Im selben Zeitraum eine zweite Meldung erzeugen (z.B. eine Aufgabe ausschreiben) | Sie kommt als **eigene** Mail; der Puls bündelt nicht mit (Ausnahme zu BR-213) | | |
 | 6 | Den Knopf «In der App öffnen» **angemeldet** antippen | Die Leseansicht **dieses** Pulses öffnet sich – im Browser die PWA, auf dem Gerät die App, sobald die App Links greifen (`/tabs/*` ist beansprucht, `pulse/:pulseId` führt auf `PulseReadPage`). Beides ist richtig | | |
-| 7 | Denselben Knopf **abgemeldet** antippen | Nach der Anmeldung steht das Dashboard da, **nicht** der Puls – gemerkt wird heute nur eine Einladung, kein beliebiges Ziel. Das ist der bekannte Stand, keine Abweichung | | |
+| 7 | Denselben Knopf **abgemeldet** antippen, Anmeldelink anfordern, anmelden | Die Leseansicht **dieses** Pulses steht da, nicht das Dashboard – der Weg wird über die Anmeldeschranke hinweg gemerkt (`RequireAuth`) und danach angesteuert. Gilt auf dem Gerät und im Browser; eine Einladung hätte Vortritt | | |
 | 8 | Die Mail in einem zweiten Programm ansehen (Gmail-Web und Apple Mail) | Kopfband, Abschnitte und Gruss stehen; nichts ist zerfallen | | |
 
 ---
