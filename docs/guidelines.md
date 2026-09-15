@@ -632,7 +632,9 @@ ihrem Bereich (`invite.created`, `agenda.checkedIn`).
 Es gibt genau eine Stylesheet-Datei: `src/theme/variables.css`. Sie enthält
 
 - die Ionic-Farb-Tokens (die Vereinsfarben überschreiben sie zur Laufzeit aus
-  `clubs.settings.theme`, siehe `src/lib/theme.ts` – C-013), und
+  `clubs.settings.theme`, siehe `src/lib/theme.ts` – C-013),
+- die zwei Schriften der Marke (`--app-font-title`, `--app-font-text`) samt der
+  Regel, welche Elemente den Titelschnitt tragen, und
 - die `app-*`-Klassen für Abstände und Schriftgrössen, die Ionic nicht mitbringt.
 
 Regeln:
@@ -641,6 +643,12 @@ Regeln:
   `variables.css`, mit Präfix `app-` und einem Kommentar, wofür sie da sind.
 - **Abstände aus dem Raster**: `--app-space-1` … `--app-space-6`. Keine
   Pixelwerte von Hand.
+- **Schrift nur über die zwei Tokens.** Titel tragen `--app-font-title`
+  (Space Grotesk), alles andere `--app-font-text` (DM Sans), das Ionic als
+  `--ion-font-family` bekommt. Ein `font-family` mit einem Schriftnamen darin
+  steht sonst nirgends. Die Schriftdateien liegen als
+  `@fontsource-variable`-Paket im Bündel; von Googles Schriftserver lädt die
+  App nichts (C-003), und ohne Netz steht sie nicht in der Systemschrift da.
 - **Farben nur über Tokens.** Ein Hex-Wert in einer Komponente bricht das
   Vereins-Theming. Für Ionic-Komponenten heisst das `color="primary"` statt
   eines eigenen Farbwerts – auch für den Toast (`color="success"` /

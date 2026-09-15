@@ -24,6 +24,15 @@ import '@ionic/react/css/display.css';
 /* Folgt der Geräteeinstellung; das Vereins-Theme legt sich zur Laufzeit darüber. */
 import '@ionic/react/css/palettes/dark.system.css';
 
+/* Die beiden Schriften der Marke (my-club.ch): Space Grotesk auf den Titeln,
+   DM Sans im Fliesstext. Sie liegen als Paket im Bündel, nicht auf Googles
+   Schriftserver – die Regel «kein Google» gilt auch für Schriften, und auf
+   dem Gerät ohne Netz stünde die App sonst in der Systemschrift da. Beide
+   Pakete sind variable Schnitte: eine Datei je Zeichensatz-Ausschnitt deckt
+   alle Strichstärken ab. */
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/dm-sans';
+
 import './theme/variables.css';
 
 import { AuthProvider } from './hooks/useAuth';

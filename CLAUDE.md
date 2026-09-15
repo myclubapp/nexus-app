@@ -80,7 +80,9 @@ supabase db push            # Migrationen deployen
   `useClub().eventLabel()`. Die Datenbank kennt nur `events.type`.
 - **Kein Google.** Keine Firebase-, FCM-, Google-Maps- oder ML-Kit-Abhängigkeit.
   QR-Scan läuft über `html5-qrcode` im WebView, Push über APNs, ntfy und
-  Web Push VAPID.
+  Web Push VAPID. Auch die Schriften: Space Grotesk und DM Sans liegen als
+  `@fontsource-variable`-Paket im Bündel, kein `<link>` auf Googles
+  Schriftserver.
 - Commits nach [Conventional Commits](https://www.conventionalcommits.org/).
 
 ## Fallstricke
