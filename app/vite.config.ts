@@ -70,7 +70,17 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    /**
+     * Keine Quellkarten im Bau. Sie landen sonst neben dem Bundle auf
+     * app.my-club.ch und geben den vollständigen Quelltext heraus – samt
+     * Kommentaren, Tabellennamen und den Namen der Datenbankfunktionen, die
+     * hinter der RLS stehen. Für die Fehlersuche kostet das nichts: Der
+     * Dev-Server liefert seine Karten unabhängig von dieser Angabe, und einen
+     * Fehlerdienst, der hochgeladene Karten bräuchte, gibt es hier nicht.
+     * Käme je einer dazu, ist 'hidden' die richtige Antwort – Karten bauen,
+     * hochladen, aus `dist` löschen –, nicht `true`.
+     */
+    sourcemap: false,
   },
   /**
    * Abhängigkeiten im Test wie im Browser auflösen.
