@@ -157,7 +157,7 @@ Nachfolge-Vorlauf, Vorstands-Reaktionszeiten), rechnet ab jetzt damit.
   Folgeaufgabe (siehe Offen).
 - **Titel der Ämter:** Drei kommen aus Sandros PDFs (Word-Titelzeile), die
   übrigen aus den Dateinamen, mit der Ämtertabelle in
-  `Konzept_Vereinsapp_Gamification.md` §4.3 als Vorlage. Umbenennen geht im
+  `Konzept_Gamification_nexus.md` §4.3 als Vorlage. Umbenennen geht im
   Formular.
 
 ## Offen

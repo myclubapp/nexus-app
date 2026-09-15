@@ -7,10 +7,14 @@ Datenmodell des MVP-Schnitts. Grundlage: [`requirements.md`](requirements.md) un
 entspricht `jsonb`, `DateTime` entspricht `timestamptz`, `String` entspricht `text`. Entitäts- und
 Attributnamen sind englisch, weil sie unverändert in Schema und Code auftreten.
 
-**Abgrenzung:** Rechnungsdaten leben im eigenständigen Dienst «myclub Billing»; in diesem Modell
-existiert nur der lesende Spiegel `INVOICE_REF`. Die als `Deferred` geführten Anforderungen
-(Badges, Level, Challenges, Rewards, Funktionärsämter, Meisterschaft, Eltern und Kinder) sind hier
-noch nicht modelliert.
+**Abgrenzung:** Das Rechnungswesen läuft seit dem Entscheid vom 14.09.2026 **in nexus**
+(UC-046/047) und ist hier vollständig modelliert – `INVOICE_CREDITOR`, `INVOICE_PERIOD`, `INVOICE`,
+`INVOICE_POSITION`, `INVOICE_FEE_ITEM`, `INVOICE_PAYMENT_IMPORT`. Der Spiegel `INVOICE_REF` bleibt
+daneben bestehen: Er ist der einzige Weg in die Mitgliedersicht und trägt nur Betrag, Fälligkeit,
+Stand und Link (UC-036, BR-156/BR-226); `BILLING_OUTBOX` bleibt für Vereine, die ihren
+Debitorenbestand in einem fremden System führen. Die als `Deferred` geführten Anforderungen
+(Badges, Level, Challenges, Rewards, Meisterschaft, Eltern und Kinder) sind hier nicht modelliert;
+die Funktionärsämter dagegen schon – sie wurden am 12.09.2026 vorgezogen (UC-041).
 
 ## Entity Relationship Diagram
 
@@ -20,7 +24,7 @@ erDiagram
     USER_ACCOUNT ||--o{ JOIN_REQUEST : "stellt"
     USER_ACCOUNT ||--o{ PUSH_TOKEN : "registriert"
     USER_ACCOUNT ||--o{ NOTIFICATION : "empfängt"
-    USER_ACCOUNT ||--o{ NOTIFICATION_PREF : "konfiguriert"
+    USER_ACCOUNT ||--o| NOTIFICATION_SETTINGS : "steuert"
 
     CLUB ||--o{ CLUB_MEMBER : "hat"
     CLUB ||--o{ TEAM : "gliedert sich in"
@@ -35,17 +39,27 @@ erDiagram
     CLUB ||--o{ HEALTH_SIGNAL : "erzeugt"
     CLUB ||--o{ HEALTH_ALERT_ROUTING : "konfiguriert"
     CLUB ||--o{ CLUB_MESSAGE_LOG : "protokolliert"
+    CLUB ||--o{ CLUB_CHURN_STATS : "zählt je Saison"
     CLUB ||--o{ CLUB_PULSE : "erzählt"
     CLUB ||--o{ VOICE_NOTE : "sammelt"
     CLUB_MEMBER ||--o{ CHECKIN_INVITATION : "wird gefragt"
     CHECKIN_INVITATION ||--o{ CHECKIN_RESPONSE : "sammelt"
     CLUB ||--o{ FUNCTIONARY_ROLE : "gliedert"
-    CLUB_MEMBER ||--o| FUNCTIONARY_ROLE : "hält"
+    FUNCTIONARY_ROLE ||--o{ FUNCTIONARY_HOLDER : "wird besetzt durch"
+    FUNCTIONARY_ROLE ||--o{ FUNCTIONARY_TERM : "vergütet über"
+    CLUB_MEMBER ||--o{ FUNCTIONARY_HOLDER : "hält"
+    CLUB_MEMBER ||--o{ FUNCTIONARY_TERM : "erhält"
     CLUB ||--o{ MEETING_INPUT : "behandelt"
     CLUB ||--o{ CHECKIN_PROMPT : "stellt"
     CLUB ||--o{ CHECKIN_RESPONSE : "sammelt"
     CLUB ||--o{ INVOICE_REF : "spiegelt"
     CLUB ||--o{ BILLING_OUTBOX : "meldet"
+    CLUB ||--o| INVOICE_CREDITOR : "zahlt auf"
+    CLUB ||--o{ INVOICE_PERIOD : "eröffnet"
+    CLUB ||--o{ INVOICE_FEE_ITEM : "führt"
+    CLUB ||--o{ INVOICE_PAYMENT_IMPORT : "gleicht ab"
+    CLUB ||--o{ NEWS_SOURCE : "bezieht aus"
+    CLUB ||--o{ CLUB_MODULE_SUGGESTION : "erhält"
     CLUB ||--o{ FEDERATION_CONNECTION : "verbindet"
     CLUB ||--o| LEGACY_SOURCE : "übernimmt aus"
 
@@ -61,6 +75,7 @@ erDiagram
     CLUB_MEMBER ||--o{ ATTENDANCE : "nimmt teil an"
     CLUB_MEMBER ||--o{ POINT_TRANSACTION : "erhält"
     CLUB_MEMBER ||--o{ TASK_ASSIGNMENT : "übernimmt"
+    CLUB_MEMBER ||--o| MEMBER_CONTACT : "hinterlegt"
     CLUB_MEMBER ||--o| MEMBER_CONTRIBUTION_PROFILE : "beschreibt sich in"
     CLUB_MEMBER ||--o{ HEALTH_SIGNAL : "betrifft"
     CLUB_MEMBER ||--o{ VOICE_NOTE : "verfasst"
@@ -68,8 +83,15 @@ erDiagram
     CLUB_MEMBER ||--o{ CHECKIN_RESPONSE : "beantwortet"
     CLUB_MEMBER ||--o{ INVOICE_REF : "schuldet"
     CLUB_MEMBER ||--o{ BILLING_OUTBOX : "steht in"
+    CLUB_MEMBER ||--o{ INVOICE : "schuldet"
+
+    INVOICE_PERIOD ||--o{ INVOICE : "umfasst"
+    INVOICE ||--o{ INVOICE_POSITION : "gliedert sich in"
+    INVOICE_FEE_ITEM ||--o{ INVOICE_POSITION : "bemisst"
+    INVOICE_PAYMENT_IMPORT ||--o{ INVOICE : "stellt bezahlt"
 
     EVENT_SERIES ||--o{ EVENT : "erzeugt"
+    EVENT ||--o| EVENT_QR_TOKEN : "sichert Check-in mit"
     EVENT ||--o{ EVENT_SHIFT : "gliedert sich in"
     EVENT ||--o{ ATTENDANCE : "erfasst"
     EVENT ||--o{ CHECKIN_RESPONSE : "löst aus"
@@ -82,6 +104,7 @@ erDiagram
     TASK ||--o| MEETING_INPUT : "folgt aus"
 
     NEWS ||--o| MEETING_INPUT : "veröffentlicht"
+    NEWS_SOURCE ||--o{ NEWS : "speist"
     VOICE_NOTE ||--o{ VOICE_NOTE_MESSAGE : "führt"
     VOICE_NOTE ||--o| MEETING_INPUT : "wird zu"
     VOICE_NOTE ||--o| CHECKIN_RESPONSE : "ergänzt"
@@ -524,6 +547,30 @@ Ein Beitrag des Vereins oder eines Teams im Feed.
 
 **Constraints:** Es wird nicht erfasst, wer einen Beitrag gelesen hat.
 
+### NEWS_SOURCE
+
+Die Website eines Vereins als Quelle seiner News – damit der Feed sich selbst füllt.
+
+| Attribute     | Description                                        | Data Type | Length/Precision | Validation Rules                        |
+| ------------- | -------------------------------------------------- | --------- | ---------------- | --------------------------------------- |
+| id            | Eindeutige Kennung der Quelle                      | UUID      | 36               | Primary Key, Generated                  |
+| club_id       | Verein der Quelle                                  | UUID      | 36               | Not Null, Foreign Key (CLUB.id)         |
+| kind          | Art der Quelle                                     | String    | 20               | Not Null, Values: wordpress             |
+| url           | Adresse der Website                                | String    | 400              | Not Null, Format: URL                   |
+| site_name     | Name der Website laut ihrer Schnittstelle          | String    | 200              | Optional                                |
+| api_style     | Weg, auf dem die Schnittstelle erreichbar ist      | String    | 10               | Not Null, Values: pretty, query         |
+| post_limit    | Anzahl Beiträge je Abgleich                        | Integer   | 10               | Not Null, Min: 1, Max: 100              |
+| categories    | Gewählte Kategorien als Liste aus Id und Name      | JSON      | -                | Not Null, Vorgabe leere Liste           |
+| active        | Läuft der nächtliche Abgleich?                     | Boolean   | 1                | Not Null, Vorgabe wahr                  |
+| last_sync_at  | Zeitpunkt des letzten Abgleichs                    | DateTime  | -                | Optional                                |
+| last_status   | Ausgang des letzten Abgleichs                      | String    | 10               | Optional, Values: ok, error             |
+| last_error    | Fehlermeldung des letzten Abgleichs                | String    | 500              | Optional                                |
+| last_imported | Anzahl übernommener Beiträge beim letzten Abgleich | Integer   | 10               | Not Null, Min: 0                        |
+| created_by    | Mitglied, das die Quelle verbunden hat             | UUID      | 36               | Optional, Foreign Key (CLUB_MEMBER.id)  |
+| created_at    | Zeitpunkt des Verbindens                           | DateTime  | -                | Not Null                                |
+
+**Constraints:** Je Verein und Art besteht höchstens eine Quelle. Die Adresse wird an genau einer Stelle normalisiert (`normaliseSiteUrl()`): immer `https`, kein Schrägstrich am Ende, keine Leerzeichen – der Constraint hält nur fest, was dort entsteht. Eine **leere** Kategorienliste heisst **alle** Kategorien, nicht keine (BR-174); der Kategoriename ist eine Kopie vom Zeitpunkt des Verbindens und frischt sich bei jeder Prüfung auf. Der Abgleich liest ausschliesslich; es wird nie auf die Website zurückgeschrieben.
+
 ### NOTIFICATION
 
 Ein Eintrag der In-App-Inbox; sie erreicht alle Mitglieder unabhängig von Push.
@@ -551,21 +598,6 @@ Ein Eintrag der In-App-Inbox; sie erreicht alle Mitglieder unabhängig von Push.
 | email_error | Letzter Versandfehler           | String    | 500              | Optional                                |
 
 **Constraints:** Jede Zustellung entsteht hier, unabhängig davon, ob zusätzlich ein Push oder eine E-Mail versendet wird. Die Vermerke `push_*` und `email_*` werden beim Entstehen aus NOTIFICATION_SETTINGS berechnet; der Versand holt nur die offenen Zeilen ab und quittiert an ihnen. **Jede Zeile trägt ein Warum** – entweder `why` vom Auslöser oder den Standardsatz ihrer Kategorie (BR-239, `0096`); die Standardsätze stehen in `src/i18n` für die Inbox und in `send-mail/template.ts` für die Mail. Eine Zeile mit `mail_template` bekommt im Postfach ein eigenes Blatt statt der Meldungsliste und wird nie mit anderen gebündelt; je Person und Verein entsteht höchstens eine mit `welcome` (BR-240).
-
-### NOTIFICATION_PREF
-
-Die Entscheidung eines Kontos, welche Kategorie über welchen Kanal zugestellt wird.
-
-| Attribute | Description                        | Data Type | Length/Precision | Validation Rules                        |
-| --------- | ---------------------------------- | --------- | ---------------- | --------------------------------------- |
-| user_id   | Konfigurierendes Anmeldekonto      | UUID      | 36               | Not Null, Foreign Key (USER_ACCOUNT.id) |
-| channel   | Zustellkanal                       | String    | 20               | Not Null, Values: inbox, push           |
-| category  | Kategorie der Benachrichtigung     | String    | 30               | Not Null                                |
-| enabled   | Kennzeichen, ob zugestellt wird    | Boolean   | 1                | Not Null                                |
-| quiet_from| Beginn der stillen Zeit            | String    | 5                | Optional                                |
-| quiet_to  | Ende der stillen Zeit              | String    | 5                | Optional                                |
-
-**Constraints:** Primärschlüssel ist die Kombination aus `user_id`, `channel` und `category`. Für `channel = inbox` ist `enabled` immer wahr; die Inbox ist nicht abschaltbar.
 
 ### PUSH_TOKEN
 
@@ -690,19 +722,64 @@ Ein Vorschlag eines Mitglieds an ein Gremium samt dokumentierter Antwort.
 
 ### FUNCTIONARY_ROLE
 
-Ein Amt des Vereins. Es ist der Verteiler, über den ein Gremium definiert wird – nicht ein Verzeichnis von Personen.
+Ein Amt des Vereins samt Factsheet: was es umfasst, was es kostet, wofür es da ist und wer es hält.
 
-| Attribute        | Description                              | Data Type | Length/Precision | Validation Rules                        |
-| ---------------- | ---------------------------------------- | --------- | ---------------- | --------------------------------------- |
-| id               | Eindeutige Kennung des Amtes             | UUID      | 36               | Primary Key, Generated                  |
-| club_id          | Verein des Amtes                         | UUID      | 36               | Not Null, Foreign Key (CLUB.id)         |
-| title            | Bezeichnung des Amtes                    | String    | 80               | Not Null, Min: 2                        |
-| holder_member_id | Inhaber:in; leer bedeutet vakant         | UUID      | 36               | Optional, Foreign Key (CLUB_MEMBER.id)  |
-| is_board         | Gehört das Amt zum Vorstand?             | Boolean   | 1                | Not Null, Vorgabe falsch                |
-| held_since       | Datum der Übernahme                      | Date      | -                | Optional                                |
-| created_at       | Zeitpunkt der Erstellung                 | DateTime  | -                | Not Null                                |
+| Attribute          | Description                                          | Data Type | Length/Precision | Validation Rules                        |
+| ------------------ | ---------------------------------------------------- | --------- | ---------------- | --------------------------------------- |
+| id                 | Eindeutige Kennung des Amtes                         | UUID      | 36               | Primary Key, Generated                  |
+| club_id            | Verein des Amtes                                     | UUID      | 36               | Not Null, Foreign Key (CLUB.id)         |
+| title              | Bezeichnung des Amtes                                | String    | 80               | Not Null, Min: 2                        |
+| duties             | Die Pflichten als geordnete Liste                    | JSON      | -                | Not Null, Vorgabe leere Liste           |
+| why                | Wozu das Amt dient und wem es hilft                  | String    | 1000             | Optional                                |
+| hours_per_season   | Geschätzter Aufwand je Saison als Freitext           | String    | 40               | Optional                                |
+| points_label       | Wie der Punktwert gegenüber Mitgliedern heisst       | String    | 80               | Optional                                |
+| season_points      | Punkte, die eine volle Saison im Amt gutschreibt     | Integer   | 10               | Optional, Min: 0, Max: 10000            |
+| max_holders        | Wie viele Sitze das Amt hat                          | Integer   | 10               | Not Null, Min: 1, Vorgabe 1             |
+| contact_member_id  | Ansprechperson für Interessierte                     | UUID      | 36               | Optional, Foreign Key (CLUB_MEMBER.id)  |
+| contact_name       | Ansprechperson als Freitext, wenn sie kein Konto hat | String    | 120              | Optional                                |
+| factsheet_path     | Ablageort des Pflichtenhefts im Vereinsspeicher      | String    | 400              | Optional                                |
+| is_board           | Gehört das Amt zum Vorstand?                         | Boolean   | 1                | Not Null, Vorgabe falsch                |
+| greeting           | Gruss des Amtes im Vereins-Puls, je Sprache          | JSON      | -                | Not Null, Vorgabe leeres Objekt         |
+| greeting_image_url | Bild zum Gruss                                       | String    | 1000             | Optional                                |
+| holder_member_id   | Spiegel der ersten Inhaber:in; leer bedeutet vakant  | UUID      | 36               | Optional, Foreign Key (CLUB_MEMBER.id)  |
+| held_since         | Spiegel des Datums der ersten Übernahme              | Date      | -                | Optional                                |
+| created_at         | Zeitpunkt der Erstellung                             | DateTime  | -                | Not Null                                |
+| updated_at         | Zeitpunkt der letzten Änderung                       | DateTime  | -                | Not Null                                |
 
-**Constraints:** Ein Titel besteht je Verein genau einmal, unabhängig von Gross- und Kleinschreibung. Ein Amt hat höchstens **eine** Inhaber:in; ein Co-Präsidium sind zwei Ämter desselben Titels. `held_since` besteht genau dann, wenn eine Inhaber:in eingetragen ist, und wird vom Server geführt. Factsheets, Vakanz-Ausschreibung und Nachfolgeplanung sind **nicht** Teil dieser Entität – sie stehen im MVP-Schnitt als Ausbaustufe 2. Die Menge der Ämter mit `is_board` ist der Verteiler «Vorstand» und der voreingestellte Empfängerkreis einer Sitzung (BR-237); welche Ämter dazugehören, entscheidet jeder Verein selbst.
+**Constraints:** Ein Titel besteht je Verein genau einmal, unabhängig von Gross- und Kleinschreibung. Die Besetzung steht in `FUNCTIONARY_HOLDER`, nicht hier: Ein Amt kann `max_holders` Sitze haben, und ein Co-Präsidium ist ein Amt mit zwei Sitzen statt zwei Ämtern desselben Titels. `holder_member_id` und `held_since` sind **Spiegel** der ordentlich besetzten ersten Inhaber:in und werden vom Server geführt (BR-185) – sie existieren, damit Verteiler und Vakanz-Anzeige weiterhin eine Spalte lesen können; geschrieben werden sie nie von Hand. Ein Amt gilt als vakant, solange weniger Sitze besetzt sind als `max_holders`. Die Menge der Ämter mit `is_board` ist der Verteiler «Vorstand» und der voreingestellte Empfängerkreis einer Sitzung (BR-237); welche Ämter dazugehören, entscheidet jeder Verein selbst.
+
+### FUNCTIONARY_HOLDER
+
+Ein besetzter Sitz an einem Amt – die Verknüpfung zwischen Amt und Person.
+
+| Attribute    | Description                                            | Data Type | Length/Precision | Validation Rules                             |
+| ------------ | ------------------------------------------------------ | --------- | ---------------- | -------------------------------------------- |
+| id           | Eindeutige Kennung des Sitzes                          | UUID      | 36               | Primary Key, Generated                       |
+| role_id      | Amt, das besetzt wird                                  | UUID      | 36               | Not Null, Foreign Key (FUNCTIONARY_ROLE.id)  |
+| member_id    | Mitglied auf dem Sitz; leer bei reinem Freitext        | UUID      | 36               | Optional, Foreign Key (CLUB_MEMBER.id)       |
+| display_name | Anzeigename des Sitzes                                 | String    | 120              | Not Null, Min: 1                             |
+| interim      | Ist die Besetzung nur vorübergehend?                   | Boolean   | 1                | Not Null, Vorgabe falsch                     |
+| since        | Datum der Übernahme                                    | Date      | -                | Optional                                     |
+| created_at   | Zeitpunkt der Erfassung                                | DateTime  | -                | Not Null                                     |
+
+**Constraints:** Ein Sitz ohne `member_id` trägt nur einen Namen – das ist der Weg für Amtsinhaber:innen, die die App nicht nutzen, und der Normalfall beim Übernehmen eines bestehenden Organigramms. Ein vorübergehend besetzter Sitz (`interim`) zählt für die Vakanz-Anzeige als offen, für den Verteiler aber als besetzt: Wer einspringt, soll die Post bekommen, ohne dass die Suche nach einer Nachfolge aufhört. Die Anzahl Sitze eines Amtes ist durch `FUNCTIONARY_ROLE.max_holders` begrenzt; der Spiegel am Amt wird bei jeder Änderung nachgeführt (BR-185).
+
+### FUNCTIONARY_TERM
+
+Die Gutschrift einer Amtsperiode: dass ein Amt in einem Abschnitt der Saison getragen wurde.
+
+| Attribute    | Description                                       | Data Type | Length/Precision | Validation Rules                             |
+| ------------ | ------------------------------------------------- | --------- | ---------------- | -------------------------------------------- |
+| id           | Eindeutige Kennung der Gutschrift                 | UUID      | 36               | Primary Key, Generated                       |
+| role_id      | Amt, für das gutgeschrieben wird                  | UUID      | 36               | Not Null, Foreign Key (FUNCTIONARY_ROLE.id)  |
+| member_id    | Mitglied, das die Periode getragen hat            | UUID      | 36               | Not Null, Foreign Key (CLUB_MEMBER.id)       |
+| season       | Saison der Periode                                | String    | 20               | Not Null                                     |
+| period       | Abschnitt der Saison als Quartal                  | Integer   | 10               | Not Null, Min: 1, Max: 4                     |
+| points       | Gutgeschriebene Punkte                            | Integer   | 10               | Not Null, Min: 0                             |
+| confirmed_at | Zeitpunkt der Bestätigung                         | DateTime  | -                | Not Null                                     |
+| confirmed_by | Mitglied, das bestätigt hat                       | UUID      | 36               | Optional, Foreign Key (CLUB_MEMBER.id)       |
+
+**Constraints:** Die Kombination aus Amt, Mitglied, Saison und Abschnitt besteht genau einmal – das ist die Sperre gegen eine doppelte Gutschrift derselben Periode. Der Punktwert wird beim Bestätigen aus `FUNCTIONARY_ROLE.season_points` errechnet und **hier festgehalten**: Eine spätere Änderung des Amtswerts verändert keine bereits gutgeschriebene Periode. Die Buchung in den Ledger geschieht serverseitig; der Eintrag hier ist ihre Quelle (`source_id`).
 
 ### CHECKIN_PROMPT
 
@@ -793,6 +870,115 @@ geändert hat, wartet hier, bis der Dienst es abholt.
 Korb, den niemand leert, würde sonst nur wachsen. Ein Austritt und eine Löschung erzeugen denselben
 Eintrag `remove`. Angemeldete Konten haben auf die Entität keinen Zugriff; sie gehört dem Dienst.
 
+### INVOICE_CREDITOR
+
+Die Zahlungsempfängerin des Vereins: IBAN und Adresse, die auf jedem Einzahlungsschein stehen.
+
+| Attribute    | Description                                   | Data Type | Length/Precision | Validation Rules                        |
+| ------------ | --------------------------------------------- | --------- | ---------------- | --------------------------------------- |
+| club_id      | Verein, dem die Zahlungsdaten gehören         | UUID      | 36               | Primary Key, Foreign Key (CLUB.id)      |
+| iban         | Konto des Vereins                             | String    | 34               | Not Null, Format: IBAN                  |
+| name         | Name der Empfängerin auf dem Beleg            | String    | 120              | Not Null, Min: 2                        |
+| street       | Strasse der Empfängerin                       | String    | 200              | Optional                                |
+| house_number | Hausnummer der Empfängerin                    | String    | 20               | Optional                                |
+| postal_code  | Postleitzahl der Empfängerin                  | String    | 12               | Optional                                |
+| city         | Ort der Empfängerin                           | String    | 80               | Optional                                |
+| country      | Land als zweistelliges Kürzel                 | String    | 2                | Not Null, Vorgabe CH                    |
+| updated_at   | Zeitpunkt der letzten Änderung                | DateTime  | -                | Not Null                                |
+
+**Constraints:** Je Verein besteht höchstens eine Zahlungsempfängerin – der Primärschlüssel ist die Vereinskennung. Die IBAN wird beim Schreiben gegen die Prüfziffer nach ISO 13616 geprüft (`is_valid_iban`), nicht erst beim Erzeugen des Belegs: Eine falsche IBAN soll auffallen, bevor hundert Rechnungen damit hinausgehen. Angelegt und geändert wird sie nur vom Vorstand.
+
+### INVOICE_PERIOD
+
+Ein Rechnungslauf: der Stichtag, zu dem ein Verein einem Kreis von Mitgliedern Rechnung stellt.
+
+| Attribute        | Description                                  | Data Type | Length/Precision | Validation Rules                   |
+| ---------------- | -------------------------------------------- | --------- | ---------------- | ---------------------------------- |
+| id               | Eindeutige Kennung des Laufs                 | UUID      | 36               | Primary Key, Generated             |
+| club_id          | Verein des Laufs                             | UUID      | 36               | Not Null, Foreign Key (CLUB.id)    |
+| name             | Bezeichnung, etwa «Saison 2026/27»           | String    | 120              | Not Null, Min: 2                   |
+| due_date         | Fälligkeitsdatum aller Rechnungen des Laufs  | Date      | -                | Not Null                           |
+| currency         | Währung des Laufs                            | String    | 3                | Not Null, Vorgabe CHF              |
+| reference_prefix | Vorsilbe der Zahlungsreferenz                | String    | 10               | Optional                           |
+| created_at       | Zeitpunkt der Eröffnung                      | DateTime  | -                | Not Null                           |
+
+**Constraints:** Die Vorsilbe besteht ausschliesslich aus Ziffern, weil sie in die 27-stellige Zahlungsreferenz eingeht. Ein Lauf lässt sich löschen, solange keine Rechnung daraus versendet ist; danach wird storniert statt gelöscht.
+
+### INVOICE
+
+Eine einzelne Rechnung an ein Mitglied, mit Schweizer Zahlungsreferenz und QR-Beleg.
+
+| Attribute     | Description                                      | Data Type | Length/Precision | Validation Rules                                  |
+| ------------- | ------------------------------------------------ | --------- | ---------------- | ------------------------------------------------- |
+| id            | Eindeutige Kennung der Rechnung                  | UUID      | 36               | Primary Key, Generated                            |
+| club_id       | Verein der Rechnung                              | UUID      | 36               | Not Null, Foreign Key (CLUB.id)                   |
+| period_id     | Rechnungslauf der Rechnung                       | UUID      | 36               | Not Null, Foreign Key (INVOICE_PERIOD.id)         |
+| member_id     | Schuldendes Mitglied                             | UUID      | 36               | Not Null, Foreign Key (CLUB_MEMBER.id)            |
+| reference     | 27-stellige Zahlungsreferenz mit Prüfziffer      | String    | 27               | Not Null, Unique                                  |
+| amount        | Summe der Positionen                             | Decimal   | 10,2             | Not Null, Min: 0                                  |
+| currency      | Währung der Rechnung                             | String    | 3                | Not Null, Vorgabe CHF                             |
+| status        | Zustand der Rechnung                             | String    | 20               | Not Null, Values: draft, sent, paid, cancelled    |
+| due_date      | Fälligkeitsdatum                                 | Date      | -                | Not Null                                          |
+| pdf_path      | Ablageort des erzeugten Belegs                   | String    | 400              | Optional                                          |
+| sent_at       | Zeitpunkt des Versands                           | DateTime  | -                | Optional                                          |
+| paid_at       | Zeitpunkt des Zahlungseingangs                   | DateTime  | -                | Optional                                          |
+| payer         | Name der einzahlenden Person laut Bankmeldung    | String    | 200              | Optional                                          |
+| cancelled_at  | Zeitpunkt der Stornierung                        | DateTime  | -                | Optional                                          |
+| cancel_reason | Begründung der Stornierung                       | String    | 500              | Optional                                          |
+| created_at    | Zeitpunkt der Erstellung                         | DateTime  | -                | Not Null                                          |
+| updated_at    | Zeitpunkt der letzten Änderung                   | DateTime  | -                | Not Null                                          |
+
+**Constraints:** Die Referenz ist vereinsübergreifend eindeutig und trägt die Prüfziffer nach MOD10 rekursiv – sie ist der Schlüssel, über den der Zahlungsabgleich eine Gutschrift der Rechnung zuordnet. `amount` ist die Summe der Positionen und wird vom Server geführt, nicht vom Client gesetzt. Eine bezahlte Rechnung lässt sich nicht mehr stornieren. Fällt `paid_at` nicht nach `due_date`, bucht der Server eine Punktebuchung der Säule 6 – über den Ledger, nicht aus dem Frontend.
+
+### INVOICE_POSITION
+
+Eine Zeile auf der Rechnung: wofür ein Teilbetrag erhoben wird.
+
+| Attribute  | Description                          | Data Type | Length/Precision | Validation Rules                        |
+| ---------- | ------------------------------------ | --------- | ---------------- | --------------------------------------- |
+| id         | Eindeutige Kennung der Position      | UUID      | 36               | Primary Key, Generated                  |
+| invoice_id | Rechnung, zu der die Position gehört | UUID      | 36               | Not Null, Foreign Key (INVOICE.id)      |
+| label      | Bezeichnung der Position             | String    | 120              | Not Null, Min: 1                        |
+| amount     | Betrag der Position                  | Decimal   | 10,2             | Not Null                                |
+| sort_order | Reihenfolge auf dem Beleg            | Integer   | 10               | Not Null, Vorgabe 0                     |
+
+**Constraints:** Der Betrag darf negativ sein – das ist der Weg für Rabatte und Gutschriften innerhalb derselben Rechnung. Die Summe aller Positionen einer Rechnung muss null oder grösser sein, weil ein negativer Rechnungsbetrag keinen Einzahlungsschein ergibt. Positionen werden mit ihrer Rechnung gelöscht.
+
+### INVOICE_FEE_ITEM
+
+Ein wiederverwendbarer Beitragsposten des Vereins, aus dem sich Rechnungspositionen bemessen.
+
+| Attribute  | Description                                   | Data Type | Length/Precision | Validation Rules                        |
+| ---------- | --------------------------------------------- | --------- | ---------------- | --------------------------------------- |
+| id         | Eindeutige Kennung des Postens                | UUID      | 36               | Primary Key, Generated                  |
+| club_id    | Verein des Postens                            | UUID      | 36               | Not Null, Foreign Key (CLUB.id)         |
+| team_id    | Team, für das der Posten gilt; leer = Verein  | UUID      | 36               | Optional, Foreign Key (TEAM.id)         |
+| name       | Bezeichnung, etwa «Aktivbeitrag»              | String    | 120              | Not Null, Min: 2                        |
+| amount     | Betrag des Postens                            | Decimal   | 10,2             | Not Null                                |
+| currency   | Währung des Postens                           | String    | 3                | Not Null, Vorgabe CHF                   |
+| is_active  | Steht der Posten noch zur Auswahl?            | Boolean   | 1                | Not Null, Vorgabe wahr                  |
+| created_at | Zeitpunkt der Erstellung                      | DateTime  | -                | Not Null                                |
+
+**Constraints:** Ein Posten mit `team_id` gilt nur für Mitglieder dieses Teams; ohne `team_id` gilt er für den ganzen Verein. Posten werden nicht gelöscht, sondern auf `is_active = falsch` gesetzt – bereits gestellte Rechnungen sollen erklärbar bleiben. Die Position auf der Rechnung ist eine **Kopie** von Bezeichnung und Betrag, keine Verknüpfung: Eine spätere Beitragserhöhung verändert keine gestellte Rechnung.
+
+### INVOICE_PAYMENT_IMPORT
+
+Das Protokoll eines Bankabgleichs: was eine camt.054-Meldung enthielt und was sie zugeordnet hat.
+
+| Attribute  | Description                                          | Data Type | Length/Precision | Validation Rules                        |
+| ---------- | ---------------------------------------------------- | --------- | ---------------- | --------------------------------------- |
+| id         | Eindeutige Kennung des Abgleichs                     | UUID      | 36               | Primary Key, Generated                  |
+| club_id    | Verein des Abgleichs                                 | UUID      | 36               | Not Null, Foreign Key (CLUB.id)         |
+| filename   | Name der eingelesenen Bankdatei                      | String    | 400              | Optional                                |
+| found      | Anzahl Gutschriften in der Datei                     | Integer   | 10               | Not Null, Min: 0                        |
+| matched    | Anzahl neu als bezahlt gebuchter Rechnungen          | Integer   | 10               | Not Null, Min: 0                        |
+| already    | Anzahl Gutschriften auf bereits bezahlte Rechnungen  | Integer   | 10               | Not Null, Min: 0                        |
+| unmatched  | Die nicht zuordenbaren Gutschriften                  | JSON      | -                | Not Null, Vorgabe leere Liste           |
+| created_by | Mitglied, das den Abgleich ausgelöst hat             | UUID      | 36               | Optional, Foreign Key (CLUB_MEMBER.id)  |
+| created_at | Zeitpunkt des Abgleichs                              | DateTime  | -                | Not Null                                |
+
+**Constraints:** Der Abgleich ist wiederholbar: Dieselbe Datei zweimal eingelesen bucht keine Rechnung zweimal, sondern zählt die Gutschriften unter `already`. Nicht zugeordnete Gutschriften werden **nicht** stillschweigend verworfen, sondern stehen mit Betrag, Referenz und Datum in `unmatched`, damit der Vorstand sie von Hand klären kann. Die Bankdatei selbst wird nicht gespeichert.
+
 ### FEDERATION_CONNECTION
 
 Die Verbindung eines Vereins zu einem Verband über dessen API-Schlüssel.
@@ -806,6 +992,7 @@ Die Verbindung eines Vereins zu einem Verband über dessen API-Schlüssel.
 | status         | Zustand der Verbindung                         | String    | 20               | Not Null, Values: pending, active, error  |
 | last_sync_at   | Zeitpunkt des letzten Abgleichs                | DateTime  | -                | Optional                                  |
 | last_error     | Fehlermeldung des letzten Abgleichs            | String    | 500              | Optional                                  |
+| news_enabled   | Erscheinen auch die Beiträge des Verbands im Feed? | Boolean | 1              | Not Null, Vorgabe falsch                  |
 
 **Constraints:** Primärschlüssel ist die Kombination aus `club_id` und `federation`. In `api_key_secret` steht ausschliesslich der **Name** des Vault-Eintrags, nie der Schlüssel selbst (BR-153). Der Schlüssel wird nie an den Client ausgeliefert. Der Abgleich liest ausschliesslich; es werden keine Daten an den Verband zurückgeschrieben. Abgeglichen werden ausschliesslich Teams, die über `TEAM.federation_team_id` verknüpft sind (UC-039); eine gelöste Verknüpfung oder eine getrennte Verbindung entfernt weder Teams noch bereits importierte Termine (BR-181).
 
@@ -827,6 +1014,18 @@ Die Verbindung eines Vereins zu seinem Bestand in der bisherigen myclub-App (Fir
 **Constraints:** Ein Verein hat höchstens eine Quelle, eine Kennung gehört höchstens einem Verein. Der Zugang zum bisherigen Backend steht **nicht** in dieser Tabelle, sondern als Secret der Edge Function (BR-185). Der Abgleich liest ausschliesslich (BR-191) und übernimmt nur aktuelle Termine (BR-186); er löscht nichts (BR-184). Mitglieder der bisherigen App entstehen als CLUB_MEMBER ohne `user_id` mit `legacy_user_id` (BR-192), Teams tragen `legacy_team_id`, Antworten werden ATTENDANCE mit Status registered oder excused (BR-193).
 
 ---
+
+### CLUB_MODULE_SUGGESTION
+
+Der Merkposten, dass einem Verein ein weiterer Baustein vorgeschlagen wurde – damit es beim Vorschlag bleibt.
+
+| Attribute    | Description                                  | Data Type | Length/Precision | Validation Rules                        |
+| ------------ | -------------------------------------------- | --------- | ---------------- | --------------------------------------- |
+| club_id      | Verein, dem vorgeschlagen wurde              | UUID      | 36               | Not Null, Foreign Key (CLUB.id)         |
+| module       | Kennung des vorgeschlagenen Bausteins        | String    | 40               | Not Null                                |
+| suggested_at | Zeitpunkt des Vorschlags                     | DateTime  | -                | Not Null                                |
+
+**Constraints:** Primärschlüssel ist die Kombination aus Verein und Baustein – jeder Baustein wird einem Verein **genau einmal** vorgeschlagen. Das ist der ganze Zweck der Entität: Sie macht aus dem Vorschlag von K7 («Ihr habt 40 aktive Mitglieder – Zeit für Ämter-Factsheets?») ein einmaliges Angebot statt einer wiederkehrenden Aufforderung. Ein Eintrag sagt nichts darüber aus, ob der Verein den Baustein angenommen hat; ob er in Gebrauch ist, steht an den Daten selbst.
 
 ## Beispielinhalte der Erstbefüllung
 

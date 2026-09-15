@@ -4,16 +4,28 @@ Hinweise für Claude Code in diesem Repository.
 
 ## Was das Projekt ist
 
-**myclub nexus** – Engagement-Plattform für Vereine. Ionic React 9 + Capacitor 8
-(iOS, Android, PWA) auf einem Supabase-Backend. Nachfolger der bestehenden
-Ionic-Angular-App unter `github.com/myclubapp/app`, aber ohne Google-Stack:
-kein Firebase, kein FCM, kein Google-Login.
+**nexus – rethink communities** – Engagement-Plattform für Vereine nach Schweizer
+Recht. Ionic React 9 + Capacitor 8 (iOS, Android, PWA) auf einem Supabase-Backend.
+Nachfolger der bestehenden Ionic-Angular-App unter `github.com/myclubapp/app`, aber
+ohne Google-Stack: kein Firebase, kein FCM, kein Google-Login.
+
+**Marke (Entscheid 16.09.2026):** Produkt- und Dachmarke ist **nexus**. «myclub»/
+«my-club» bezeichnet nur noch die Alt-App, die migriert und nicht weiterentwickelt
+wird. Der Arbeitstitel «TeamSpirit» ist abgelöst. Noch offen sind Domain,
+App-Store-Name und Bundle-ID (`ch.myclub.nexus`) – bis dahin bleibt die Bundle-ID
+im Code unverändert.
 
 Massgebende Dokumente in `docs/`, in dieser Rangfolge:
 
-1. `MVP_Scope_myclub.md` – der Leistungsschnitt. Übersteuert die anderen.
-2. `Technische_Architektur_TeamSpirit.md` – Stack, Schema, Flows.
-3. `Konzept_Vereinsapp_Gamification.md` – die sieben Punkte-Säulen.
+1. `MVP_Scope_nexus.md` – der Leistungsschnitt. Übersteuert die anderen.
+2. `Technische_Architektur_nexus.md` – Stack, Flows, Schreibpfade, RLS.
+3. `Konzept_Gamification_nexus.md` – die sieben Punkte-Säulen samt Punktwerten.
+
+Darüber liegen zwei Haltungs-Dokumente, die den Purpose und das Segment festlegen:
+`nexus_Manifest_Vereinsfuehrungslogik.md` (Purpose, fünf Grundsätze, vier
+Arbeitsprinzipien) und `Positionierung_nexus_Rethink_Communities.md` (Segment ist
+die Rechtsform Verein, Marken-Architektur). Das Schema führt `entity_model.md`
+zusammen mit `supabase/migrations/` – nicht das Architektur-Dokument.
 
 **Die Verwaltung ist das Substrat, das Punktesystem ist das Produkt.** Wer eine
 Funktion baut, prüft zuerst, ob sie im MVP-Schnitt (§2.1) steht.

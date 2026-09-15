@@ -3,8 +3,8 @@
 Engagement-Plattform für Vereine. Ionic React 9 + Capacitor 8 für iOS, Android
 und PWA, auf einem Supabase-Backend (Postgres, Auth, Edge Functions).
 
-Der Leistungsschnitt steht in `docs/MVP_Scope_myclub.md`, der Stack in
-`docs/Technische_Architektur_TeamSpirit.md`.
+Der Leistungsschnitt steht in `docs/MVP_Scope_nexus.md`, der Stack in
+`docs/Technische_Architektur_nexus.md`.
 
 ## Was drin ist
 

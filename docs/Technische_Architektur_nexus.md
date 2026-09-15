@@ -1,4 +1,4 @@
-# Technische Architektur: TeamSpirit
+# Technische Architektur: nexus
 ## Ionic React + Capacitor | Supabase (100% – Deno Edge Functions, Postgres, pg_cron)
 ### Souverän & Open Source – ohne Google-Abhängigkeiten
 
@@ -65,19 +65,19 @@
 | Saisonabschluss (Funktionärspunkte) | **Edge Function `season-close`** + Admin-UI | Workflow mit Vorstands-Freigabe |
 | Leaderboards | **Materialized Views** + Supabase Realtime | Performant, live, ohne Serverlogik |
 | Badge-Vergabe | **Trigger/SQL nach Punktebuchung** + nächtlicher Sweep | Kriterien liegen als JSONB in der DB |
-| Verbandsdaten (Spielpläne, Resultate) | **pg_cron → Edge Function `federation-sync`** | Muster aus myclub übernommen (s. Abschnitt 2) |
+| Verbandsdaten (Spielpläne, Resultate) | **pg_cron → Edge Function `federation-sync`** | Muster aus my-club übernommen (s. Abschnitt 2) |
 
 **Faustregel**: Transaktionale Geschäftslogik → **Postgres-Funktionen**. Alles mit externen HTTP-Aufrufen → **Edge Functions (Deno)**. Zeitsteuerung → **pg_cron**.
 
 ---
 
-## 2. Referenz-Projekt: myclub (github.com/myclubapp)
+## 2. Referenz-Projekt: my-club (github.com/myclubapp)
 
-Die bestehende myclub-App (Ionic **Angular** + Firebase) dient als UI- und Funktions-Referenz. Sie ist produktionserprobt für Schweizer Vereine – wir übernehmen die bewährten Patterns, ersetzen aber den gesamten Google-Stack (Firebase/Firestore/FCM/Google Maps).
+Die bestehende my-club-App (Ionic **Angular** + Firebase) dient als UI- und Funktions-Referenz. Sie ist produktionserprobt für Schweizer Vereine – wir übernehmen die bewährten Patterns, ersetzen aber den gesamten Google-Stack (Firebase/Firestore/FCM/Google Maps).
 
 ### 2.1 UI-Referenz: Seiten-Mapping (Angular → React)
 
-| myclub-Seite (Angular) | TeamSpirit (Ionic React) | Übernahme / Änderung |
+| my-club-Seite (Angular) | nexus (Ionic React) | Übernahme / Änderung |
 |---|---|---|
 | `tabs` (Tab-Navigation) | Tab-Layout mit 5 Tabs | Struktur übernehmen; Tabs: Dashboard, Marktplatz, Ranglisten, Agenda, Profil |
 | `onboarding`, `auth` | Onboarding + Auth | Flow übernehmen; Login Google-frei (s. 3.2) |
@@ -93,13 +93,13 @@ Die bestehende myclub-App (Ionic **Angular** + Firebase) dient als UI- und Funkt
 | `follow` | Follow (Teams/Vereine folgen) | Später (Phase 3) |
 | `club-links` | Vereins-Links | Übernehmen (einfach) |
 
-### 2.2 Bewährte Patterns aus der myclub-Codebasis
+### 2.2 Bewährte Patterns aus der my-club-Codebasis
 
-- **Whitelabel-Themes pro Verein** (`custom-themes/app-uhc-win-u`): In TeamSpirit als CSS-Variablen (Ionic Theming), gespeichert in `clubs.settings` – kein Rebuild pro Verein nötig.
+- **Whitelabel-Themes pro Verein** (`custom-themes/app-uhc-win-u`): In nexus als CSS-Variablen (Ionic Theming), gespeichert in `clubs.settings` – kein Rebuild pro Verein nötig.
 - **i18n** mit ngx-translate → in React: **react-i18next** (DE/FR/IT/EN, deckt Konzept-Phase 4 ab).
-- **Trigger-Architektur**: myclub nutzt Firestore-Trigger (`onDocumentCreated/Updated/Deleted`) für Benachrichtigungen und Folgeaktionen → identisches Muster mit **Postgres-Triggern** (z.B. `after insert on news → notify`).
+- **Trigger-Architektur**: my-club nutzt Firestore-Trigger (`onDocumentCreated/Updated/Deleted`) für Benachrichtigungen und Folgeaktionen → identisches Muster mit **Postgres-Triggern** (z.B. `after insert on news → notify`).
 - **Helfer-Bestätigungs-Flow**: `helferEvents/schichten/attendees` + `confirmHelferEvent` → bei Bestätigung entsteht ein `helferPunkt`. Genau dieses Muster bildet unsere `confirm_task()`/`award_points()`-Kette ab – inkl. Migration: bestehende `helferPunkte` lassen sich 1:1 in `point_transactions` überführen.
-- **Verbands-Sync-Scheduler**: myclub synchronisiert Clubs (Mo 08:00), Teams (Mo 08:10), Spiele (tägl. 06:00), News (stündlich) von Verbands-APIs (swiss unihockey etc.) – Zeitplan und Aufteilung übernehmen wir in pg_cron + `federation-sync`.
+- **Verbands-Sync-Scheduler**: my-club synchronisiert Clubs (Mo 08:00), Teams (Mo 08:10), Spiele (tägl. 06:00), News (stündlich) von Verbands-APIs (swiss unihockey etc.) – Zeitplan und Aufteilung übernehmen wir in pg_cron + `federation-sync`.
 - **Kids-E-Mail-Verifikation**: Eltern legen Kinder an, Verifikation per Mail – wichtig für Jugendschutz (`is_minor`, Einwilligung).
 - **Stripe für Vereins-Abos**: wird ersetzt (s. 3.1) – Vereinsrechnungen laufen bereits heute über QR-Rechnung, das bleibt.
 
@@ -109,7 +109,7 @@ Die bestehende myclub-App (Ionic **Angular** + Firebase) dient als UI- und Funkt
 
 ### 3.1 Ersatz-Matrix (Firebase/Google → souveräne Alternativen)
 
-| Bisher (myclub) | Neu (TeamSpirit) | Bemerkung |
+| Bisher (my-club) | Neu (nexus) | Bemerkung |
 |---|---|---|
 | Firebase Auth (inkl. Google-Login) | **Supabase Auth (GoTrue, Open Source)**: Magic Link, E-Mail/Passwort, Passkeys | Ohne Google-/Apple-Social-Login entfällt auch die «Sign in with Apple»-Pflicht im App Store |
 | Firestore | **PostgreSQL** | Relational statt Dokumente; RLS statt Firestore Rules |
@@ -199,293 +199,36 @@ Lokale Entwicklung mit `supabase start` (lokale Instanz inkl. Edge Runtime), Dep
 
 ## 5. Datenmodell (PostgreSQL / Supabase)
 
-### 5.1 Kern-Entitäten (ER-Übersicht)
+### 5.1 Verbindliche Quelle des Datenmodells
 
-```
-clubs ─┬─< teams ──< team_members >── club_members >── auth.users
-       ├─< club_members (Mitgliedschaft, Rolle, Eintritt)
-       ├─< join_requests (Beitritts-Anfragen mit Approval – myclub-Muster)
-       ├─< guardians (Eltern ↔ Kinder – myclub-Muster)
-       ├─< events ──< event_shifts (Helfer-Schichten) ──< attendance
-       ├─< news (Club-/Team-/Verbands-News)
-       ├─< point_rules (konfigurierbare Punktwerte)
-       ├─< point_transactions (JEDE Punktebewegung, append-only)
-       ├─< tasks ──< task_assignments (Aufgaben-Marktplatz)
-       ├─< functionary_roles ──< functionary_assignments (Ämter + Factsheets)
-       ├─< badges ──< member_badges
-       ├─< challenges ──< challenge_progress
-       ├─< rewards ──< reward_redemptions
-       ├─< invoices (QR-Rechnung → Punkte bei pünktlicher Zahlung)
-       ├─< notifications (In-App-Inbox, Push-Spiegel)
-       └─< push_tokens (ntfy/APNs/WebPush-Tokens pro Gerät)
-```
+Das Schema wird **nicht mehr in diesem Dokument geführt.** Verbindlich sind, in dieser Rangfolge:
 
-### 5.2 SQL-Schema (Kerntabellen)
+1. `supabase/migrations/` – der ausgeführte Stand. Was dort nicht steht, existiert nicht.
+2. [`entity_model.md`](entity_model.md) – Entitäten, Attribute, Beziehungen und Validierungsregeln.
+3. `app/src/lib/database.types.ts` – die Aufzählungen hinter den `text`-Spalten und die Form von `clubs.settings`.
 
-```sql
--- ============ MANDANTEN & MITGLIEDER ============
+Der Grund für die Auslagerung: Der frühere SQL-Block dieses Abschnitts war der Entwurf vor
+der Umsetzung und ist mit ihr auseinandergelaufen. Dieses Dokument beschreibt ab hier nur
+noch, was am Schema *Architektur* ist – die Schreibpfade (§5.3) und die Mandantentrennung
+(§5.4). Beides ist gegen die Migrationen geprüft.
 
-create table clubs (
-  id            uuid primary key default gen_random_uuid(),
-  name          text not null,
-  slug          text unique not null,
-  sport_type    text,                    -- 'unihockey', 'fussball', 'musik', ...
-  season_start  date,                    -- z.B. 1. Juni
-  settings      jsonb default '{}',      -- Feature-Flags, Theme (Whitelabel), Leaderboard-Optionen
-  created_at    timestamptz default now()
-);
+**Was der frühere Entwurf anders nannte oder nie bekam** – damit die Absicht nicht still verlorengeht:
 
-create table club_members (
-  id            uuid primary key default gen_random_uuid(),
-  club_id       uuid not null references clubs(id) on delete cascade,
-  user_id       uuid references auth.users(id),   -- null bei Kind ohne eigenes Login
-  role          text not null default 'member',  -- member|trainer|admin|superadmin
-  member_since  date not null default current_date,
-  display_name  text not null,
-  avatar_url    text,
-  leaderboard_opt_in boolean default true,
-  is_minor      boolean default false,   -- Jugendschutz: Einwilligung nötig
-  status        text default 'active',   -- active|passive|honorary|left
-  unique (club_id, user_id)
-);
+| Entwurfsname | Stand heute |
+|---|---|
+| `creditors`, `surcharges` | Gebaut als `invoice_creditors`, `invoice_fee_items` (UC-046) |
+| `functionary_assignments` | Gebaut als `functionary_holders` + `functionary_terms` (UC-041) |
+| `notification_prefs` | Heisst `notification_settings` |
+| `club_messages_log` | Heisst `club_message_log` |
+| `member_contribution_profile` | Heisst `member_contribution_profiles` |
+| `badges`, `member_badges` | Nicht gebaut – Ausbaustufe 2 (FR-122) |
+| `guardians` | Nicht gebaut – Eltern/Kinder ist Post-MVP (FR-129) |
+| `exercises`, `event_exercises`, `lineups`, `club_links` | Nicht gebaut – bewusst verworfen (MVP-Scope §2.3) |
 
--- Eltern/Kinder (myclub-Muster: parents-list, kids mit E-Mail-Verifikation)
-create table guardians (
-  parent_user  uuid not null references auth.users(id) on delete cascade,
-  child_member uuid not null references club_members(id) on delete cascade,
-  verified_at  timestamptz,
-  primary key (parent_user, child_member)
-);
-
--- Beitritts-Anfragen mit Approval (myclub-Muster: club/team requests)
-create table join_requests (
-  id          uuid primary key default gen_random_uuid(),
-  club_id     uuid not null references clubs(id) on delete cascade,
-  team_id     uuid references teams(id),
-  user_id     uuid not null references auth.users(id),
-  status      text default 'pending',    -- pending|approved|rejected
-  decided_by  uuid references club_members(id),
-  decided_at  timestamptz,
-  created_at  timestamptz default now()
-);
-
-create table teams (
-  id       uuid primary key default gen_random_uuid(),
-  club_id  uuid not null references clubs(id) on delete cascade,
-  name     text not null                -- 'Herren 1', 'Damen', 'U16'...
-);
-
-create table team_members (
-  team_id   uuid references teams(id) on delete cascade,
-  member_id uuid references club_members(id) on delete cascade,
-  role      text default 'player',      -- player|trainer|staff
-  primary key (team_id, member_id)
-);
-
-create table push_tokens (
-  id         uuid primary key default gen_random_uuid(),
-  user_id    uuid not null references auth.users(id) on delete cascade,
-  token      text unique not null,      -- ntfy-Topic / APNs-Token / WebPush-Subscription
-  platform   text not null,             -- android_ntfy|ios_apns|webpush
-  created_at timestamptz default now()
-);
-
-create table news (
-  id           uuid primary key default gen_random_uuid(),
-  club_id      uuid references clubs(id) on delete cascade,
-  team_id      uuid references teams(id) on delete cascade,
-  source       text default 'club',     -- club|team|federation
-  title        text not null,
-  body         text,
-  image_url    text,
-  published_at timestamptz default now()
-);
-
--- ============ EVENTS, SCHICHTEN & ANWESENHEIT ============
-
-create table events (
-  id          uuid primary key default gen_random_uuid(),
-  club_id     uuid not null references clubs(id) on delete cascade,
-  team_id     uuid references teams(id),          -- null = Vereinsevent
-  type        text not null,   -- training|match|gv|social|helper|meeting (0072)
-  title       text not null,
-  starts_at   timestamptz not null,
-  ends_at     timestamptz,
-  location    text,
-  geo         point,                              -- für MapLibre/swisstopo-Karte
-  qr_token    text unique default encode(gen_random_bytes(16), 'hex'),
-  point_rule_code text          -- welcher Punktwert bei Teilnahme greift
-);
-
--- Helfer-Schichten (myclub-Muster: helferEvents/schichten)
-create table event_shifts (
-  id         uuid primary key default gen_random_uuid(),
-  event_id   uuid not null references events(id) on delete cascade,
-  title      text not null,              -- 'Festwirtschaft 10–14 Uhr'
-  starts_at  timestamptz,
-  ends_at    timestamptz,
-  needed     int not null default 1,     -- benötigte Helfer:innen
-  point_rule_code text                   -- Punktwert dieser Schicht
-);
-
-create table attendance (
-  event_id     uuid references events(id) on delete cascade,
-  shift_id     uuid references event_shifts(id),  -- null bei Training/Spiel
-  member_id    uuid references club_members(id) on delete cascade,
-  status       text not null default 'present', -- registered|present|excused|absent|substitute
-  checked_in_at timestamptz default now(),
-  confirmed_by uuid references club_members(id), -- Trainer-/OK-Bestätigung
-  primary key (event_id, member_id)
-);
-
--- ============ PUNKTESYSTEM ============
-
-create table point_rules (
-  id          uuid primary key default gen_random_uuid(),
-  club_id     uuid not null references clubs(id) on delete cascade,
-  pillar      smallint not null,        -- 1..7 (Säulen aus dem Konzept)
-  code        text not null,            -- 'training_attend', 'invoice_on_time', ...
-  label       text not null,
-  points      int not null,
-  is_active   boolean default true,
-  meta        jsonb default '{}',       -- z.B. Streak-Länge, Max pro Woche
-  unique (club_id, code)
-);
-
--- Append-only Ledger: JEDE Punktebewegung, nie updaten/löschen → Korrektur = Gegenbuchung
--- (Migrationspfad: bestehende myclub-«helferPunkte» werden 1:1 hierhin überführt)
-create table point_transactions (
-  id          uuid primary key default gen_random_uuid(),
-  club_id     uuid not null references clubs(id) on delete cascade,
-  member_id   uuid not null references club_members(id) on delete cascade,
-  rule_code   text,
-  points      int not null,             -- kann negativ sein (nur für Korrekturen!)
-  season      text not null,            -- '2026/27'
-  source_type text not null,            -- attendance|task|invoice|loyalty|manual|migration|...
-  source_id   uuid,
-  note        text,
-  created_by  uuid,                     -- null = System
-  created_at  timestamptz default now()
-);
-create index on point_transactions (club_id, member_id, season);
-
-create materialized view member_points as
-select club_id, member_id, season,
-       sum(points) as season_points,
-       sum(sum(points)) over (partition by club_id, member_id) as career_points
-from point_transactions
-group by club_id, member_id, season;
-
--- ============ AUFGABEN-MARKTPLATZ ============
-
-create table tasks (
-  id           uuid primary key default gen_random_uuid(),
-  club_id      uuid not null references clubs(id) on delete cascade,
-  team_id      uuid references teams(id),
-  title        text not null,
-  description  text,
-  category     text,                    -- kommunikation|material|infrastruktur|...
-  points       int not null,
-  task_type    text not null default 'oneoff', -- oneoff|recurring|season_role
-  due_at       timestamptz,
-  max_assignees int default 1,
-  status       text default 'open',     -- open|claimed|submitted|done|expired
-  created_by   uuid not null references club_members(id)
-);
-
-create table task_assignments (
-  id           uuid primary key default gen_random_uuid(),
-  task_id      uuid not null references tasks(id) on delete cascade,
-  member_id    uuid not null references club_members(id),
-  claimed_at   timestamptz default now(),
-  submitted_at timestamptz,
-  proof_url    text,
-  confirmed_at timestamptz,
-  confirmed_by uuid references club_members(id),
-  kudos        text,
-  unique (task_id, member_id)
-);
-
--- ============ FUNKTIONÄRSÄMTER ============
-
-create table functionary_roles (
-  id             uuid primary key default gen_random_uuid(),
-  club_id        uuid not null references clubs(id) on delete cascade,
-  title          text not null,
-  duties         jsonb not null,         -- Pflichtenheft (aus Factsheet)
-  hours_per_season text,
-  helper_points  numeric,                -- Vereinsskala (1–7)
-  app_points_per_season int not null,    -- z.B. helper_points * 50
-  contact_member uuid references club_members(id),
-  max_holders    int default 1,
-  is_paid        boolean default false,
-  factsheet_url  text
-);
-
-create table functionary_assignments (
-  id         uuid primary key default gen_random_uuid(),
-  role_id    uuid not null references functionary_roles(id) on delete cascade,
-  member_id  uuid not null references club_members(id),
-  season     text not null,
-  confirmed  boolean default false,
-  unique (role_id, member_id, season)
-);
-
-create view vacant_roles as
-select r.*,
-       r.max_holders - count(a.id) filter (
-         where a.season = current_season(r.club_id)
-       ) as open_slots
-from functionary_roles r
-left join functionary_assignments a on a.role_id = r.id
-group by r.id
-having r.max_holders > count(a.id) filter (
-  where a.season = current_season(r.club_id)
-);
-
--- ============ BADGES, RECHNUNGEN, NOTIFICATIONS ============
-
-create table badges (
-  id        uuid primary key default gen_random_uuid(),
-  club_id   uuid references clubs(id),
-  code      text not null,
-  label     text not null,
-  tier      text,
-  criteria  jsonb not null
-);
-
-create table member_badges (
-  member_id  uuid references club_members(id) on delete cascade,
-  badge_id   uuid references badges(id) on delete cascade,
-  awarded_at timestamptz default now(),
-  primary key (member_id, badge_id)
-);
-
--- QR-Rechnung (swissqrbill-Generierung im Client; PDF in Storage)
-create table invoices (
-  id        uuid primary key default gen_random_uuid(),
-  club_id   uuid not null references clubs(id) on delete cascade,
-  member_id uuid not null references club_members(id),
-  amount    numeric not null,
-  reference text,                        -- QR-Referenz für camt.054-Matching
-  due_date  date not null,
-  paid_at   timestamptz,
-  pdf_url   text,
-  season    text not null
-);
--- Trigger: paid_at gesetzt UND paid_at <= due_date → Punktebuchung 'invoice_on_time'
-
--- In-App-Inbox (Fallback-Kanal, erreicht 100% der Mitglieder)
-create table notifications (
-  id         uuid primary key default gen_random_uuid(),
-  user_id    uuid not null references auth.users(id) on delete cascade,
-  title      text not null,
-  body       text,
-  link       text,
-  read_at    timestamptz,
-  created_at timestamptz default now()
-);
-```
+**Ohne Entsprechung im Entwurf, weil später entschieden**: `invites`, `event_qr_tokens`,
+`member_contacts`, `club_pulses`, `club_module_suggestions`, `club_churn_stats`,
+`checkin_invitations`, `voice_note_messages`, `news_sources`, `legacy_sources`,
+`billing_outbox`, `invoice_payment_imports`.
 
 ### 5.3 Punkte-Engine als Postgres-Funktionen
 
@@ -545,7 +288,7 @@ begin
   return json_build_object('ok', true);
 end $$;
 
--- Helfer-Schicht bestätigen (myclub-Muster confirmHelferEvent)
+-- Helfer-Schicht bestätigen (my-club-Muster confirmHelferEvent)
 -- bzw. Aufgabe bestätigen: Rollenprüfung + award_points()
 create function confirm_task(p_assignment uuid, p_kudos text default null)
 returns void language plpgsql security definer as $$
@@ -626,7 +369,7 @@ Deno.serve(async (req) => {
 | `jobs-loyalty` | pg_cron (nächtlich 03:10) | Vereinstreue-Jubiläen (1/5/10/20 Jahre) |
 | `jobs-digest` | pg_cron (So 18:00) | Wochenzusammenfassung als Push/Mail |
 | `season-close` | Manuell durch Admin (mit Freigabe-UI) | Funktionärspunkte nach Bestätigung buchen, Leaderboard archivieren |
-| `federation-sync` | pg_cron (Zeitplan wie myclub: Spiele tägl. 06:00, News stündlich, Teams/Clubs Mo früh) | Spielpläne/Resultate/News von Verbands-APIs importieren |
+| `federation-sync` | pg_cron (Zeitplan wie my-club: Spiele tägl. 06:00, News stündlich, Teams/Clubs Mo früh) | Spielpläne/Resultate/News von Verbands-APIs importieren |
 
 ### Zeitsteuerung mit pg_cron + pg_net
 
@@ -660,7 +403,7 @@ Secrets (APNs-Key, ntfy-Zugang, VAPID-Keys, CRON_SECRET) via `supabase secrets s
 3. Client ruft `supabase.rpc('check_in', ...)` → Funktion validiert Token + Zeitfenster, schreibt `attendance`, bucht Punkte.
 4. Supabase Realtime pusht den neuen Punktestand live aufs Dashboard ✨.
 
-### 7.2 Helfer-Event mit Schichten (myclub-Muster)
+### 7.2 Helfer-Event mit Schichten (my-club-Muster)
 1. OK erstellt Event `type='helper'` mit `event_shifts` (Festwirtschaft 10–14, Aufbau, ...).
 2. Mitglieder melden sich pro Schicht an (`attendance` mit `shift_id`, Status `registered`).
 3. Nach dem Event bestätigt das OK die Anwesenheit → Statuswechsel auf `present` triggert `award_points()` mit dem Punktwert der Schicht.
@@ -681,7 +424,7 @@ Secrets (APNs-Key, ntfy-Zugang, VAPID-Keys, CRON_SECRET) via `supabase secrets s
 
 ## 8. Ionic React App: Aufbau
 
-### Seitenstruktur (Tabs – Layout-Referenz: myclub)
+### Seitenstruktur (Tabs – Layout-Referenz: my-club)
 ```
 🏠 Dashboard      → Punkte, Level, Streak, «Nächste Punkte», offene Aufgaben, News
 📋 Marktplatz     → Aufgaben + vakante Ämter (Filter: Team, Kategorie, Frist)
@@ -699,14 +442,14 @@ Secrets (APNs-Key, ntfy-Zugang, VAPID-Keys, CRON_SECRET) via `supabase secrets s
 | `@capacitor/preferences` | Session/Cache persistent |
 | `@capacitor/share` | Badges/Erfolge teilen |
 | `@capacitor/app` | Deep Links (Magic-Link-Login) |
-| **react-i18next** | DE/FR/IT/EN (myclub: ngx-translate) |
-| **swissqrbill** | QR-Rechnungs-PDF (aus myclub übernommen) |
+| **react-i18next** | DE/FR/IT/EN (my-club: ngx-translate) |
+| **swissqrbill** | QR-Rechnungs-PDF (aus my-club übernommen) |
 
 ### Auth-Hinweise
 - **Magic Link** als Default – Deep-Link-Handling in Capacitor (`appUrlOpen` + `exchangeCodeForSession`).
 - E-Mail/Passwort als Fallback, **Passkeys** sobald verfügbar.
 - Kein Google-/Apple-Login → keine «Sign in with Apple»-Pflicht.
-- Onboarding: Einladungslink/QR **oder** Beitritts-Anfrage mit Admin-Approval (`join_requests`, myclub-Muster).
+- Onboarding: Einladungslink/QR **oder** Beitritts-Anfrage mit Admin-Approval (`join_requests`, my-club-Muster).
 
 ### Offline-Strategie (MVP-tauglich)
 - Lesecache via TanStack Query + `@capacitor/preferences`.
@@ -745,7 +488,7 @@ Secrets (APNs-Key, ntfy-Zugang, VAPID-Keys, CRON_SECRET) via `supabase secrets s
 ## 11. Umsetzungs-Reihenfolge (MVP)
 
 1. **Supabase-Projekt** aufsetzen (Region Zürich), Migrationen `0001–0005` + Seed (Standard-Punkteregeln, Badge-Katalog, Ämter-Templates aus den Factsheets)
-2. **Ionic React Scaffold** mit Auth-Flow (Magic Link + Deep Links), Tab-Layout nach myclub-Vorbild, Club-Onboarding (Einladungslink + `join_requests`)
+2. **Ionic React Scaffold** mit Auth-Flow (Magic Link + Deep Links), Tab-Layout nach my-club-Vorbild, Club-Onboarding (Einladungslink + `join_requests`)
 3. **Events + QR-Check-in (ZXing) + `check_in()`-RPC** – der Kern-Loop: Training besuchen → Punkte sehen
 4. **Dashboard + Vereins-Leaderboard** (Materialized View + Realtime + pg_cron-Refresh)
 5. **Push-Setup** (In-App-Inbox zuerst, dann ntfy/APNs/VAPID) + erster Cron-Job (`jobs-streaks`)
@@ -757,7 +500,14 @@ Secrets (APNs-Key, ntfy-Zugang, VAPID-Keys, CRON_SECRET) via `supabase secrets s
 
 ## 12. Ergänzungen aus dem offiziellen Requirements-Katalog (docs/, 2026-07-17)
 
-Abgleich mit `vision.md`, `requirements.md`, `use_cases.md`, `entity_model.md` – Details im Dokument «Abgleich Vorgaben myclub». Schema- und Funktions-Ergänzungen:
+> **Entwurf vom 17.07.2026, nicht der gebaute Stand.** Die SQL-Blöcke dieses Abschnitts
+> halten fest, was der damalige Abgleich forderte – sie sind kein Schema. Mehrere Tabellen
+> daraus heissen heute anders (`creditors` → `invoice_creditors`, `surcharges` →
+> `invoice_fee_items`, `notification_prefs` → `notification_settings`) oder wurden nie
+> gebaut. Verbindlich sind `supabase/migrations/` und [`entity_model.md`](entity_model.md)
+> (§5.1). §13 übersteuert zudem Teile dieses Abschnitts.
+
+Abgleich mit `vision.md`, `requirements.md`, `use_cases.md`, `entity_model.md` – Details im Dokument «MVP-Scope nexus» (`MVP_Scope_nexus.md`). Schema- und Funktions-Ergänzungen:
 
 ```sql
 -- Beitragsverwaltung (PRO, FR-063–070; Entities CREDITOR/SURCHARGE/INVOICE_POSITION)
@@ -833,19 +583,20 @@ Weitere übernommene Vorgaben: QR-Referenz mit MOD10-Prüfziffer nach SIX-Spez (
 
 ## 13. MVP-Schnitt (übersteuert Teile der Abschnitte 5, 6 und 12)
 
-Gemäss Dokument «MVP-Scope myclub»:
+Gemäss [`MVP_Scope_nexus.md`](MVP_Scope_nexus.md):
 
-- **Billing ausgelagert**: `creditors`, `invoice_periods`, `invoice_positions`, `surcharges` sowie die volle `invoices`-Logik ziehen in das eigenständige Supabase-Projekt **myclub-billing** um. In der App verbleibt nur ein Spiegel:
-  ```sql
-  create table invoice_refs (          -- read-only Spiegel aus Billing-Webhooks
-    id uuid primary key,               -- = Billing-Invoice-ID
-    club_id uuid not null references clubs(id) on delete cascade,
-    member_id uuid not null references club_members(id) on delete cascade,
-    amount numeric, due_date date, status text,   -- open|paid|overdue
-    paid_at timestamptz, detail_url text          -- signierte Billing-URL
-  );
-  ```
-  Neue Edge Function `billing-events` (ersetzt `payment-import` in der App): verarbeitet `invoice.created/paid/overdue`, aktualisiert `invoice_refs` und bucht bei fristgerechter Zahlung `award_points('invoice_on_time')`.
+- **Billing in nexus, nicht ausgelagert** (revidiert am 14.09.2026, UC-046/UC-047): Der
+  Rechnungslauf wurde nach dem Vorbild der my-club-App **in nexus nachgebaut** und läuft dort –
+  `invoice_creditors`, `invoice_periods`, `invoices`, `invoice_positions`, `invoice_fee_items`,
+  `invoice_payment_imports` (Migrationen `0087`–`0090`). Ein zweites Supabase-Projekt und eine
+  eingebettete fremde Oberfläche gibt es nicht.
+  - Was aus der ursprünglichen Auslagerung gültig bleibt, ist die **Abgrenzung zum Mitglied**
+    (BR-156/BR-226): `invoice_refs` trägt weiterhin nur Betrag, Fälligkeit, Stand und Link und
+    ist der einzige Weg in die Mitgliedersicht (UC-036).
+  - Die **Punktequelle** bleibt: eine fristgerecht bezahlte Rechnung bucht Säule 6 – neu aus dem
+    eigenen Zahlungsabgleich (`invoice_payment_imports`, camt.054) statt aus einem Webhook.
+  - `billing_outbox` bleibt bestehen für den Fall, dass ein Verein seinen Debitorenbestand doch
+    in einem fremden System führt.
 - **Ein Punkte-Ledger**: Helferpunkte-Konto und Soll-/Schwellwert-Reporting entfallen; Schicht-Bestätigungen buchen direkt in `point_transactions` (Säule 3). Vorstands-Reporting = Leaderboard-Filter nach Säule.
 - **Verbands-Sync per API-Key** (swiss unihockey neu wie Handball):
   ```sql
@@ -860,7 +611,7 @@ Gemäss Dokument «MVP-Scope myclub»:
   ```
   `federation-sync` iteriert über aktive Verbindungen statt über einen globalen Katalog; der Presync aller Verbandsvereine und das E-Mail-Claiming entfallen ersatzlos – der gültige API-Key ist die Verifikation.
 - **Vereinsart-offen**: `clubs.sport_type` wird zu `clubs.club_kind` (sport|music|culture|youth|neighborhood|other) + frei konfigurierbare Terminologie-Labels in `clubs.settings` («Training»/«Probe»/«Anlass»).
-- **Post-MVP verschoben**: `exercises`, `event_exercises`, `lineups`, J+S-/Mitglieder-Export, `guardians`-Flow, `club_links`, Badges/Challenges/Ämter-Tabellen bleiben im Schema-Entwurf dokumentiert, werden aber erst in den Inkrementen M4+ migriert.
+- **Post-MVP verschoben**: `exercises`, `event_exercises`, `lineups`, J+S-Export, `guardians`-Flow, `club_links` sowie Badges/Challenges bleiben unmigriert (M4+). **Vorgezogen und gebaut**: Funktionärsämter mit Factsheet (UC-041, `functionary_roles/holders/terms`, `0070`/`0099`) und der Mitglieder-Export (UC-043, `0082`).
 
 ---
 

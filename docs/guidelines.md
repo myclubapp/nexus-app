@@ -3,7 +3,7 @@
 Verbindliche Regeln für jede Umsetzung in diesem Repository. Sie gelten
 zusätzlich zu `CLAUDE.md` und konkretisieren, **wie** eine Ansicht gebaut wird.
 
-**Rangfolge bei Widerspruch:** `MVP_Scope_myclub.md` → `requirements.md` →
+**Rangfolge bei Widerspruch:** `MVP_Scope_nexus.md` → `requirements.md` →
 `CLAUDE.md` → dieses Dokument.
 
 Die Regeln zu Ionic-Komponenten und zum Datenzugriff sind gegen die offizielle

@@ -44,6 +44,4 @@ app/android/captures/
 supabase/.branches/
 supabase/.temp/
 
-# Interne Dokumente (nicht veröffentlichen)
-docs/Abgleich_Voicible_Manifest.md
 .vercel

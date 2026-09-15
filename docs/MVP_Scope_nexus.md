@@ -1,4 +1,7 @@
-# MVP-Scope: myclub (neue App)
+# MVP-Scope: nexus (neue App)
+> **Markenentscheid 16.09.2026**: Produkt- und Dachmarke ist **nexus – rethink communities**. «myclub»/«my-club» bezeichnet in diesem Dokument ausschliesslich die **Alt-App** (Ionic Angular/Firebase) und deren Bestand; Modul- und Preisnamen sind auf nexus umgestellt. Zielsegment: **Vereine nach Schweizer Recht** (Sport zuerst, dann Musik/Kultur/Jugend/Quartierverein) – keine NGOs, keine Unternehmen.
+
+> Marke: **nexus** (Claim: rethink communities) · Projekte: **nexus-app** / **nexus-backend** · Arbeitstitel «TeamSpirit» abgelöst (siehe Onboarding-Konzept §4.6)
 ## Vereinfachung, Modulschnitt & Billing als eigenständiger Dienst
 
 > Dieses Dokument ist der massgebende Leistungsschnitt für die neue App und **übersteuert** die
@@ -11,11 +14,11 @@
 
 | # | Entscheid | Wirkung |
 |---|---|---|
-| 1 | **Rechnungsstellung wird eigenständiger Dienst** («myclub Billing») – **am 14.09.2026 revidiert** | Die komplexeste Domäne (SIX-QR-Spez, MOD10, camt.054, Mahnwesen, Perioden, Positionen) sollte die App verlassen. **Entschieden ist nun: Der Dienst wird nach dem Vorbild der bisherigen myclub-App in nexus nachgebaut und läuft dort (UC-046).** Die Abgrenzung des Spiegels bleibt: Was das Mitglied sieht, ist weiterhin Betrag, Fälligkeit, Stand und Link (UC-036, BR-156) |
+| 1 | **Rechnungsstellung wird eigenständiger Dienst** («nexus Billing») – **am 14.09.2026 revidiert** | Die komplexeste Domäne (SIX-QR-Spez, MOD10, camt.054, Mahnwesen, Perioden, Positionen) sollte die App verlassen. **Entschieden ist nun: Der Dienst wird nach dem Vorbild der bisherigen my-club-App in nexus nachgebaut und läuft dort (UC-046).** Die Abgrenzung des Spiegels bleibt: Was das Mitglied sieht, ist weiterhin Betrag, Fälligkeit, Stand und Link (UC-036, BR-156) |
 | 2 | **Helfer-Modul geht in der Gamification auf** | Kein separates Helferpunkte-Konto, kein Soll-/Schwellwert-Reporting mehr. Es gibt genau **einen** Punkte-Ledger: die Gamification. Helfer-Schichten bleiben als Event-Typ erhalten |
 | 3 | **Verbands-Sync nur noch mit API-Key pro Verein** (swiss unihockey neu wie Handball) | Kein globaler Presync aller Verbandsvereine mehr, kein Vereinsverzeichnis, kein Claiming-Problem – der API-Key **ist** die Verifikation |
 | 4 | **Vereinsart-offen von Tag 1** | Onboarding ohne Sport-Fokus: Sport-, Musik-, Kultur-, Quartier-, Jugendvereine – alles gleichberechtigt. Meisterschaft/Verband ist ein optionales Add-on, kein Kernkonzept |
-| 5 | **Gamification Basic ist der Kern, nicht ein Add-on** | Mitgliederverwaltung ist Commodity (Fairgate, ClubDesk, Webling & Co. machen das längst) – damit ist keine Differenzierung möglich. myclub positioniert sich als **Engagement-Plattform für Vereine**: Die Verwaltung ist das tragende Substrat, das Punkte-/Wertschätzungssystem ist das Produkt. Dazu kommt intern die **Mitgliederwert-Perspektive** (§11) nach dem Vorbild des Kundenwerts aus Sales Excellence/CX |
+| 5 | **Gamification Basic ist der Kern, nicht ein Add-on** | Mitgliederverwaltung ist Commodity (Fairgate, ClubDesk, Webling & Co. machen das längst) – damit ist keine Differenzierung möglich. nexus positioniert sich als **Engagement-Plattform für Vereine**: Die Verwaltung ist das tragende Substrat, das Punkte-/Wertschätzungssystem ist das Produkt. Dazu kommt intern die **Mitgliederwert-Perspektive** (§11) nach dem Vorbild des Kundenwerts aus Sales Excellence/CX |
 
 ---
 
@@ -37,7 +40,7 @@
 
 | Was | Wohin |
 |---|---|
-| Beitragsverwaltung, QR-Rechnung, Perioden, Zuschläge, Positionen, Mahnwesen, Zahlungsabgleich | → ursprünglich **myclub Billing** (eigenständiger Dienst, §3). **Seit dem 14.09.2026 wieder IN, als eigener Bereich in nexus (UC-046)** |
+| Beitragsverwaltung, QR-Rechnung, Perioden, Zuschläge, Positionen, Mahnwesen, Zahlungsabgleich | → ursprünglich **nexus Billing** (eigenständiger Dienst, §3). **Seit dem 14.09.2026 wieder IN, als eigener Bereich in nexus (UC-046)** |
 | Helferpunkte-Konto, Soll-/Schwellwert-Reporting, Reporting-Zeitraum | → **ersetzt durch Gamification-Ledger** (§4). Vorstands-Sicht = Filter auf Säule 3 statt eigenes Modul |
 | Globaler Verbands-Presync + Vereinsverzeichnis + Kontakt-E-Mail-Claiming | → **entfällt**; Verbands-Anbindung per API-Key (§5) |
 
@@ -55,11 +58,11 @@
 
 ---
 
-## 3. myclub Billing – der eigenständige Rechnungsdienst
+## 3. nexus Billing – der eigenständige Rechnungsdienst
 
 > **Revidiert am 14.09.2026.** Dieser Abschnitt beschreibt die ursprünglich
 > gewählte Auslagerung. Entschieden ist stattdessen: **Die Rechnungslogik der
-> bisherigen myclub-App wird in nexus nachgebaut und läuft in nexus** –
+> bisherigen my-club-App wird in nexus nachgebaut und läuft in nexus** –
 > Abrechnungsperioden, Positionen, QR-Einzahlungsschein (`swissqrbill`),
 > Versand. Der Ablauf steht in
 > [`use_cases/UC-046-rechnung-stellen-und-versenden.md`](use_cases/UC-046-rechnung-stellen-und-versenden.md).
@@ -84,13 +87,13 @@ Die Rechnungsstellung hat einen anderen Charakter als der Rest der App: regulato
 - hält sie die App schlank,
 - kann sie unabhängig getestet, zertifiziert und weiterentwickelt werden,
 - ist sie **auch standalone verkaufbar** (Vereine, die nur Rechnungen wollen – eigenes Produktpotenzial),
-- bleibt sie vollständig in myclub integrierbar (Deep Integration, für Nutzer unsichtbar).
+- bleibt sie vollständig in nexus integrierbar (Deep Integration, für Nutzer unsichtbar).
 
 ### 3.2 Architektur der Integration
 
 ```
 ┌────────────────────┐          ┌──────────────────────────┐
-│    myclub App      │          │      myclub Billing      │
+│    nexus App      │          │      nexus Billing      │
 │  (Supabase Kern)   │          │  (eigenes Supabase-Proj.)│
 │                    │  ①  API  │                          │
 │ Mitglieder, Teams ─┼─────────►│ Debitoren-Spiegel        │
@@ -106,15 +109,15 @@ Die Rechnungsstellung hat einen anderen Charakter als der Rest der App: regulato
 
 **Drei Integrationspunkte:**
 
-1. **Mitglieder-Sync (myclub → Billing)**: Minimaler Datensatz (member_id, Name, Adresse, E-Mail, Team-Zuordnung). Push bei Änderung, Billing hält einen Debitoren-Spiegel. Kein Rückfluss von Stammdaten.
-2. **Eingebettete UI (Billing → myclub)**: «Meine Rechnungen» (Mitglied) und «Rechnungslauf» (Kassier:in) als eingebettete Ansichten (signierte URL / Web Component) – für Nutzer fühlt es sich wie ein Teil von myclub an. SSO über signiertes Token (myclub-JWT → Billing verifiziert).
-3. **Ereignisse (Billing → myclub, Webhooks)**: `invoice.created`, `invoice.paid`, `invoice.overdue`. Bei `invoice.paid` mit `paid_at <= due_date` bucht myclub `award_points('invoice_on_time')` – die Gamification-Säule 6 funktioniert damit ohne dass die App Rechnungen kennt.
+1. **Mitglieder-Sync (nexus → Billing)**: Minimaler Datensatz (member_id, Name, Adresse, E-Mail, Team-Zuordnung). Push bei Änderung, Billing hält einen Debitoren-Spiegel. Kein Rückfluss von Stammdaten.
+2. **Eingebettete UI (Billing → nexus)**: «Meine Rechnungen» (Mitglied) und «Rechnungslauf» (Kassier:in) als eingebettete Ansichten (signierte URL / Web Component) – für Nutzer fühlt es sich wie ein Teil von nexus an. SSO über signiertes Token (nexus-JWT → Billing verifiziert).
+3. **Ereignisse (Billing → nexus, Webhooks)**: `invoice.created`, `invoice.paid`, `invoice.overdue`. Bei `invoice.paid` mit `paid_at <= due_date` bucht nexus `award_points('invoice_on_time')` – die Gamification-Säule 6 funktioniert damit ohne dass die App Rechnungen kennt.
 
-**Grundregel der Abgrenzung**: myclub kennt nur *«Mitglied X hat Rechnung Y offen/bezahlt (Betrag, Fälligkeit, Link)»* – alles andere (Positionen, Referenzen, Bankdaten) bleibt im Billing-Dienst.
+**Grundregel der Abgrenzung**: nexus kennt nur *«Mitglied X hat Rechnung Y offen/bezahlt (Betrag, Fälligkeit, Link)»* – alles andere (Positionen, Referenzen, Bankdaten) bleibt im Billing-Dienst.
 
 ### 3.3 Technik (kompakt)
 
-Gleicher Stack wie die App (Supabase-Projekt «myclub-billing»: Postgres + Edge Functions + Storage für PDFs), damit ein Team beide Dienste beherrscht. Eigene API (PostgREST + Edge Functions), eigene Mandanten-Tabelle (ein Billing-Mandant pro Verein, aktiviert aus den myclub-Vereinseinstellungen heraus). Die bisherigen Schema-Entwürfe `creditors`, `invoice_periods`, `invoices`, `invoice_positions`, `surcharges` wandern unverändert dorthin.
+Gleicher Stack wie die App (Supabase-Projekt «nexus-billing»: Postgres + Edge Functions + Storage für PDFs), damit ein Team beide Dienste beherrscht. Eigene API (PostgREST + Edge Functions), eigene Mandanten-Tabelle (ein Billing-Mandant pro Verein, aktiviert aus den nexus-Vereinseinstellungen heraus). Die bisherigen Schema-Entwürfe `creditors`, `invoice_periods`, `invoices`, `invoice_positions`, `surcharges` wandern unverändert dorthin.
 
 ---
 
@@ -167,10 +170,10 @@ Verein gründet sich generisch (§6) → Einstellungen → «Verband verbinden»
 
 | Stufe | Inhalt | Preis (Vorschlag) |
 |---|---|---|
-| **myclub Basis** | Kern gemäss §2.1 **inkl. Gamification Basic** (Punkte-Ledger, Dashboard, Leaderboards, einfacher Marktplatz, Spider-Selbstsicht) **und Vereins-Gesundheit mit Frühwarnsystem** (drei Ebenen, Rollen-Routing) | Grössenstaffel: micro CHF 0 (≤20) / small 6.90 / medium 12.90 / large 24.90 |
+| **nexus Basis** | Kern gemäss §2.1 **inkl. Gamification Basic** (Punkte-Ledger, Dashboard, Leaderboards, einfacher Marktplatz, Spider-Selbstsicht) **und Vereins-Gesundheit mit Frühwarnsystem** (drei Ebenen, Rollen-Routing) | Grössenstaffel: micro CHF 0 (≤20) / small 6.90 / medium 12.90 / large 24.90 |
 | **Add-on Engagement Pro** | Badges, Level, Challenges, Rewards, Funktionärsämter mit Factsheets & Vakanz-Anzeige – plus vertiefte Analytics: Langzeit-Trends, Saisonvergleiche, Ehrenamts-Bilanz (Stunden), Puls-Umfragen | ~CHF 6.90/Mt |
 | **Add-on Verband** | Verbands-Sync (Spielpläne, Resultate, Tabellen) via API-Key | CHF 5.90/Mt |
-| **myclub Billing** | Eigenständiger Dienst, aus myclub aktivierbar | Eigene Preisliste (z.B. Flat oder pro Rechnung) |
+| **nexus Billing** | Eigenständiger Dienst, aus nexus aktivierbar | Eigene Preisliste (z.B. Flat oder pro Rechnung) |
 
 Die Logik: Das Gratis-/Basis-Erlebnis macht den USP für **jedes Mitglied** spürbar (Punkte ab dem ersten Training) – das verkauft die App von innen. Der Vorstand zahlt für die Führungs-Perspektive (Engagement Pro) und die Anschlüsse (Verband, Billing).
 
@@ -192,7 +195,7 @@ Die Logik: Das Gratis-/Basis-Erlebnis macht den USP für **jedes Mitglied** spü
 - **Technische Architektur**: Invoicing-Tabellen (creditors, invoice_periods, invoice_positions, surcharges) wechseln ins Billing-Projekt; in der App bleibt nur ein schlanker Rechnungs-Spiegel (`invoice_refs`: member_id, amount, due_date, status, link). Neu: `federation_connections`. `payment-import` zieht ins Billing um; die App erhält stattdessen den Webhook-Endpunkt `billing-events`. Helfer-Soll-Logik entfällt.
 - **Konzept Gamification**: Säule 6 («Rechnung pünktlich bezahlt») funktioniert unverändert – gespeist vom Billing-Webhook. Badges/Level/Challenges/Ämter als Ausbaustufe 2 markiert. Preismodell gemäss §7.
 - **Onboarding-Konzept**: Verbands-Claiming-Abschnitt ersetzt durch API-Key-Flow (§5); Gründung vereinsart-offen (§6). Invite-first bleibt unverändert der Kern.
-- **Abgleich Vorgaben**: FR-057–062 (Helfer) und FR-063–070 (Beiträge) gelten als «erfüllt durch Gamification-Ledger» bzw. «delegiert an myclub Billing»; FR-071 (J+S) und FR-016/017 (Eltern) → Post-MVP.
+- **Abgleich Vorgaben**: FR-057–062 (Helfer) und FR-063–070 (Beiträge) gelten als «erfüllt durch Gamification-Ledger» bzw. «delegiert an nexus Billing»; FR-071 (J+S) und FR-016/017 (Eltern) → Post-MVP.
 
 ---
 
@@ -207,12 +210,12 @@ Das Billing-Muster lässt sich verallgemeinern. **Extraktions-Kriterien** (mind.
 
 ```
                     ┌──────────────────────────┐
-                    │        myclub App        │  Kern + Gamification
+                    │        nexus App        │  Kern + Gamification
                     │  (Supabase, ein Ledger)  │  ← bleibt bewusst monolithisch
                     └──┬──────┬──────┬──────┬──┘
        Webhooks/API      │      │      │      │ publish (Opt-in)
    ┌──────────────────┐  │      │      │   ┌──┴──────────────────────┐
-   │  myclub Billing  │◄─┘      │      │   │  myclub Kalender        │
+   │  nexus Billing  │◄─┘      │      │   │  nexus Kalender        │
    │  QR-Rechnung,    │         │      │   │  (Publishing, read-only)│
    │  camt.054,       │         │      │   │  ICS-Feeds · Widget ·   │
    │  Mahnwesen       │         │      │   │  JSON-API · Webhooks    │
@@ -233,16 +236,16 @@ Das Billing-Muster lässt sich verallgemeinern. **Extraktions-Kriterien** (mind.
 **① Federation Gateway (Verbands-Sync als Dienst) – starker Kandidat, M4**
 - Kriterien: (c) fremde APIs mit eigenem Takt (swiss unihockey v2, Handball, Volleyball, Turnverband – jede anders), (a) Formatänderungen der Verbände, (d) als normierte Vereins-Sport-API auch für Dritte interessant, (e) Verbands-Ausfall darf die App nie stören.
 - Zuschnitt: nimmt API-Keys entgegen (Vault), normalisiert alle Verbände auf **ein** Schema (games, results, standings, news), liefert per API/Webhook an die App. Neue Verbände = nur Gateway-Release, App bleibt unberührt.
-- Kopfstart: Das bestehende myclub-**GraphQL-Backend** für Verbandsdaten ist faktisch der Embryo dieses Dienstes – es wird herausgelöst und auf das API-Key-Modell umgestellt, statt neu gebaut.
+- Kopfstart: Das bestehende my-club-**GraphQL-Backend** für Verbandsdaten ist faktisch der Embryo dieses Dienstes – es wird herausgelöst und auf das API-Key-Modell umgestellt, statt neu gebaut.
 
 **② J+S Connector – starker Kandidat, Post-MVP**
 - Kriterien: (a) BASPO-/AWK-Formatvorgaben mit behördlichem Änderungsrhythmus, (b) für Musik-/Kultur-/Quartiervereine komplett irrelevant, (d) auch für andere Vereinssoftware nutzbar, perspektivisch (c) direkte NDS/«nationale Datenbank Sport»-Anbindung.
-- Zuschnitt: liest Anwesenheiten + Personendaten über eine schmale myclub-API (nur J+S-relevante Felder, inkl. AHV-Nummer → Datenschutz-Isolation als Bonus: sensible Exportdaten verlassen den App-Kern nur in diesen Dienst), erzeugt AWK-CSV bzw. künftige Behördenformate.
+- Zuschnitt: liest Anwesenheiten + Personendaten über eine schmale nexus-API (nur J+S-relevante Felder, inkl. AHV-Nummer → Datenschutz-Isolation als Bonus: sensible Exportdaten verlassen den App-Kern nur in diesen Dienst), erzeugt AWK-CSV bzw. künftige Behördenformate.
 - MVP-Haltung: Die App erfasst Anwesenheiten sauber (das passiert ohnehin via QR-Check-in) – der Connector kommt, wenn die ersten J+S-pflichtigen Sportvereine migriert sind.
 
-**③ myclub Kalender (Publishing-Dienst) – starker Kandidat, der einfachste von allen**
-- Kriterien: (e) Fehler-/Last-Isolation – öffentlicher Website-Traffic (Embed-Widget, Feed-Abrufe) darf nie die App-Datenbank belasten; rein **read-only**, kein transaktionaler Zustand – die risikoärmste Extraktion der ganzen Landschaft. Datenquelle für **getKanva.io** (eigenes myclub-Projekt) und Vereinswebsites.
-- **Manifest-Korrektur K6a («Struktur vor Sichtbarkeit»)**: Der Kalender ist **kein Standalone-Produkt** und wird nicht einzeln verkauft. Sichtbarkeit ist Ergebnis innerer Struktur: Embed, ICS und Kanva-Grafiken werden für einen Verein erst freigeschaltet, wenn die Basis steht (Ämter besetzt, Vereins-Puls aktiv, erster Onboarding-Zyklus abgeschlossen). Technisch bleibt der Dienst früh verfügbar (M3), kommerziell und im Onboarding-Pfad kommt er nach der Struktur.
+**③ nexus Kalender (Publishing-Dienst) – starker Kandidat, der einfachste von allen**
+- Kriterien: (e) Fehler-/Last-Isolation – öffentlicher Website-Traffic (Embed-Widget, Feed-Abrufe) darf nie die App-Datenbank belasten; rein **read-only**, kein transaktionaler Zustand – die risikoärmste Extraktion der ganzen Landschaft. Datenquelle für **getKanva.io** (eigenes nexus-Projekt) und Vereinswebsites.
+- **Manifest-Korrektur K6a («Innen vor aussen»)**: Der Kalender ist **kein Standalone-Produkt** und wird nicht einzeln verkauft. Sichtbarkeit ist Ergebnis innerer Struktur: Embed, ICS und Kanva-Grafiken werden für einen Verein erst freigeschaltet, wenn die Basis steht (Ämter besetzt, Vereins-Puls aktiv, erster Onboarding-Zyklus abgeschlossen). Technisch bleibt der Dienst früh verfügbar (M3), kommerziell und im Onboarding-Pfad kommt er nach der Struktur.
 - Zuschnitt – drei Ausgabekanäle aus einer Quelle:
   1. **Embed-Widget** (Web Component/iframe) für Vereinswebsites – Agenda/Spielplan im Vereins-Theming (Farben/Logo aus `clubs.settings`), responsive, ohne Login.
   2. **iCal/ICS-Feeds** pro Verein und pro Team – abonnierbar in Apple/Google/Outlook-Kalendern («Termine immer im eigenen Kalender» ist für viele Mitglieder wertvoller als jede App).
@@ -263,8 +266,8 @@ Das Billing-Muster lässt sich verallgemeinern. **Extraktions-Kriterien** (mind.
 
 | Wann | Dienst | Auslöser |
 |---|---|---|
-| **M3** | **myclub Kalender** | Read-only, risikoarm – erster externer Dienst: ICS-Feeds & Website-Widget schaffen sofort sichtbaren Nutzen; JSON-API/Webhooks für getKanva.io |
-| M4 | myclub Billing | Bestandsvereine brauchen Rechnungen (bereits entschieden) |
+| **M3** | **nexus Kalender** | Read-only, risikoarm – erster externer Dienst: ICS-Feeds & Website-Widget schaffen sofort sichtbaren Nutzen; JSON-API/Webhooks für getKanva.io |
+| M4 | nexus Billing | Bestandsvereine brauchen Rechnungen (bereits entschieden) |
 | M4 | Federation Gateway | Erste Sportvereine verbinden Verbände per API-Key; GraphQL-Backend wird herausgelöst |
 | M4+ | Messaging-Dienst | Sobald Billing produktiv versendet (vorher: shared Library) |
 | Post-MVP | J+S Connector | Erste J+S-pflichtige Vereine migriert |
@@ -371,7 +374,7 @@ Das Mitgliederwert-Konzept wurde gegen das 5-Dimensionen-Reifegradmodell, die Ku
 - **V3 Sentiment-Darstellung** (MVP-korrekt, Erhebung in Pro): Stimmung wird als «nicht erhoben» gezeigt, nie als 0 – Puls-Umfragen schliessen die Lücke in Engagement Pro.
 - **V4 Trainer-Aufwand-Budget** (MVP): Ein-Tap-Triage (<10 s pro Hinweis) und Deckel für gleichzeitig offene Hinweise pro Team.
 
-Geschärfte Positionierung aus der Prüfung: myclub ist **das Betriebssystem für Mitgliederorientierung** – es liefert einem ressort-orientierten Verein Struktur (Rollen-Routing), Metriken (Health), Entscheidungsrechte (Signal-Konfiguration) und Prozesse (Status-Workflow) schlüsselfertig.
+Geschärfte Positionierung aus der Prüfung: nexus ist **das Betriebssystem für Mitgliederorientierung** – es liefert einem ressort-orientierten Verein Struktur (Rollen-Routing), Metriken (Health), Entscheidungsrechte (Signal-Konfiguration) und Prozesse (Status-Workflow) schlüsselfertig.
 
 ---
 
@@ -470,7 +473,7 @@ Basis-Funktion (Kern): Der Kreislauf Mitglied → Input → Gremium → dokument
 
 ### 11.8 Ergänzende Verfeinerungen aus dem HWZ-Skills-Review (V5–V7)
 
-Aus der Prüfung aller EMBA- und Kommunikations-Frameworks (Details: «HWZ Skills Mapping myclub») gehen drei weitere Verfeinerungen in den Scope über:
+Aus der Prüfung aller EMBA- und Kommunikations-Frameworks (Details: «HWZ Skills Mapping nexus») gehen drei weitere Verfeinerungen in den Scope über:
 - **V5 Symmetrie-Prinzip** (People Analytics, «Greater Good»): Führungs-Reaktionszeiten werden mit denselben Instrumenten sichtbar wie Mitglieder-Signale – Antwortzeit des Vorstands auf Inputs, Triage-Zeit der Trainer auf Fürsorge-Hinweise, Vakanz-Dauer von Ämtern. Zudem: Punkteregeln als GV-Traktandum-Vorlage (Mitsprache der Gemessenen).
 - **V6 AI-Governance-Check** (Digital Law): DSFA für das Health-Profiling vor Launch, KI-Register ab Tag 1, Health-Daten bezahlter Funktionäre nie für Anstellungsentscheide verwendbar.
 - **V7 Crowding-out-Schutz** (Sinnstiftendes Leadership): Punkte machen Sinn sichtbar, ersetzen ihn nicht – Kudos vor Punktzahl, dezenter Rewards-Shop, Konfig-Option «nur Dank» pro Kategorie, Tonalität feiert den Beitrag statt die Zahl.
@@ -504,24 +507,24 @@ Die Kommunikations-Skills (GFK, 4-Ohren, Wertequadrat, Glasl) definieren den Inh
 
 ---
 
-## 14. Manifest-Konformität: Korrekturen K1–K7 (Voicible-Manifest)
+## 14. Manifest-Konformität: Korrekturen K1–K7 (nexus-Manifest)
 
-> Der Abgleich des gesamten Konzepts mit dem Voicible-Manifest (Purpose, Vision 2031, Mission, fünf Werte,
-> Führungsverständnis, Verzichts-Liste) ist im Dokument «Abgleich Voicible Manifest» dokumentiert.
+> Der Abgleich des gesamten Konzepts mit dem nexus-Manifest (Purpose, Vision 2031, Mission, fünf Werte,
+> Führungsverständnis, Verzichts-Liste) ist im Dokument «nexus – Vereinsführungslogik» (`nexus_Manifest_Vereinsfuehrungslogik.md`) dokumentiert.
 > Die daraus folgenden sieben Korrekturen sind ab jetzt Teil des Scopes und **übersteuern** ältere Aussagen.
 
-**Gemeinsamer Purpose-Satz für myclub**: *myclub existiert, damit Ehrenamt tragfähig bleibt: damit Menschen sich in ihrem Verein verbunden fühlen, Verantwortung teilen können und nicht an ihrem Engagement zerbrechen.* Positionierung geschärft: nicht «Betriebssystem für Mitgliederorientierung» als Selbstzweck, sondern **das Werkzeug, mit dem Verbindung, geteilte Verantwortung und Entlastung zur täglichen Routine werden.**
+**Purpose-Satz (massgebend, gleichlautend mit Manifest §1 und `vision.md` §1)**: *nexus existiert, damit Vereine von vielen getragen werden – und die, die vorangehen, nicht allein bleiben.* Positionierung geschärft: nicht «Betriebssystem für Mitgliederorientierung» als Selbstzweck, sondern **das Werkzeug, mit dem Verbindung, geteilte Verantwortung und Entlastung zur täglichen Routine werden.**
 
 | # | Korrektur | Konkrete Umsetzung im Produkt |
 |---|---|---|
-| **K1 Verbindung-vor-Aufruf-Regel** | Die App misst pro Verein die **Verbindungs-Quote** (Verbindungs-Nachrichten: News, «Aus dem Vorstand», Kudos, Puls, Dank ↔ Aufrufe: Vakanzen, Helfergesuche, Aufgaben-Pushes). Kippt sie, erhält der Vorstand einen Symmetrie-Hinweis (V5): «Seit 5 Wochen nur Aufrufe – Zeit für ein Update, was läuft.» Optional konfigurierbar als sanfte Sperre: Helferaufruf-Push erst nach einem Vereins-Puls. **Nicht toleriert (per Design)**: Aufrufe an eine Gemeinschaft, die seit Monaten nichts gehört hat. |
-| **K2 Vereins-Puls** | Der Wochen-Digest wird umgebaut: statt «45 Punkte, Platz 12» die drei Fragen der Vision 2031 – **Was passiert · Woran arbeiten wir · Wo kannst du dabei sein**. Automatisch komponiert aus Agenda, Sitzungs-Antworten und offenen Aufgaben/Ämtern; Vorstand gibt in zwei Minuten frei (oder Auto-Versand). Persönliche Punkte erscheinen nachgeordnet. Das ist «Verbindung vor Aufruf» als Routine. |
+| **K1 Erst der Faden, dann die Frage** | Die App misst pro Verein die **Verbindungs-Quote** (Verbindungs-Nachrichten: News, «Aus dem Vorstand», Kudos, Puls, Dank ↔ Aufrufe: Vakanzen, Helfergesuche, Aufgaben-Pushes). Kippt sie, erhält der Vorstand einen Symmetrie-Hinweis (V5): «Seit 5 Wochen nur Aufrufe – Zeit für ein Update, was läuft.» Optional konfigurierbar als sanfte Sperre: Helferaufruf-Push erst nach einem Vereins-Puls. **Nicht toleriert (per Design)**: Aufrufe an eine Gemeinschaft, die seit Monaten nichts gehört hat. |
+| **K2 Vereins-Puls** | Der Wochen-Digest wird umgebaut: statt «45 Punkte, Platz 12» die drei Fragen der Vision 2031 – **Was passiert · Woran arbeiten wir · Wo kannst du dabei sein**. Automatisch komponiert aus Agenda, Sitzungs-Antworten und offenen Aufgaben/Ämtern; Vorstand gibt in zwei Minuten frei (oder Auto-Versand). Persönliche Punkte erscheinen nachgeordnet. Das ist «Erst der Faden, dann die Frage» als Routine. |
 | **K3 Anfragen statt Abfragen** | (a) **Warum-Pflichtfeld** an jeder Aufgabe, jedem Amt, jedem Helfer-Event («Wozu dient das? Wem hilft es?») – ohne Sinnzusammenhang kann kein Aufruf publiziert werden. (b) **Beitrags-Profil**: Beim Onboarding und jährlich fragt die App jedes Mitglied «Womit trägst du gern bei? Was wäre für dich ein sinnvoller Beitrag?» (Interessen, Stärken, Zeitbudget); Marktplatz und Vakanz-Anzeige **matchen** darauf und schlagen Beiträge persönlich vor – Verantwortung wird angeboten, nicht ausgeschrieben. |
 | **K4 Verantwortung teilen & Nachfolge** | Zwei neue Vereins-Health-KPIs: **Verantwortungsverteilung** (Anteil der Mitglieder, die 80% der Einsätze tragen – der «dieselben 20 Leute»-Index, Trend über Saisons) und **Nachfolge-Vorlauf** (Ämter ohne designierte Nachfolge, Amtsdauer > x Jahre). Ämter-Factsheets erhalten «Inhaber:in seit» und «Nachfolge geplant». Frühwarnung an den Vorstand: «Kassier seit 9 Jahren, keine Nachfolge – Zeit, Verantwortung anzubieten.» |
 | **K5 «Was können wir verändern?»** | Jedes Team-/Vereins-Signal im Cockpit trägt eine **Handlungsfrage an den Verein**, nicht nur einen Gesprächsvorschlag ans Mitglied (Beteiligung sinkt → «Trainingszeit? Bank-Erlebnis? Zuletzt erklärt, wofür trainiert wird?»). Dazu eigene **Vorstands-Signale** (Symmetrie): Kommunikationspause > 4 Wochen, Verbindungs-Quote gekippt, Inputs unbeantwortet, Ämter ohne Nachfolge. Playbooks (V2) erhalten eine Vorstands-Seite. Keine Schuldnarrative – auch nicht in Richtung Vorstand: Signal, kein Urteil. |
-| **K6 Verzicht per Design** | (a) Kalender/Kanva **nie standalone**, Freischaltung nach innerer Struktur (§10.2 angepasst). (b) **Entlastungs-Test als Feature-Gate**: Jede Funktion weist aus, welche Vorstandszeit sie spart und welche sie kostet – netto negativ wird nicht gebaut. (c) **Vereins-DNA als Objekt**: Vereinsprofil mit Warum, Werten, Tonalität, Traditionen, Begriffen; alle KI-Funktionen (Playbooks, Matchbericht-Entwürfe, Antwort-Vorlagen, Clustering) arbeiten damit – keine generische KI. myclub liefert der Vereins-KI zudem die operative DNA (wer macht was, Ämter, Termine, offene Anliegen). |
-| **K7 Vereins-Tempo** | **Zero-Config-Start** mit drei Dingen: Agenda, Einladung, Punkte (Standardregeln). Alles Weitere – Ämter, Stimme, Sitzungs-Inputs, Check-ins, Cockpit – schaltet die App **vorschlagend** frei, wenn der Verein bereit ist («Ihr habt 40 aktive Mitglieder – Zeit für Ämter-Factsheets?»). Definitionskatalog, Punkteregeln, Alert-Routing haben Defaults; Konfiguration ist Kür. «Machbar statt perfekt» – immer im Tempo des Vereins. |
+| **K6 Verzicht per Design** | (a) Kalender/Kanva **nie standalone**, Freischaltung nach innerer Struktur (§10.2 angepasst). (b) **Entlastungs-Test als Feature-Gate**: Jede Funktion weist aus, welche Vorstandszeit sie spart und welche sie kostet – netto negativ wird nicht gebaut. (c) **Vereins-DNA als Objekt**: Vereinsprofil mit Warum, Werten, Tonalität, Traditionen, Begriffen; alle KI-Funktionen (Playbooks, Matchbericht-Entwürfe, Antwort-Vorlagen, Clustering) arbeiten damit – keine generische KI. nexus liefert der Vereins-KI zudem die operative DNA (wer macht was, Ämter, Termine, offene Anliegen). |
+| **K7 Vereins-Tempo** | **Zero-Config-Start** mit drei Dingen: Agenda, Einladung, Punkte (Standardregeln). Alles Weitere – Ämter, Stimme, Sitzungs-Inputs, Check-ins, Cockpit – schaltet die App **vorschlagend** frei, wenn der Verein bereit ist («Ihr habt 40 aktive Mitglieder – Zeit für Ämter-Factsheets?»). Definitionskatalog, Punkteregeln, Alert-Routing haben Defaults; Konfiguration ist Kür. «Routine statt Kraftakt» – im eigenen Tempo des Vereins. |
 
-**Erfolgsdefinition von myclub (Kennzahlen-Test des Manifests)**: Verantwortungsverteilung, Nachfolge-Vorlauf, Verbindungs-Quote und ein freiwilliger, privater **Entlastungs-Index** der Funktionäre («Wie tragfähig fühlt sich dein Amt gerade an?», Check-in-Mechanik §12.6) – Mitgliederwachstum bleibt sichtbar, ist aber Folge, nicht Ziel.
+**Erfolgsdefinition von nexus (Kennzahlen-Test des Manifests)**: Verantwortungsverteilung, Nachfolge-Vorlauf, Verbindungs-Quote und ein freiwilliger, privater **Entlastungs-Index** der Funktionäre («Wie tragfähig fühlt sich dein Amt gerade an?», Check-in-Mechanik §12.6) – Mitgliederwachstum bleibt sichtbar, ist aber Folge, nicht Ziel.
 
-**Verzichts-Liste myclub** (Produkt-Entsprechung von Manifest §8): keine Sichtbarkeit ohne Struktur · kein Feature, das dem Vorstand netto Aufgaben aufbürdet · keine generische KI · keine Schuldnarrative · kein Versprechen schneller Mitgliederzahlen.
+**Verzichts-Liste nexus** (Produkt-Entsprechung von Manifest §8): keine Sichtbarkeit ohne Struktur · kein Feature, das dem Vorstand netto Aufgaben aufbürdet · keine generische KI · keine Schuldnarrative · kein Versprechen schneller Mitgliederzahlen.
