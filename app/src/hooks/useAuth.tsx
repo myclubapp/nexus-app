@@ -28,6 +28,14 @@ interface AuthContextValue {
    */
   authError: string | null;
   clearAuthError: () => void;
+  /**
+   * Meldet einen Anmeldefehler, der ausserhalb einer Seite entstanden ist.
+   *
+   * `/auth/verify` löst den Anmeldelink selbst ein (UC-005 A5) und ist beim
+   * Scheitern schon auf dem Weg zum Anmeldebildschirm. Ohne diesen Weg bliebe
+   * die Begründung dort, wo niemand mehr hinsieht.
+   */
+  reportAuthError: (message: string) => void;
   signInWithMagicLink: (email: string) => Promise<void>;
   signInWithPassword: (email: string, password: string) => Promise<void>;
   /** Setzt oder ändert das Passwort des angemeldeten Kontos (UC-008). */
@@ -240,6 +248,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const clearAuthError = useCallback(() => setAuthError(null), []);
+  const reportAuthError = useCallback((message: string) => setAuthError(message), []);
 
   /**
    * Abmelden gilt für **alle** Geräte. `signOut()` ohne `scope` ist der
@@ -259,6 +268,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       initialising,
       authError,
       clearAuthError,
+      reportAuthError,
       signInWithMagicLink,
       signInWithPassword,
       setPassword,
@@ -269,6 +279,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       initialising,
       authError,
       clearAuthError,
+      reportAuthError,
       signInWithMagicLink,
       signInWithPassword,
       setPassword,

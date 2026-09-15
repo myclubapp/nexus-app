@@ -38,7 +38,7 @@
  */
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 import { authAction, authMail } from './template.ts';
-import { confirmUrl, verifySignature } from './hook.ts';
+import { confirmUrl, verifyLink, verifySignature } from './hook.ts';
 import { catchSmtpRejections, fromHeader, openClient, readSmtpConfig } from '../_shared/smtp.ts';
 import { LOCALES, type Locale, type MailBrand } from '../_shared/mail.ts';
 
@@ -51,8 +51,9 @@ interface HookPayload {
     user_metadata?: Record<string, unknown> | null;
   };
   email_data?: {
-    // GoTrue schickt den Code weiterhin mit. Die Mail zeigt ihn nicht mehr an:
-    // Die App hat kein `verifyOtp`, der Code hätte nirgends hingekonnt.
+    // GoTrue schickt den Code zum Abtippen weiterhin mit. Die Mail zeigt ihn
+    // nicht an: Der Anmeldebildschirm hat kein Feld dafür. Eingelöst wird der
+    // `token_hash` darunter – über die Schaltfläche oder über `/auth/verify`.
     token?: string;
     token_hash?: string;
     redirect_to?: string;
@@ -120,6 +121,10 @@ Deno.serve(async (request) => {
     action,
     payload.email_data?.redirect_to ?? null,
   );
+  // Der zweite Weg in dieselbe Anmeldung – die Adresse, die sich kopieren
+  // lässt (siehe `verifyLink()`). `APP_URL` ist dasselbe Secret wie bei
+  // `send-mail`; fehlt es, trägt die Mail nur die Schaltfläche.
+  const copyLinkUrl = verifyLink(Deno.env.get('APP_URL'), tokenHash, action);
 
   // Alles Weitere läuft **hinter** der Antwort (siehe Kopf): Verein holen,
   // Blatt bauen, über SMTP verschicken.
@@ -159,6 +164,7 @@ Deno.serve(async (request) => {
       locale,
       brand,
       confirmUrl: link,
+      copyUrl: copyLinkUrl,
       year: new Date().getFullYear(),
     });
 

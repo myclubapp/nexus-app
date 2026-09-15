@@ -135,6 +135,19 @@ supabase db push            # Migrationen deployen
   `AndroidManifest.xml` und `CLAIMED_PREFIXES` in `src/lib/deepLink.ts`. Die
   beanspruchten Pfade – heute `/tabs` und `/invite` – müssen in allen vier
   Zuordnungen dieselben sein.
-  **`/auth/callback` bleibt bewusst unbeansprucht.** Fängt die App den Rückweg
-  einer Anmeldung ab, die im Browser begonnen hat, fehlt ihr der
-  PKCE-Verifier und der Tausch scheitert wortlos.
+  **`/auth/callback` und `/auth/verify` bleiben bewusst unbeansprucht.** Fängt
+  die App den Rückweg einer Anmeldung ab, die im Browser begonnen hat, fehlt
+  ihr der PKCE-Verifier und der Tausch scheitert wortlos.
+- **Der Anmeldelink hat zwei Wege, und nur einer ist kopierbar.** Die
+  Schaltfläche der Mail zeigt auf `/auth/v1/verify` von GoTrue; der schickt
+  danach einen **PKCE-Code** an das Ziel, das die App bei der Anfrage genannt
+  hat. Einlösen lässt der sich nur dort, wo der Verifier liegt – im Browser,
+  der die Anmeldung gestartet hat, oder in der App. Eine kopierte Adresse
+  landet fast nie dort und scheitert wortlos. Deshalb trägt die Mail darunter
+  eine zweite, ausgeschriebene Adresse auf `/auth/verify` mit dem
+  **Token-Hash**: Den löst die App über `verifyOtp()` ein, ohne Verifier und
+  ohne Gerätebindung (`verifyLink()` in `supabase/functions/auth-mail/hook.ts`,
+  `AuthVerifyPage`). Beide Wege lösen denselben Token ein – wer den einen geht,
+  entwertet den anderen. `emailOtpType()` in `src/lib/authLink.ts` und
+  `authAction()` in `auth-mail/template.ts` müssen dieselben sechs Anlässe
+  kennen.

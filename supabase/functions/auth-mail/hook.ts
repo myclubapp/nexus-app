@@ -96,3 +96,42 @@ export function confirmUrl(
   if (redirectTo) url.searchParams.set('redirect_to', redirectTo);
   return url.toString();
 }
+
+/**
+ * Die Adresse zum Kopieren – derselbe Anmeldelink, nur ohne Gerätebindung.
+ *
+ * `confirmUrl()` oben zeigt auf den Prüfendpunkt von GoTrue. Der prüft den
+ * Token und schickt danach einen **PKCE-Code** an das Ziel, das die App bei
+ * der Anfrage genannt hat. Einlösen lässt sich der Code nur dort, wo der
+ * Verifier liegt: im Browser, der die Anmeldung gestartet hat, oder in der
+ * App hinter `ch.myclub.nexus://`. Kopiert man die Adresse in einen anderen
+ * Browser oder auf ein anderes Gerät, scheitert der Tausch wortlos – genau
+ * das, was eine kopierbare Adresse können müsste.
+ *
+ * Diese hier geht den anderen Weg: Sie trägt den Token-Hash an `/auth/verify`
+ * in der App, und die löst ihn über `verifyOtp()` selbst ein. Dieser Weg
+ * kennt kein PKCE, braucht keinen Verifier und wirkt deshalb in jedem
+ * Browser.
+ *
+ * Ohne `APP_URL` gibt es sie nicht; die Mail trägt dann nur die Schaltfläche.
+ */
+export function verifyLink(
+  appUrl: string | null | undefined,
+  tokenHash: string,
+  action: string,
+): string | null {
+  if (!appUrl) return null;
+  let url: URL;
+  try {
+    // Absolut gesetzt: Ein Pfad in `APP_URL` gehört nicht in die Adresse.
+    url = new URL('/auth/verify', appUrl);
+  } catch {
+    return null;
+  }
+  // Dieselbe Schranke wie in `safeUrl()`: Ein Anmeldelink ohne TLS wäre einer
+  // zum Mitlesen.
+  if (url.protocol !== 'https:') return null;
+  url.searchParams.set('token_hash', tokenHash);
+  url.searchParams.set('type', action);
+  return url.toString();
+}

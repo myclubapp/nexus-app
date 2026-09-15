@@ -5,6 +5,7 @@ import { assert, assertEquals, assertStringIncludes } from 'jsr:@std/assert@1';
 import {
   brandColor,
   button,
+  copyLink,
   escapeHtml,
   facts,
   onBrand,
@@ -103,4 +104,20 @@ Deno.test('Bausteine: Warum, Werte und Schaltfläche tragen HTML und Text', () =
   const ok = button('Öffnen', 'https://app.example.ch/x', '#ffeb3b');
   assertStringIncludes(ok.html, 'color: #1a1a1a'); // helle Vereinsfarbe, dunkle Schrift
   assertEquals(ok.text, 'Öffnen: https://app.example.ch/x');
+});
+
+// Die Adresse zum Kopieren steht neben der Schaltfläche, weil sich eine
+// Schaltfläche nicht markieren lässt (UC-005 A5).
+Deno.test('Kopieradresse: ausgeschrieben im Blatt, eigene Zeile im Text', () => {
+  const link = copyLink('Oder kopieren:', 'https://app.example.ch/auth/verify?token_hash=abc');
+  // Ausgeschrieben – und trotzdem anklickbar.
+  assertStringIncludes(link.html, 'href="https://app.example.ch/auth/verify?token_hash=abc"');
+  assertStringIncludes(link.html, '>https://app.example.ch/auth/verify?token_hash=abc</a>');
+  // Kein Mailprogramm soll sie am Rand abschneiden.
+  assertStringIncludes(link.html, 'word-break: break-all');
+  // Eigene Zeile: Hinter einem Doppelpunkt hängen manche Programme das
+  // Satzzeichen an den Link.
+  assertEquals(link.text, 'Oder kopieren:\nhttps://app.example.ch/auth/verify?token_hash=abc');
+
+  assertEquals(copyLink('Oder kopieren:', 'http://unsicher.example'), { html: '', text: '' });
 });

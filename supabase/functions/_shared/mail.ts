@@ -196,6 +196,28 @@ export function button(label: string, url: string, color: string): MailSection {
   };
 }
 
+/**
+ * Die Adresse zum Kopieren – unter einer Schaltfläche, die dasselbe Ziel hat.
+ *
+ * Eine Schaltfläche lässt sich antippen, aber nicht markieren. Wer die Mail
+ * auf dem einen Gerät liest und sich auf dem anderen anmelden will, braucht
+ * die Adresse als Text. Deshalb steht sie hier ausgeschrieben – in einem
+ * Kasten, damit sie nicht wie ein Satz gelesen wird, und mit
+ * `word-break: break-all`, damit kein Mailprogramm sie am Rand abschneidet.
+ *
+ * Der Textteil setzt die Adresse auf eine **eigene** Zeile: Steht sie hinter
+ * einem Doppelpunkt, hängen manche Programme das Satzzeichen an den Link.
+ */
+export function copyLink(label: string, url: string): MailSection {
+  const safe = safeUrl(url);
+  if (!safe) return { html: '', text: '' };
+  return {
+    html: `<p style="margin: 0 0 6px; font-family: ${FONT}; font-size: 14px; line-height: 20px; color: #777777;">${escapeHtml(label)}</p>
+              <p style="margin: 0 0 18px; padding: 10px 12px; background-color: #f6f6f6; border: 1px solid #e6e6e6; border-radius: 6px; font-family: ${FONT}; font-size: 13px; line-height: 19px; color: #555555; word-break: break-all;"><a href="${escapeHtml(safe)}" style="color: #555555; text-decoration: none;">${escapeHtml(safe)}</a></p>`,
+    text: `${label}\n${safe}`,
+  };
+}
+
 /** Ein Link als Zeile, für alles, was keine Schaltfläche verdient. */
 export function linkLine(label: string, url: string, color: string): MailSection {
   const safe = safeUrl(url);

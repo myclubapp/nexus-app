@@ -1,7 +1,7 @@
 # Manual Test Plan: UC-005 — Anmelden
 
 **Use Case:** [UC-005](../use_cases/UC-005-anmelden.md)
-**Geltungsbereich:** Anmeldelink, Passwort-Anmeldung, Deep-Link-Rücksprung, Sitzung
+**Geltungsbereich:** Anmeldelink (Schaltfläche und Adresse zum Kopieren), Passwort-Anmeldung, Deep-Link-Rücksprung, Sitzung
 **Anforderungen:** FR-001, FR-002, FR-003, FR-110
 **Regeln:** BR-017, BR-018, BR-019
 **Erstellt:** 2026-09-08
@@ -178,6 +178,26 @@
 
 ---
 
+## TC-011: Anmeldelink kopieren und woanders einfügen (A5)
+
+**Priority:** High
+**Preconditions:** Niemand ist angemeldet. Konto **K1**. Der Anmeldelink wird
+auf **Gerät A** angefordert (z. B. der App auf dem Telefon), die E-Mail auf
+**Gerät B** oder in einem anderen Browser gelesen.
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Auf Gerät A einen Anmeldelink anfordern | Der Hinweis mit der Adresse erscheint | | |
+| 2 | Die E-Mail öffnen | Unter der Schaltfläche steht eine **ausgeschriebene Adresse** auf `app.my-club.ch/auth/verify` mit dem Hinweis «Geht die Schaltfläche nicht? …» | | |
+| 3 | Die Adresse markieren und kopieren | Sie lässt sich als Text markieren – nicht nur über «Link kopieren» im Kontextmenü | | |
+| 4 | Sie in einem Browser auf Gerät B einfügen und öffnen | Kurz eine Ladeanzeige, danach ist die Person **angemeldet** | | |
+| 5 | Wohin die App führt | Dashboard des zuletzt genutzten Vereins, sonst Onboarding | | |
+| 6 | Zurück auf Gerät A die **Schaltfläche** derselben E-Mail antippen | Der Anmeldebildschirm mit «Dieser Anmeldelink ist abgelaufen oder wurde bereits verwendet.» – beide Wege teilen sich einen Token (BR-018) | | |
+| 7 | Einen neuen Link anfordern und diesmal die **Schaltfläche** antippen | Die Anmeldung geht durch wie in TC-001 | | |
+| 8 | Die kopierte Adresse ein zweites Mal öffnen | Derselbe Hinweis wie in Schritt 6, **keine** weisse Seite | | |
+
+---
+
 ## Test Matrix
 
 | Device / Browser | OS / Version | Screen Size | Status |
@@ -206,6 +226,7 @@
 | TC-008 | Vier Sprachen | High | |
 | TC-009 | Darstellung und Bedienung auf dem Gerät | Medium | |
 | TC-010 | Ohne Netz | Medium | |
+| TC-011 | Anmeldelink kopieren und woanders einfügen | High | |
 
 **Overall Result:** ☐ Pass ☐ Fail
 **Tester:** ******\_\_\_******
