@@ -1165,8 +1165,8 @@
     },
     "finance": {
       "title": "Finanzen",
-      "source": "Aus dem Zahlungsstatus. Dieses Modul ist noch nicht in Betrieb.",
-      "grow": "Sobald Rechnungen dazukommen, zählt hier pünktliche Zahlung."
+      "source": "Aus der pünktlichen Bezahlung deiner Rechnungen.",
+      "grow": "Rechnungen vor dem Fälligkeitsdatum begleichen."
     },
     "network": {
       "title": "Netzwerk",

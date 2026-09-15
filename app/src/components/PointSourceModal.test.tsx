@@ -93,6 +93,27 @@ describe('PointSourceFields', () => {
     expect(chip('Trainingsengagement').getAttribute('aria-checked')).toBe('false');
   });
 
+  it('zeigt «Finanzen» als ganze Dimension, ohne Säule darunter', () => {
+    const { container, onChange } = render(ALL_POINTS, [
+      ...pillars,
+      { pillar: null, dimension: 'finance' },
+    ]);
+
+    const headers = [...container.querySelectorAll('ion-list-header')].map((element) =>
+      element.textContent?.trim(),
+    );
+    expect(headers).toContain('Finanzen');
+
+    // Unter «Finanzen» steht genau ein Chip – die Dimension selbst.
+    const chips = [...container.querySelectorAll('ion-list')]
+      .at(headers.indexOf('Finanzen'))!
+      .querySelectorAll('ion-chip');
+    expect(chips).toHaveLength(1);
+
+    fireEvent.click(chips[0]);
+    expect(onChange).toHaveBeenCalledWith({ kind: 'dimension', dimension: 'finance' });
+  });
+
   it('kommt ohne Säulen ohne Abschnitt aus', () => {
     render(ALL_POINTS, []);
 

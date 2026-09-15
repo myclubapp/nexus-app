@@ -1165,8 +1165,8 @@
     },
     "finance": {
       "title": "Finances",
-      "source": "De l’état des paiements. Ce module n’est pas encore en service.",
-      "grow": "Dès que les factures arriveront, le paiement à temps comptera ici."
+      "source": "Du paiement ponctuel de tes factures.",
+      "grow": "Régler les factures avant la date d'échéance."
     },
     "network": {
       "title": "Réseau",

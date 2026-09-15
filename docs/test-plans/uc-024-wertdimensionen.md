@@ -3,7 +3,7 @@
 **Use Case:** [UC-024](../use_cases/UC-024-wertdimensionen-einsehen.md)
 **Geltungsbereich:** Netzdiagramm, Vergleichslinien, nicht erhobene Dimensionen, Führungssicht
 **Anforderungen:** FR-071, FR-072
-**Regeln:** BR-100 bis BR-104
+**Regeln:** BR-100 bis BR-104, BR-209
 **Erstellt:** 2026-09-09
 
 ## Vorbereitung
@@ -40,11 +40,28 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Die Zeile «Finanzen» ansehen | Rechts steht **«nicht erhoben»**, keine Zahl | | |
+| 1 | Regel «Rechnung pünktlich bezahlt» im Verein **deaktivieren** | Die Zeile «Finanzen» zeigt rechts **«nicht erhoben»**, keine Zahl | | |
 | 2 | Das Diagramm ansehen | Auf der Finanz-Achse liegt **kein** Punkt – die Fläche lässt sie aus | | |
-| 3 | «Finanzen» antippen | Die Erklärung sagt, dass das Modul noch nicht in Betrieb ist | | |
+| 3 | Die Regel wieder **aktivieren** | «Finanzen» ist erhoben und zeigt einen Wert (0, solange niemand eine Rechnung fristgerecht bezahlt hat) | | |
 | 4 | Säule 4 (Vereinsleben) im Verein deaktivieren | «Netzwerk» erscheint ebenfalls als «nicht erhoben», nicht als 0 | | |
 | 5 | Säule 2 (Wettkampf) prüfen | «Engagement» bleibt erhoben – Säule 1 ist aktiv | | |
+
+---
+
+## TC-002a: Finanzen hat eine Quelle (BR-209, FR-119)
+
+**Priority:** High
+**Preconditions:** Die Regel `invoice_on_time` ist aktiv; für **M1** ist eine
+Rechnung fristgerecht bezahlt und abgeglichen (UC-047).
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als **M1** «Meine Stärken» öffnen | «Finanzen» trägt einen Wert – nicht «nicht erhoben» | | |
+| 2 | «Finanzen» antippen | Die Erklärung nennt die pünktliche Bezahlung, **nicht** ein Modul, das noch kommt | | |
+| 3 | «Treue» ansehen | Die Zahlungspunkte zählen dort **nicht** mehr mit | | |
+| 4 | Im Punkteverlauf die Buchung «Rechnung pünktlich bezahlt» suchen | Sie steht unverändert in Säule 6 – die Punktevergabe hat sich nicht geändert | | |
+| 5 | In der Rangliste das Blatt «Punktequelle» öffnen | «Finanzen» steht als Gruppe da, mit genau einem Chip und **ohne** Säule darunter | | |
+| 6 | «Finanzen» in der Rangliste wählen | Nur die Zahlungspunkte zählen | | |
 
 ---
 

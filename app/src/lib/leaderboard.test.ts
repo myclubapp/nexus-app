@@ -207,4 +207,22 @@ describe('sourceGroups', () => {
   it('kommt mit einem Verein ohne jede Buchung zurecht', () => {
     expect(sourceGroups([])).toEqual([]);
   });
+
+  it('nimmt eine Dimension ohne eigene Säule als ganze Wahl auf', () => {
+    // «Finanzen» entsteht aus `invoice_on_time` **innerhalb** von Säule 6
+    // (0093) – es gibt darunter nichts Feineres zu wählen, die Dimension
+    // selbst muss deshalb wählbar sein.
+    const groups = sourceGroups([...clubPillars, { pillar: null, dimension: 'finance' }]);
+    const finance = groups.find((group) => group.dimension === 'finance')!;
+
+    expect(finance.pillars).toEqual([]);
+    expect(finance.selectable).toBe(true);
+    // Und sie steht an ihrem Platz im Netzdiagramm, nicht hinten dran.
+    expect(groups.map((group) => group.dimension)).toEqual([
+      'engagement',
+      'volunteering',
+      'finance',
+      'network',
+    ]);
+  });
 });

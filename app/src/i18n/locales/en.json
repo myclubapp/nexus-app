@@ -1165,8 +1165,8 @@
     },
     "finance": {
       "title": "Finance",
-      "source": "From payment status. This module is not in service yet.",
-      "grow": "Once invoices arrive, paying on time will count here."
+      "source": "From paying your invoices on time.",
+      "grow": "Settle invoices before the due date."
     },
     "network": {
       "title": "Network",

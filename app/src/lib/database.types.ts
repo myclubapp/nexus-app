@@ -36,10 +36,13 @@ type Fn = Generated['public']['Functions'];
 export type Database = Omit<Generated, 'public'> & {
   public: Omit<Generated['public'], 'Functions'> & {
     Functions: Omit<Fn, 'leaderboard_rows' | 'team_ranking_rows'> & {
-      /** `0092`: die Säulen dieses Vereins mit ihrer Wertdimension. */
+      /**
+       * `0092`/`0093`: die Säulen dieses Vereins mit ihrer Wertdimension.
+       * `pillar` ist `null` für eine Dimension ohne eigene Säule («Finanzen»).
+       */
       club_pillars: {
         Args: { p_club_id: string };
-        Returns: { pillar: number; dimension: string | null }[];
+        Returns: { pillar: number | null; dimension: string | null }[];
       };
       leaderboard_rows: {
         Args: Fn['leaderboard_rows']['Args'] & { p_dimension?: string };

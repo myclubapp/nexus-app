@@ -86,7 +86,12 @@ export function ownRank(rows: readonly LeaderboardEntry[]): number | null {
  * die Rangliste rechnet.
  */
 export interface ClubPillar {
-  pillar: Pillar;
+  /**
+   * `null` heisst: eine Dimension **ohne eigene Säule**. «Finanzen» entsteht
+   * aus der Regel `invoice_on_time` innerhalb von Säule 6 (`0093`) – sie ist
+   * als Ganzes wählbar, darunter gibt es nichts Feineres.
+   */
+  pillar: Pillar | null;
   /** `null`, falls der Server eine Säule ohne Dimension führt. */
   dimension: Dimension | null;
 }
@@ -156,9 +161,10 @@ export interface SourceGroup {
   /**
    * Ist die ganze Dimension eine eigene Wahl?
    *
-   * Nur, wenn mehr als eine Säule darunter liegt. «Netzwerk» besteht allein
-   * aus «Vereinsleben» – zwei Zeilen für dieselbe Menge wären eine Wahl ohne
-   * Unterschied.
+   * Nicht, wenn genau eine Säule darunter liegt: «Netzwerk» besteht allein
+   * aus «Vereinsleben», zwei Zeilen für dieselbe Menge wären eine Wahl ohne
+   * Unterschied. Mit **keiner** Säule darunter ist sie dagegen die einzige
+   * Wahl, die es dort gibt – so steht «Finanzen» in der Liste.
    */
   selectable: boolean;
 }
@@ -176,7 +182,7 @@ export function sourceGroups(rows: readonly ClubPillar[]): SourceGroup[] {
 
   for (const row of rows) {
     const pillars = byDimension.get(row.dimension) ?? [];
-    if (!pillars.includes(row.pillar)) pillars.push(row.pillar);
+    if (row.pillar !== null && !pillars.includes(row.pillar)) pillars.push(row.pillar);
     byDimension.set(row.dimension, pillars);
   }
 
@@ -188,6 +194,6 @@ export function sourceGroups(rows: readonly ClubPillar[]): SourceGroup[] {
     .map(([dimension, pillars]) => ({
       dimension,
       pillars: [...pillars].sort((a, b) => a - b),
-      selectable: dimension !== null && pillars.length > 1,
+      selectable: dimension !== null && pillars.length !== 1,
     }));
 }

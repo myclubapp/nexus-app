@@ -20,7 +20,8 @@
 3. System legt den Team-Durchschnitt und den Vereins-Durchschnitt als Vergleichslinien darüber.
 4. System benennt die stärkste Dimension in positiver Formulierung.
 5. Mitglied tippt eine Dimension an.
-6. System erklärt, aus welchen Säulen die Dimension entsteht und welche Beiträge sie erhöhen.
+6. System erklärt, woraus die Dimension entsteht – aus ihren Säulen, bei «Finanzen» aus der
+   pünktlichen Bezahlung – und welche Beiträge sie erhöhen.
 
 ## Alternative Flows
 
@@ -81,6 +82,18 @@ Die Selbstsicht benennt Stärken. Sie enthält keine Gesamtnote und keinen Rang.
 ### BR-102: Keine Rangliste des Werts
 
 Es existiert keine Ansicht, die Mitglieder nach ihren Wertdimensionen sortiert – weder für Trainer:innen noch für den Vorstand.
+
+### BR-209: Die Dimension einer Buchung entscheidet der Regelcode
+
+Die Zuordnung läuft über `dimension_of_rule(pillar, code)` (0093): In aller
+Regel gilt die Dimension der Säule, `invoice_on_time` zählt jedoch zu
+«Finanzen» statt zu «Treue». Säule 6 («Verlässlichkeit & Administration»)
+trägt beides – Antwortverhalten und Zahlungsmoral – und ist damit gröber als
+die Dimension.
+
+«Finanzen» ist deshalb die einzige Dimension **ohne eigene Säule**. Eine achte
+Säule wäre der falsche Weg: Das Konzept kennt sieben, und die Punktevergabe
+selbst ändert sich durch die feinere Zuordnung um keinen Punkt.
 
 ### BR-103: Nicht erhoben ist nicht null
 

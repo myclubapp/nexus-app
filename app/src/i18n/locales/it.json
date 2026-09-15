@@ -1165,8 +1165,8 @@
     },
     "finance": {
       "title": "Finanze",
-      "source": "Dallo stato dei pagamenti. Questo modulo non è ancora in funzione.",
-      "grow": "Appena arriveranno le fatture, qui conterà il pagamento puntuale."
+      "source": "Dal pagamento puntuale delle tue fatture.",
+      "grow": "Saldare le fatture entro la scadenza."
     },
     "network": {
       "title": "Rete",

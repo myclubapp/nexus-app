@@ -217,7 +217,8 @@ export function useClubPillars() {
       });
       if (error) throw new Error(error.message);
       return (data ?? []).map((row) => ({
-        pillar: row.pillar as ClubPillar['pillar'],
+        // `null` ist eine Dimension ohne eigene Säule – «Finanzen» (`0093`).
+        pillar: (row.pillar ?? null) as ClubPillar['pillar'],
         dimension: DIMENSIONS.includes(row.dimension as Dimension)
           ? (row.dimension as Dimension)
           : null,
