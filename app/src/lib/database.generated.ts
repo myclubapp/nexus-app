@@ -932,6 +932,8 @@ export type Database = {
           created_at: string
           duties: Json
           factsheet_path: string | null
+          greeting: Json
+          greeting_image_url: string | null
           held_since: string | null
           holder_member_id: string | null
           hours_per_season: string | null
@@ -951,6 +953,8 @@ export type Database = {
           created_at?: string
           duties?: Json
           factsheet_path?: string | null
+          greeting?: Json
+          greeting_image_url?: string | null
           held_since?: string | null
           holder_member_id?: string | null
           hours_per_season?: string | null
@@ -970,6 +974,8 @@ export type Database = {
           created_at?: string
           duties?: Json
           factsheet_path?: string | null
+          greeting?: Json
+          greeting_image_url?: string | null
           held_since?: string | null
           holder_member_id?: string | null
           hours_per_season?: string | null
@@ -2172,12 +2178,14 @@ export type Database = {
           email_wanted: boolean
           id: string
           link: string | null
+          mail_template: string | null
           push_after: string | null
           push_sent_at: string | null
           push_wanted: boolean
           read_at: string | null
           title: string
           user_id: string
+          why: string | null
         }
         Insert: {
           body?: string | null
@@ -2192,12 +2200,14 @@ export type Database = {
           email_wanted?: boolean
           id?: string
           link?: string | null
+          mail_template?: string | null
           push_after?: string | null
           push_sent_at?: string | null
           push_wanted?: boolean
           read_at?: string | null
           title: string
           user_id: string
+          why?: string | null
         }
         Update: {
           body?: string | null
@@ -2212,12 +2222,14 @@ export type Database = {
           email_wanted?: boolean
           id?: string
           link?: string | null
+          mail_template?: string | null
           push_after?: string | null
           push_sent_at?: string | null
           push_wanted?: boolean
           read_at?: string | null
           title?: string
           user_id?: string
+          why?: string | null
         }
         Relationships: [
           {
@@ -3350,6 +3362,15 @@ export type Database = {
         Args: { p_club_id: string; p_kind: string; p_reference: string }
         Returns: undefined
       }
+      mail_brand: {
+        Args: { p_invite_code?: string; p_user_id?: string }
+        Returns: {
+          club_color: string
+          club_logo: string
+          club_name: string
+          locale: string
+        }[]
+      }
       mark_attendance: {
         Args: { p_event_id: string; p_member_id: string; p_present?: boolean }
         Returns: number
@@ -3468,9 +3489,11 @@ export type Database = {
           p_category: string
           p_club_id?: string
           p_link?: string
+          p_template?: string
           p_title: string
           p_urgent?: boolean
           p_user_id: string
+          p_why?: string
         }
         Returns: undefined
       }
@@ -3489,7 +3512,9 @@ export type Database = {
           category: string
           club_color: string
           club_id: string
+          club_logo: string
           club_name: string
+          club_why: string
           created_at: string
           display_name: string
           email: string
@@ -3497,8 +3522,11 @@ export type Database = {
           id: string
           link: string
           locale: string
+          mail_template: string
+          payload: Json
           title: string
           user_id: string
+          why: string
         }[]
       }
       preview_invite: {
@@ -3536,6 +3564,10 @@ export type Database = {
           muted: boolean
           notified: number
         }[]
+      }
+      pulse_payload: {
+        Args: { p_keep?: Json; p_locale?: string; p_pulse_id: string }
+        Returns: Json
       }
       push_decision: {
         Args: { p_at?: string; p_category: string; p_user_id: string }
@@ -3746,6 +3778,10 @@ export type Database = {
           p_quiet_from?: string
           p_quiet_to?: string
         }
+        Returns: undefined
+      }
+      set_office_greeting: {
+        Args: { p_greeting?: Json; p_image?: string; p_role_id: string }
         Returns: undefined
       }
       set_office_points: {
@@ -3988,6 +4024,10 @@ export type Database = {
         }[]
       }
       voice_quota_left: { Args: { p_club_id: string }; Returns: number }
+      welcome_member: {
+        Args: { p_club_id: string; p_user_id: string }
+        Returns: undefined
+      }
       withdraw_join_request: {
         Args: { p_request_id: string }
         Returns: undefined
