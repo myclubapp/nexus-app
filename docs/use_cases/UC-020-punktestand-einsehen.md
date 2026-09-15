@@ -81,6 +81,8 @@ Die Saisonzuordnung einer Buchung folgt derselben Berechnung in Datenbank und Ap
 
 «Nächste Punkte» berücksichtigt Team-Zugehörigkeit, Beitrags-Profil und bereits übernommene Beiträge.
 
+Je Termin steht höchstens **ein** Schicht-Vorschlag, die früheste offene Schicht. Ein Helferanlass trägt ein Dutzend Schichten; alle zu nennen füllte die kurze Liste mit demselben Anlass, und weil der Vorschlag ohnehin an den Termin führt, wäre die zweite Zeile dieselbe Adresse. Wer antippt, sieht am Termin alle offenen Schichten.
+
 ### BR-084: Keine Vergleichszahl im Dashboard
 
 Das Dashboard zeigt den eigenen Beitrag. Ein Rangvergleich gehört in die Rangliste und ist abwählbar.

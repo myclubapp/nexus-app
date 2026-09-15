@@ -359,6 +359,12 @@ export interface NextContribution {
  * Der Server stellt sie zusammen: Er kennt die Team-Zugehörigkeit, die
  * Unterdeckung jeder Schicht und den Geltungsbereich jeder Aufgabe. Im Client
  * wären das drei Abfragen und drei Kopien derselben Regeln.
+ *
+ * `(kind, refId)` ist der Schlüssel der Liste – auch in der Anzeige (Dashboard
+ * und `ContributionGoalCard`). Dass er eindeutig ist, hält die Abfrage: Ein
+ * Schicht-Vorschlag trägt den **Termin** als `refId`, und davon steht seit
+ * `0097` höchstens einer je Termin (BR-083). Fällt diese Begrenzung, wird aus
+ * einem Helferanlass mit zwölf Schichten wieder ein doppelter React-Key.
  */
 export function useNextContributions(limit = 5) {
   const { activeClub, activeMembership } = useClub();
