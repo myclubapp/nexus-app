@@ -1,10 +1,12 @@
 /**
  * Zentrales Stylesheet.
  *
- * Zwei Teile, und nur diese Datei enthält sie:
+ * Drei Teile, und nur diese Datei enthält sie:
  *   1. Farb-Tokens. Die Vereinsfarben überschreiben sie zur Laufzeit aus
  *      clubs.settings.theme (siehe src/lib/theme.ts) – kein Build pro Verein.
- *   2. Eine Handvoll `app-*`-Klassen für Abstände und Schriftgrössen, die
+ *   2. Die zwei Schriften der Marke. Anders als die Farben sind sie fest:
+ *      Ein Verein färbt die App, er beschriftet sie nicht.
+ *   3. Eine Handvoll `app-*`-Klassen für Abstände und Schriftgrössen, die
  *      Ionic nicht mitbringt. Alles andere kommt aus den Ionic-Komponenten
  *      selbst; Inline-Styles in Seiten sind nicht vorgesehen.
  */
@@ -60,6 +62,19 @@
   --app-health-info: var(--ion-color-success);
   --app-health-attention: var(--ion-color-warning);
   --app-health-urgent: var(--ion-color-danger);
+
+  /* Schrift. Dieselben zwei Familien wie auf my-club.ch: Space Grotesk auf
+     den Titeln, DM Sans im Fliesstext. Die Dateien liegen im Bündel
+     (@fontsource-variable, eingebunden in App.tsx), nicht auf Googles
+     Schriftserver. Die Namen mit «Variable» sind die der Pakete; der Name
+     ohne Zusatz fängt eine Schrift ab, die auf dem Gerät installiert ist. */
+  --app-font-title: 'Space Grotesk Variable', 'Space Grotesk', system-ui, sans-serif;
+  --app-font-text: 'DM Sans Variable', 'DM Sans', system-ui, sans-serif;
+
+  /* Ionic zieht die Schrift der ganzen App aus dieser Variablen. Sie gehört
+     auf `:root` und nicht auf `html`: Dort setzt `core.css` je Modus ein
+     `--ion-default-font`, und `html.ios` schlägt `html`. */
+  --ion-font-family: var(--app-font-text);
 
   /* Abstandsraster. Alle app-*-Klassen unten rechnen damit. */
   --app-space-1: 4px;
@@ -119,6 +134,27 @@
     --ion-color-danger-shade: #e04055;
     --ion-color-danger-tint: #ff5b71;
   }
+}
+
+/* --- Titel tragen die Display-Schrift ------------------------------------- */
+/* Titel ist hier alles, was eine Sache benennt: die Kopfzeile der Seite, die
+   Überschrift einer Karte oder eines Abschnitts – und die `h2` einer
+   Listenzeile, denn sie ist der Titel des Termins oder der Aufgabe. Alles
+   andere, auch Knöpfe und Zweitzeilen, bleibt in DM Sans.
+   Zwei Angaben, nicht eine: Die Eigenschaft deckt alles ab, was erbt; die
+   Variable erreicht die Stellen, an denen Ionic im Schattenbaum selbst
+   `--ion-font-family` einsetzt – etwa den grossen iOS-Titel. */
+ion-title,
+ion-card-title,
+ion-list-header,
+ion-item-divider,
+h1,
+h2,
+h3,
+.app-stat__value,
+.app-wizard__title {
+  --ion-font-family: var(--app-font-title);
+  font-family: var(--app-font-title);
 }
 
 /* Gruppierte Listen wirken auf getöntem Grund wie in den iOS-Einstellungen.
@@ -270,6 +306,9 @@ ion-tab-button.tab-selected .app-tab-icon-filled {
 .app-venue-map .maplibregl-ctrl-attrib,
 .app-venue-map .maplibregl-ctrl-attrib a {
   color: rgb(0 0 0 / 0.85);
+  /* MapLibre schreibt seiner Karte Helvetica vor; der Sprechblase am Spielort
+     und der Quellenangabe stünde das als einziger Fremdkörper im Bild. */
+  font-family: var(--app-font-text);
 }
 
 /* --- Fliesstext neben einer Liste (TextSection) ----------------------------

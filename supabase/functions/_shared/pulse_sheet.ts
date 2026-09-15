@@ -20,6 +20,8 @@ import {
   brandColor,
   button,
   escapeHtml,
+  FONT,
+  FONT_TITLE,
   heading,
   LOCALE_TAGS,
   paragraph,
@@ -29,8 +31,6 @@ import {
   type MailBrand,
   type MailSection,
 } from './mail.ts';
-
-const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 
 /** Die Abschnitte in fester Reihenfolge (BR-113). */
 export const PULSE_SECTIONS = ['happening', 'workingOn', 'joinIn'] as const;
@@ -205,7 +205,7 @@ export function pulseItems(
       return `<tr>
                   <td valign="top" width="3" bgcolor="${color}" style="width: 3px; line-height: 1px; font-size: 1px;">&nbsp;</td>
                   <td valign="top" style="padding: 0 0 14px 12px;">
-                    <p style="margin: 0 0 2px; font-family: ${FONT}; font-size: 16px; font-weight: 700; line-height: 22px; color: #111111;">${escapeHtml(item.title)}</p>
+                    <p style="margin: 0 0 2px; font-family: ${FONT_TITLE}; font-size: 16px; font-weight: 700; line-height: 22px; color: #111111;">${escapeHtml(item.title)}</p>
                     <p style="margin: 0; font-family: ${FONT}; font-size: 14px; line-height: 20px; color: #777777;">${escapeHtml(meta.join(' · '))}</p>
                     ${external ? `<p style="margin: 4px 0 0; font-family: ${FONT}; font-size: 14px; line-height: 20px;"><a href="${external}" style="color: ${color};">${escapeHtml(t.readOnSite)}</a></p>` : ''}
                   </td>

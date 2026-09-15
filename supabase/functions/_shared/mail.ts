@@ -128,7 +128,19 @@ export function onBrand(color: string): string {
 
 // --- Abschnitte -------------------------------------------------------------
 
-const FONT = 'Helvetica, Arial, sans-serif';
+/**
+ * Die zwei Schriften der Marke, dieselben wie in der App und auf my-club.ch.
+ *
+ * Geladen wird hier nichts: Webschriften kennen nur wenige Mailprogramme
+ * (Apple Mail ja, Gmail und Outlook nein), und eine Schrift nachzuladen hiesse,
+ * beim Öffnen der Mail eine Adresse anzufunken. Die Namen stehen deshalb bloss
+ * vorn in der Liste – wer die Schrift auf dem Gerät hat, liest die Mail im
+ * Auftritt der App, alle anderen in der Systemschrift. `Arial` steht am Schluss
+ * für Outlook auf Windows: Dessen Word-Maschine kennt `system-ui` nicht und
+ * griffe sonst zu einer Serifenschrift.
+ */
+export const FONT = "'DM Sans', system-ui, Arial, sans-serif";
+export const FONT_TITLE = "'Space Grotesk', system-ui, Arial, sans-serif";
 
 export function paragraph(text: string): MailSection {
   return {
@@ -139,7 +151,7 @@ export function paragraph(text: string): MailSection {
 
 export function heading(text: string): MailSection {
   return {
-    html: `<p style="margin: 22px 0 10px; font-family: ${FONT}; font-size: 17px; font-weight: 700; line-height: 24px; color: #111111;">${escapeHtml(text)}</p>`,
+    html: `<p style="margin: 22px 0 10px; font-family: ${FONT_TITLE}; font-size: 17px; font-weight: 700; line-height: 24px; color: #111111;">${escapeHtml(text)}</p>`,
     text: `\n${text}`,
   };
 }
@@ -235,7 +247,7 @@ export function steps(items: { title: string; body: string }[], color: string): 
       (item, index) => `<tr>
                   <td valign="top" width="30" style="padding: 0 12px 16px 0; font-family: ${FONT}; font-size: 16px; font-weight: 700; line-height: 22px; color: ${color};">${index + 1}.</td>
                   <td valign="top" style="padding: 0 0 16px;">
-                    <p style="margin: 0 0 2px; font-family: ${FONT}; font-size: 16px; font-weight: 700; line-height: 22px; color: #111111;">${escapeHtml(item.title)}</p>
+                    <p style="margin: 0 0 2px; font-family: ${FONT_TITLE}; font-size: 16px; font-weight: 700; line-height: 22px; color: #111111;">${escapeHtml(item.title)}</p>
                     <p style="margin: 0; font-family: ${FONT}; font-size: 15px; line-height: 22px; color: #555555;">${escapeHtml(item.body)}</p>
                   </td>
                 </tr>`,
@@ -264,7 +276,7 @@ export function notice(input: {
     html: `<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
                   <td style="padding: ${input.first ? '0 0 18px' : '18px 0'}; ${input.first ? '' : 'border-top: 1px solid #ebebeb;'}">
                     <p style="margin: 0 0 4px; font-family: ${FONT}; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: #8a8a8a;">${escapeHtml(input.meta)}</p>
-                    <p style="margin: 0 0 6px; font-family: ${FONT}; font-size: 18px; font-weight: 700; line-height: 24px; color: #111111;">${escapeHtml(input.title)}</p>
+                    <p style="margin: 0 0 6px; font-family: ${FONT_TITLE}; font-size: 18px; font-weight: 700; line-height: 24px; color: #111111;">${escapeHtml(input.title)}</p>
                     ${input.body ? `<p style="margin: 0 0 12px; font-family: ${FONT}; font-size: 16px; line-height: 24px; color: #444444;">${escapeHtml(input.body)}</p>` : ''}
                     ${input.why ? input.why.html : ''}
                     ${link ? link.html : ''}
@@ -292,7 +304,7 @@ function bandHtml(brand: MailBrand, color: string): string {
   const logoHtml = logo
     ? `<tr><td align="left" style="padding: 0 0 12px;"><img src="${escapeHtml(logo)}" alt="${escapeHtml(name)}" height="40" style="height: 40px; max-height: 40px; width: auto; border: 0; display: block;"></td></tr>`
     : '';
-  return `${logoHtml}<tr><td align="left" style="font-family: ${FONT}; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: ${ink};">${escapeHtml(name)}</td></tr>`;
+  return `${logoHtml}<tr><td align="left" style="font-family: ${FONT_TITLE}; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: ${ink};">${escapeHtml(name)}</td></tr>`;
 }
 
 export function renderShell(input: ShellInput): { html: string; text: string } {
@@ -321,7 +333,7 @@ export function renderShell(input: ShellInput): { html: string; text: string } {
         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin-top: -40px;">
           <tr>
             <td bgcolor="#ffffff" align="left" style="padding: 32px 30px 24px; border-radius: 6px;">
-              ${input.greeting ? `<p style="margin: 0 0 14px; font-family: ${FONT}; font-size: 20px; font-weight: 700; color: #111111;">${escapeHtml(input.greeting)}</p>` : ''}
+              ${input.greeting ? `<p style="margin: 0 0 14px; font-family: ${FONT_TITLE}; font-size: 20px; font-weight: 700; color: #111111;">${escapeHtml(input.greeting)}</p>` : ''}
               ${body.map((section) => section.html).join('\n              ')}
             </td>
           </tr>
