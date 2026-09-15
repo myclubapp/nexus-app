@@ -16,6 +16,7 @@ import {
 } from '@ionic/react';
 import { openOutline, personCircleOutline, share as shareIcon } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
+import { federationOf } from '../lib/federation';
 import { isSample } from '../lib/sample';
 import { formatDateTime } from '../lib/format';
 import { sanitizeNewsHtml } from '../lib/newsHtml';
@@ -57,6 +58,9 @@ export function NewsCard({ entry, fallbackAuthor, onOpen, onShare, full = false 
   const { t } = useTranslation();
   const isButton = onOpen !== undefined;
   const canShare = Boolean(entry.external_url) && onShare !== undefined;
+  // Der Verband, wenn der Beitrag von ihm kommt – sonst `null`. Die Kennung
+  // steht in `external_id` («<verband>:<beitrag>»), wie bei den Terminen.
+  const source = entry.source === 'federation' ? federationOf(entry) : null;
   // Nur im Detail, und nur einmal je Beitrag – das Entschärfen baut ein DOM.
   const article = useMemo(
     () => (full ? sanitizeNewsHtml(entry.body_html) : ''),
@@ -92,6 +96,15 @@ export function NewsCard({ entry, fallbackAuthor, onOpen, onShare, full = false 
             <>
               {' · '}
               <IonBadge color="medium">{t('sample.badge')}</IonBadge>
+            </>
+          )}
+          {/* FR-197: Ein Verbandsbeitrag ist nicht die Stimme des Vereins –
+              und er nennt den Verband beim Namen, nicht «vom Verband»: Ein
+              Verein kann an zwei Verbänden hängen (BR-180 sinngemäss). */}
+          {source && (
+            <>
+              {' · '}
+              <IonBadge color="tertiary">{t(`federation.name.${source}`)}</IonBadge>
             </>
           )}
         </IonCardSubtitle>

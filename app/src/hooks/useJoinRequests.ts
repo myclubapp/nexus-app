@@ -83,6 +83,14 @@ export function useMyJoinRequest() {
 export interface ClubLookup {
   clubId: string;
   clubName: string;
+  /**
+   * Nimmt dieser Verein offene Anfragen an (BR-258)?
+   *
+   * Steht hier und nicht erst im Fehler des Absendens: Ein Knopf, der sicher
+   * abgewiesen wird, ist ein falsches Versprechen – die Ansicht zeigt
+   * stattdessen den Weg über die Einladung.
+   */
+  acceptsRequests: boolean;
 }
 
 /**
@@ -102,7 +110,11 @@ export function useFindClub() {
 
       const row = data?.[0];
       return row?.club_id && row.club_name
-        ? { clubId: row.club_id, clubName: row.club_name }
+        ? {
+            clubId: row.club_id,
+            clubName: row.club_name,
+            acceptsRequests: row.accepts_requests === true,
+          }
         : null;
     },
   });

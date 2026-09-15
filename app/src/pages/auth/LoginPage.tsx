@@ -13,6 +13,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { isConfigured } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
+import { AuthShell } from '../../components/AuthShell';
 import { InlineError, NotConfiguredState } from '../../components/StateViews';
 import { LanguageSwitcher } from '../../components/LanguageSwitcher';
 import {
@@ -28,7 +29,8 @@ import {
  * Der Link ist der Standardweg (BR-017: kein Drittanbieter-Login). Das
  * Passwort ist der zweite Weg für alle, die gerade kein Postfach zur Hand
  * haben (A2). Diese Seite verwendet bewusst kein `AppPage`: Sie hat keine
- * Kopfzeile und keinen grossen Titel.
+ * Kopfzeile und keinen grossen Titel – das Gerüst ist `AuthShell`, dasselbe
+ * wie beim Onboarding, damit die beiden Seiten vor dem Verein zusammenpassen.
  */
 export function LoginPage() {
   const { t } = useTranslation();
@@ -87,101 +89,91 @@ export function LoginPage() {
   }
 
   return (
-    <IonPage>
-      <IonContent className="ion-padding">
-        <div className="app-centered app-centered--login">
+    <AuthShell title={t('auth.title')} footer={<LanguageSwitcher />}>
+      {status === 'sent' ? (
+        <>
           <IonText>
-            <h1>{t('auth.title')}</h1>
+            <p>{t('auth.checkInbox', { email })}</p>
           </IonText>
+          <IonButton fill="clear" onClick={() => setStatus('idle')}>
+            {t('auth.sendAgain')}
+          </IonButton>
+        </>
+      ) : (
+        <>
+          <IonSegment
+            value={method}
+            onIonChange={(e) => {
+              setMethod(e.detail.value as SignInMethod);
+              setError(null);
+              clearAuthError();
+            }}
+          >
+            <IonSegmentButton value="link">
+              <IonLabel>{t('auth.methodLink')}</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="password">
+              <IonLabel>{t('auth.methodPassword')}</IonLabel>
+            </IonSegmentButton>
+          </IonSegment>
 
-          {status === 'sent' ? (
-            <>
-              <IonText>
-                <p>{t('auth.checkInbox', { email })}</p>
+          <form onSubmit={handleSubmit} className="app-centered">
+            <IonText color="medium">
+              <p>
+                {method === 'link' ? t('auth.subtitle') : t('auth.passwordSubtitle')}
+              </p>
+            </IonText>
+
+            {/* `fill` gibt es nur im Material-Modus; ohne `mode="md"`
+                stünden die Felder im iOS-Modus als blosse Linien da
+                (Doku ion-input, «Filled Inputs»). */}
+            <IonInput
+              label={t('auth.email')}
+              labelPlacement="floating"
+              fill="outline"
+              mode="md"
+              type="email"
+              inputmode="email"
+              autocomplete="email"
+              enterkeyhint={method === 'link' ? 'send' : 'next'}
+              value={email}
+              onIonInput={(e) => setEmail(e.detail.value ?? '')}
+            />
+
+            {method === 'password' && (
+              <IonInput
+                label={t('auth.password')}
+                labelPlacement="floating"
+                fill="outline"
+                mode="md"
+                type="password"
+                autocomplete="current-password"
+                enterkeyhint="go"
+                value={password}
+                onIonInput={(e) => setPassword(e.detail.value ?? '')}
+              />
+            )}
+
+            {message && <InlineError message={message} />}
+
+            <IonButton type="submit" expand="block" disabled={status === 'sending'}>
+              {status === 'sending' ? (
+                <IonSpinner name="crescent" />
+              ) : method === 'link' ? (
+                t('auth.sendMagicLink')
+              ) : (
+                t('auth.signIn')
+              )}
+            </IonButton>
+
+            {method === 'password' && (
+              <IonText color="medium">
+                <p>{t('auth.noPasswordHint')}</p>
               </IonText>
-              <IonButton fill="clear" onClick={() => setStatus('idle')}>
-                {t('auth.sendAgain')}
-              </IonButton>
-            </>
-          ) : (
-            <>
-              <IonSegment
-                value={method}
-                onIonChange={(e) => {
-                  setMethod(e.detail.value as SignInMethod);
-                  setError(null);
-                  clearAuthError();
-                }}
-              >
-                <IonSegmentButton value="link">
-                  <IonLabel>{t('auth.methodLink')}</IonLabel>
-                </IonSegmentButton>
-                <IonSegmentButton value="password">
-                  <IonLabel>{t('auth.methodPassword')}</IonLabel>
-                </IonSegmentButton>
-              </IonSegment>
-
-              <form onSubmit={handleSubmit} className="app-centered">
-                <IonText color="medium">
-                  <p>
-                    {method === 'link' ? t('auth.subtitle') : t('auth.passwordSubtitle')}
-                  </p>
-                </IonText>
-
-                {/* `fill` gibt es nur im Material-Modus; ohne `mode="md"`
-                    stünden die Felder im iOS-Modus als blosse Linien da
-                    (Doku ion-input, «Filled Inputs»). */}
-                <IonInput
-                  label={t('auth.email')}
-                  labelPlacement="floating"
-                  fill="outline"
-                  mode="md"
-                  type="email"
-                  inputmode="email"
-                  autocomplete="email"
-                  enterkeyhint={method === 'link' ? 'send' : 'next'}
-                  value={email}
-                  onIonInput={(e) => setEmail(e.detail.value ?? '')}
-                />
-
-                {method === 'password' && (
-                  <IonInput
-                    label={t('auth.password')}
-                    labelPlacement="floating"
-                    fill="outline"
-                    mode="md"
-                    type="password"
-                    autocomplete="current-password"
-                    enterkeyhint="go"
-                    value={password}
-                    onIonInput={(e) => setPassword(e.detail.value ?? '')}
-                  />
-                )}
-
-                {message && <InlineError message={message} />}
-
-                <IonButton type="submit" expand="block" disabled={status === 'sending'}>
-                  {status === 'sending' ? (
-                    <IonSpinner name="crescent" />
-                  ) : method === 'link' ? (
-                    t('auth.sendMagicLink')
-                  ) : (
-                    t('auth.signIn')
-                  )}
-                </IonButton>
-
-                {method === 'password' && (
-                  <IonText color="medium">
-                    <p>{t('auth.noPasswordHint')}</p>
-                  </IonText>
-                )}
-              </form>
-            </>
-          )}
-
-          <LanguageSwitcher />
-        </div>
-      </IonContent>
-    </IonPage>
+            )}
+          </form>
+        </>
+      )}
+    </AuthShell>
   );
 }

@@ -24,7 +24,8 @@
 7. Vorstand bestätigt oder ändert den Saisonbeginn.
 8. System legt den Verein an, erzeugt einen eindeutigen Kurznamen aus dem Vereinsnamen, macht die gründende Person zum Vorstand und legt den zur Vereinsart passenden Satz Standard-Punkteregeln sowie die Standard-Terminlabels an.
 9. System legt zur Vereinsart passende, als Beispiel gekennzeichnete Inhalte an, damit kein Bildschirm leer bleibt (UC-037).
-10. System zeigt den Startbildschirm mit drei Handlungsangeboten: ersten Termin erfassen, Mitglieder einladen, Punkteregeln ansehen. Solange keine Vereins-Website verbunden ist, kommt als einmaliges Angebot der Import der Website-News dazu (UC-038, BR-171).
+10. System führt den Vorstand in den Einrichtungs-Assistenten (UC-051): Verband, Verbandsnews, Teams, Beispielinhalte, Mitglieder – jeder Schritt überspringbar.
+11. System zeigt den Startbildschirm mit drei Handlungsangeboten: ersten Termin erfassen, Mitglieder einladen, Punkteregeln ansehen. Solange keine Vereins-Website verbunden ist, kommt als einmaliges Angebot der Import der Website-News dazu (UC-038, BR-171). Die Überschrift der Karte führt zurück in den Assistenten (BR-259).
 
 ## Alternative Flows
 
@@ -84,4 +85,4 @@ Die gründende Person erhält die Rolle admin. Ein Verein hat zu jedem Zeitpunkt
 
 ### BR-004: Gründungsdauer
 
-Der Wizard umfasst höchstens drei Eingabeschritte, damit die Gründung in unter drei Minuten abgeschlossen ist.
+Der Wizard umfasst höchstens drei Eingabeschritte, damit die Gründung in unter drei Minuten abgeschlossen ist. Der Einrichtungs-Assistent aus UC-051 zählt nicht dazu: Er beginnt **nach** Schritt 8, ist vollständig überspringbar und fügt dem Verein nichts hinzu, was ohne ihn fehlte (BR-259).

@@ -34,6 +34,14 @@ export interface FederationConnection {
   lastError: string | null;
   /** Ob ein Schlüssel hinterlegt ist – **nicht** welcher (BR-153). */
   hasKey: boolean;
+  /**
+   * Stehen die Beiträge dieses Verbands im Feed (FR-197, BR-260)?
+   *
+   * Voreingestellt **aus**: Ein Verein verbindet den Verband wegen des
+   * Spielplans; die Medienmitteilungen sind eine zweite Frage, und sie wird
+   * gestellt, nicht vorausgesetzt.
+   */
+  newsEnabled: boolean;
 }
 
 /**
@@ -52,6 +60,33 @@ const KEY_REQUIRED: Record<Federation, boolean> = {
 
 export function requiresKey(federation: Federation): boolean {
   return KEY_REQUIRED[federation];
+}
+
+/**
+ * Liefert dieser Verband Beiträge für den Feed (FR-197)?
+ *
+ * Heute nur swiss unihockey: Er veröffentlicht über Publishr, und
+ * `sync-federation` liest diese Schnittstelle. Die drei übrigen Verbände haben
+ * keine – das alte Backend kratzt dort ihre Websites ab, und eine abgelesene
+ * HTML-Seite ist keine Zusage, auf die sich ein Verein verlassen soll.
+ *
+ * Die Frage steht hier und nicht als `true` im Formular: Kommt ein Verband
+ * dazu, ändert sich **eine** Zeile – wie bei `requiresKey()`.
+ *
+ * **Das Gegenstück ist `newsEndpoint()` in `supabase/functions/sync-federation`.**
+ * Beide Listen sagen dasselbe, und sie müssen zweimal dastehen: Die App kennt
+ * weder Endpunkte noch Secrets, der Dienst kennt kein UI. Wer einen Verband
+ * ergänzt, ergänzt beide.
+ */
+const NEWS_AVAILABLE: Record<Federation, boolean> = {
+  swissunihockey: true,
+  swissvolley: false,
+  swisshandball: false,
+  swissturnverband: false,
+};
+
+export function deliversNews(federation: Federation): boolean {
+  return NEWS_AVAILABLE[federation];
 }
 
 export type FederationProblem = 'clubIdMissing' | 'keyMissing';
@@ -116,6 +151,10 @@ export interface FederationSyncResult {
   teams?: number;
   games?: number;
   stale?: number;
+  /** FR-197: wie viele Verbandsbeiträge im Feed stehen. */
+  news?: number;
+  /** Warum keine – ohne dass die Verbindung deshalb als kaputt gilt (BR-155). */
+  newsError?: string;
   error?: string;
 }
 

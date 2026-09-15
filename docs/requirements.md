@@ -39,6 +39,8 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-009 | Beitritts-Anfrage stellen    | Als Gast möchte ich ohne Einladung eine Beitritts-Anfrage an einen Verein stellen, damit ich auch ohne Link dazustossen kann.                                   | Medium   | Implemented |
 | FR-010 | Beitritts-Anfrage entscheiden| Als Vorstand möchte ich Beitritts-Anfragen genehmigen oder ablehnen, damit nur berechtigte Personen Zugang zum Verein erhalten.                                 | High     | Implemented |
 | FR-011 | Mehrere Vereine              | Als Mitglied möchte ich mehreren Vereinen angehören und zwischen ihnen wechseln, damit ich nur ein Konto brauche.                                               | Medium   | Implemented |
+| FR-195 | Verein einrichten (Assistent) | Als Vorstand möchte ich nach der Gründung Schritt für Schritt durch die wichtigsten Einstellungen geführt werden – Verband, Teams, Beispielinhalte, Mitglieder –, damit ich nicht raten muss, was als Nächstes zu tun ist, und den Assistenten jederzeit verlassen kann (UC-051). | High     | Implemented |
+| FR-196 | Offene Anfragen als Vereinseinstellung | Als Vorstand möchte ich entscheiden, ob Aussenstehende mit unserem Kurznamen eine Beitritts-Anfrage stellen können, damit der Verein nicht ungefragt offen steht (UC-051, UC-004). | High     | Implemented |
 | FR-012 | Konto löschen                | Als Mitglied möchte ich mein Konto in der App löschen, damit ich die Kontrolle über meine Daten behalte (Store-Pflicht).                                        | High     | Implemented        |
 
 ### 1.2 Mitglieder & Teams
@@ -246,6 +248,7 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-155 | Bisherige App täglich abgleichen | Als System möchte ich die verbundene bisherige App jede Nacht abgleichen, damit neue und geänderte Termine von selbst in der Agenda stehen. | High     | Implemented   |
 | FR-156 | Kalendereintrag auf dem Gerät | Als Mitglied möchte ich einen zugesagten Termin oder eine übernommene Schicht mit Titel, Ort, Zeitfenster und Warum in den Kalender meines Geräts übernehmen, damit der Einsatz dort steht, wo ich meinen Tag plane. | Medium   | Implemented   |
 | FR-156 | Mitglieder, Teams und Zusagen aus der bisherigen App übernehmen | Als Vorstand möchte ich, dass mit den Terminen auch unsere Mitglieder, Teams, Trainings und die Zu- und Absagen aus der bisherigen myclub-App übernommen werden, damit die Umstellung ohne Neuerfassung der Personen gelingt. | High     | Implemented   |
+| FR-197 | Verbandsnews im Feed        | Als Vorstand möchte ich beim Verbinden eines Verbands entscheiden, ob auch seine Beiträge in unserem News-Feed erscheinen, damit wir den Feed bewusst füllen und nicht ungefragt (UC-035, UC-051). | Low      | Implemented   |
 | FR-157 | Kalenderübersicht der Agenda  | Als Mitglied möchte ich die Agenda auch als Monatskalender sehen, in dem Tage mit Terminen markiert sind, damit ich auf einen Blick sehe, wann etwas ansteht, und einen Tag antippen kann, um seine Termine zu öffnen. | Medium   | Implemented   |
 
 ### 1.12 Erstbefüllung, leere Zustände & Einführung

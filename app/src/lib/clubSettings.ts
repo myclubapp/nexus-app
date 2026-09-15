@@ -82,6 +82,8 @@ export function buildClubSettings(
     goal?: { seasonPoints: string };
     /** UC-050: welches Amt den Vereins-Puls unterschreibt (FR-191). */
     pulse?: { greetingRoleId: string };
+    /** UC-051: Nimmt der Verein offene Beitritts-Anfragen an (FR-196)? */
+    join?: { public: boolean };
   },
 ): ClubSettings {
   const settings: ClubSettings = { ...current };
@@ -174,6 +176,14 @@ export function buildClubSettings(
     const roleId = input.pulse.greetingRoleId.trim();
     if (roleId) settings.pulse = { greetingRoleId: roleId };
     else delete settings.pulse;
+  }
+
+  // Die offene Anfrage: wie ein Modul abgelegt – nur `true` steht da, ein
+  // `false` verschwindet. Beides heisst «zu» (BR-258), und ein Eintrag, der
+  // dasselbe sagt wie sein Fehlen, macht die Einstellung nur länger.
+  if (input.join) {
+    if (input.join.public) settings.join = { public: true };
+    else delete settings.join;
   }
 
   return settings;

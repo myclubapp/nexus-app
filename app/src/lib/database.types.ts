@@ -22,7 +22,7 @@ export type {
   TablesUpdate,
 } from './database.generated';
 
-/* --- Übergang bis `supabase db push` für `0092`–`0100` gelaufen ist -------
+/* --- Übergang bis `supabase db push` für `0092`–`0102` gelaufen ist -------
  *
  * `types:generate` kennt die neuen Funktionen erst, wenn die Migration remote
  * steht. Bis dahin wird der fehlende Stand **hier** nachgebildet und nicht in
@@ -41,7 +41,17 @@ export type Database = Omit<Generated, 'public'> & {
      * Blatt im Postfach bekommt – dessen Namen (FR-184). Beides schreibt nur
      * der Server über `notify()`; die App liest.
      */
-    Tables: Omit<Tbl, 'notifications' | 'functionary_roles'> & {
+    Tables: Omit<Tbl, 'notifications' | 'functionary_roles' | 'federation_connections'> & {
+      /**
+       * `0102`: Will dieser Verein die Beiträge dieses Verbands im Feed
+       * (FR-197)? Die Frage sitzt an der **Verbindung**, weil ein Verein an
+       * zwei Verbänden hängen kann. Geschrieben wird sie über
+       * `set_federation_news()`, nie über einen `update` – die Tabelle hat
+       * seit `0058` keine Schreib-Policy.
+       */
+      federation_connections: Omit<Tbl['federation_connections'], 'Row'> & {
+        Row: Tbl['federation_connections']['Row'] & { news_enabled: boolean };
+      };
       notifications: Omit<Tbl['notifications'], 'Row'> & {
         Row: Tbl['notifications']['Row'] & {
           why: string | null;
@@ -68,7 +78,24 @@ export type Database = Omit<Generated, 'public'> & {
         };
       };
     };
-    Functions: Omit<Fn, 'leaderboard_rows' | 'team_ranking_rows'> & {
+    Functions: Omit<
+      Fn,
+      'leaderboard_rows' | 'team_ranking_rows' | 'find_club_by_slug'
+    > & {
+      /**
+       * `0101`: Der Kurzname sagt jetzt auch, **ob** der Verein offene
+       * Anfragen annimmt (FR-196, BR-258). Ohne diese Spalte führte das
+       * Formular in einen Knopf, den der Server abweist.
+       */
+      find_club_by_slug: {
+        Args: Fn['find_club_by_slug']['Args'];
+        Returns: { club_id: string; club_name: string; accepts_requests: boolean }[];
+      };
+      /** `0102`: die Verbandsnews dieser Verbindung zu- oder abschalten (FR-197). */
+      set_federation_news: {
+        Args: { p_club_id: string; p_federation: string; p_enabled: boolean };
+        Returns: undefined;
+      };
       /**
        * `0092`/`0093`: die Säulen dieses Vereins mit ihrer Wertdimension.
        * `pillar` ist `null` für eine Dimension ohne eigene Säule («Finanzen»).
@@ -252,6 +279,18 @@ export type ClubSettings = {
    */
   pulse?: {
     greetingRoleId?: string;
+  };
+  /**
+   * UC-004/UC-051: Nimmt der Verein offene Beitritts-Anfragen an (FR-196)?
+   *
+   * Fehlt der Eintrag, ist er **aus** – wie bei den Modulen und aus demselben
+   * Grund: Der Weg in einen Verein ist die Einladung (BR-006); die offene
+   * Anfrage ist der zweite Weg, und den öffnet der Vorstand ausdrücklich
+   * (BR-258). Durchgesetzt wird die Regel in `request_join()` (`0101`), nicht
+   * durch das Ausblenden des Formulars.
+   */
+  join?: {
+    public?: boolean;
   };
   /** UC-022 A3: Anzeige auf die vorderen Ränge begrenzen. */
   leaderboard?: {

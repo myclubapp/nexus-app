@@ -26,6 +26,13 @@ interface WizardProps {
   isSubmitting?: boolean;
   /** Fehler des letzten Versuchs. Die Eingaben bleiben dabei stehen. */
   error?: string | null;
+  /**
+   * Der Ausstieg, für Schrittführungen, die niemand durchlaufen **muss** –
+   * die Einrichtung eines Vereins etwa (UC-051, BR-259). Ohne ihn gibt es
+   * keinen Knopf: Die Gründung hat keinen Ausstieg, sie hat ein Ziel.
+   */
+  onSkip?: () => void;
+  skipLabel?: string;
 }
 
 /**
@@ -38,6 +45,11 @@ interface WizardProps {
  *
  * Die Eingaben bleiben bei einem Fehler stehen: Der Wizard hält keinen eigenen
  * Formularzustand, sondern zeigt nur, was die Seite ihm gibt.
+ *
+ * `onSkip` ist der Ausstieg für Schrittführungen, die niemand durchlaufen
+ * muss – die Einrichtung eines Vereins (UC-051). Die Gründung selbst hat ihn
+ * nicht: Ein Wizard ohne Ausstieg ist eine Aufgabe, einer mit Ausstieg ein
+ * Angebot, und die Gründung ist eine Aufgabe.
  */
 export function Wizard({
   steps,
@@ -47,6 +59,8 @@ export function Wizard({
   onFinish,
   isSubmitting = false,
   error,
+  onSkip,
+  skipLabel,
 }: WizardProps) {
   const { t } = useTranslation();
 
@@ -100,6 +114,18 @@ export function Wizard({
             onClick={() => onCurrentChange(index - 1)}
           >
             {t('common.back')}
+          </IonButton>
+        )}
+
+        {onSkip && (
+          <IonButton
+            expand="block"
+            fill="clear"
+            color="medium"
+            disabled={isSubmitting}
+            onClick={onSkip}
+          >
+            {skipLabel ?? t('common.skip')}
           </IonButton>
         )}
       </div>

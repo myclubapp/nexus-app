@@ -17,12 +17,13 @@ synchron gehalten werden können.
 
 | UC | Titel | Primärakteur | Requirements | Status |
 |---|---|---|---|---|
-| [UC-001](UC-001-verein-gruenden.md) | Verein gründen | Vorstand | FR-004, FR-005, FR-006, FR-035, FR-113, FR-134 | Implemented |
+| [UC-001](UC-001-verein-gruenden.md) | Verein gründen | Vorstand | FR-004, FR-005, FR-006, FR-035, FR-113, FR-134, FR-195 | Implemented |
 | [UC-002](UC-002-per-einladung-beitreten.md) | Per Einladung beitreten | Gast | FR-008, FR-011 | Implemented |
 | [UC-003](UC-003-einladung-erstellen.md) | Einladung erstellen | Vorstand | FR-007 | Implemented |
-| [UC-004](UC-004-beitritts-anfrage-entscheiden.md) | Beitritts-Anfrage entscheiden | Vorstand | FR-009, FR-010 | Implemented |
+| [UC-004](UC-004-beitritts-anfrage-entscheiden.md) | Beitritts-Anfrage entscheiden | Vorstand | FR-009, FR-010, FR-196 | Implemented |
 | [UC-005](UC-005-anmelden.md) | Anmelden | Mitglied | FR-001, FR-002, FR-003 | Implemented |
 | [UC-006](UC-006-konto-loeschen.md) | Konto löschen | Mitglied | FR-012 | Implemented |
+| [UC-051](UC-051-verein-einrichten.md) | Verein einrichten | Vorstand | FR-195, FR-196, FR-197 | Implemented |
 
 ### Mitglieder & Teams
 
@@ -95,7 +96,7 @@ synchron gehalten werden können.
 | [UC-033](UC-033-beitrags-profil-erfassen.md) | Beitrags-Profil erfassen | Mitglied | FR-058, FR-059 | Implemented |
 | [UC-034](UC-034-vereinsidentitaet-konfigurieren.md) | Vereinsidentität, Begriffe und Module konfigurieren | Vorstand | FR-111, FR-112, FR-113, FR-114, FR-115 | Implemented |
 | [UC-049](UC-049-vereins-ansprache-festlegen.md) | Ansprache des Vereins festlegen | Vorstand | FR-185, FR-186, FR-187 | Draft |
-| [UC-035](UC-035-verband-verbinden.md) | Verband verbinden | Vorstand | FR-120, FR-121 | Implemented |
+| [UC-035](UC-035-verband-verbinden.md) | Verband verbinden | Vorstand | FR-120, FR-121, FR-197 | Implemented |
 | [UC-039](UC-039-verbands-team-verknuepfen.md) | Verbands-Team verknüpfen oder importieren | Vorstand | FR-150, FR-151, FR-152, FR-153 | Implemented |
 | [UC-040](UC-040-bisherige-app-uebernehmen.md) | Termine aus der bisherigen myclub-App übernehmen | Vorstand | FR-154, FR-155, FR-156 | Implemented |
 | [UC-036](UC-036-rechnungen-einsehen.md) | Rechnungen einsehen und Punkte bei pünktlicher Zahlung | Mitglied | FR-116, FR-117, FR-118, FR-119 | Implemented |
@@ -140,7 +141,7 @@ Ablauf steht in UC-008, die Gliederung der Seite in [`../guidelines.md`](../guid
 
 ## Geschäftsregeln
 
-Die Regeln BR-001 bis BR-257 sind fortlaufend und über alle Use Cases hinweg eindeutig vergeben. **Wer eine neue vergibt, prüft zuerst den höchsten Stand** – zuletzt kollidierten UC-044 und UC-045 auf BR-210 bis BR-213, und UC-048 musste FR-179 bis FR-181 an den parallel gebauten Sitzungs-Strang abgeben.
+Die Regeln BR-001 bis BR-262 sind fortlaufend und über alle Use Cases hinweg eindeutig vergeben. **Wer eine neue vergibt, prüft zuerst den höchsten Stand** – zuletzt kollidierten UC-044 und UC-045 auf BR-210 bis BR-213, und UC-048 musste FR-179 bis FR-181 an den parallel gebauten Sitzungs-Strang abgeben.
 Die vier nicht verhandelbaren Regeln des Projekts sind über mehrere Use Cases verteilt:
 
 | Prinzip | Regeln |

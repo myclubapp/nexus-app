@@ -308,11 +308,61 @@ ion-tab-button.tab-selected .app-tab-icon-filled {
   gap: var(--app-space-4);
 }
 
-.app-centered--login {
+/* --- Seiten vor dem Verein (AuthShell) -------------------------------------
+   Anmeldung und Onboarding teilen sich dieses Feld: dieselbe Spalte, dieselbe
+   Breite, derselbe Abstand von oben. Vorher lag beim Onboarding nur das
+   Segment in einer zentrierten Spalte, während Formular und Knopfleiste die
+   volle Breite nahmen – auf einem Tabletbildschirm ein Eingabefeld über
+   1000 px. */
+.app-auth {
   max-width: 420px;
-  /* Die Anmeldung hat keine Kopfzeile, die den Safe-Area-Rand trüge – auf
-     Geräten mit Dynamic Island liegt der Rand bei rund 59 px. */
-  padding-top: calc(var(--ion-safe-area-top, 0px) + 32px);
+  margin: 0 auto;
+  display: grid;
+  gap: var(--app-space-4);
+  /* Keine Kopfzeile heisst: Diese Seite trägt die Safe Area selbst. Auf
+     Geräten mit Dynamic Island liegt der obere Rand bei rund 59 px. */
+  padding: calc(var(--ion-safe-area-top, 0px) + 32px) var(--app-space-4)
+    calc(var(--ion-safe-area-bottom, 0px) + var(--app-space-6));
+}
+
+/* Das Onboarding trägt Listen und eine Schrittführung und bekommt dafür etwas
+   mehr Platz; die Anmeldung mit ihren zwei Feldern bleibt schmal. */
+.app-auth--wide {
+  max-width: 560px;
+}
+
+/* Listen, Fussnoten und Knopfleisten bringen ihren eigenen Seitenrand mit –
+   innerhalb dieser Spalte stünde er ein zweites Mal. Das Raster bleibt, die
+   Ränder fallen weg. */
+.app-auth ion-list,
+.app-auth .app-footnote,
+.app-auth .app-text,
+.app-auth .app-wizard {
+  margin-inline: 0;
+  padding-inline: 0;
+}
+
+.app-auth .app-actions {
+  padding: 0;
+}
+
+.app-auth__head {
+  display: grid;
+  gap: var(--app-space-1);
+  text-align: center;
+}
+
+.app-auth__head h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  line-height: 1.25;
+}
+
+.app-auth__foot {
+  display: grid;
+  justify-items: center;
+  gap: var(--app-space-2);
+  margin-top: var(--app-space-2);
 }
 
 /* Natives Farbfeld in den Vereinseinstellungen – Ionic hat keinen Farbwähler. */

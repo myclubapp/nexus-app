@@ -103,6 +103,34 @@ export function useSaveClubModules() {
 }
 
 /**
+ * Nimmt der Verein offene Beitritts-Anfragen an (UC-051, FR-196)?
+ *
+ * **Sofort beim Umlegen**, wie die Module: Der Schalter öffnet einen Weg in
+ * den Verein hinein – wer ihn umlegt und die Seite verlässt, hat ihn geöffnet
+ * und nicht einen Entwurf verworfen.
+ *
+ * Wirksam wird er in `request_join()` (`0101`), nicht hier: Das Formular
+ * auszublenden ist Bequemlichkeit, die Regel steht im Server (C-011).
+ */
+export function useSaveJoinPolicy() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (isPublic: boolean) => {
+      if (!activeClub) throw new Error('Kein aktiver Verein');
+
+      await writeClub(activeClub.id, {
+        settings: buildClubSettings(activeClub.settings, { join: { public: isPublic } }),
+      });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['memberships'] });
+    },
+  });
+}
+
+/**
  * Welches Amt den Vereins-Puls unterschreibt (UC-050, FR-191).
  *
  * **Sofort beim Wählen**, wie die Module: Es ist eine einzelne Entscheidung

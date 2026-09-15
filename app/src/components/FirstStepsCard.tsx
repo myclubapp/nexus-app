@@ -1,4 +1,4 @@
-import { IonIcon, IonItem, IonLabel, IonNote } from '@ionic/react';
+import { IonButton, IonIcon, IonItem, IonLabel, IonNote } from '@ionic/react';
 import {
   calendarOutline,
   globeOutline,
@@ -6,6 +6,7 @@ import {
   trophyOutline,
 } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
+import { CLUB_SETUP_ROUTE } from '../lib/clubSetup';
 import { ListSection } from './ListSection';
 
 interface FirstStepsCardProps {
@@ -60,6 +61,15 @@ export function FirstStepsCard({ clubName, offerNewsImport = false }: FirstSteps
     <ListSection
       title={t('firstSteps.title', { club: clubName })}
       footnote={t('firstSteps.footnote')}
+      /* UC-051: der Weg in den Einrichtungs-Assistenten – als Knopf in der
+         Überschrift und **nicht** als vierte Zeile. Die Karte bleibt bei drei
+         Angeboten (BR-002, BR-171); der Assistent ist kein viertes Angebot,
+         sondern der Weg, der sie alle nacheinander abfragt. */
+      action={
+        <IonButton fill="clear" size="small" routerLink={CLUB_SETUP_ROUTE}>
+          {t('firstSteps.setup')}
+        </IonButton>
+      }
     >
       {/* Jeder Schritt liegt in einem anderen Tab: `root` startet ihn dort
           ohne Fremd-History, statt vorwärts hineinzuschieben. */}

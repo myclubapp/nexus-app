@@ -27,7 +27,8 @@
     "keepEditing": "Weiter bearbeiten",
     "details": "Details",
     "manage": "Verwalten",
-    "clear": "Löschen"
+    "clear": "Löschen",
+    "skip": "Überspringen"
   },
   "auth": {
     "title": "Willkommen",
@@ -106,7 +107,10 @@
     "requestPendingHint": "Du erhältst eine Nachricht, sobald der Vorstand entschieden hat.",
     "requestWaiting": "Wartet auf den Entscheid des Vorstands",
     "withdrawRequest": "Anfrage zurückziehen",
-    "withdrawConfirm": "Die Anfrage wird zurückgezogen. Du kannst jederzeit eine neue stellen."
+    "withdrawConfirm": "Die Anfrage wird zurückgezogen. Du kannst jederzeit eine neue stellen.",
+    "subtitle": "Einen Verein gründen, eine Einladung einlösen – oder bei einem Verein anfragen.",
+    "clubClosedHint": "Dieser Verein nimmt keine offenen Anfragen entgegen.",
+    "clubClosedExplain": "Hier führt der Weg hinein über eine Einladung. Der Vorstand kann offene Anfragen in den Vereinseinstellungen zulassen."
   },
   "tabs": {
     "dashboard": "Start",
@@ -425,7 +429,46 @@
     "logoUrlHint": "Oder trage die Adresse eines Logos ein, das schon auf eurer Website liegt.",
     "moduleOn": "«{{module}}» eingeschaltet.",
     "moduleOff": "«{{module}}» ausgeschaltet.",
-    "notWritten": "Nicht gespeichert: Der Verein hat die Änderung nicht angenommen. Nur der Vorstand darf ihn bearbeiten."
+    "notWritten": "Nicht gespeichert: Der Verein hat die Änderung nicht angenommen. Nur der Vorstand darf ihn bearbeiten.",
+    "joinTitle": "Beitritt",
+    "joinPublic": "Offene Anfragen zulassen",
+    "joinPublicBody": "Wer euren Kurznamen kennt, kann eine Anfrage stellen. Über jede einzelne entscheidet der Vorstand.",
+    "joinPublicHint": "Ist der Schalter aus, kommt man nur über eine Einladung herein. Euer Kurzname: {{slug}}",
+    "joinOpened": "Offene Anfragen sind zugelassen.",
+    "joinClosed": "Offene Anfragen sind abgeschaltet."
+  },
+  "clubSetup": {
+    "title": "Verein einrichten",
+    "linkHint": "Verband, Teams, Beispielinhalte, Mitglieder – Schritt für Schritt.",
+    "finish": "Fertig",
+    "later": "Später einrichten",
+    "federation": {
+      "title": "Hängt euer Verein an einem Verband?",
+      "hint": "Dann kommen Spielplan und Teams von dort. Ohne Verband geht es auch – dieser Schritt lässt sich überspringen.",
+      "connected": "Verbunden"
+    },
+    "news": {
+      "title": "Auch die Verbandsnews?",
+      "hint": "Die Beiträge des Verbands erscheinen dann im News-Feed eures Vereins."
+    },
+    "teams": {
+      "title": "Wie heissen eure Teams?",
+      "hint": "Teams gliedern Termine, Einladungen und die Rangliste. Ein Verein ohne Teams funktioniert auch.",
+      "empty": "Noch kein Team. Legt eines an oder übernehmt sie aus dem Verband."
+    },
+    "samples": {
+      "title": "Die Beispielinhalte",
+      "hint": "Damit kein Bildschirm leer bleibt, stehen in Agenda, Marktplatz und Feed gekennzeichnete Beispiele.",
+      "explain": "Beispiele buchen keine Punkte und erreichen niemanden. Sie verschwinden mit dem ersten eigenen Inhalt derselben Art – oder jetzt, in einem Schritt.",
+      "none": "Es sind keine Beispielinhalte mehr da."
+    },
+    "members": {
+      "title": "Wie kommen die Mitglieder herein?",
+      "hint": "Über einen Einladungslink – und auf Wunsch über eine Anfrage von jemandem, der euren Kurznamen kennt.",
+      "createLink": "Einladungslink erstellen",
+      "linkReady": "Der Link ist da",
+      "moreInvites": "Alle Einladungen"
+    }
   },
   "health": {
     "title": "Vereins-Gesundheit",
@@ -586,7 +629,8 @@
     "news": {
       "title": "News von eurer Website holen",
       "hint": "Bestehende Beiträge übernehmen"
-    }
+    },
+    "setup": "Einrichten"
   },
   "invite": {
     "title": "Einladungen",
@@ -1997,7 +2041,6 @@
     "teamsFound_other": "{{count}} Teams beim Verband gefunden",
     "nextStep": "Verknüpft eure Teams mit den Teams des Verbands – erst dann entstehen Spiele.",
     "toTeams": "Zu den Teams",
-    "empty": "Noch kein Verband verbunden.",
     "problem": {
       "clubIdMissing": "Ohne Vereinskennung gibt es nichts abzugleichen.",
       "keyMissing": "Dieser Verband verlangt einen Schlüssel."
@@ -2009,7 +2052,12 @@
       "swisshandball": "Swiss Handball",
       "swissturnverband": "Schweizerischer Turnverband"
     },
-    "startConnect": "Verband verbinden"
+    "news": "Verbandsnews",
+    "newsHint": "Die Beiträge des Verbands stehen dann im News-Feed, neben euren eigenen. Als Nachricht des Vereins zählen sie nicht.",
+    "newsOn": "Die Verbandsnews stehen im Feed.",
+    "newsOff": "Es kommen keine neuen Verbandsbeiträge mehr. Was im Feed steht, bleibt.",
+    "newsPending": "Eingeschaltet. Die Beiträge kommen mit dem nächsten Abgleich: {{reason}}",
+    "newsUnavailable": "Dieser Verband liefert keine Beiträge."
   },
   "legacy": {
     "title": "Bisherige myclub-App",
