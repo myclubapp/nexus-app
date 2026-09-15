@@ -10,7 +10,7 @@
  * `Record<string, unknown>`, und Interfaces bekommen in TypeScript keine
  * implizite Index-Signatur.
  */
-import type { Database as Generated, Tables as Row } from './database.generated';
+import type { Database as Generated, Json, Tables as Row } from './database.generated';
 import type { Language } from '../i18n';
 
 export type {
@@ -22,7 +22,7 @@ export type {
   TablesUpdate,
 } from './database.generated';
 
-/* --- Übergang bis `supabase db push` für `0092`–`0096` gelaufen ist -------
+/* --- Übergang bis `supabase db push` für `0092`–`0100` gelaufen ist -------
  *
  * `types:generate` kennt die neuen Funktionen erst, wenn die Migration remote
  * steht. Bis dahin wird der fehlende Stand **hier** nachgebildet und nicht in
@@ -41,11 +41,30 @@ export type Database = Omit<Generated, 'public'> & {
      * Blatt im Postfach bekommt – dessen Namen (FR-184). Beides schreibt nur
      * der Server über `notify()`; die App liest.
      */
-    Tables: Omit<Tbl, 'notifications'> & {
+    Tables: Omit<Tbl, 'notifications' | 'functionary_roles'> & {
       notifications: Omit<Tbl['notifications'], 'Row'> & {
         Row: Tbl['notifications']['Row'] & {
           why: string | null;
           mail_template: string | null;
+        };
+      };
+      /**
+       * `0100`: der Gruss am Amt (FR-191, FR-192). `greeting` ist ein Objekt
+       * Sprache → Text, `greeting_image_url` eine **öffentliche** Adresse –
+       * das Porträt liegt nie im privaten Speicher der Profilbilder (BR-253).
+       */
+      functionary_roles: Omit<Tbl['functionary_roles'], 'Row' | 'Insert' | 'Update'> & {
+        Row: Tbl['functionary_roles']['Row'] & {
+          greeting: Json;
+          greeting_image_url: string | null;
+        };
+        Insert: Tbl['functionary_roles']['Insert'] & {
+          greeting?: Json;
+          greeting_image_url?: string | null;
+        };
+        Update: Tbl['functionary_roles']['Update'] & {
+          greeting?: Json;
+          greeting_image_url?: string | null;
         };
       };
     };
@@ -66,6 +85,24 @@ export type Database = Omit<Generated, 'public'> & {
       request_club_pulse: {
         Args: { p_club_id: string };
         Returns: string | null;
+      };
+      /**
+       * `0100`: Grusstext und Porträt eines Amtes setzen (FR-191, FR-192).
+       * Eigene Funktion statt Parameter an `save_office()` – ein Formular ohne
+       * diese Felder würde sonst Gruss **und** Belegung löschen.
+       */
+      set_office_greeting: {
+        Args: { p_role_id: string; p_greeting?: Json; p_image?: string };
+        Returns: undefined;
+      };
+      /**
+       * `0100`: die Nutzlast eines Pulses für Blatt und Vorschau (FR-188,
+       * FR-189). `security invoker` – wer den Puls nicht sehen darf, bekommt
+       * `null`, und zwar ohne zweite Rollenprüfung (die Policy aus `0044`).
+       */
+      pulse_payload: {
+        Args: { p_pulse_id: string; p_locale?: string; p_keep?: Json };
+        Returns: Json;
       };
       leaderboard_rows: {
         Args: Fn['leaderboard_rows']['Args'] & { p_dimension?: string };
@@ -205,6 +242,16 @@ export type ClubSettings = {
    */
   goal?: {
     seasonPoints?: number;
+  };
+  /**
+   * UC-050: welches Amt den Vereins-Puls unterschreibt (FR-191, BR-252).
+   *
+   * Die Wahl steht am Verein, der Grusstext am Amt – wechselt die Besetzung,
+   * wechselt die Unterschrift mit, ohne dass hier etwas nachgezogen wird.
+   * Fehlt die Angabe, grüsst niemand und das Blatt endet nach den Abschnitten.
+   */
+  pulse?: {
+    greetingRoleId?: string;
   };
   /** UC-022 A3: Anzeige auf die vorderen Ränge begrenzen. */
   leaderboard?: {

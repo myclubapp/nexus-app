@@ -76,7 +76,7 @@ synchron gehalten werden können.
 | [UC-028](UC-028-benachrichtigungen-einstellen.md) | Benachrichtigungen einstellen | Mitglied | FR-079, FR-080, FR-081 | Implemented |
 | [UC-044](UC-044-meldungen-per-email.md) | Meldungen per E-Mail erhalten | Mitglied | FR-164, FR-165 | Implemented |
 | [UC-048](UC-048-vereinsmail-und-warum.md) | Mail im Vereins-Look, mit Warum und Begrüssung | Mitglied | FR-182, FR-183, FR-184 | Implemented |
-| [UC-050](UC-050-vereins-puls-persoenlich.md) | Vereins-Puls persönlich gestalten | Vorstand | FR-188 bis FR-192 | Draft |
+| [UC-050](UC-050-vereins-puls-persoenlich.md) | Vereins-Puls persönlich gestalten | Vorstand | FR-188 bis FR-192 | In Progress |
 | [UC-038](UC-038-website-news-uebernehmen.md) | News von der Vereins-Website übernehmen | Vorstand | FR-146, FR-147, FR-149 | In Progress |
 
 ### «Stimme» & Dialog

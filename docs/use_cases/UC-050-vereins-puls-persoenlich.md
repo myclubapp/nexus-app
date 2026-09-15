@@ -7,7 +7,7 @@
 **Primary Actor:** Vorstand
 **Secondary Actor:** Mitglied, System
 **Goal:** Der Puls erreicht die Mitglieder als ganzes Blatt – mit den Beiträgen des Vereins, einem Gruss, der einen Absender hat, und einer Vorschau, die vor dem Versand zeigt, was ankommt
-**Status:** Draft
+**Status:** In Progress – gebaut und gegen die laufende Datenbank geprüft (21 Verhaltensprüfungen in einer zurückgerollten Transaktion). Die Migration `0100` ist **nicht** eingespielt und `pulse-preview` nicht deployt; bis dahin wirkt nichts davon (Stand 15.09.2026)
 
 ## Preconditions
 
@@ -21,7 +21,7 @@
 2. System komponiert den Entwurf aus **vier** Quellen: den Terminen der kommenden vierzehn Tage, den vereinsweiten Beiträgen der letzten vierzehn Tage aus App und Website, den publizierten Vorstandsantworten, den offenen Aufgaben und Schichten.
 3. Vorstand öffnet den Entwurf, streicht oder ergänzt Einträge und schreibt den Einleitungssatz (UC-027, Schritt 5).
 4. Vorstand wählt «Vorschau».
-5. System zeigt zwei Ansichten desselben Pulses: das Blatt, wie es in der App erscheint, und die Mail, wie sie im Postfach ankommt – beide mit Einleitungssatz, den drei Abschnitten, dem Punktestand als Platzhalter und der Grussformel mit Amt, Name und Porträt. Es wird nichts versendet, nichts gezählt und nichts als gesendet vermerkt.
+5. System zeigt zwei Ansichten desselben Pulses: das Blatt, wie es in der App erscheint, und die Mail, wie sie im Postfach ankommt – beide mit Einleitungssatz, den drei Abschnitten, der Grussformel mit Amt, Name und Porträt. Der persönliche Punktestand steht in keiner der beiden: Er gehört einem Mitglied allein, und die Vorschau zeigt, was **alle** bekommen. Es wird nichts versendet, nichts gezählt und nichts als gesendet vermerkt.
 6. Vorstand gibt frei (UC-027, Schritte 6 bis 8).
 7. System stellt den Puls zu: in die Inbox, wo erlaubt als Push – und als **eigenes Mailblatt** mit denselben drei Abschnitten in derselben Reihenfolge, statt als eine Meldungszeile mit Link.
 8. Am Fuss des Blatts steht der Gruss: der Text, darunter Name und Amt, daneben das Porträt, wenn eines hinterlegt ist.
@@ -113,7 +113,9 @@
 
 ### BR-248: Die drei Fragen gelten auch im Postfach
 
-Das Mailblatt trägt dieselben drei Abschnitte in derselben Reihenfolge wie die App (BR-113) und den Punktestand nachgeordnet (BR-114). Eine Mail, die nur den Einleitungssatz und einen Link trägt, erfüllt UC-027 nicht – sie verlegt die Nachricht in eine App, die das Mitglied vielleicht gerade nicht öffnet.
+Das Mailblatt trägt dieselben drei Abschnitte in derselben Reihenfolge wie die App (BR-113). Eine Mail, die nur den Einleitungssatz und einen Link trägt, erfüllt UC-027 nicht – sie verlegt die Nachricht in eine App, die das Mitglied vielleicht gerade nicht öffnet.
+
+**Der persönliche Punktestand bleibt in der App.** BR-114 verlangt, dass er nachgeordnet steht, nicht dass er überall steht: Er gehört einem Mitglied allein, und das Blatt entsteht in einem Versandlauf, der von Punkten nichts weiss. Wer ihn sehen will, öffnet die App über den Knopf im Blatt – dort steht er, wo BR-114 ihn hinstellt.
 
 ### BR-249: Die Vorschau sendet nicht
 
@@ -139,19 +141,30 @@ Das Porträt der Grussformel ist ein Repräsentationsbild des Vereins wie das Lo
 
 Name und Amt sind Text, nicht Bildinhalt. Die meisten Postfächer laden Bilder erst auf Klick; ein Gruss, der nur als Bild existiert, kommt bei der Mehrheit nicht an. Und es ist ein Porträt mit gesetztem Namen – **keine eingescannte Unterschrift**: Die wäre ein Abbild, das sich aus jeder Massenmail weiterverwenden lässt, und trägt nichts bei, was der gesetzte Name nicht trägt.
 
-## Vorgesehene Umsetzung
+## Umsetzung
 
-| Anforderung | Wo |
+| Anforderung | Wo umgesetzt |
 | --- | --- |
-| FR-188 | `notify(..., p_template => 'pulse')` in `release_pulse()` – der Mechanismus aus `0096` gibt der Zeile ihre eigene Mail (Ausnahme zu BR-213, UC-044); zweiter Zweig in `send-mail/template.ts` neben `welcome`, Bausteine aus `_shared/mail.ts` |
-| FR-189 | Betriebsart `preview` in `send-mail` (gibt HTML zurück, versendet nicht), Blatt in `PulsePage`; `mode: 'test'` bleibt die Probemail an die eigene Adresse |
-| FR-190 | `compose_club_pulse()`: vierte Quelle `news` mit `source in ('club','website')`, `team_id is null`, `not is_sample`, vierzehn Tage, Limit 4; neue Art `news` in `PulseItem` (`app/src/lib/pulse.ts`) |
-| FR-191 | Grussformel an `functionary_roles` (Amt) plus Vereinseinstellung, welches Amt grüsst; `pending_mail()` aus `0096` erweitern – nicht die Fassung aus `0084` |
-| FR-192 | Eigenes Feld für das Porträt im öffentlichen Speicher (`club-logo`-Muster aus `0083`), `safeUrl()` im Blatt |
-| BR-249 | `send-mail` (Betriebsart), `PulsePage` |
-| BR-250 | `compose_club_pulse()` |
-| BR-252 | `functionary_roles`, `release_pulse()` |
-| BR-253 | Upload-Weg und Bucket-Wahl in der Migration |
+| FR-188 | `0100` (`release_pulse()` mit `p_template => 'pulse'`, `pending_mail()` mit `payload`), `supabase/functions/_shared/pulse_sheet.ts`, zweiter Zweig in `send-mail/template.ts` neben `welcome` |
+| FR-189 | `supabase/functions/pulse-preview/` (eigene Function, `verify_jwt`), `0100` (`pulse_payload()`), `app/src/components/PulsePreviewModal.tsx`, `usePulsePreview()` |
+| FR-190 | `0100` (`compose_club_pulse()`: `news` mit `source in ('club','website')`, `team_id is null`, `not is_sample`, 14 Tage, Limit 4), Art `news` in `app/src/lib/pulse.ts` |
+| FR-191 | `0100` (`functionary_roles.greeting`, `set_office_greeting()`), `clubs.settings.pulse.greetingRoleId`, `app/src/components/PulseGreetingModal.tsx` |
+| FR-192 | `0100` (`greeting_image_url`, Pfadart `greeting` in den `club-logo`-Policies, `can_write_club_media()`), `ImagePicker` mit `kind="greeting"` |
+| BR-248 | `_shared/pulse_sheet.ts` (`renderPulseSheet`), `app/src/components/PulseSections.tsx` |
+| BR-249 | `pulse-preview` (liest, schreibt nicht), `pulse_payload(… p_keep)` |
+| BR-250 | `0100` (`compose_club_pulse()`) |
+| BR-251 | `0100` – ausdrücklich **keine** Entdopplung gegen schon zugestellte Meldungen |
+| BR-252 | `0100` (`pulse_payload()` liest Amt und Belegung), `clubs.settings.pulse.greetingRoleId` |
+| BR-253 | `0100` (Bucket-Wahl, `https:`-Prüfung in `set_office_greeting()`), `app/src/hooks/useMedia.ts` (`isPublicKind`) |
+| BR-254 | `_shared/pulse_sheet.ts` (`pulseSignature`), `app/src/lib/pulse.ts` (`signatureOf`) |
+
+**Der Gruss geht über `set_office_greeting()` und nicht über `save_office()`** –
+aus demselben Grund, aus dem `0091` den Punktwert herausgenommen hat (BR-206):
+Ein Formular, das die Felder nicht kennt, würde sie löschen. Bei `save_office()`
+käme es schlimmer: Dort heisst `p_holders` mit Vorgabe `'[]'` «keine Sitze», und
+ein Aufruf, der nur den Gruss setzen wollte, hätte die ganze Belegung des Amtes
+gelöscht.
+
 
 ## Was dieser Use Case nebenbei behebt
 

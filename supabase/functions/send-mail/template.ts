@@ -8,11 +8,14 @@
  * die Texte – in den vier Sprachen der App – und die Entscheidung, welches
  * Blatt eine Zeile bekommt.
  *
- * Drei Formen aus derselben Funktion:
+ * Vier Formen aus derselben Funktion:
  *   * **eine** Meldung (sofort oder dringend),
  *   * die **Zusammenfassung** (täglich oder wöchentlich),
- *   * das **Willkommensblatt** (FR-184) – die einzige Zeile, die ein eigenes
- *     Blatt trägt, erkennbar an `template = 'welcome'`.
+ *   * das **Willkommensblatt** (FR-184), erkennbar an `template = 'welcome'`,
+ *   * das **Pulsblatt** (FR-188, UC-050) an `template = 'pulse'`. Es steht in
+ *     `_shared/pulse_sheet.ts`, weil die Vorschau (FR-189) dasselbe Blatt
+ *     rendert – zwei Abschriften würden auseinanderlaufen, und dann zeigte die
+ *     Vorschau etwas, das niemand bekommt.
  *
  * **Das Warum (FR-183).** Jede Meldung trägt es mit: entweder ihr eigenes –
  * das `why` der Aufgabe, des Amts, des Termins – oder den Standardsatz ihrer
@@ -43,6 +46,13 @@ import {
   type MailBrand,
   type MailSection,
 } from '../_shared/mail.ts';
+import {
+  renderPulseSheet,
+  PULSE_SECTIONS,
+  type PulseSection,
+  type PulseSheetItem,
+  type PulseSheetPayload,
+} from '../_shared/pulse_sheet.ts';
 
 export { appLink };
 export type { Locale };
@@ -63,6 +73,12 @@ export interface MailItem {
   clubLogo: string | null;
   /** Das Warum des Vereins selbst (`clubs.settings.dna.why`, FR-114). */
   clubWhy: string | null;
+  /**
+   * Die Nutzlast eines eigenen Blatts (UC-050). `pending_mail()` füllt sie nur
+   * für Zeilen mit `mail_template`; für den Puls sind es die drei Abschnitte,
+   * der Einleitungssatz und der Gruss – in der Sprache der Empfängerin.
+   */
+  payload?: unknown;
 }
 
 export interface MailGroup {
@@ -402,6 +418,56 @@ const STRINGS: Record<Locale, Strings> = {
   },
 };
 
+/**
+ * Warum diese Mail kommt – die Fusszeile des E-Mail-Kanals.
+ *
+ * Steht hier und nicht in `_shared/`, weil sie zum Meldungskanal gehört und
+ * nicht zum Blatt. Die Vorschau des Pulses liest sie mit, damit sie **dieselbe**
+ * Fusszeile zeigt wie die Mail; ein zweiter Wortlaut wäre eine Vorschau auf
+ * etwas, das niemand bekommt.
+ */
+export function channelFootnote(locale: Locale): { text: string; settingsLabel: string } {
+  const t = STRINGS[locale];
+  return { text: t.channelWhy, settingsLabel: t.settings };
+}
+
+/**
+ * Die Nutzlast als Blattform – tolerant gelesen, weil sie als `jsonb` kommt.
+ *
+ * `null` heisst: Es gibt keine brauchbare Nutzlast. Dann bleibt es bei der
+ * Meldungsliste; eine schlichte Zeile ist besser als ein leeres Blatt.
+ */
+export function toSheetPayload(value: unknown): PulseSheetPayload | null {
+  if (!value || typeof value !== 'object') return null;
+  const row = value as Record<string, unknown>;
+  if (typeof row.pulseId !== 'string') return null;
+
+  const raw = (row.sections ?? {}) as Record<string, unknown>;
+  const sections = {} as Record<PulseSection, PulseSheetItem[]>;
+  let count = 0;
+  for (const section of PULSE_SECTIONS) {
+    const items = Array.isArray(raw[section]) ? (raw[section] as PulseSheetItem[]) : [];
+    sections[section] = items;
+    count += items.length;
+  }
+  if (count === 0) return null;
+
+  const greeting = row.greeting as Record<string, unknown> | null | undefined;
+  return {
+    pulseId: row.pulseId,
+    intro: (row.intro ?? null) as string | null,
+    sections,
+    greeting: greeting
+      ? {
+          text: (greeting.text ?? null) as string | null,
+          office: (greeting.office ?? null) as string | null,
+          names: Array.isArray(greeting.names) ? (greeting.names as string[]) : [],
+          imageUrl: (greeting.imageUrl ?? null) as string | null,
+        }
+      : null,
+  };
+}
+
 /** Der Verein, wenn alle Meldungen aus demselben stammen. */
 export function singleClub(items: MailItem[]): string | null {
   const names = new Set(items.map((item) => item.clubName ?? ''));
@@ -498,9 +564,43 @@ function renderWelcome(
   return { subject, ...shell };
 }
 
+/**
+ * Das Pulsblatt (FR-188, BR-248).
+ *
+ * `null` heisst: keine brauchbare Nutzlast – dann fällt die Mail auf die
+ * Meldungsliste zurück, statt ein leeres Blatt zu verschicken.
+ */
+function renderPulse(
+  group: MailGroup,
+  item: MailItem,
+  options: RenderOptions,
+): RenderedMail | null {
+  const payload = toSheetPayload(item.payload);
+  if (!payload) return null;
+
+  const t = STRINGS[group.locale];
+  const settingsUrl = appLink(options.appUrl, '/tabs/profile/notifications');
+
+  return renderPulseSheet({
+    brand: brandOf([item]),
+    locale: group.locale,
+    displayName: group.displayName,
+    payload,
+    appUrl: options.appUrl,
+    footnote: t.channelWhy,
+    footnoteLink: settingsUrl ? { label: t.settings, url: settingsUrl } : null,
+    now: options.now,
+  });
+}
+
 export function renderMail(group: MailGroup, options: RenderOptions): RenderedMail {
   if (group.items.length === 1 && group.items[0].template === 'welcome') {
     return renderWelcome(group, group.items[0], options);
+  }
+
+  if (group.items.length === 1 && group.items[0].template === 'pulse') {
+    const sheet = renderPulse(group, group.items[0], options);
+    if (sheet) return sheet;
   }
 
   const t = STRINGS[group.locale];

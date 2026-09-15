@@ -54,6 +54,9 @@ vi.mock('../hooks/useClub', () => ({
 vi.mock('../hooks/useClubSettings', () => ({
   useSaveClubSettings: () => ({ mutate: saveSettings, isPending: false, error: null }),
   useSaveClubModules: () => ({ mutate: saveModules, isPending: false, error: null }),
+  // UC-050: wer den Vereins-Puls unterschreibt. Diese Seite ruft es nicht auf –
+  // der Mock braucht den Export trotzdem, weil er das ganze Modul ersetzt.
+  useSavePulseGreetingRole: () => ({ mutate: vi.fn(), isPending: false, error: null }),
 }));
 
 vi.mock('../hooks/useToast', () => ({
@@ -76,6 +79,9 @@ vi.mock('../hooks/useMedia', () => ({
   useSignedMediaUrl: () => null,
   logoUrl: () => null,
   pickImage: vi.fn(),
+  // UC-050: Logo und Grussporträt liegen öffentlich, ein Gesicht nicht
+  // (BR-216, BR-253). `ImagePicker` fragt damit, ob es signieren muss.
+  isPublicKind: (kind: string) => kind === 'logo' || kind === 'greeting',
 }));
 
 /** Der Schalter zu einem Modul – gefunden über seine Überschrift. */

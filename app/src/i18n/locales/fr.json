@@ -1258,8 +1258,30 @@
       "event": "Rendez-vous",
       "task": "Tâche",
       "shift": "Créneau",
-      "decision": "Du comité"
-    }
+      "decision": "Du comité",
+      "news": "Actualité"
+    },
+    "onWebsite": "sur le site",
+    "board": "Le comité",
+    "preview": "Aperçu",
+    "previewTitle": "Voilà ce qui arrive",
+    "previewApp": "Dans l’app",
+    "previewMail": "Par e-mail",
+    "previewMailHint": "La feuille qui arrive dans la boîte – telle que l’envoi la construit.",
+    "previewEmpty": "Il n’y a pas d’aperçu pour ce pouls.",
+    "previewPointsHint": "Dans l’app, le total de points personnel suit les sections. Il appartient à chaque membre et ne figure donc pas dans l’aperçu.",
+    "greetingTitle": "Formule de salutation",
+    "greetingManage": "Configurer la salutation",
+    "greetingManageHint": "La salutation tient à la fonction, pas à la personne : lors d’une reprise de fonction, la signature suit.",
+    "greetingOffice": "Qui salue",
+    "greetingOfficeHint": "Uniquement les fonctions du comité. Si la fonction est vacante, c’est le comité qui salue.",
+    "greetingText": "Texte de salutation",
+    "greetingTextHint": "Facultatif, en quatre langues au plus. Qui n’en remplit qu’une salue tout le monde avec celle-là.",
+    "greetingImage": "Portrait",
+    "greetingImageHint": "Facultatif. Il figure dans l’e-mail et est donc public – le nom et la fonction s’affichent aussi sans image.",
+    "greetingSaved": "La salutation est enregistrée.",
+    "noBoardOffice": "Il n’y a encore aucune fonction du comité qui pourrait saluer.",
+    "vacantHint": "Cette fonction est vacante – c’est le comité qui salue."
   },
   "notifications": {
     "title": "Notifications",

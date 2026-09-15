@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase, isConfigured } from '../lib/supabase';
 import type { Json } from '../lib/database.types';
+import type { LabelSet } from '../lib/clubSettings';
+import { SUPPORTED_LANGUAGES, type Language } from '../i18n';
 import {
   FACTSHEET_BUCKET,
   factsheetPath,
@@ -28,6 +30,20 @@ interface HolderRow {
  * Marktplatz. Die Policy aus `0049`/`0070` gibt heraus, was Mitglieder sehen
  * dürfen – der Client filtert nichts.
  */
+/**
+ * Der Grusstext je Sprache (UC-050, FR-191) – tolerant gelesen, weil er als
+ * `jsonb` kommt. Was keine Zeichenkette ist, fällt weg: Ein Objekt mit einer
+ * Zahl darin wäre kein Gruss.
+ */
+function readGreeting(value: unknown): LabelSet {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  const entries = Object.entries(value as Record<string, unknown>).filter(
+    ([code, text]) =>
+      typeof text === 'string' && text.trim() !== '' && SUPPORTED_LANGUAGES.includes(code as Language),
+  );
+  return Object.fromEntries(entries) as LabelSet;
+}
+
 export function useOffices() {
   const { activeClub } = useClub();
 
@@ -42,7 +58,7 @@ export function useOffices() {
         // Ansprechperson zeigen beide auf `club_members` – ohne den Namen des
         // Fremdschlüssels wäre die Einbettung mehrdeutig.
         .select(
-          'id, title, holder_member_id, held_since, why, duties, hours_per_season, points_label, season_points, is_board, max_holders, contact_member_id, contact_name, factsheet_path, holder:club_members!functionary_roles_holder_member_id_fkey(display_name), holders:functionary_holders(id, member_id, display_name, interim, since, created_at)',
+          'id, title, holder_member_id, held_since, why, duties, hours_per_season, points_label, season_points, is_board, max_holders, contact_member_id, contact_name, factsheet_path, greeting, greeting_image_url, holder:club_members!functionary_roles_holder_member_id_fkey(display_name), holders:functionary_holders(id, member_id, display_name, interim, since, created_at)',
         )
         .eq('club_id', activeClub!.id)
         .order('title');
@@ -78,6 +94,8 @@ export function useOffices() {
           contactMemberId: row.contact_member_id,
           contactName: row.contact_name,
           factsheetPath: row.factsheet_path,
+          greeting: readGreeting(row.greeting),
+          greetingImageUrl: row.greeting_image_url,
           holders,
         };
       });
@@ -152,6 +170,42 @@ export function useSaveOffice() {
 }
 
 /** Ein Amt auflösen. Die Inputs daran bleiben – sie tragen ihre Kennung selbst. */
+/**
+ * Den Gruss eines Amtes schreiben (FR-191, FR-192).
+ *
+ * **Eigene Funktion, nicht `save_office()`** – aus demselben Grund, aus dem
+ * der Punktwert eine eigene hat (BR-206): Ein Formular, das die Felder nicht
+ * kennt, würde sie sonst löschen. Bei `save_office()` käme es schlimmer, weil
+ * ein Aufruf ohne Belegung die Sitze des Amtes löscht.
+ *
+ * `undefined` heisst «unverändert», das leere Objekt «grüsst nicht mehr», die
+ * leere Zeichenkette «kein Porträt mehr».
+ */
+export function useSaveOfficeGreeting() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (input: {
+      roleId: string;
+      greeting?: LabelSet;
+      imageUrl?: string;
+    }): Promise<void> => {
+      const { error } = await supabase.rpc('set_office_greeting', {
+        p_role_id: input.roleId,
+        // `Json` verlangt eine Index-Signatur, die ein Type-Alias über
+        // `Partial<Record<…>>` nicht mitbringt.
+        p_greeting: input.greeting as unknown as Json,
+        p_image: input.imageUrl,
+      });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['offices', activeClub?.id] });
+    },
+  });
+}
+
 export function useDeleteOffice() {
   const queryClient = useQueryClient();
   const { activeClub } = useClub();

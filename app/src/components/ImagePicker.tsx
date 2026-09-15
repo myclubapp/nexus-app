@@ -3,7 +3,7 @@ import { IonAvatar, IonButton, IonIcon, IonItem, IonLabel, IonSpinner } from '@i
 import { imageOutline } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '../hooks/useToast';
-import { logoUrl, pickImage, useSignedMediaUrl, useUploadMedia } from '../hooks/useMedia';
+import { isPublicKind, logoUrl, pickImage, useSignedMediaUrl, useUploadMedia } from '../hooks/useMedia';
 import type { MediaKind } from '../lib/image';
 import { ListSection } from './ListSection';
 
@@ -62,12 +62,12 @@ export function ImagePicker({
   const [isPicking, setPicking] = useState(false);
 
   const busy = isPicking || upload.isPending;
-  // Was in der Spalte steht, ist ein Pfad; angezeigt wird eine Adresse. Das
-  // Logo liegt öffentlich, Team- und Profilbild brauchen eine Signatur – der
-  // Hook läuft immer, gibt beim Logo aber nichts zurück (Regel der Hooks:
-  // keine Bedingung davor).
-  const signed = useSignedMediaUrl(kind === 'logo' ? null : url);
-  const preview = kind === 'logo' ? logoUrl(url) : signed;
+  // Was in der Spalte steht, ist ein Pfad; angezeigt wird eine Adresse. Logo
+  // und Grussporträt liegen öffentlich, Team- und Profilbild brauchen eine
+  // Signatur – der Hook läuft immer, gibt bei den öffentlichen aber nichts
+  // zurück (Regel der Hooks: keine Bedingung davor).
+  const signed = useSignedMediaUrl(isPublicKind(kind) ? null : url);
+  const preview = isPublicKind(kind) ? logoUrl(url) : signed;
 
   async function choose() {
     setPicking(true);

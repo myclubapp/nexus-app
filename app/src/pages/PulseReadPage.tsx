@@ -1,16 +1,13 @@
-import { IonItem, IonLabel, IonListHeader, IonNote } from '@ionic/react';
+import { IonLabel, IonListHeader, IonNote } from '@ionic/react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AppPage } from '../components/AppPage';
-import { ListSection } from '../components/ListSection';
-import { TextSection } from '../components/TextSection';
+import { PulseSections } from '../components/PulseSections';
 import { StatCard } from '../components/StatCard';
 import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
-import { usePulse } from '../hooks/usePulse';
+import { usePulsePayload } from '../hooks/usePulse';
 import { useMyPointsSummary } from '../hooks/useGamification';
-import { formatDate } from '../lib/format';
-import { PULSE_SECTIONS, itemsOf } from '../lib/pulse';
 
 /**
  * Den Vereins-Puls lesen (UC-027, A4).
@@ -18,11 +15,16 @@ import { PULSE_SECTIONS, itemsOf } from '../lib/pulse';
  * BR-114: **Die Punkte stehen nachgeordnet.** Sie kommen nach den drei
  * Abschnitten und nie als Aufmacher – der Puls handelt vom Verein, nicht vom
  * eigenen Punktestand. Die Reihenfolge dieser Seite ist die Regel.
+ *
+ * Gelesen wird über `pulse_payload()` und nicht über die Tabelle: Der Gruss
+ * hängt am Amt (UC-050, BR-252) und steht deshalb nicht in `club_pulses`. Die
+ * Funktion ist `security invoker` – die Policy aus `0044` entscheidet, wer
+ * einen Puls sieht, und der Client filtert nichts.
  */
 export function PulseReadPage() {
   const { t } = useTranslation();
   const { pulseId } = useParams<{ pulseId: string }>();
-  const pulse = usePulse(pulseId ?? null);
+  const pulse = usePulsePayload(pulseId ?? null);
   const points = useMyPointsSummary();
 
   const entry = pulse.data ?? null;
@@ -40,33 +42,11 @@ export function PulseReadPage() {
         />
       ) : (
         <>
-          {/* Die Einleitung des Vorstands ist Fliesstext, mit ihren Umbrüchen. */}
-          {entry.intro && (
-            <TextSection preserveLines>
-              <p>{entry.intro}</p>
-            </TextSection>
-          )}
-
-          {PULSE_SECTIONS.map((section) => {
-            const items = itemsOf(entry, section);
-            if (items.length === 0) return null;
-            return (
-              <ListSection key={section} title={t(`pulse.section.${section}`)}>
-                {items.map((item) => (
-                  <IonItem key={item.id}>
-                    <IonLabel className="ion-text-wrap">
-                      <h2>{item.title}</h2>
-                      <IonNote>
-                        {t(`pulse.kind.${item.kind}`)}
-                        {' · '}
-                        {item.at ? formatDate(item.at) : t('pulse.noDate')}
-                      </IonNote>
-                    </IonLabel>
-                  </IonItem>
-                ))}
-              </ListSection>
-            );
-          })}
+          <PulseSections
+            intro={entry.intro}
+            sections={entry.sections}
+            greeting={entry.greeting}
+          />
 
           {/* BR-114: nachgeordnet – nach den drei Fragen, nie davor. Die
               Kachel ist keine Listenzeile und steht deshalb neben der Liste. */}

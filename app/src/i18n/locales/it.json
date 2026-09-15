@@ -1258,8 +1258,30 @@
       "event": "Appuntamento",
       "task": "Compito",
       "shift": "Turno",
-      "decision": "Dal comitato"
-    }
+      "decision": "Dal comitato",
+      "news": "Contributo"
+    },
+    "onWebsite": "sul sito",
+    "board": "Il comitato",
+    "preview": "Anteprima",
+    "previewTitle": "Così arriva il polso",
+    "previewApp": "Nell’app",
+    "previewMail": "Come e-mail",
+    "previewMailHint": "Il foglio che arriva in posta – così come lo costruisce l’invio.",
+    "previewEmpty": "Per questo polso non c’è anteprima.",
+    "previewPointsHint": "Nell’app il punteggio personale segue le sezioni. Appartiene a ogni socio e perciò non compare nell’anteprima.",
+    "greetingTitle": "Formula di saluto",
+    "greetingManage": "Impostare il saluto",
+    "greetingManageHint": "Il saluto è legato alla carica, non alla persona: al passaggio di carica la firma cambia con essa.",
+    "greetingOffice": "Chi saluta",
+    "greetingOfficeHint": "Solo cariche del comitato. Se la carica è vacante, saluta il comitato.",
+    "greetingText": "Testo del saluto",
+    "greetingTextHint": "Facoltativo, in un massimo di quattro lingue. Chi ne compila una sola saluta tutti con quella.",
+    "greetingImage": "Ritratto",
+    "greetingImageHint": "Facoltativo. Compare nell’e-mail ed è quindi pubblico – nome e carica ci sono anche senza immagine.",
+    "greetingSaved": "La formula di saluto è salvata.",
+    "noBoardOffice": "Non c’è ancora nessuna carica del comitato che possa salutare.",
+    "vacantHint": "Questa carica è vacante – saluta il comitato."
   },
   "notifications": {
     "title": "Notifiche",

@@ -6,6 +6,7 @@
  * und die Prüfung des Formulars. Was hier steht, prüft `office.test.ts`; die
  * Blätter stellen nur dar.
  */
+import type { LabelSet } from './clubSettings';
 
 /** Eine Pflicht: Überschrift, optional ein Satz dazu. Form wie `duties` in `0070`. */
 export interface OfficeDuty {
@@ -57,6 +58,14 @@ export interface Office {
   contactMemberId: string | null;
   contactName: string | null;
   factsheetPath: string | null;
+  /**
+   * Der Grusstext dieses Amtes je Sprache (UC-050, FR-191). Leer heisst: Dieses
+   * Amt grüsst nicht. Er hängt am Amt und nicht an der Person – wechselt die
+   * Besetzung, wechselt die Unterschrift mit (BR-252).
+   */
+  greeting?: LabelSet;
+  /** Das Porträt zum Gruss – eine **öffentliche** Adresse (FR-192, BR-253). */
+  greetingImageUrl?: string | null;
   holders: OfficeHolder[];
 }
 

@@ -158,11 +158,11 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-082 | Vereins-Puls komponieren  | Als System möchte ich wöchentlich einen Entwurf mit «Was passiert · Woran arbeiten wir · Wo kannst du dabei sein» erzeugen, damit Verbindung Routine wird (K2). | High | Implemented |
 | FR-083 | Vereins-Puls freigeben    | Als Vorstand möchte ich den Puls-Entwurf in zwei Minuten prüfen und freigeben, damit der Versand wenig Zeit kostet.                                    | High     | Implemented |
 | FR-084 | Symmetrie-Hinweis         | Als Vorstand möchte ich gewarnt werden, wenn seit Wochen nur Aufrufe und keine Verbindungs-Nachrichten ausgingen, damit wir das Muster korrigieren (K1). | High   | Implemented |
-| FR-188 | Puls als eigenes Mailblatt | Als Mitglied möchte ich den Vereins-Puls per E-Mail mit allen drei Abschnitten erhalten, damit ich ihn lesen kann, ohne die App zu öffnen (UC-050). | High | Draft |
-| FR-189 | Vorschau des Pulses | Als Vorstand möchte ich vor der Freigabe sehen, wie der Puls in der App und im Postfach ankommt, damit ich nichts versende, das ich nicht gesehen habe (UC-050). | High | Draft |
-| FR-190 | Beiträge im Puls | Als Mitglied möchte ich im Puls auch die vereinsweiten Beiträge aus App und Website der letzten zwei Wochen finden, damit die Wochenübersicht vollständig ist (UC-050). | Medium | Draft |
-| FR-191 | Grussformel am Amt | Als Vorstand möchte ich einen Grusstext an ein Vorstandsamt hängen, damit der Puls mit Name und Amt grüsst und die Unterschrift bei der Amtsübergabe mitwechselt (UC-050). | Medium | Draft |
-| FR-192 | Porträt zur Grussformel | Als Mitglied möchte ich zum Gruss ein Gesicht sehen, damit der Puls von Menschen kommt und nicht von einem System (UC-050). | Low | Draft |
+| FR-188 | Puls als eigenes Mailblatt | Als Mitglied möchte ich den Vereins-Puls per E-Mail mit allen drei Abschnitten erhalten, damit ich ihn lesen kann, ohne die App zu öffnen (UC-050). | High | In Progress |
+| FR-189 | Vorschau des Pulses | Als Vorstand möchte ich vor der Freigabe sehen, wie der Puls in der App und im Postfach ankommt, damit ich nichts versende, das ich nicht gesehen habe (UC-050). | High | In Progress |
+| FR-190 | Beiträge im Puls | Als Mitglied möchte ich im Puls auch die vereinsweiten Beiträge aus App und Website der letzten zwei Wochen finden, damit die Wochenübersicht vollständig ist (UC-050). | Medium | In Progress |
+| FR-191 | Grussformel am Amt | Als Vorstand möchte ich einen Grusstext an ein Vorstandsamt hängen, damit der Puls mit Name und Amt grüsst und die Unterschrift bei der Amtsübergabe mitwechselt (UC-050). | Medium | In Progress |
+| FR-192 | Porträt zur Grussformel | Als Mitglied möchte ich zum Gruss ein Gesicht sehen, damit der Puls von Menschen kommt und nicht von einem System (UC-050). | Low | In Progress |
 
 ### 1.7 «Stimme»: Sprachmemos & Feedback
 

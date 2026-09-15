@@ -101,3 +101,35 @@ export function useSaveClubModules() {
     },
   });
 }
+
+/**
+ * Welches Amt den Vereins-Puls unterschreibt (UC-050, FR-191).
+ *
+ * **Sofort beim Wählen**, wie die Module: Es ist eine einzelne Entscheidung
+ * und kein Entwurf, der zu einem Speichern-Knopf gehört. Ein leerer Wert
+ * heisst «niemand grüsst» – dann endet das Blatt nach den Abschnitten (A1).
+ *
+ * Der Grusstext selbst steht am Amt und nicht hier (BR-252): Wechselt die
+ * Besetzung, wechselt die Unterschrift mit, ohne dass jemand diese Einstellung
+ * nachzieht.
+ */
+export function useSavePulseGreetingRole() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (roleId: string) => {
+      if (!activeClub) throw new Error('Kein aktiver Verein');
+
+      await writeClub(activeClub.id, {
+        settings: buildClubSettings(activeClub.settings, {
+          pulse: { greetingRoleId: roleId },
+        }),
+      });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['memberships'] });
+      await queryClient.invalidateQueries({ queryKey: ['pulse-preview'] });
+    },
+  });
+}

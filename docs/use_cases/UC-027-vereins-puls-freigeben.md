@@ -15,13 +15,13 @@
 
 ## Main Success Scenario
 
-1. System komponiert wöchentlich einen Puls-Entwurf aus drei Quellen: den Terminen der kommenden vierzehn Tage, den dokumentierten Vorstandsantworten der letzten zwei Wochen und den offenen Aufgaben und Schichten.
+1. System komponiert wöchentlich einen Puls-Entwurf aus vier Quellen: den Terminen der kommenden vierzehn Tage, den vereinsweiten Beiträgen der letzten zwei Wochen (UC-050, FR-190), den dokumentierten Vorstandsantworten derselben Frist und den offenen Aufgaben und Schichten.
 2. System benachrichtigt den Vorstand über den bereitliegenden Entwurf.
 3. Vorstand öffnet den Entwurf.
 4. System zeigt ihn in drei Abschnitten: «Was passiert», «Woran wir arbeiten», «Wo du dabei sein kannst».
-5. Vorstand streicht oder ergänzt einzelne Punkte und kann einen persönlichen Einleitungssatz schreiben.
+5. Vorstand streicht oder ergänzt einzelne Punkte, kann einen persönlichen Einleitungssatz schreiben und sich ansehen, wie der Puls ankommt (UC-050, FR-189).
 6. Vorstand gibt frei.
-7. System stellt den Puls allen Mitgliedern in die Inbox und, wo erlaubt, als Push zu.
+7. System stellt den Puls allen Mitgliedern in die Inbox und, wo erlaubt, als Push zu – und, wo der E-Mail-Kanal offen ist, als **eigenes Blatt** mit denselben drei Abschnitten (UC-050, FR-188). Bis dahin ging per E-Mail nur eine Meldungszeile mit Verweis hinaus.
 8. System zählt den Versand als Verbindungs-Nachricht und vermerkt den Zeitpunkt des letzten Pulses.
 
 ## Alternative Flows

@@ -1258,8 +1258,30 @@
       "event": "Event",
       "task": "Task",
       "shift": "Shift",
-      "decision": "From the board"
-    }
+      "decision": "From the board",
+      "news": "Post"
+    },
+    "onWebsite": "on the website",
+    "board": "The board",
+    "preview": "Preview",
+    "previewTitle": "How the pulse arrives",
+    "previewApp": "In the app",
+    "previewMail": "As email",
+    "previewMailHint": "The sheet that lands in the inbox – exactly as the send builds it.",
+    "previewEmpty": "There is no preview for this pulse.",
+    "previewPointsHint": "In the app the personal points follow the sections. They belong to each member individually and are therefore not part of the preview.",
+    "greetingTitle": "Greeting",
+    "greetingManage": "Set up the greeting",
+    "greetingManageHint": "The greeting belongs to the office, not the person: when the office changes hands, the signature follows.",
+    "greetingOffice": "Who signs",
+    "greetingOfficeHint": "Board offices only. If the office is vacant, the board signs.",
+    "greetingText": "Greeting text",
+    "greetingTextHint": "Optional, in up to four languages. Fill in one and everyone gets that one.",
+    "greetingImage": "Portrait",
+    "greetingImageHint": "Optional. It appears in the email and is therefore public – name and office are shown even without a picture.",
+    "greetingSaved": "The greeting is saved.",
+    "noBoardOffice": "There is no board office yet that could sign.",
+    "vacantHint": "This office is vacant – the board signs."
   },
   "notifications": {
     "title": "Notifications",

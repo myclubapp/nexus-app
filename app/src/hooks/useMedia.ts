@@ -25,8 +25,20 @@ import { useClub } from './useClub';
 export const LOGO_BUCKET = 'club-logo';
 export const PHOTO_BUCKET = 'club-photos';
 
+/**
+ * Welcher Bucket – und damit: öffentlich oder nicht.
+ *
+ * Logo und Grussporträt sind Zeichen, mit denen der Verein nach aussen
+ * auftritt, und liegen öffentlich; ein Gesicht aus der Mitgliederkartei liegt
+ * privat (BR-216, BR-253).
+ */
 export function bucketFor(kind: MediaKind): string {
-  return kind === 'logo' ? LOGO_BUCKET : PHOTO_BUCKET;
+  return kind === 'logo' || kind === 'greeting' ? LOGO_BUCKET : PHOTO_BUCKET;
+}
+
+/** Liegt die Art im öffentlichen Bucket? */
+export function isPublicKind(kind: MediaKind): boolean {
+  return kind === 'logo' || kind === 'greeting';
 }
 
 /**
@@ -44,9 +56,11 @@ export const SIGNED_URL_TTL = 3600;
 /**
  * Die öffentliche Adresse des Vereinslogos.
  *
- * Nur für das Logo: Sein Bucket ist öffentlich, weil es **vor** der Anmeldung
- * lädt (Einladungsseite, White-Label) – dort gibt es niemanden, für den
- * signiert werden könnte.
+ * Für das Logo und das Grussporträt: Ihr Bucket ist öffentlich. Das Logo, weil
+ * es **vor** der Anmeldung lädt (Einladungsseite, White-Label) – dort gibt es
+ * niemanden, für den signiert werden könnte. Das Porträt, weil es in einer
+ * E-Mail steht, wo eine ablaufende Signatur nach Tagen ein kaputtes Bild wäre
+ * (BR-253).
  *
  * Ein Wert, der schon mit `http` beginnt, kommt unverändert zurück: Das Logo
  * darf eine fremde Adresse sein (UC-034), und ein Bestand aus früheren Zeiten
@@ -267,7 +281,7 @@ export function useUploadMedia() {
       // Anzeigen frisch signiert und taugt nicht als gespeicherter Wert.
       return {
         path,
-        url: input.kind === 'logo' ? (logoUrl(path) ?? '') : '',
+        url: isPublicKind(input.kind) ? (logoUrl(path) ?? '') : '',
       };
     },
   });

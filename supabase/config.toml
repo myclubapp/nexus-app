@@ -93,3 +93,10 @@ verify_jwt = true
 # weist ohne sie mit 401 ab. `verify_jwt = true` würde den Hook aussperren.
 [functions.auth-mail]
 verify_jwt = false
+
+# UC-050: Die Vorschau des Vereins-Pulses (FR-189). Sie liest mit dem Token der
+# Aufruferin, und die Policy aus `0044` entscheidet – Entwürfe sieht nur der
+# Vorstand. `verify_jwt` davor ist die erste Hürde; eine Vorschau ohne
+# angemeldete Person gibt es nicht.
+[functions.pulse-preview]
+verify_jwt = true

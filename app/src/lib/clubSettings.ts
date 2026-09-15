@@ -80,6 +80,8 @@ export function buildClubSettings(
     leaderboard?: { topOnly: string; hidePoints: boolean };
     /** UC-042: das Saisonziel für den Beitrag, in Punkten. */
     goal?: { seasonPoints: string };
+    /** UC-050: welches Amt den Vereins-Puls unterschreibt (FR-191). */
+    pulse?: { greetingRoleId: string };
   },
 ): ClubSettings {
   const settings: ClubSettings = { ...current };
@@ -163,6 +165,15 @@ export function buildClubSettings(
     } else {
       delete settings.goal;
     }
+  }
+
+  // Der Gruss am Puls: Kein Amt gewählt heisst «niemand grüsst», und dann
+  // verschwindet der Eintrag ganz – ein leerer Wert, der dastünde, wäre eine
+  // Einstellung, die etwas verspricht und nichts bewirkt (A1).
+  if (input.pulse) {
+    const roleId = input.pulse.greetingRoleId.trim();
+    if (roleId) settings.pulse = { greetingRoleId: roleId };
+    else delete settings.pulse;
   }
 
   return settings;

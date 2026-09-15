@@ -5,7 +5,7 @@
 | **Primary Actor** | Vorstand                                                            |
 | **Goal**          | Der Puls erreicht die Mitglieder als ganzes Blatt – mit den Beiträgen des Vereins, einem Gruss am Amt und einer Vorschau vor dem Versand |
 | **Plan created**  | 2026-09-15                                                          |
-| **Status**        | Open                                                                |
+| **Status**        | Gebaut und geprüft; wartet auf `db push` (0100) und das Deploy von `pulse-preview` |
 
 ## Overview
 
@@ -40,7 +40,7 @@ Parallelsitzung nexus-app-f9, die `0096` gebaut hat):
   `escapeHtml`, `safeUrl`.
 - `pending_mail()` in der Fassung aus `0096` – **diese** wird erweitert, nicht
   die aus `0084`.
-- `0096` ist seit dem 15.09.2026 eingespielt; `0098` schliesst an – `0097` und `0099` waren in der Zwischenzeit von zwei anderen Sitzungen belegt und remote eingetragen.
+- `0096` ist seit dem 15.09.2026 eingespielt; `0100` trägt die Änderung – `0097` und `0099` gehören zwei Parallelsitzungen, und weil `save_office()` fortgeschrieben wird, muss die Nummer **über** `0099` liegen (sonst überschreibt ein `db reset` die Erweiterung).
 
 ## Related Use Cases
 
@@ -60,11 +60,11 @@ Parallelsitzung nexus-app-f9, die `0096` gebaut hat):
 
 | ID     | Titel                     | Status vorher | Ziel        | Notizen                                                        |
 | ------ | ------------------------- | ------------- | ----------- | -------------------------------------------------------------- |
-| FR-188 | Puls als eigenes Mailblatt | Draft        | Implemented | `p_template => 'pulse'` in `release_pulse()`, zweiter Zweig in `send-mail/template.ts` |
-| FR-189 | Vorschau des Pulses       | Draft         | Implemented | Eigene Function `pulse-preview` (`verify_jwt`), Blatt in `PulsePage` |
-| FR-190 | Beiträge im Puls          | Draft         | Implemented | Vierte Quelle in `compose_club_pulse()`, neue Art `news`        |
-| FR-191 | Grussformel am Amt        | Draft         | Implemented | `functionary_roles.greeting`, `clubs.settings.pulse.greetingRoleId` |
-| FR-192 | Porträt zur Grussformel   | Draft         | Implemented | `functionary_roles.greeting_image_url`, Bucket `club-logo`, Pfadart `greeting` |
+| FR-188 | Puls als eigenes Mailblatt | Draft        | In Progress | `p_template => 'pulse'` in `release_pulse()`, zweiter Zweig in `send-mail/template.ts` |
+| FR-189 | Vorschau des Pulses       | Draft         | In Progress | Eigene Function `pulse-preview` (`verify_jwt`), Blatt in `PulsePage` |
+| FR-190 | Beiträge im Puls          | Draft         | In Progress | Vierte Quelle in `compose_club_pulse()`, neue Art `news`        |
+| FR-191 | Grussformel am Amt        | Draft         | In Progress | `functionary_roles.greeting`, `clubs.settings.pulse.greetingRoleId` |
+| FR-192 | Porträt zur Grussformel   | Draft         | In Progress | `functionary_roles.greeting_image_url`, Bucket `club-logo`, Pfadart `greeting` |
 | FR-082 | Vereins-Puls komponieren  | Implemented   | Implemented | Unverändert im Ablauf, eine Quelle mehr                        |
 | FR-083 | Vereins-Puls freigeben    | Implemented   | Implemented | Unverändert; der Versand trägt ab hier ein eigenes Blatt        |
 
@@ -80,7 +80,7 @@ Parallelsitzung nexus-app-f9, die `0096` gebaut hat):
 | BR-253 | Kein Bild aus dem privaten Speicher in eine Mail | Neu | Eigenes Feld im öffentlichen Bucket, nie `club_members.avatar_url` |
 | BR-254 | Der Gruss steht auch ohne Bild              | Neu  | Name und Amt als Text; kein Scan einer Unterschrift          |
 | BR-113 | Drei Fragen, feste Reihenfolge              | Gilt | Die vierte Quelle wird eine neue **Art** im ersten Abschnitt, kein vierter Abschnitt |
-| BR-114 | Punkte stehen nachgeordnet                  | Gilt | Auch im Mailblatt                                            |
+| BR-114 | Punkte stehen nachgeordnet                  | Gilt | In der App; das Mailblatt trägt sie nicht (BR-248, Entscheid beim Bauen) |
 | BR-116 | Verbindung vor Aufruf                       | Gilt | Die Vorschau löst die sanfte Sperre **nicht**                |
 | BR-213 | Eine Mail je Person und Lauf                | Ausnahme | `mail_template` bündelt nie mit – wie die Willkommensmail |
 | BR-216 | Profilbilder nur innerhalb des Klubs        | Gilt | Der Grund für BR-253                                         |
@@ -168,21 +168,21 @@ Verbindlich aus `docs/guidelines.md`:
 - **Bauteile:** `AppPage`, `ListSection` mit `footnote`, `TextSection`, `SkeletonList`, `EmptyState` mit Angebot, `FormModal` für die Grussformel, `ManageSection` für den Verwaltungsweg. **Kein neues Bauteil** – die Mailvorschau ist ein `iframe` in einem Blatt, kein eigenes Layout.
 - **Entscheidungen** als reine Funktionen in `src/lib/pulse.ts` (§9): die neue Art `news`, die Auswahl der Abschnitte, der Gruss (Amt, Namen, Bild) – prüfbar ohne Rendern.
 - **Vier Sprachen** ab dem ersten Commit; neue Schlüssel unter `pulse.*` und `clubSettings.pulse.*`. Die Sprachdateien unmittelbar vor dem Schreiben neu einlesen (drei Parallelsitzungen).
-- **Migration `0098_pulse_greeting_and_news.sql`** – `0096`, `0097` und `0099` sind eingespielt; 0098 ist die einzige freie Nummer darunter und mit den Peers abgesprochen.
+- **Migration `0100_pulse_greeting_and_news.sql`** – über `0099`, weil sie `save_office()` fortschreibt; `0098` bleibt unbenutzt.
 - Die Mailtexte des Blatts entstehen in `send-mail/template.ts` in vier Sprachen – sie sind für `i18n:check` unsichtbar, also von Hand vollständig halten (siehe UC-049, BR-244).
 
 ---
 
 ## Implementation Tasks
 
-- [ ] 1. Migration `0098`: `functionary_roles.greeting`/`greeting_image_url`, Pfadart `greeting` in den vier `club-logo`-Policies, vierte Quelle in `compose_club_pulse()`, `release_pulse()` mit `p_template => 'pulse'`, `pending_mail()` mit `payload`
-- [ ] 2. `src/lib/pulse.ts` + Vitest: Art `news`, externer Verweis, Gruss aus Amt und Belegung (vakant → «Der Vorstand», mehrere Inhaber:innen → alle Namen, Bild nur am Amt)
-- [ ] 3. `send-mail/template.ts`: Pulsblatt als zweiter Zweig neben `welcome`, in vier Sprachen, Gruss am Fuss, Porträt über `safeUrl()`
-- [ ] 4. Function `pulse-preview`: rendert mit dem Token der Aufruferin, importiert das Blatt aus `_shared/`; `send-mail` bleibt unangetastet
-- [ ] 5. `useClubSettings`/`useOffices`: Grussformel schreiben und lesen; `usePulse`: Vorschau abrufen
-- [ ] 6. `PulsePage`: Knopf «Vorschau», Blatt mit App-Ansicht und Mailansicht; `OfficeFormModal` um Grusstext und Bild erweitern
-- [ ] 7. i18n in vier Sprachen, `npm run i18n:check`
-- [ ] 8. Verhaltensprüfung gegen die laufende Datenbank: vierte Quelle greift, Team-News bleibt draussen, Vorschau setzt kein `sent_at` und zählt keine Verbindung, Pulszeile trägt `mail_template`
+- [x] 1. Migration `0100`: `functionary_roles.greeting`/`greeting_image_url`, Pfadart `greeting` in den vier `club-logo`-Policies, vierte Quelle in `compose_club_pulse()`, `release_pulse()` mit `p_template => 'pulse'`, `pending_mail()` mit `payload`, `set_office_greeting()` für den Gruss
+- [x] 2. `src/lib/pulse.ts` + Vitest: Art `news`, externer Verweis, Gruss aus Amt und Belegung (vakant → «Der Vorstand», mehrere Inhaber:innen → alle Namen, Bild nur am Amt)
+- [x] 3. `send-mail/template.ts`: Pulsblatt als zweiter Zweig neben `welcome`, in vier Sprachen, Gruss am Fuss, Porträt über `safeUrl()`
+- [x] 4. Function `pulse-preview`: rendert mit dem Token der Aufruferin, importiert das Blatt aus `_shared/`; `send-mail` bleibt unangetastet
+- [x] 5. `useClubSettings`/`useOffices`: Grussformel schreiben und lesen; `usePulse`: Vorschau abrufen
+- [x] 6. `PulsePage`: Knopf «Vorschau» und Verwaltungsweg «Grussformel einrichten»; `PulseSections` für App-Ansicht und Leseseite, `PulsePreviewModal`, `PulseGreetingModal` (Amt, vier Sprachen, `ImagePicker`)
+- [x] 7. i18n in vier Sprachen, `npm run i18n:check`
+- [x] 8. Verhaltensprüfung gegen die laufende Datenbank: vierte Quelle greift, Team-News bleibt draussen, Vorschau setzt kein `sent_at` und zählt keine Verbindung, Pulszeile trägt `mail_template`
 - [ ] 9. `ai-code-review` als eigener Durchgang, Befunde beheben
 - [ ] 10. Testplan `docs/test-plans/uc-050-vereins-puls-persoenlich.md`
 - [ ] 11. Statusabgleich in `requirements.md`, UC-050, UC-027 und `use_cases/README.md`
@@ -197,3 +197,60 @@ Verbindlich aus `docs/guidelines.md`:
 3. **Die Vorschau darf den Entwurf nicht verbrauchen.** `release_pulse()` streicht die nicht behaltenen Einträge **in der Tabelle**; die Vorschau bekommt die Auswahl als Parameter und schreibt nichts.
 4. **Ein Bild in der Mail ist erst auf Klick da.** Name und Amt gehören in den Text (BR-254); ein `alt` allein ist kein Gruss.
 5. **`payload` ist Nutzlast, nicht Wahrheit.** Sie entsteht beim Abholen, nicht beim Anlegen der Zeile – ein Puls, der nach dem Versand geändert würde, dürfte die schon verschickte Mail nicht rückwirkend ändern. `club_pulses` ist nach `status = 'sent'` unveränderlich; das prüft Schritt 8.
+
+---
+
+## Was beim Bauen gefallen ist (15.09.2026)
+
+**Der Gruss bekam seine eigene Funktion.** Der Plan sah `save_office()` mit zwei
+Parametern mehr vor. Beim Schreiben der Oberfläche kam heraus, dass das nicht
+nur den Wert gefährdet (BR-206 beim Punktwert), sondern die **Belegung**:
+`p_holders` heisst mit seiner Vorgabe `'[]'` «keine Sitze», und der Rumpf löscht
+am Ende alles, was nicht in der Liste steht. Ein Aufruf, der nur den Gruss
+setzen wollte, hätte das Amt entvölkert. Jetzt: `set_office_greeting()`, drei
+Parameter, eine Spalte. Eine Prüfung hält es fest («Der Gruss lässt die
+Belegung unberührt»).
+
+**Die Vorschau bekam ihre eigene Function.** Der Plan sah eine Betriebsart
+`preview` in `send-mail` vor. Einwand der Parallelsitzung, die `send-mail`
+gebaut hat, angenommen: Diese Function hält den `service_role`-Schlüssel und hat
+genau **ein** Tor, ganz vorne. Ein zweiter Vertrauensgrad daneben hiesse, dass
+dieses Tor je Betriebsart entscheiden muss – und eine falsch einsortierte frühe
+Rückgabe wäre ein Mitglied, das den Versandlauf anstösst. `pulse-preview` hat
+einen einzigen Vertrauensgrad und dupliziert nichts: Das Blatt liegt in
+`_shared/pulse_sheet.ts`.
+
+**Die Nummer wurde 0100.** 0098 war frei, die Migration schrieb aber zunächst
+`save_office()` fort – und dessen jüngste Fassung steht in `0099`. Bei einem
+`db reset` hätte 0099 die Erweiterung still überschrieben. Nach dem Umbau auf
+`set_office_greeting()` wäre 0098 wieder möglich gewesen; die Nummer bleibt
+oben, weil auch die neuen Spalten an `functionary_roles` hängen.
+
+**Der Punktestand kam nicht ins Mailblatt.** BR-114 verlangt, dass er
+nachgeordnet steht, nicht dass er überall steht. Ein Versandlauf, der je
+Empfängerin einen Punktestand nachschlägt, wäre eine zweite Abfrage je Zeile –
+und der Puls handelt vom Verein. Die Vorschau sagt das ausdrücklich
+(`pulse.previewPointsHint`), damit niemand die Lücke für ein Versehen hält.
+
+**Zwei Befunde, die keine Prüfung bestellt hatte:**
+
+1. **Ein Renderzyklus im Gruss-Formular.** Der erste Entwurf kopierte den
+   gespeicherten Stand per `useEffect` in den Zustand und hörte dabei auf
+   `offices.data` und `activeClub`. Kommt eine dieser Referenzen je Rendern neu
+   – im Test tat sie es –, dreht die Seite endlos; der Vitest-Worker starb mit
+   `SIGABRT`. Jetzt ist beides **abgeleitet** (`chosen ?? stored`,
+   `draft ?? office.greeting`), und es gibt keinen Effekt mehr. In der App wäre
+   es nicht aufgefallen, weil React Query stabile Referenzen liefert – der Test
+   war strenger als die Laufzeit.
+2. **Ionic-Elemente setzen ihren Inhalt erst nach der Hydration.** Eine
+   synchrone `queryByText`-Abfrage auf eine Abschnittsüberschrift trifft `null`,
+   obwohl das DOM sie trägt. `findByText` wartet den Tick ab. Steht als
+   Kommentar im Test, weil es der nächsten Person genauso passiert.
+
+**Prüfung gegen die laufende Datenbank ohne Deploy.** `supabase db query
+--linked -f` mit `begin; … rollback;` wendet die Migration an, befragt sie und
+nimmt sie zurück. Vorher belegt, dass der Rollback dort wirklich greift (eine
+Wegwerftabelle, danach `pg_class` befragt). 21 Prüfungen, alle grün; die
+Produktionsdatenbank ist unverändert (`greeting`-Spalte weg, `pulse_payload`
+weg, `save_office` weiter zwölfstellig). Das ersetzt Schritt 3 **nicht** – nach
+dem echten `db push` gehört derselbe Lauf ohne `rollback` wiederholt.

@@ -17,6 +17,13 @@
  *   { mode: 'test', to }     – eine Probemail an eine Adresse, ohne die
  *                              Datenbank anzufassen. Für die Inbetriebnahme.
  *
+ * Die **Vorschau** des Vereins-Pulses (UC-050, FR-189) liegt ausdrücklich
+ * **nicht** hier, sondern in der Function `pulse-preview`: Diese Function hält
+ * den `service_role`-Schlüssel und hat genau ein Tor, ganz vorne. Ein zweiter
+ * Vertrauensgrad daneben hiesse, dass dieses Tor je Betriebsart entscheiden
+ * muss – und eine falsch einsortierte frühe Rückgabe wäre ein Mitglied, das
+ * den Versandlauf anstösst.
+ *
  * Was fehlt, wird gesagt: Ohne SMTP-Zugang antwortet die Function mit 503
  * und einer Zeile, die nennt, welche Variable fehlt – ein Lauf, der still
  * nichts tut, wäre nach zwei Wochen unbemerkt.
@@ -73,6 +80,9 @@ function groupRows(rows: PendingRow[]): MailGroup[] {
       clubColor: row.club_color,
       clubLogo: row.club_logo,
       clubWhy: row.club_why,
+      // Die Nutzlast eines eigenen Blatts (UC-050): `pending_mail()` füllt sie
+      // nur für Zeilen mit `mail_template`.
+      payload: row.payload ?? null,
     };
     const key = row.mail_template ? `${row.user_id}:${row.id}` : row.user_id;
     const existing = groups.get(key);
@@ -109,6 +119,7 @@ interface PendingRow {
   link: string | null;
   why: string | null;
   mail_template: string | null;
+  payload: unknown;
   created_at: string;
 }
 
@@ -158,6 +169,7 @@ Deno.serve(async (request) => {
           clubColor: null,
           clubLogo: null,
           clubWhy: null,
+          payload: null,
         },
       ],
     };

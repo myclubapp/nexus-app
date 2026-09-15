@@ -13,7 +13,12 @@
  */
 
 /** Wofür ein Bild steht – bestimmt Pfad und Kantenlänge. */
-export type MediaKind = 'logo' | 'teams' | 'members';
+/**
+ * `greeting` seit UC-050 (FR-192): das Porträt am Gruss des Pulses. Es liegt
+ * wie das Logo im **öffentlichen** Bucket – ein Postfach kann mit einer
+ * ablaufenden Signatur nichts anfangen (BR-253).
+ */
+export type MediaKind = 'logo' | 'teams' | 'members' | 'greeting';
 
 /**
  * Die längste Kante nach dem Verkleinern.
@@ -27,6 +32,9 @@ export const MEDIA_MAX_EDGE: Record<MediaKind, number> = {
   logo: 512,
   teams: 1024,
   members: 512,
+  // Im Blatt steht es als Kreis von 56 Pixeln; 512 reicht auf jedem Bildschirm
+  // und hält die Mail klein.
+  greeting: 512,
 };
 
 /** Was der Bucket annimmt (`0083`). SVG fehlt mit Absicht: Es kann Skript tragen. */
@@ -70,6 +78,9 @@ export function mediaPath(
 ): string {
   const ext = extensionFor(fileName);
   const unique = randomName();
+  // Das Logo gehört dem Verein, alles andere einem Gegenstand darin: das
+  // Porträt einem Amt, das Teambild einem Team, das Profilbild einer Person.
+  // `can_write_club_media()` liest genau diese Form.
   return kind === 'logo'
     ? `${clubId}/logo/${unique}.${ext}`
     : `${clubId}/${kind}/${ownerId}/${unique}.${ext}`;

@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase, isConfigured } from '../lib/supabase';
+import i18n from '../i18n';
 import { useClub } from './useClub';
-import type { ClubPulse, ConnectionRatio, PulseItem } from '../lib/pulse';
+import { toPulsePayload, type ClubPulse, type ConnectionRatio, type PulseItem, type PulsePayload } from '../lib/pulse';
 
 function toPulse(row: Record<string, unknown>): ClubPulse {
   return {
@@ -54,6 +55,40 @@ export function usePulse(pulseId: string | null) {
         .maybeSingle();
       if (error) throw new Error(error.message);
       return data ? toPulse(data as Record<string, unknown>) : null;
+    },
+  });
+}
+
+/**
+ * Ein Puls mit allem, was im Blatt steht – Abschnitte **und** Gruss (UC-050).
+ *
+ * `pulse_payload()` ist `security invoker`: Die Policy aus `0044` entscheidet,
+ * wer etwas sieht, und gibt `null` zurück, wenn nichts zu sehen ist. Deshalb
+ * liest diese Abfrage auch den Gruss, den die Tabelle allein nicht kennt – er
+ * hängt am Amt (BR-252).
+ */
+export function usePulsePayload(pulseId: string | null, keep: string[] | null = null) {
+  // **Die Sprache gehört in den Schlüssel**, weil sie in die Abfrage geht: Der
+  // Grusstext ist Prosa des Vereins und wird nach Sprache **ausgewählt**. Ohne
+  // sie zeigte ein Sprachwechsel den Gruss von vorher.
+  //
+  // Und die Auswahl gehört ebenfalls hinein: Sie filtert **serverseitig**
+  // (`p_keep`), damit die Regel «was gestrichen ist, steht nicht drin» genau
+  // einmal im Repository steht – dieselbe Funktion beantwortet die App-Ansicht
+  // und das Mailblatt.
+  const keepKey = keep ? [...keep].sort().join(',') : 'alle';
+
+  return useQuery({
+    queryKey: ['pulse-payload', pulseId, keepKey, i18n.language],
+    enabled: Boolean(pulseId) && isConfigured,
+    queryFn: async (): Promise<PulsePayload | null> => {
+      const { data, error } = await supabase.rpc('pulse_payload', {
+        p_pulse_id: pulseId!,
+        p_locale: i18n.language,
+        p_keep: keep ?? undefined,
+      });
+      if (error) throw new Error(error.message);
+      return toPulsePayload(data);
     },
   });
 }
@@ -113,6 +148,67 @@ export function useComposePulse() {
       void queryClient.invalidateQueries({ queryKey: ['pulse-draft', activeClub?.id] });
     },
   });
+}
+
+/** Was die Vorschau zurückgibt – das fertige Blatt, wie es im Postfach ankommt. */
+export interface PulsePreview {
+  subject: string;
+  html: string;
+}
+
+/**
+ * Die Vorschau des Pulses (UC-050, FR-189).
+ *
+ * Gerendert wird in der Function `pulse-preview` – mit **demselben** Blatt wie
+ * der Versand (`_shared/pulse_sheet.ts`). Die App baut es ausdrücklich nicht
+ * nach: Eine zweite Abschrift zeigte etwas, das niemand bekommt.
+ *
+ * `keep` ist die Auswahl des Vorstands, damit die Vorschau zeigt, was die
+ * Freigabe verschicken würde. Geschrieben wird dabei nichts (BR-249).
+ */
+export function usePulsePreview(
+  pulseId: string | null,
+  keep: string[] | null,
+  enabled: boolean,
+) {
+  // Die Auswahl gehört in den Schlüssel, nicht nur in den Rumpf: Wer einen
+  // Eintrag streicht und die Vorschau erneut öffnet, soll sie ohne diesen
+  // Eintrag sehen und nicht die zwischengespeicherte von vorher.
+  const keepKey = keep ? [...keep].sort().join(',') : 'alle';
+
+  return useQuery({
+    queryKey: ['pulse-preview', pulseId, keepKey, i18n.language],
+    enabled: Boolean(pulseId) && enabled && isConfigured,
+    // Eine Vorschau ist nichts, was im Hintergrund altert – sie entsteht beim
+    // Öffnen des Blatts und wird danach nicht mehr gebraucht.
+    staleTime: 0,
+    gcTime: 0,
+    queryFn: async (): Promise<PulsePreview> => {
+      const { data, error } = await supabase.functions.invoke<PulsePreview>('pulse-preview', {
+        body: { pulseId, locale: i18n.language, keep },
+      });
+      // `functions.invoke` wirft bei jedem Status ab 400 denselben Satz –
+      // dasselbe Muster wie in `useInvoicing`: die Meldung der Function lesen,
+      // sonst steht «non-2xx status code» auf dem Bildschirm.
+      if (error) throw new Error(await functionMessage(error));
+      if (!data) throw new Error(i18n.t('pulse.previewEmpty'));
+      return data;
+    },
+  });
+}
+
+/** Die Meldung aus dem Rumpf einer Function – nicht der Satz von supabase-js. */
+async function functionMessage(error: unknown): Promise<string> {
+  const context = (error as { context?: Response }).context;
+  if (context && typeof context.json === 'function') {
+    try {
+      const body = (await context.json()) as { error?: string };
+      if (body?.error) return body.error;
+    } catch {
+      // Kein JSON im Rumpf – dann bleibt die Meldung der Bibliothek.
+    }
+  }
+  return (error as Error).message;
 }
 
 /** A2: «Diese Woche nicht». */

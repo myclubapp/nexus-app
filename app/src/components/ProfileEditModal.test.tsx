@@ -34,6 +34,9 @@ vi.mock('../hooks/useMedia', () => ({
   // signiert. Im Test genügt der Wert selbst.
   useSignedMediaUrl: (value: string | null | undefined) => value ?? null,
   logoUrl: (value: string | null | undefined) => value ?? null,
+  // UC-050: Logo und Grussporträt liegen öffentlich, ein Gesicht nicht
+  // (BR-216, BR-253). `ImagePicker` fragt damit, ob es signieren muss.
+  isPublicKind: (kind: string) => kind === 'logo' || kind === 'greeting',
 }));
 
 vi.mock('../hooks/useToast', () => ({

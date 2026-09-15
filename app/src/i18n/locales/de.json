@@ -1258,8 +1258,30 @@
       "event": "Termin",
       "task": "Aufgabe",
       "shift": "Schicht",
-      "decision": "Aus dem Vorstand"
-    }
+      "decision": "Aus dem Vorstand",
+      "news": "Beitrag"
+    },
+    "onWebsite": "auf der Website",
+    "board": "Der Vorstand",
+    "preview": "Vorschau",
+    "previewTitle": "So kommt der Puls an",
+    "previewApp": "In der App",
+    "previewMail": "Als E-Mail",
+    "previewMailHint": "Das Blatt, das im Postfach ankommt – so, wie der Versand es baut.",
+    "previewEmpty": "Zu diesem Puls gibt es keine Vorschau.",
+    "previewPointsHint": "In der App steht nach den Abschnitten der persönliche Punktestand. Er gehört jedem Mitglied einzeln und steht deshalb nicht in der Vorschau.",
+    "greetingTitle": "Grussformel",
+    "greetingManage": "Grussformel einrichten",
+    "greetingManageHint": "Der Gruss hängt am Amt, nicht an der Person: Bei einer Amtsübergabe wechselt die Unterschrift mit.",
+    "greetingOffice": "Wer grüsst",
+    "greetingOfficeHint": "Nur Vorstandsämter. Ist das Amt unbesetzt, grüsst der Vorstand.",
+    "greetingText": "Grusstext",
+    "greetingTextHint": "Freiwillig, und in bis zu vier Sprachen. Wer nur eine ausfüllt, grüsst alle damit.",
+    "greetingImage": "Porträt",
+    "greetingImageHint": "Freiwillig. Es steht in der E-Mail und ist damit öffentlich – Name und Amt stehen auch ohne Bild da.",
+    "greetingSaved": "Die Grussformel ist hinterlegt.",
+    "noBoardOffice": "Es gibt noch kein Vorstandsamt, das grüssen könnte.",
+    "vacantHint": "Dieses Amt ist unbesetzt – es grüsst der Vorstand."
   },
   "notifications": {
     "title": "Benachrichtigungen",

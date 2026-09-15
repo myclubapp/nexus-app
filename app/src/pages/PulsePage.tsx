@@ -10,6 +10,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
+import { ManageSection } from '../components/ManageSection';
+import { PulseGreetingModal } from '../components/PulseGreetingModal';
+import { PulsePreviewModal } from '../components/PulsePreviewModal';
 import { StatCard } from '../components/StatCard';
 import { EmptyState, ErrorState, InlineError } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
@@ -50,6 +53,10 @@ export function PulsePage() {
   const compose = useComposePulse();
 
   const [intro, setIntro] = useState('');
+  // FR-189: Zwei Blätter, die nichts versenden – die Vorschau und die
+  // Einrichtung der Grussformel.
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [greetingOpen, setGreetingOpen] = useState(false);
   // A3 nach einem Anstoss von Hand: Der Lauf fand nichts. Das gehört in die
   // Fläche und nicht in einen Toast – die Erklärung muss stehen bleiben,
   // solange der Bildschirm leer ist (BR-165).
@@ -193,6 +200,17 @@ export function PulsePage() {
           {isEmpty(pulse, kept) && <InlineError message={t('pulse.allStruck')} />}
 
           <div className="app-actions">
+            {/* FR-189: sehen, was ankommt – **vor** der Freigabe. Sie steht
+                deshalb über dem Freigabeknopf und nicht daneben. */}
+            <IonButton
+              expand="block"
+              fill="outline"
+              disabled={isEmpty(pulse, kept)}
+              onClick={() => setPreviewOpen(true)}
+            >
+              {t('pulse.preview')}
+            </IonButton>
+
             <IonButton
               expand="block"
               disabled={release.isPending || isEmpty(pulse, kept)}
@@ -237,6 +255,29 @@ export function PulsePage() {
           </div>
         </>
       )}
+
+      {/* Die Grussformel gehört nicht an den einzelnen Puls, sondern an das
+          Amt (BR-252) – deshalb steht sie als Verwaltungsweg und ist auch
+          erreichbar, wenn diese Woche kein Entwurf vorliegt. */}
+      <ManageSection
+        actions={[
+          {
+            label: t('pulse.greetingManage'),
+            detail: true,
+            onClick: () => setGreetingOpen(true),
+          },
+        ]}
+        footnote={t('pulse.greetingManageHint')}
+      />
+
+      <PulsePreviewModal
+        isOpen={previewOpen}
+        onDismiss={() => setPreviewOpen(false)}
+        pulseId={pulse?.id ?? null}
+        keep={struck === null ? null : [...kept]}
+      />
+
+      <PulseGreetingModal isOpen={greetingOpen} onDismiss={() => setGreetingOpen(false)} />
     </AppPage>
   );
 }

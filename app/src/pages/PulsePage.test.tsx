@@ -24,10 +24,32 @@ vi.mock('../hooks/usePulse', () => ({
   useReleasePulse: () => ({ mutate: vi.fn(), isPending: false }),
   useDiscardPulse: () => ({ mutate: vi.fn(), isPending: false }),
   useComposePulse: () => ({ mutate: compose, isPending: composePending }),
+  // UC-050: Die beiden Blätter der Seite (Vorschau, Grussformel) hängen
+  // immer im Baum, auch geschlossen – ein Mock ohne sie liesse die Seite
+  // schon beim Rendern fallen.
+  usePulsePayload: () => ({ data: null, isLoading: false, error: null, refetch: vi.fn() }),
+  usePulsePreview: () => ({ data: null, isLoading: false, error: null, refetch: vi.fn() }),
 }));
 
 vi.mock('../hooks/useToast', () => ({
   useToast: () => ({ success, failure }),
+}));
+
+// Die zwei Blätter der Seite (Vorschau, Grussformel) hängen wie überall in der
+// App unbedingt im Baum – ihre Hooks laufen also mit, auch wenn niemand sie
+// geöffnet hat. Sie brauchen deshalb hier ihre Mocks; geprüft werden sie in
+// ihren eigenen Tests.
+vi.mock('../hooks/useClub', () => ({
+  useClub: () => ({ isAdmin: true, isBoard: true, activeClub: { id: 'club-1', settings: {} } }),
+}));
+
+vi.mock('../hooks/useOffices', () => ({
+  useOffices: () => ({ data: [], isLoading: false, error: null }),
+  useSaveOfficeGreeting: () => ({ mutate: vi.fn(), isPending: false }),
+}));
+
+vi.mock('../hooks/useClubSettings', () => ({
+  useSavePulseGreetingRole: () => ({ mutate: vi.fn(), isPending: false }),
 }));
 
 describe('PulsePage – ohne Entwurf', () => {
