@@ -39,6 +39,12 @@ describe('isEditable', () => {
     // Die Änderung ginge beim nächsten Abgleich verloren (UC-038).
     expect(isEditable({ source: 'website' })).toBe(false);
   });
+
+  it('bietet einen Verbandsbeitrag nicht zum Bearbeiten an (FR-197)', () => {
+    // `upsert_federation_news()` überschreibt Titel, Anriss und Bild bei jedem
+    // Lauf – eine Änderung hier wäre spätestens am nächsten Morgen weg.
+    expect(isEditable({ source: 'federation' })).toBe(false);
+  });
 });
 
 describe('publishedTitle (FR-100)', () => {

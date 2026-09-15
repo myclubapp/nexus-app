@@ -205,3 +205,27 @@ describe('buildClubSettings – Rangliste (Konzept §7.2)', () => {
     expect(settings.leaderboard).toBeUndefined();
   });
 });
+
+describe('buildClubSettings – offene Anfragen (FR-196, BR-258)', () => {
+  it('legt nur ein `true` ab – wie ein Modul', () => {
+    const open = buildClubSettings({}, input({ join: { public: true } }));
+    expect(open.join).toEqual({ public: true });
+  });
+
+  it('lässt den Eintrag verschwinden, wenn der Weg zu ist', () => {
+    // Ein `false`, das dastünde, sagte dasselbe wie sein Fehlen und machte die
+    // Einstellung nur länger.
+    const closed = buildClubSettings(
+      { join: { public: true } },
+      input({ join: { public: false } }),
+    );
+    expect(closed.join).toBeUndefined();
+  });
+
+  it('fasst die Einstellung nicht an, wenn eine andere Seite speichert', () => {
+    // Die Vereinseinstellungen und der Einrichtungs-Assistent schicken je nur
+    // ihren eigenen Ausschnitt; was fehlt, bleibt stehen.
+    const kept = buildClubSettings({ join: { public: true } }, input({}));
+    expect(kept.join).toEqual({ public: true });
+  });
+});

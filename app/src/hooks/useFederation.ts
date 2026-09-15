@@ -41,7 +41,9 @@ export function useFederationConnections() {
     queryFn: async (): Promise<FederationConnection[]> => {
       const { data, error } = await supabase
         .from('federation_connections')
-        .select('federation, federation_club_id, api_key_secret, status, last_sync_at, last_error')
+        .select(
+          'federation, federation_club_id, api_key_secret, status, last_sync_at, last_error, news_enabled',
+        )
         .eq('club_id', activeClub!.id)
         .order('federation');
       if (error) throw new Error(error.message);
@@ -54,6 +56,7 @@ export function useFederationConnections() {
           status: string;
           last_sync_at: string | null;
           last_error: string | null;
+          news_enabled: boolean | null;
         };
         return {
           federation: entry.federation as Federation,
@@ -62,6 +65,7 @@ export function useFederationConnections() {
           lastSyncAt: entry.last_sync_at,
           lastError: entry.last_error,
           hasKey: entry.api_key_secret !== null,
+          newsEnabled: entry.news_enabled === true,
         };
       });
     },
@@ -182,6 +186,64 @@ export function useConnectFederation() {
     },
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ['federation', activeClub?.id] });
+    },
+  });
+}
+
+/** Was aus dem Umlegen wurde – die Grundlage der Meldung an die Person. */
+export interface NewsToggleResult {
+  enabled: boolean;
+  /** Warum noch keine Beiträge dastehen. `null`, wenn sie da sind. */
+  syncError: string | null;
+}
+
+/**
+ * UC-035, Schritt 7: die Verbandsnews zu- oder abschalten (FR-197).
+ *
+ * **Einschalten und abgleichen gehören zusammen.** Der nächtliche Lauf käme
+ * erst am nächsten Morgen; bis dahin sähe der Schalter wirkungslos aus. Es ist
+ * derselbe Griff wie nach dem Verknüpfen eines Teams (UC-039, Schritt 9) – und
+ * er steht **hier**, nicht in den beiden Ansichten, die ihn brauchen
+ * (`FederationPage` und der Einrichtungs-Assistent). Zweimal geschrieben liefe
+ * er auseinander.
+ *
+ * Ein misslungener Abgleich ist **kein** Fehlschlag: Die Verbindung steht, nur
+ * die Beiträge fehlen noch (BR-155). Deshalb `syncError` im Ergebnis und keine
+ * Ausnahme.
+ *
+ * Abschalten entfernt **nichts**: Was schon im Feed steht, gehört dem Verein
+ * (BR-170 sinngemäss). Es kommt nur nichts mehr nach.
+ */
+export function useSetFederationNews() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (input: {
+      federation: Federation;
+      enabled: boolean;
+    }): Promise<NewsToggleResult> => {
+      if (!activeClub) throw new Error('Kein aktiver Verein');
+
+      const { error } = await supabase.rpc('set_federation_news', {
+        p_club_id: activeClub.id,
+        p_federation: input.federation,
+        p_enabled: input.enabled,
+      });
+      if (error) throw new Error(error.message);
+
+      if (!input.enabled) return { enabled: false, syncError: null };
+
+      return {
+        enabled: true,
+        syncError: (await syncFederationNow(activeClub.id, input.federation)).error,
+      };
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ['federation', activeClub?.id] });
+      // Erst **nach** dem Abgleich: Sonst läse der Feed neu, bevor die Beiträge
+      // dastehen, und bliebe bis zum nächsten Betreten leer.
+      void queryClient.invalidateQueries({ queryKey: ['news'] });
     },
   });
 }

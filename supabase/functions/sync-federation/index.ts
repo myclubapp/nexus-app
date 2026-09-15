@@ -72,6 +72,49 @@ const ENDPOINTS: Record<
   swissturnverband: { teamsUrl: null, gamesUrl: null },
 };
 
+/**
+ * Die Beiträge eines Verbands (UC-035, Schritt 7; FR-197).
+ *
+ * Swiss unihockey veröffentlicht über **Publishr**; `fkMediahouse=61` ist sein
+ * Newsraum, und `tags=!top&tags=!pin` blendet die angehefteten Kacheln der
+ * Website aus. Dieselbe Schnittstelle liest `getNews()` im alten Backend
+ * (`myclubapp/backend`, `graphql/swissunihockey/resolvers.ts`) – dort steht der
+ * Token im Quelltext, hier kommt er aus der Umgebung:
+ *
+ *   supabase secrets set SWISSUNIHOCKEY_NEWS_TOKEN=<Token>
+ *
+ * **Ohne gesetztes Secret gibt es keine Verbandsnews**, und der Abgleich sagt
+ * das auch. Ein Endpunkt mit eingebautem Schlüssel wäre ein Schlüssel im
+ * Repository – genau das, was BR-153 für die Vereinsschlüssel ausschliesst.
+ *
+ * Die übrigen drei Verbände stehen mit `null` da, wie schon bei Teams und
+ * Spielen: Das alte Backend kratzt ihre Websites (`handball.ch/Umbraco/Api`,
+ * `volleyball.ch/de/news`), und eine abgeschriebene HTML-Seite ist keine
+ * Schnittstelle, auf die sich ein Verein verlassen soll.
+ *
+ * **Dieselbe Liste steht in `app/src/lib/federation.ts` als `deliversNews()`.**
+ * Sie muss es: Die App entscheidet damit, ob sie überhaupt einen Schalter
+ * anbietet, und sie kennt weder Secrets noch Endpunkte. Kommt ein Verband dazu,
+ * ändern sich **beide** Stellen – die dortige Notiz sagt dasselbe. Auseinander
+ * laufen sie nur in eine Richtung: Fehlt das Secret, steht der Schalter zwar da,
+ * und der Abgleich meldet beim Einschalten ehrlich, warum noch nichts kommt.
+ */
+function newsEndpoint(
+  federation: Federation,
+): { url: string; token: string | null } | null {
+  if (federation !== 'swissunihockey') return null;
+
+  const token = Deno.env.get('SWISSUNIHOCKEY_NEWS_TOKEN')?.trim();
+  if (!token) return null;
+
+  return {
+    url:
+      'https://app.publishr.ch/api/v2/contenthub-story/list' +
+      '?orderBy=timestamp&fkMediahouse=61&limit=20&tags=!top&tags=!pin&social=false',
+    token,
+  };
+}
+
 const BROWSER_HEADERS = {
   'Accept': 'application/json, text/plain, */*',
   'User-Agent': 'myclub-nexus/1.0 (+https://myclub.ch)',
@@ -329,6 +372,122 @@ function readGames(payload: unknown): { league: string | null; games: Federation
   return { league, games };
 }
 
+/** Ein Beitrag des Verbands, wie er in den Feed geht. */
+interface FederationStory {
+  id: string;
+  title: string;
+  /** Der Anriss – das, was die Karte in der Liste zeigt. */
+  lead: string | null;
+  /** Der Volltext, wenn der Verband ihn mitliefert; sonst `null` (BR-169). */
+  html: string | null;
+  imageUrl: string | null;
+  author: string | null;
+  url: string | null;
+  publishedAt: string;
+}
+
+/**
+ * Publishr legt einen Beitrag in **Elemente**: 1 ist der Titel, 6 der Anriss,
+ * 13 das Bild, 61 der Volltext. Dieselben Nummern liest das alte Backend.
+ *
+ * Belegt am 15.09.2026 gegen die echte Schnittstelle (`fkMediahouse=61`,
+ * 3 Beiträge): Titel, Anriss und Bild kommen, **Element 61 fehlt dort** – der
+ * Newsraum von swiss unihockey führt keinen Volltext. Ein Beitrag ohne
+ * Volltext ist kein Fehler: Die Karte zeigt den Anriss, und das Detail zeigt
+ * ihn ebenfalls (`NewsCard`). Deshalb wird hier nichts erfunden.
+ */
+function storyElement(story: unknown, element: number): string | null {
+  const items = (story as { storyItem?: Array<{ fkElement?: unknown; contentA?: unknown }> })
+    ?.storyItem;
+  if (!Array.isArray(items)) return null;
+  for (const item of items) {
+    if (Number(item?.fkElement) !== element) continue;
+    const value = typeof item?.contentA === 'string' ? item.contentA.trim() : '';
+    if (value.length > 0) return value;
+  }
+  return null;
+}
+
+/**
+ * Der Volltext ohne Skripte, Stile, Rahmen und Formulare.
+ *
+ * Das ist **nicht** die Sicherung – die sitzt vor dem DOM
+ * (`app/src/lib/newsHtml.ts`, DOMPurify), weil in `news.body_html` auch
+ * schreiben kann, wer eine News verfasst. Hier fällt nur weg, was nie
+ * gespeichert gehört; wortgleich zu `toArticleHtml()` im Website-Abgleich.
+ */
+function toArticleHtml(html: string | null): string | null {
+  if (!html) return null;
+  const article = html
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<(script|style|iframe|object|embed|form|noscript|template)\b[\s\S]*?<\/\1\s*>/gi, '')
+    .replace(/<(iframe|embed|input|button)\b[^>]*\/?>/gi, '')
+    .trim();
+  return article === '' ? null : article;
+}
+
+/**
+ * Die Beiträge aus der Antwort von Publishr.
+ *
+ * Ein Beitrag ohne Kennung oder ohne Titel wird übersprungen: Er hätte im Feed
+ * keine Überschrift und beim nächsten Abgleich keinen Schlüssel, über den er
+ * sich wiedererkennen liesse.
+ */
+function readStories(payload: unknown, federation: Federation): FederationStory[] {
+  const rows = (payload as { status?: unknown; data?: unknown })?.data;
+  if (!Array.isArray(rows)) return [];
+
+  const stories: FederationStory[] = [];
+  for (const row of rows) {
+    const entry = row as {
+      id?: unknown;
+      title?: unknown;
+      creationTimestamp?: unknown;
+      contenthubStory?: { publishTimestamp?: unknown; canonicalUrl?: unknown };
+      storyAuthor?: Array<{ contact?: { firstName?: unknown; lastName?: unknown } }>;
+    };
+
+    const id = entry?.id;
+    if (id === undefined || id === null) continue;
+
+    const title = storyElement(row, 1) ?? (typeof entry.title === 'string' ? entry.title.trim() : '');
+    if (!title) continue;
+
+    const contact = entry.storyAuthor?.[0]?.contact;
+    const author = [contact?.firstName, contact?.lastName]
+      .map((part) => (typeof part === 'string' ? part.trim() : ''))
+      .filter((part) => part.length > 0)
+      .join(' ');
+
+    // Der Zeitpunkt der Veröffentlichung, nicht der des Anlegens: Ein Beitrag,
+    // der drei Tage im Entwurf lag, gehört im Feed an seinen Erscheinungstag.
+    const published = entry.contenthubStory?.publishTimestamp ?? entry.creationTimestamp;
+    const publishedAt =
+      typeof published === 'string' && !Number.isNaN(Date.parse(published))
+        ? new Date(published).toISOString()
+        : new Date().toISOString();
+
+    const canonical = entry.contenthubStory?.canonicalUrl;
+
+    stories.push({
+      id: `${federation}:${id}`,
+      title,
+      lead: storyElement(row, 6),
+      html: toArticleHtml(storyElement(row, 61)),
+      imageUrl: storyElement(row, 13),
+      // Die Herkunft steht am Beitrag, auch wenn niemand sie geschrieben hat:
+      // «swiss unihockey» ist ehrlicher als eine leere Zeile.
+      author: author.length > 0 ? author : null,
+      // Publishr führt `canonicalUrl` meist nicht. Eine aus dem Kurznamen
+      // zusammengebaute Adresse wäre geraten – und ein Verweis ins Leere ist
+      // schlechter als keiner.
+      url: typeof canonical === 'string' && canonical.startsWith('https://') ? canonical : null,
+      publishedAt,
+    });
+  }
+  return stories;
+}
+
 // ---------------------------------------------------------------------------
 // Der Abgleich.
 // ---------------------------------------------------------------------------
@@ -338,6 +497,86 @@ interface Credentials {
   federation: Federation;
   federation_club_id: string;
   api_key: string | null;
+  /** FR-197: Will dieser Verein die Beiträge dieses Verbands im Feed? */
+  news_enabled: boolean;
+}
+
+/**
+ * Die Beiträge eines Verbands, **einmal je Lauf** geholt.
+ *
+ * Die News eines Verbands sind für alle seine Vereine dieselben. Ohne diesen
+ * Zwischenspeicher fragte der nächtliche Lauf die Schnittstelle einmal pro
+ * verbundenem Verein – dasselbe Ergebnis, zwanzigmal, und zwanzig Gelegenheiten
+ * für ein Zeitlimit.
+ *
+ * Ein Fehlschlag wird mitgespeichert: Was einmal nicht ging, geht in derselben
+ * Minute nicht noch einmal.
+ */
+type StoryCache = Map<Federation, { stories: FederationStory[] } | { error: string }>;
+
+async function loadStories(
+  cache: StoryCache,
+  federation: Federation,
+): Promise<{ stories: FederationStory[] } | { error: string }> {
+  const known = cache.get(federation);
+  if (known) return known;
+
+  const endpoint = newsEndpoint(federation);
+  const result = !endpoint
+    ? { error: 'Für diesen Verband sind keine News eingerichtet' }
+    : await getJson(endpoint.url, endpoint.token)
+        .then((payload) => {
+          const stories = readStories(payload, federation);
+          return stories.length > 0
+            ? { stories }
+            : { error: 'Der Verband liefert derzeit keine Beiträge' };
+        })
+        .catch((cause: unknown) => ({
+          error: cause instanceof Error ? cause.message : String(cause),
+        }));
+
+  cache.set(federation, result);
+  return result;
+}
+
+/**
+ * Die Beiträge des Verbands in den Feed **eines** Vereins (FR-197).
+ *
+ * Gibt zurück, wie viele Beiträge stehen – oder warum keiner. Ein
+ * **Fehlschlag hier setzt die Verbindung nicht auf `error`**: Der Spielplan
+ * ist der Zweck der Verbindung (BR-152), die News sind die Zugabe. Eine
+ * Verbandsverbindung als kaputt zu melden, weil ein Newsraum nicht antwortet,
+ * schickte den Vorstand einen Fehler suchen, der seine Termine nicht betrifft
+ * (BR-155).
+ */
+async function syncNews(
+  admin: SupabaseClient,
+  row: Credentials,
+  cache: StoryCache,
+): Promise<{ news: number; newsError?: string }> {
+  const loaded = await loadStories(cache, row.federation);
+  if ('error' in loaded) return { news: 0, newsError: loaded.error };
+
+  let written = 0;
+  for (const story of loaded.stories) {
+    const { data, error } = await admin.rpc('upsert_federation_news', {
+      p_club_id: row.club_id,
+      p_federation: row.federation,
+      p_external_id: story.id,
+      p_title: story.title,
+      p_body: story.lead,
+      p_body_html: story.html,
+      p_image_url: story.imageUrl,
+      p_author: story.author,
+      p_external_url: story.url,
+      p_published_at: story.publishedAt,
+    });
+    if (error) return { news: written, newsError: error.message };
+    // `false` heisst: Der Verein will diese News (nicht mehr). Kein Fehler.
+    if (data === false) return { news: 0 };
+    written += 1;
+  }
+  return { news: written };
 }
 
 interface LinkedTeam {
@@ -401,16 +640,27 @@ async function syncGames(
  * dann je verknüpftem Team die Spiele (BR-152: nur, was verknüpft ist). Ein
  * Team, das der Verband nicht mehr nennt, wird veraltet vermerkt (A6).
  */
-async function syncOne(admin: SupabaseClient, row: Credentials): Promise<{
+async function syncOne(
+  admin: SupabaseClient,
+  row: Credentials,
+  cache: StoryCache = new Map(),
+): Promise<{
   club: string;
   federation: string;
   ok: boolean;
   teams?: number;
   games?: number;
   stale?: number;
+  news?: number;
+  newsError?: string;
   error?: string;
 }> {
   const endpoint = ENDPOINTS[row.federation]?.teamsUrl;
+
+  // Die News hängen nicht am Spielplan: Sie kommen auch dann, wenn der Verein
+  // noch kein Team verknüpft hat (BR-152 gilt den Spielen, nicht den
+  // Beiträgen) – und sie fehlen, ohne die Verbindung zu beschädigen.
+  const news = row.news_enabled ? await syncNews(admin, row, cache) : { news: 0 };
 
   const fail = async (error: string) => {
     await admin.rpc('report_federation_sync', {
@@ -419,7 +669,10 @@ async function syncOne(admin: SupabaseClient, row: Credentials): Promise<{
       p_ok: false,
       p_error: error,
     });
-    return { club: row.club_id, federation: row.federation, ok: false, error };
+    // Auch ein misslungener Spielplan-Abgleich sagt, was aus den News wurde:
+    // Sie hängen nicht aneinander, und wer nur die Meldung liest, soll nicht
+    // raten müssen.
+    return { club: row.club_id, federation: row.federation, ok: false, error, ...news };
   };
 
   if (!endpoint) return fail('Für diesen Verband besteht noch keine Schnittstelle');
@@ -472,7 +725,15 @@ async function syncOne(admin: SupabaseClient, row: Credentials): Promise<{
     p_federation: row.federation,
     p_ok: true,
   });
-  return { club: row.club_id, federation: row.federation, ok: true, teams: teams.length, games, stale };
+  return {
+    club: row.club_id,
+    federation: row.federation,
+    ok: true,
+    teams: teams.length,
+    games,
+    stale,
+    ...news,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -519,9 +780,13 @@ Deno.serve(async (request) => {
 
     // Nacheinander: Zwanzig Verbandsabfragen gleichzeitig bringen nichts ein,
     // kosten aber jedes Zeitlimit gleichzeitig.
+    //
+    // Der Zwischenspeicher hält die Beiträge je Verband über den ganzen Lauf:
+    // Sie sind für alle Vereine desselben Verbands dieselben (FR-197).
+    const cache: StoryCache = new Map();
     const results = [];
     for (const row of (data ?? []) as Credentials[]) {
-      results.push(await syncOne(admin, row));
+      results.push(await syncOne(admin, row, cache));
     }
     return json({ synced: results.length, results });
   }

@@ -33,12 +33,14 @@ export function validateNews(draft: NewsDraft): NewsProblem[] {
 /**
  * Darf diese News bearbeitet werden?
  *
- * Übernommene News der Vereins-Website gehören nicht dem Verein, sondern der
- * Quelle: Wer sie hier ändert, verliert die Änderung beim nächsten Abgleich
- * (UC-038). Sie werden deshalb gar nicht erst zum Bearbeiten angeboten.
+ * Übernommene Beiträge gehören nicht dem Verein, sondern der Quelle: Wer sie
+ * hier ändert, verliert die Änderung beim nächsten Abgleich – bei der
+ * Vereins-Website (UC-038) wie beim Verband (FR-197, `upsert_federation_news`
+ * überschreibt Titel, Anriss und Bild). Sie werden deshalb gar nicht erst zum
+ * Bearbeiten angeboten.
  */
 export function isEditable(entry: Pick<News, 'source'>): boolean {
-  return entry.source !== 'website';
+  return entry.source !== 'website' && entry.source !== 'federation';
 }
 
 /**
