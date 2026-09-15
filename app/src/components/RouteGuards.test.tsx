@@ -6,9 +6,12 @@
  */
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { screen } from '@testing-library/react';
-import { RequireAuth, RequireClub } from './RouteGuards';
+import { Route, Routes } from 'react-router-dom';
+import { RedirectIfSignedIn, RequireAuth, RequireClub } from './RouteGuards';
 import { SkeletonPage } from './Skeletons';
 import { renderWithProviders } from '../test/utils';
+import { peekDeepLink, rememberDeepLink } from '../lib/deepLink';
+import { setPendingInvite } from '../lib/invite';
 
 const auth = { session: { user: { id: 'u1' } } as unknown, initialising: false };
 const club = {
@@ -27,6 +30,7 @@ beforeEach(() => {
   club.memberships = [{ id: 'm1', club_id: 'c1' }];
   club.isLoading = false;
   club.error = null;
+  localStorage.clear();
 });
 
 describe('RequireClub', () => {
@@ -111,5 +115,118 @@ describe('RequireAuth', () => {
 
     expect(container.querySelectorAll('ion-skeleton-text').length).toBeGreaterThan(0);
     expect(container.querySelector('ion-spinner')).toBeNull();
+  });
+});
+
+/**
+ * Der Weg eines Links aus einer E-Mail über die Anmeldung hinweg. Ohne ihn
+ * landet jede:r, der die App gerade neu installiert hat, auf dem Dashboard
+ * statt dort, wohin der Link zeigte.
+ */
+describe('gemerktes Ziel über die Anmeldung', () => {
+  it('merkt den Weg, wenn die Anmeldeschranke dazwischenkommt', () => {
+    auth.session = null;
+
+    renderWithProviders(
+      <RequireAuth>
+        <p>Puls</p>
+      </RequireAuth>,
+      { route: '/tabs/pulse/42' },
+    );
+
+    expect(peekDeepLink()).toBe('/tabs/pulse/42');
+  });
+
+  it('vergisst ihn, sobald er erreicht ist', () => {
+    rememberDeepLink('/tabs/pulse/42');
+
+    renderWithProviders(
+      <RequireAuth>
+        <p>Puls</p>
+      </RequireAuth>,
+      { route: '/tabs/pulse/42' },
+    );
+
+    expect(screen.getByText('Puls')).toBeInTheDocument();
+    expect(peekDeepLink()).toBeNull();
+  });
+
+  // Ein anderer Weg als der gemerkte darf ihn nicht aufbrauchen.
+  it('lässt ihn stehen, wenn anderswo angekommen wird', () => {
+    rememberDeepLink('/tabs/pulse/42');
+
+    renderWithProviders(
+      <RequireAuth>
+        <p>Agenda</p>
+      </RequireAuth>,
+      { route: '/tabs/agenda' },
+    );
+
+    expect(peekDeepLink()).toBe('/tabs/pulse/42');
+  });
+
+  it('führt nach dem Anmelden dorthin statt aufs Dashboard', () => {
+    rememberDeepLink('/tabs/pulse/42');
+
+    renderWithProviders(
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            <RedirectIfSignedIn>
+              <p>Anmelden</p>
+            </RedirectIfSignedIn>
+          }
+        />
+        <Route path="/tabs/dashboard" element={<p>Dashboard</p>} />
+        <Route path="/tabs/pulse/42" element={<p>Puls 42</p>} />
+      </Routes>,
+      { route: '/login' },
+    );
+
+    expect(screen.getByText('Puls 42')).toBeInTheDocument();
+  });
+
+  // UC-005 A4 bleibt unangetastet: Vor der Einladung steht nichts.
+  it('lässt der Einladung den Vortritt', () => {
+    rememberDeepLink('/tabs/pulse/42');
+    setPendingInvite('abc123');
+
+    renderWithProviders(
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            <RedirectIfSignedIn>
+              <p>Anmelden</p>
+            </RedirectIfSignedIn>
+          }
+        />
+        <Route path="/tabs/pulse/42" element={<p>Puls 42</p>} />
+        <Route path="/invite/:code" element={<p>Einladung</p>} />
+      </Routes>,
+      { route: '/login' },
+    );
+
+    expect(screen.getByText('Einladung')).toBeInTheDocument();
+  });
+
+  it('führt ohne gemerktes Ziel weiterhin aufs Dashboard', () => {
+    renderWithProviders(
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            <RedirectIfSignedIn>
+              <p>Anmelden</p>
+            </RedirectIfSignedIn>
+          }
+        />
+        <Route path="/tabs/dashboard" element={<p>Dashboard</p>} />
+      </Routes>,
+      { route: '/login' },
+    );
+
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
   });
 });

@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -8,7 +7,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation|density"
             android:name=".MainActivity"
@@ -16,20 +14,42 @@
             android:theme="@style/AppTheme.NoActionBarLaunch"
             android:launchMode="singleTask"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Rueckkehr aus dem Magic Link: ch.myclub.nexus://auth/callback -->
+            <!-- Rueckkehr aus dem Magic Link: ch.myclub.nexus://auth/callback.
+                 Das Schema muss mit Info.plist, supabase/config.toml und
+                 env.appScheme uebereinstimmen; hier stand zuvor
+                 `ch.myclub.nexus.default`, womit der Anmeldelink auf Android
+                 nie in der App ankam. -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="ch.myclub.nexus.default" />
+                <data android:scheme="ch.myclub.nexus" />
             </intent-filter>
 
+            <!-- App Links: Die https-Adressen aus den E-Mails oeffnen
+                 die App statt den Browser. `autoVerify` laesst Android bei der
+                 Installation https://app.my-club.ch/.well-known/assetlinks.json
+                 holen und die Signatur dieser App darin suchen. Ohne Treffer
+                 bleibt es still beim Browser - ein Schema alleine reicht dafuer
+                 nicht, E-Mail-Programme machen `ch.myclub.nexus://` gar nicht
+                 erst anklickbar.
+
+                 Nur `/tabs` und `/invite`, nicht der ganze Host: `/auth/callback`
+                 muss im Browser bleiben, sonst faengt die App den Rueckweg einer
+                 Anmeldung ab, die im Browser begonnen hat, und der PKCE-Verifier
+                 fehlt ihr. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="app.my-club.ch" android:pathPrefix="/tabs" />
+                <data android:scheme="https" android:host="app.my-club.ch" android:pathPrefix="/invite" />
+            </intent-filter>
         </activity>
 
         <provider
@@ -37,9 +57,7 @@
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
         </provider>
     </application>
 
@@ -55,8 +73,6 @@
          damit neuere Geräte nicht nach der alten, weiteren Berechtigung
          gefragt werden. -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 </manifest>

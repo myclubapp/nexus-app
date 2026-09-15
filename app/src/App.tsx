@@ -34,6 +34,7 @@ import { OnboardingPage } from './pages/onboarding/OnboardingPage';
 import { JoinByInvitePage } from './pages/onboarding/JoinByInvitePage';
 import { TabsPage } from './pages/TabsPage';
 import { AppMenu, APP_CONTENT_ID } from './components/AppMenu';
+import { DeepLinkRouter } from './components/DeepLinkRouter';
 import { HardwareBackExit } from './components/HardwareBackExit';
 import { LocaleSync } from './components/LocaleSync';
 import { SkeletonPage } from './components/Skeletons';
@@ -62,6 +63,9 @@ export default function App() {
                 (Ionic-Doku «Hardware Back Button»). Muss im Router stehen,
                 weil sie `useIonRouter` braucht. */}
             <HardwareBackExit />
+            {/* Der Link aus einer E-Mail öffnet die App – hier fährt sie an
+                den Ort, den er nennt. */}
+            <DeepLinkRouter />
             {/* UC-044: die Sprache der App auf dem Server, damit E-Mails in
                 ihr geschrieben werden. */}
             <LocaleSync />

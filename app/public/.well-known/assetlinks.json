@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "ch.myclub.nexus.app",
+      "sha256_cert_fingerprints": [
+        "97:3B:8A:9F:AC:8B:80:69:4C:33:1C:87:22:91:24:BF:57:4E:88:24:B3:DF:57:66:50:01:A8:8A:D1:07:99:EA"
+      ]
+    }
+  }
+]

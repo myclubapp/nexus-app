@@ -1,0 +1,24 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["U7DQUX87VS.ch.myclub.nexus.app"],
+        "components": [
+          {
+            "/": "/auth/callback*",
+            "exclude": true,
+            "comment": "Der Anmeldelink gehoert dem, der ihn angefordert hat. Faengt die App den Rueckweg des Browsers ab, fehlt ihr der PKCE-Verifier und der Tausch scheitert. Die App kehrt ueber ch.myclub.nexus://auth/callback zurueck."
+          },
+          {
+            "/": "/tabs/*",
+            "comment": "Jeder Link aus den E-Mails: Dashboard, Puls, Rechnungen, Benachrichtigungen."
+          },
+          {
+            "/": "/invite/*",
+            "comment": "Einladungslink (UC-002 A3)."
+          }
+        ]
+      }
+    ]
+  }
+}

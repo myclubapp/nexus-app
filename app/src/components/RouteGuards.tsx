@@ -1,10 +1,11 @@
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { IonContent, IonPage } from '@ionic/react';
-import { Navigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useClub } from '../hooks/useClub';
 import { ErrorState, LoadingState } from './StateViews';
 import { peekPendingInvite } from '../lib/invite';
+import { forgetDeepLink, peekDeepLink, rememberDeepLink } from '../lib/deepLink';
 
 /**
  * Ionic erwartet zu jeder Route eine Seite – auch für diese Zwischenanzeige.
@@ -46,6 +47,23 @@ function ErrorPage({ error, onRetry }: { error: Error; onRetry: () => void }) {
 
 export function RequireAuth({ children, pending }: GuardProps) {
   const { session, initialising } = useAuth();
+  const location = useLocation();
+  const target = `${location.pathname}${location.search}`;
+
+  // Der Weg über die Anmeldung hinweg. Beides gehört hierher, weil dies die
+  // einzige Stelle ist, die «abgemeldet unterwegs» und «angekommen» beide sieht.
+  useEffect(() => {
+    if (initialising) return;
+    // Abgemeldet: merken, bevor die Anmeldeschranke den Weg verschluckt.
+    if (!session) {
+      rememberDeepLink(target);
+      return;
+    }
+    // Angekommen: aufräumen. Erst hier und nicht beim Entscheiden – so bleibt
+    // das Ziel auch dann stehen, wenn das Rendern zweimal läuft (StrictMode).
+    if (peekDeepLink() === target) forgetDeepLink();
+  }, [session, initialising, target]);
+
   if (initialising) return <>{pending ?? <LoadingPage />}</>;
   if (!session) return <Navigate to="/login" replace />;
   return <>{children}</>;
@@ -70,11 +88,11 @@ export function RedirectIfSignedIn({ children }: { children: ReactNode }) {
   const { session, initialising } = useAuth();
   if (initialising) return <LoadingPage />;
   if (session) {
-    // UC-005 A4: Eine gemerkte Einladung geht der Startseite vor.
+    // UC-005 A4: Eine gemerkte Einladung geht der Startseite vor – und vor ihr
+    // steht nichts. Danach das Ziel, das ein Link aus einer E-Mail genannt hat.
     const pendingInvite = peekPendingInvite();
-    return (
-      <Navigate to={pendingInvite ? `/invite/${pendingInvite}` : '/tabs/dashboard'} replace />
-    );
+    if (pendingInvite) return <Navigate to={`/invite/${pendingInvite}`} replace />;
+    return <Navigate to={peekDeepLink() ?? '/tabs/dashboard'} replace />;
   }
   return <>{children}</>;
 }

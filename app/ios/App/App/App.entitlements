@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Universal Links: Ein https-Link aus einer E-Mail öffnet die App statt
+	     Safari. Welche Pfade das betrifft, entscheidet nicht diese Datei,
+	     sondern https://app.my-club.ch/.well-known/apple-app-site-association –
+	     hier steht nur, welche Domain überhaupt gefragt wird.
+
+	     Die Fähigkeit muss zusätzlich am App-Identifier im Apple Developer
+	     Portal gesetzt sein. Mit automatischem Signieren erledigt Xcode das
+	     beim ersten Build selbst; sonst schlägt er mit «Associated Domains
+	     capability is not enabled» fehl. -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:app.my-club.ch</string>
+	</array>
+</dict>
+</plist>

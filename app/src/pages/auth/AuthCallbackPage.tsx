@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { LoadingState } from '../../components/StateViews';
 import { peekPendingInvite } from '../../lib/invite';
+import { peekDeepLink } from '../../lib/deepLink';
 
 /**
  * Die Landeseite des Anmeldelinks im Browser. supabase-js tauscht den
@@ -23,10 +24,14 @@ export function AuthCallbackPage() {
       return;
     }
     // UC-005 A4: Wer aus einem Einladungsfluss kam, kehrt dorthin zurück.
+    // Sonst an das Ziel, das ein Link aus einer E-Mail genannt hat – der Weg
+    // der PWA, wo der Anmeldelink über diese Seite zurückkommt.
     const pendingInvite = peekPendingInvite();
-    navigate(pendingInvite ? `/invite/${pendingInvite}` : '/tabs/dashboard', {
-      replace: true,
-    });
+    if (pendingInvite) {
+      navigate(`/invite/${pendingInvite}`, { replace: true });
+      return;
+    }
+    navigate(peekDeepLink() ?? '/tabs/dashboard', { replace: true });
   }, [session, initialising, navigate]);
 
   return (

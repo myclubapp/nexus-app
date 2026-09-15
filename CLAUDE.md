@@ -118,6 +118,23 @@ supabase db push            # Migrationen deployen
   ein `revoke execute … from public, anon, authenticated` (Vorlage:
   `0007_function_grants.sql`). `revoke … from anon` allein wirkt nicht: `anon`
   zieht sein Recht aus PUBLIC, dessen Grant dabei stehen bleibt.
-- **Deep Links.** Das Schema `ch.myclub.nexus` steht an vier Stellen: in
-  `capacitor.config.ts`, `Info.plist`, `AndroidManifest.xml` und in den
-  Supabase-Auth-Redirect-URLs. Änderungen immer überall nachziehen.
+- **Deep Links, zwei Wege.** Das Schema `ch.myclub.nexus` bringt den
+  Anmeldelink zurück und steht an vier Stellen: `Info.plist`
+  (`CFBundleURLSchemes`), `AndroidManifest.xml`, `supabase/config.toml`
+  (`additional_redirect_urls`) und `env.appScheme` in `src/lib/env.ts`.
+  Änderungen immer überall nachziehen – nicht in `capacitor.config.ts`, dessen
+  `ios.scheme` das WebView meint und nichts damit zu tun hat.
+  **Für Links aus E-Mails taugt das Schema nicht**: E-Mail-Programme machen
+  `ch.myclub.nexus://` gar nicht erst anklickbar, und ohne installierte App
+  führt es ins Leere. Die Mails tragen deshalb `https://app.my-club.ch/…`
+  (`appLink()`), und die App beansprucht diese Adressen über Universal Links
+  bzw. App Links. Dafür hängen fünf Dinge zusammen:
+  `public/.well-known/apple-app-site-association`,
+  `public/.well-known/assetlinks.json`, das Entitlement
+  `ios/App/App/App.entitlements`, der `autoVerify`-Intent-Filter im
+  `AndroidManifest.xml` und `CLAIMED_PREFIXES` in `src/lib/deepLink.ts`. Die
+  beanspruchten Pfade – heute `/tabs` und `/invite` – müssen in allen vier
+  Zuordnungen dieselben sein.
+  **`/auth/callback` bleibt bewusst unbeansprucht.** Fängt die App den Rückweg
+  einer Anmeldung ab, die im Browser begonnen hat, fehlt ihr der
+  PKCE-Verifier und der Tausch scheitert wortlos.
