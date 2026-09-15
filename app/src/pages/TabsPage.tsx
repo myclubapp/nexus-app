@@ -36,6 +36,7 @@ import { EventLabelPage } from './club/EventLabelPage';
 import { MemberPage } from './club/MemberPage';
 import { NewsSourcePage } from './club/NewsSourcePage';
 import { ClubSetupPage } from './club/ClubSetupPage';
+import { ProfileSetupPage } from './ProfileSetupPage';
 import { FederationPage } from './club/FederationPage';
 import { LegacyImportPage } from './club/LegacyImportPage';
 import { TeamPage } from './club/TeamPage';
@@ -103,6 +104,9 @@ export function TabsPage() {
         <Route path="profile/club" element={<ClubSettingsPage />} />
         {/* UC-051: die Einrichtung nach der Gründung – überspringbar (BR-259). */}
         <Route path="profile/setup" element={<ClubSetupPage />} />
+        {/* UC-053: die Einrichtung der **Person**. `profile/setup` gehört dem
+            Verein, deshalb steht der Profil-Assistent daneben und nicht darin. */}
+        <Route path="profile/onboarding" element={<ProfileSetupPage />} />
         <Route path="profile/invite" element={<InvitePage />} />
         <Route path="profile/requests" element={<JoinRequestPage />} />
         <Route path="profile/members" element={<MemberPage />} />
