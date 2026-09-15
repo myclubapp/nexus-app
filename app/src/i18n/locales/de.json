@@ -53,7 +53,12 @@
       "wrongPassword": "E-Mail-Adresse oder Passwort stimmen nicht.",
       "rateLimited": "Zu viele Versuche. Bitte warte einen Moment.",
       "emailNotConfirmed": "Diese Adresse ist noch nicht bestätigt. Öffne zuerst den Link in deinem Postfach.",
-      "passwordTooShort": "Das Passwort ist zu kurz.",
+      "passwordTooShort": "Das Passwort ist zu kurz. Es braucht mindestens {{min}} Zeichen.",
+      "passwordCharacters": "Das Passwort braucht mehr verschiedene Zeichen – mische Gross- und Kleinbuchstaben, Ziffern und Sonderzeichen.",
+      "passwordPwned": "Dieses Passwort steht in bekannten Datenlecks und ist damit leicht zu erraten. Wähle ein anderes, das du sonst nirgends verwendest.",
+      "passwordWeak": "Dieses Passwort ist zu leicht zu erraten. Wähle ein längeres oder ein ungewöhnlicheres.",
+      "passwordSame": "Das ist dein bisheriges Passwort. Wähle ein anderes.",
+      "passwordReauth": "Deine Anmeldung ist zu lange her. Melde dich neu an – danach kannst du das Passwort setzen.",
       "sessionExpired": "Du bist nicht mehr angemeldet. Abmelden gilt für alle Geräte – bitte melde dich neu an.",
       "passwordSaveFailed": "Das Passwort liess sich nicht setzen. Bitte nochmals versuchen."
     }

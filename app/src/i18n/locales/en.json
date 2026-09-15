@@ -53,7 +53,12 @@
       "wrongPassword": "Email address or password does not match.",
       "rateLimited": "Too many attempts. Please wait a moment.",
       "emailNotConfirmed": "This address is not confirmed yet. Open the link in your inbox first.",
-      "passwordTooShort": "The password is too short.",
+      "passwordTooShort": "The password is too short. It needs at least {{min}} characters.",
+      "passwordCharacters": "The password needs a wider mix of characters: upper and lower case letters, digits and symbols.",
+      "passwordPwned": "This password appears in known data breaches and is easy to guess. Pick a different one that you don’t use anywhere else.",
+      "passwordWeak": "This password is too easy to guess. Pick a longer or a more unusual one.",
+      "passwordSame": "That is your current password. Pick a different one.",
+      "passwordReauth": "Your sign-in is too old. Sign in again, then set the password.",
       "sessionExpired": "You are no longer signed in. Signing out applies to every device – please sign in again.",
       "passwordSaveFailed": "The password could not be set. Please try again."
     }

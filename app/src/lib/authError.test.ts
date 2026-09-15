@@ -96,6 +96,118 @@ describe('authErrorKey', () => {
   });
 });
 
+/**
+ * UC-005 A2: Warum ein Passwort abgelehnt wurde.
+ *
+ * GoTrue nennt den Grund – `weak_password` mit 'pwned', 'length' oder
+ * 'characters', `same_password`, `reauthentication_needed`. Bis hierher kam
+ * davon nichts an: Die Seite reichte nur `error.message` weiter, und für jeden
+ * dieser Fälle stand derselbe Satz da («Das Passwort liess sich nicht
+ * setzen»). Die Fehler werden als einfache Objekte nachgestellt, weil sie im
+ * `catch` ohnehin als `unknown` ankommen.
+ */
+describe('authErrorKey und das abgelehnte Passwort', () => {
+  it('nennt ein Passwort aus einem Datenleck beim Namen', () => {
+    expect(
+      authErrorKey(
+        {
+          code: 'weak_password',
+          message:
+            'Password is known to be weak and easy to guess, please choose a different one.',
+          reasons: ['pwned'],
+        },
+        'auth.error.passwordSaveFailed',
+      ),
+    ).toBe('auth.error.passwordPwned');
+  });
+
+  it('unterscheidet die übrigen Gründe', () => {
+    expect(authErrorKey({ code: 'weak_password', reasons: ['length'] })).toBe(
+      'auth.error.passwordTooShort',
+    );
+    expect(authErrorKey({ code: 'weak_password', reasons: ['characters'] })).toBe(
+      'auth.error.passwordCharacters',
+    );
+  });
+
+  // Zu kurz lässt sich mechanisch beheben, «steht in einem Datenleck» nicht –
+  // deshalb zuerst die Länge.
+  it('nennt bei mehreren Gründen den behebbaren zuerst', () => {
+    expect(
+      authErrorKey({ code: 'weak_password', reasons: ['pwned', 'length'] }),
+    ).toBe('auth.error.passwordTooShort');
+  });
+
+  it('bleibt bei einem schwachen Passwort ohne Grund verständlich', () => {
+    expect(authErrorKey({ code: 'weak_password', reasons: [] })).toBe(
+      'auth.error.passwordWeak',
+    );
+    expect(authErrorKey({ code: 'weak_password' })).toBe('auth.error.passwordWeak');
+  });
+
+  it('erkennt das unveränderte Passwort', () => {
+    expect(
+      authErrorKey({
+        code: 'same_password',
+        message: 'New password should be different from the old password.',
+      }),
+    ).toBe('auth.error.passwordSame');
+  });
+
+  it('erkennt die verlangte Neuanmeldung', () => {
+    expect(authErrorKey({ code: 'reauthentication_needed' })).toBe(
+      'auth.error.passwordReauth',
+    );
+  });
+});
+
+/**
+ * Der Code von GoTrue ist der stabilere Anker als sein englischer Satz: Der
+ * Text wechselt mit der Serverversion, der Code nicht.
+ */
+describe('authErrorKey und der Fehlercode', () => {
+  it.each([
+    ['invalid_credentials', 'auth.error.wrongPassword'],
+    ['email_not_confirmed', 'auth.error.emailNotConfirmed'],
+    ['over_request_rate_limit', 'auth.error.rateLimited'],
+    ['over_email_send_rate_limit', 'auth.error.rateLimited'],
+    ['otp_expired', 'auth.error.linkExpired'],
+    ['flow_state_expired', 'auth.error.linkExpired'],
+    ['session_not_found', 'auth.error.sessionExpired'],
+    ['bad_jwt', 'auth.error.sessionExpired'],
+  ])('ordnet %s zu', (code, key) => {
+    expect(authErrorKey({ code, message: 'irgendein englischer Satz' })).toBe(key);
+  });
+
+  it('nimmt den Code auch dann, wenn der Text in die Irre führte', () => {
+    // «Session expired» trüge über die Textsuche die Meldung zum Anmeldelink.
+    expect(
+      authErrorKey({ code: 'session_expired', message: 'Session has expired' }),
+    ).toBe('auth.error.sessionExpired');
+  });
+
+  it('fällt ohne bekannten Code auf den Text zurück', () => {
+    expect(
+      authErrorKey({ code: 'validation_failed', message: 'Email not confirmed' }),
+    ).toBe('auth.error.emailNotConfirmed');
+  });
+
+  it('fällt ohne Code und ohne Text auf den Rückfall zurück', () => {
+    expect(authErrorKey({}, 'auth.error.passwordSaveFailed')).toBe(
+      'auth.error.passwordSaveFailed',
+    );
+    expect(authErrorKey(new Error(''), 'auth.error.passwordSaveFailed')).toBe(
+      'auth.error.passwordSaveFailed',
+    );
+  });
+
+  it('liest auch einen gewöhnlichen Error', () => {
+    expect(authErrorKey(new Error('Invalid login credentials'))).toBe(
+      'auth.error.wrongPassword',
+    );
+  });
+});
+
 describe('isSessionGone', () => {
   // Abmelden gilt für alle Geräte. Das andere Gerät merkt es erst hier.
   it.each([

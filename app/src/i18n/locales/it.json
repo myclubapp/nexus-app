@@ -53,7 +53,12 @@
       "wrongPassword": "Indirizzo e-mail o password non corrispondono.",
       "rateLimited": "Troppi tentativi. Attendi un momento.",
       "emailNotConfirmed": "Questo indirizzo non è ancora confermato. Apri prima il link nella tua casella di posta.",
-      "passwordTooShort": "La password è troppo corta.",
+      "passwordTooShort": "La password è troppo corta. Servono almeno {{min}} caratteri.",
+      "passwordCharacters": "La password deve mescolare più tipi di caratteri: maiuscole, minuscole, cifre e caratteri speciali.",
+      "passwordPwned": "Questa password compare in fughe di dati note ed è quindi facile da indovinare. Scegline un’altra, che non usi da nessun’altra parte.",
+      "passwordWeak": "Questa password è troppo facile da indovinare. Scegline una più lunga o più insolita.",
+      "passwordSame": "Questa è la tua password attuale. Scegline un’altra.",
+      "passwordReauth": "Il tuo accesso è troppo vecchio. Accedi di nuovo, poi imposta la password.",
       "sessionExpired": "Non sei più connesso. La disconnessione vale per tutti i dispositivi: accedi di nuovo.",
       "passwordSaveFailed": "Non è stato possibile impostare la password. Riprova."
     }

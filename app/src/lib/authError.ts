@@ -65,22 +65,109 @@ export function isSessionGone(message: string | null | undefined): boolean {
 }
 
 /**
- * Übersetzungsschlüssel zu einer Fehlermeldung des Backends.
+ * Was an einem Fehler von supabase-js zählt.
+ *
+ * `code` ist die Kennung, die GoTrue mitschickt (`weak_password`,
+ * `same_password`, …), und der bessere Anker als der englische Satz daneben:
+ * Der Text wechselt mit der Serverversion, der Code nicht. `reasons` trägt
+ * allein der `AuthWeakPasswordError` – dort steht, **warum** ein Passwort
+ * abgelehnt wurde ('length', 'characters', 'pwned').
+ *
+ * Abgelesen statt über `instanceof` geprüft: Der Fehler kommt hier als
+ * `unknown` aus einem `catch` an, und ein Testfall soll ihn nachstellen
+ * können, ohne die Fehlerklassen von supabase-js zu bauen.
+ */
+function readFailure(error: unknown): {
+  code: string;
+  message: string;
+  reasons: string[];
+} {
+  if (typeof error === 'string') return { code: '', message: error, reasons: [] };
+  if (!error || typeof error !== 'object') return { code: '', message: '', reasons: [] };
+
+  const { code, message, reasons } = error as Record<string, unknown>;
+  return {
+    code: typeof code === 'string' ? code.toLowerCase() : '',
+    message: typeof message === 'string' ? message : '',
+    reasons: Array.isArray(reasons)
+      ? reasons.filter((reason): reason is string => typeof reason === 'string')
+      : [],
+  };
+}
+
+/**
+ * Fehlercodes von GoTrue, die jemand zu sehen bekommt.
+ *
+ * Der Code hat Vorrang vor der Textsuche weiter unten. Die bleibt für die
+ * Fälle, die ohne Code ankommen: Der abgelehnte Anmeldelink steht als
+ * `error_description` in der Rücksprungadresse (`authErrorFromUrl`), dort gibt
+ * es kein Fehlerobjekt.
+ */
+const ERROR_CODE_KEYS: Record<string, string> = {
+  session_not_found: 'auth.error.sessionExpired',
+  session_expired: 'auth.error.sessionExpired',
+  refresh_token_not_found: 'auth.error.sessionExpired',
+  refresh_token_already_used: 'auth.error.sessionExpired',
+  bad_jwt: 'auth.error.sessionExpired',
+  no_authorization: 'auth.error.sessionExpired',
+  otp_expired: 'auth.error.linkExpired',
+  flow_state_expired: 'auth.error.linkExpired',
+  flow_state_not_found: 'auth.error.linkExpired',
+  invalid_credentials: 'auth.error.wrongPassword',
+  email_not_confirmed: 'auth.error.emailNotConfirmed',
+  over_request_rate_limit: 'auth.error.rateLimited',
+  over_email_send_rate_limit: 'auth.error.rateLimited',
+  // Beim Setzen eines Passworts (UC-005 A2). `same_password` kommt, wenn das
+  // neue dem alten gleicht; `reauthentication_needed`, wenn im Projekt
+  // «Require reauthentication when changing password» steht und die Anmeldung
+  // älter als 24 Stunden ist – dann hilft nur eine neue Anmeldung, weil diese
+  // App den Nonce-Umweg über `reauthenticate()` nicht anbietet.
+  same_password: 'auth.error.passwordSame',
+  reauthentication_needed: 'auth.error.passwordReauth',
+};
+
+/**
+ * Warum GoTrue ein Passwort für schwach hält.
+ *
+ * Die Reihenfolge ist die der Meldung: Wer zu kurz **und** in einem Datenleck
+ * steht, hört zuerst das, was sich mechanisch beheben lässt. «Zu schwach»
+ * allein sagt niemandem, was zu tun ist – genau das war die alte Meldung.
+ */
+const WEAK_PASSWORD_KEYS: ReadonlyArray<readonly [string, string]> = [
+  ['length', 'auth.error.passwordTooShort'],
+  ['characters', 'auth.error.passwordCharacters'],
+  ['pwned', 'auth.error.passwordPwned'],
+];
+
+/**
+ * Übersetzungsschlüssel zu einem Fehler des Backends.
  *
  * Supabase antwortet auf Englisch und unübersetzt. Die Zuordnung deckt die
  * Fälle ab, die eine Person tatsächlich sieht; alles andere fällt auf eine
  * allgemeine Meldung zurück, damit nie ein englischer Satz stehen bleibt.
+ *
+ * `error` ist, was im `catch` ankommt – ein `AuthError` von supabase-js –,
+ * oder eine blosse Zeichenkette, wenn die Begründung aus einer Adresse stammt.
  *
  * `fallback` gibt es, weil der allgemeine Text vom Anmeldebildschirm kommt
  * («Die Anmeldung hat nicht geklappt»). Im Profil wird kein Konto angemeldet,
  * sondern ein Passwort gesetzt – dort nennt derselbe Satz den falschen
  * Vorgang.
  */
-export function authErrorKey(
-  message: string | null | undefined,
-  fallback = 'auth.error.generic',
-): string {
-  const text = (message ?? '').toLowerCase();
+export function authErrorKey(error: unknown, fallback = 'auth.error.generic'): string {
+  const failure = readFailure(error);
+
+  if (failure.code === 'weak_password') {
+    const named = WEAK_PASSWORD_KEYS.find(([reason]) =>
+      failure.reasons.includes(reason),
+    );
+    return named?.[1] ?? 'auth.error.passwordWeak';
+  }
+
+  const byCode = ERROR_CODE_KEYS[failure.code];
+  if (byCode) return byCode;
+
+  const text = failure.message.toLowerCase();
 
   if (!text) return fallback;
   // Vor 'expired': «JWT expired» ist keine Sache des Anmeldelinks.

@@ -110,9 +110,10 @@
 | 2 | Eintrag antippen | Ein Blatt mit einem Passwortfeld öffnet sich | | |
 | 3 | Sieben Zeichen eingeben | «Speichern» bleibt ausgegraut | | |
 | 4 | Acht Zeichen eingeben | «Speichern» wird aktiv | | |
-| 5 | Speichern | Blatt schliesst sich, Toast **oben** «Passwort gespeichert» | | |
-| 6 | Abmelden und mit diesem Passwort anmelden | Anmeldung geht durch (damit ist K1 zu K2 geworden) | | |
-| 7 | Erneut «Passwort setzen» und ein anderes vergeben | Auch das Ändern funktioniert | | |
+| 5 | Ein bekanntes Passwort wie «passwort1234» eingeben und speichern | «Dieses Passwort steht in bekannten Datenlecks …» – Supabase prüft gegen HaveIBeenPwned, und die Meldung sagt das auch | | |
+| 6 | Ein eigenes, langes Passwort eingeben und speichern | Blatt schliesst sich, Toast **oben** «Passwort gespeichert» | | |
+| 7 | Abmelden und mit diesem Passwort anmelden | Anmeldung geht durch (damit ist K1 zu K2 geworden) | | |
+| 8 | Erneut «Passwort setzen» und ein anderes vergeben | Auch das Ändern funktioniert | | |
 
 ---
 
