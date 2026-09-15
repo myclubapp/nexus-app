@@ -162,8 +162,89 @@ Nachfolge-Vorlauf, Vorstands-Reaktionszeiten), rechnet ab jetzt damit.
 
 ## Offen
 
-- Verteiler an alle verknüpften Inhaber:innen eines Amtes
-  (`holds_committee_role`, `committee_members`, `ask_office_load`).
+- ~~Verteiler an alle verknüpften Inhaber:innen eines Amtes
+  (`holds_committee_role`, `committee_members`)~~ – **erledigt am 2026-09-15**
+  in `0095`: Beide lösen über `functionary_holders` auf statt über die
+  Spiegel-Spalte. `ask_office_load()` liest weiterhin nur den Spiegel.
 - «Seit wann vakant» für `board_response_metrics.vacancy_avg_days` – rechnet
   weiter mit `created_at`.
 - Punktegutschrift am Saisonende für Ämter (Konzept §4.3).
+
+## Nachtrag 2026-09-15
+
+- `functionary_roles.is_board` (`0095`): Schalter «Gehört zum Vorstand» im
+  Amts-Formular. Die Ämter-Seite zeigt den Vorstand als **eigene Gruppe** –
+  er ist das Gremium, an das Sitzungen und Vorschläge gehen, nicht ein Amt
+  unter vielen (BR-237). Ohne Vorstandsämter bleibt es bei der einen Liste.
+
+## Nachtrag 2026-09-15 (Abend): Beschreibung als Datei (A7/A8, FR-193/FR-194)
+
+Sandros Auftrag: «Die Ämterbeschreibung soll als `*.md` exportiert und anhand
+einer Vorlage auch importiert werden können – damit die Dateien nicht nur in
+der App liegen, sondern auch auf Google Drive oder sonst wo in der
+Vereinsverwaltung.»
+
+**Keine Migration.** Das Einlesen geht durch `save_office()` und
+`set_office_points()` – dieselben Funktionen wie das Formular. Eine Datei ist
+damit kein zweiter Schreibweg und kein Weg an `is_club_admin()` vorbei.
+
+| Baustein | Datei | Zweck |
+| --- | --- | --- |
+| Format, Schreiben, Lesen, Zuordnen | `app/src/lib/officeMarkdown.ts` | reine Logik; 30 Tests in `officeMarkdown.test.ts` |
+| Weg der Datei, Dateinamen | `app/src/lib/fileExport.ts` | aus `csv.ts` herausgelöst; `deliverCsv()` ist jetzt eine Hülle darum |
+| Ausgeben | `app/src/hooks/useOfficeMarkdown.ts` | ein Amt, alle Ämter, die Vorlage |
+| Rückfrage vor dem Schreiben | `app/src/components/OfficeImportModal.tsx` | zeigt je Amt «Neu»/«Ändern» und die geänderten Angaben |
+| Einstiege | `OfficeDetailModal` («Verwalten»), `OfficePage` (Abschnitt «Ämterbeschreibungen») | beides nur für den Vorstand |
+
+**Drei Entscheide, die den Rest tragen:**
+
+1. **Markdown statt CSV**, weil eine Ämterbeschreibung ein Text mit
+   Abschnitten ist und keine Tabelle. Der Export der Mitgliederliste bleibt
+   CSV – die Regel «ein Dateiformat je Sorte Inhalt», nicht «ein Format für
+   alles».
+2. **Kein YAML-Kopf.** Er stünde in der Drive-Vorschau als Rohtext über dem
+   Blatt. Die Eckdaten sind eine Aufzählung; die einzige Maschinenangabe ist
+   die Kennung des Amtes in einem HTML-Kommentar (BR-255).
+3. **Die Datei leert nie** (BR-256). Ein fehlender oder leerer Abschnitt ist
+   keine Aussage. Sonst nähme ein Auszug – nur das überarbeitete
+   Pflichtenheft – die Besetzung mit, die gar nicht darin steht.
+
+**Ein Nebeneffekt im Modell:** `OfficeHolderDraft` trägt jetzt `since`. Das
+Formular zeigt das Feld nicht, reicht es aber durch; ohne das verlöre ein
+Speichern nach dem Einlesen das Datum, das in der Datei steht.
+
+**Offen und bewusst so gelassen:**
+
+- Das Factsheet-PDF geht nicht mit – es liegt ohnehin schon als Datei vor.
+- Auf dem Gerät geht die Datei als **Text** ins Teilen-Blatt (wie die CSV
+  seit UC-042): `@capacitor/filesystem` ist keine Abhängigkeit dieses
+  Projekts. Der Weg «Datei auf Drive» führt über den Browser.
+- Kein automatischer Abgleich mit einem Drive-Ordner. Das wäre ein Dienst,
+  kein Knopf – und eine Frage an Sandro, keine Lücke.
+
+### Was der Review-Durchgang gefunden hat (drei Befunde, alle behoben)
+
+1. **`save_office()` hat `since` verloren.** `0070` schrieb das Datum am Sitz,
+   `0095` baute die Funktion für `is_board` neu und liess es weg. Aufgefallen
+   ist es erst hier, weil das Formular nie eines geschickt hat – die
+   eingelesene Datei schickt eines («- Anna Beispiel (seit 2024-06-01)»).
+   Ohne Migration ginge es still verloren, und das Blatt zeigte die Besetzung
+   bei **jedem** Einlesen erneut als Änderung. Behoben in
+   `supabase/migrations/0099_office_holder_since.sql` (nur der Rumpf, Signatur
+   und Rechte wie in `0095`). **Noch nicht eingespielt** – `db push` löst
+   Sandro aus. Bis dahin ist das Datum aus der Datei ohne Wirkung; alles
+   andere am Einlesen funktioniert.
+2. **Der Punktwert wurde erst vom Server abgewiesen.** `set_office_points()`
+   lässt 0 bis 10000 zu und läuft als **zweite** Buchung nach `save_office()`.
+   Eine Datei mit «Punkte pro Saison: 99999» hätte das Amt gespeichert und
+   danach geworfen – die Reihe meldete «0 übernommen», obwohl ein Amt schon
+   geschrieben war. `validateOffice()` prüft die Grenze jetzt selbst, für
+   Formular und Datei gleichermassen (`offices.problem.pointsInvalid`).
+3. **Die Zwischenablage log.** `navigator.clipboard?.writeText()` läuft in
+   einem unsicheren Kontext still durch: `deliverFile()` meldete «kopiert»,
+   ohne dass etwas kopiert war. Betraf über `deliverCsv()` auch den
+   Mitglieder-Export. Jetzt: keine Zwischenablage, kein «kopiert»
+   (`fileExport.test.ts`).
+
+**Testlage:** `officeMarkdown.test.ts` (30), `fileExport.test.ts` (7),
+`OfficeImportModal.test.tsx` (7); dazu die erweiterten `office.test.ts`.

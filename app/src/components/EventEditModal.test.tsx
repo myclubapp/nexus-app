@@ -12,6 +12,11 @@ vi.mock('../hooks/useEvents', () => ({
   useCancelEvent: () => ({ mutate: cancelMutate, isPending: false, error: null }),
 }));
 
+/** Das Gremium einer Sitzung; für jeden anderen Termintyp ungenutzt. */
+vi.mock('../hooks/useOffices', () => ({
+  useOffices: () => ({ data: [], isLoading: false, error: null }),
+}));
+
 vi.mock('../hooks/useGamification', () => ({
   usePointRules: () => ({
     data: [{ code: 'training_attend', label: 'Training besucht' }],

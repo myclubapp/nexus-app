@@ -21,6 +21,8 @@ import {
   requiresWhy,
   validateCancel,
 } from '../lib/eventSeries';
+import { useOffices } from '../hooks/useOffices';
+import { readRoleIds, sortOffices } from '../lib/office';
 import type { AppEvent } from '../lib/database.types';
 
 interface EventEditProps {
@@ -49,6 +51,7 @@ interface EventEditProps {
 export function EventEdit({ event, onDone, onDismiss, isOpen = true }: EventEditProps) {
   const { t } = useTranslation();
   const rules = usePointRules();
+  const offices = useOffices();
   const update = useUpdateEvent();
   const cancelEvent = useCancelEvent();
 
@@ -56,6 +59,12 @@ export function EventEdit({ event, onDone, onDismiss, isOpen = true }: EventEdit
   const [location, setLocation] = useState(event.location ?? '');
   const [why, setWhy] = useState(event.why ?? '');
   const [ruleCode, setRuleCode] = useState<string | null>(event.point_rule_code);
+  // FR-096: Das Gremium einer Sitzung lässt sich korrigieren – sonst bliebe
+  // als Weg nur, die Sitzung zu löschen und neu anzulegen.
+  const isMeeting = event.type === 'meeting';
+  const [committee, setCommittee] = useState<string[]>(
+    readRoleIds(event.audience_role_ids),
+  );
   const [scope, setScope] = useState<'single' | 'series'>('single');
   const [reason, setReason] = useState('');
   const [askCancel, setAskCancel] = useState(false);
@@ -76,6 +85,8 @@ export function EventEdit({ event, onDone, onDismiss, isOpen = true }: EventEdit
 
   // BR-036 gilt auch beim Ändern: Ein Aufruf ohne Warum bliebe ein Aufruf.
   const whyMissing = requiresWhy(event.type) && why.trim().length === 0;
+  // BR-237: Eine Sitzung ohne Gremium weist auch die Tabelle ab (`0095`).
+  const committeeMissing = isMeeting && committee.length === 0;
 
   function save() {
     update.mutate(
@@ -87,6 +98,7 @@ export function EventEdit({ event, onDone, onDismiss, isOpen = true }: EventEdit
         location: location || null,
         why: why || null,
         pointRuleCode: ruleCode,
+        committeeRoleIds: isMeeting ? committee : undefined,
       },
       { onSuccess: () => onDone('changed') },
     );
@@ -97,7 +109,7 @@ export function EventEdit({ event, onDone, onDismiss, isOpen = true }: EventEdit
       isOpen={isOpen}
       title={t('eventEdit.title')}
       submitLabel={t('common.save')}
-      canSubmit={title.trim().length >= 2 && !whyMissing && !isBusy}
+      canSubmit={title.trim().length >= 2 && !whyMissing && !committeeMissing && !isBusy}
       isSubmitting={isBusy}
       error={error}
       onDismiss={onDismiss}
@@ -137,6 +149,28 @@ export function EventEdit({ event, onDone, onDismiss, isOpen = true }: EventEdit
               value={why}
               onIonInput={(e) => setWhy(e.detail.value ?? '')}
             />
+          </IonItem>
+        </ListSection>
+      )}
+
+      {isMeeting && (
+        <ListSection footnote={t('eventForm.committeeHint')}>
+          <IonItem>
+            <IonSelect
+              multiple
+              label={t('eventForm.committee')}
+              labelPlacement="stacked"
+              value={committee}
+              onIonChange={(e) => setCommittee((e.detail.value as string[] | null) ?? [])}
+              cancelText={t('common.cancel')}
+              okText={t('common.ok')}
+            >
+              {sortOffices(offices.data ?? []).map((office) => (
+                <IonSelectOption key={office.id} value={office.id}>
+                  {office.title}
+                </IonSelectOption>
+              ))}
+            </IonSelect>
           </IonItem>
         </ListSection>
       )}

@@ -54,7 +54,7 @@ synchron gehalten werden können.
 | [UC-020](UC-020-punktestand-einsehen.md) | Punktestand und «Nächste Punkte» einsehen | Mitglied | FR-041, FR-044, FR-045 | Implemented |
 | [UC-021](UC-021-punkte-manuell-buchen.md) | Punkte manuell buchen oder korrigieren | Vorstand | FR-042, FR-043 | Implemented |
 | [UC-022](UC-022-leaderboard-einsehen.md) | Leaderboard einsehen | Mitglied | FR-046, FR-047, FR-048, FR-049, FR-177 | Implemented |
-| [UC-041](UC-041-funktionaersamt-mit-factsheet.md) | Funktionärsamt mit Factsheet hinterlegen und im Marktplatz anbieten | Vorstand | FR-126, FR-127 | Implemented |
+| [UC-041](UC-041-funktionaersamt-mit-factsheet.md) | Funktionärsamt mit Factsheet hinterlegen und im Marktplatz anbieten | Vorstand | FR-126, FR-127, FR-193, FR-194 | Implemented |
 | [UC-042](UC-042-saisonziel-beitrag.md) | Saisonziel für den Beitrag setzen und verfolgen | Vorstand, Mitglied | FR-158, FR-159, FR-160, FR-161, FR-162 | Implemented |
 | [UC-043](../implementation/UC-043/plan.md) | Mitgliederdaten strukturieren und exportieren | Vorstand, Trainer:in | FR-130, FR-163 | Implemented |
 | [UC-045](../implementation/UC-045/plan.md) | Bilder des Vereins pflegen (Logo, Teambild, Profilbild) | Vorstand, Trainer:in, Mitglied | FR-166, FR-167, FR-168 | Implemented |
@@ -76,6 +76,7 @@ synchron gehalten werden können.
 | [UC-028](UC-028-benachrichtigungen-einstellen.md) | Benachrichtigungen einstellen | Mitglied | FR-079, FR-080, FR-081 | Implemented |
 | [UC-044](UC-044-meldungen-per-email.md) | Meldungen per E-Mail erhalten | Mitglied | FR-164, FR-165 | Implemented |
 | [UC-048](UC-048-vereinsmail-und-warum.md) | Mail im Vereins-Look, mit Warum und Begrüssung | Mitglied | FR-182, FR-183, FR-184 | Implemented |
+| [UC-050](UC-050-vereins-puls-persoenlich.md) | Vereins-Puls persönlich gestalten | Vorstand | FR-188 bis FR-192 | Draft |
 | [UC-038](UC-038-website-news-uebernehmen.md) | News von der Vereins-Website übernehmen | Vorstand | FR-146, FR-147, FR-149 | In Progress |
 
 ### «Stimme» & Dialog
@@ -93,6 +94,7 @@ synchron gehalten werden können.
 |---|---|---|---|---|
 | [UC-033](UC-033-beitrags-profil-erfassen.md) | Beitrags-Profil erfassen | Mitglied | FR-058, FR-059 | Implemented |
 | [UC-034](UC-034-vereinsidentitaet-konfigurieren.md) | Vereinsidentität, Begriffe und Module konfigurieren | Vorstand | FR-111, FR-112, FR-113, FR-114, FR-115 | Implemented |
+| [UC-049](UC-049-vereins-ansprache-festlegen.md) | Ansprache des Vereins festlegen | Vorstand | FR-185, FR-186, FR-187 | Draft |
 | [UC-035](UC-035-verband-verbinden.md) | Verband verbinden | Vorstand | FR-120, FR-121 | Implemented |
 | [UC-039](UC-039-verbands-team-verknuepfen.md) | Verbands-Team verknüpfen oder importieren | Vorstand | FR-150, FR-151, FR-152, FR-153 | Implemented |
 | [UC-040](UC-040-bisherige-app-uebernehmen.md) | Termine aus der bisherigen myclub-App übernehmen | Vorstand | FR-154, FR-155, FR-156 | Implemented |
@@ -138,7 +140,7 @@ Ablauf steht in UC-008, die Gliederung der Seite in [`../guidelines.md`](../guid
 
 ## Geschäftsregeln
 
-Die Regeln BR-001 bis BR-242 sind fortlaufend und über alle Use Cases hinweg eindeutig vergeben. **Wer eine neue vergibt, prüft zuerst den höchsten Stand** – zuletzt kollidierten UC-044 und UC-045 auf BR-210 bis BR-213, und UC-048 musste FR-179 bis FR-181 an den parallel gebauten Sitzungs-Strang abgeben.
+Die Regeln BR-001 bis BR-257 sind fortlaufend und über alle Use Cases hinweg eindeutig vergeben. **Wer eine neue vergibt, prüft zuerst den höchsten Stand** – zuletzt kollidierten UC-044 und UC-045 auf BR-210 bis BR-213, und UC-048 musste FR-179 bis FR-181 an den parallel gebauten Sitzungs-Strang abgeben.
 Die vier nicht verhandelbaren Regeln des Projekts sind über mehrere Use Cases verteilt:
 
 | Prinzip | Regeln |

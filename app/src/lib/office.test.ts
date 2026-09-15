@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
+  boardRoleIds,
   checkFactsheetFile,
+  groupOffices,
   dutiesToText,
   factsheetPath,
   isVacant,
+  officePointsExtra,
   officeToDraft,
   openSeats,
   parseDuties,
@@ -37,7 +40,9 @@ function office(overrides: Partial<Office> = {}): Office {
     duties: [],
     hoursPerSeason: '10h+',
     pointsLabel: '7',
+    seasonPoints: 350,
     maxHolders: 1,
+    isBoard: false,
     contactMemberId: null,
     contactName: 'Kevin Gysel',
     factsheetPath: null,
@@ -53,7 +58,9 @@ function draft(overrides: Partial<OfficeDraft> = {}): OfficeDraft {
     dutiesText: '',
     hoursPerSeason: '',
     pointsLabel: '',
+    seasonPoints: null,
     maxHolders: 1,
+    isBoard: false,
     contactMemberId: null,
     contactName: '',
     holders: [],
@@ -129,22 +136,56 @@ describe('validateOffice()', () => {
     expect(validateOffice(draft({ maxHolders: 2.5 }))).toContain('seatsInvalid');
   });
 
+  it('hält den Punktwert zwischen 0 und 10000 – wie set_office_points() (BR-206)', () => {
+    // Der Punktwert geht in einer zweiten Buchung an den Server: Ohne diese
+    // Prüfung wäre das Amt schon gespeichert, wenn er zurückgewiesen wird.
+    expect(validateOffice(draft({ seasonPoints: -1 }))).toContain('pointsInvalid');
+    expect(validateOffice(draft({ seasonPoints: 10001 }))).toContain('pointsInvalid');
+    expect(validateOffice(draft({ seasonPoints: 12.5 }))).toContain('pointsInvalid');
+    // `null` heisst «noch nicht festgelegt» und ist gültig (BR-200).
+    expect(validateOffice(draft({ seasonPoints: null }))).toEqual([]);
+    expect(validateOffice(draft({ seasonPoints: 0 }))).toEqual([]);
+    expect(validateOffice(draft({ seasonPoints: 10000 }))).toEqual([]);
+  });
+
   it('verlangt einen Namen nur für Sitze ohne Konto (BR-184)', () => {
-    const unnamed = { id: null, memberId: null, displayName: '  ', interim: false };
+    const unnamed = { id: null, memberId: null, displayName: '  ', interim: false, since: null };
     expect(validateOffice(draft({ holders: [unnamed] }))).toContain('holderNameMissing');
-    const linked = { id: null, memberId: 'm-1', displayName: '', interim: false };
+    const linked = { id: null, memberId: 'm-1', displayName: '', interim: false, since: null };
     expect(validateOffice(draft({ holders: [linked] }))).toEqual([]);
   });
 
   it('lässt nicht mehr ordentliche Inhaber:innen zu als Sitze', () => {
     const two = [
-      { id: null, memberId: null, displayName: 'A', interim: false },
-      { id: null, memberId: null, displayName: 'B', interim: false },
+      { id: null, memberId: null, displayName: 'A', interim: false, since: null },
+      { id: null, memberId: null, displayName: 'B', interim: false, since: null },
     ];
     expect(validateOffice(draft({ maxHolders: 1, holders: two }))).toContain('tooManyHolders');
     // «ad interim» belegt keinen Sitz.
     const withInterim = [two[0], { ...two[1], interim: true }];
     expect(validateOffice(draft({ maxHolders: 1, holders: withInterim }))).toEqual([]);
+  });
+});
+
+describe('officePointsExtra() (BR-206)', () => {
+  it('schneidet die alte Helferpunktzahl ab und lässt den Zusatz stehen', () => {
+    expect(officePointsExtra('4 + Lohn')).toBe('Lohn');
+    expect(officePointsExtra('3 + Lohn + Spesen')).toBe('Lohn + Spesen');
+  });
+
+  it('gibt nichts zurück, wo nur eine Zahl stand', () => {
+    // Die Zahl steht jetzt in `seasonPoints`; sie ein zweites Mal zu zeigen
+    // behauptete eine zweite Skala.
+    expect(officePointsExtra('4')).toBeNull();
+    expect(officePointsExtra('7')).toBeNull();
+    expect(officePointsExtra('1-4')).toBeNull();
+    expect(officePointsExtra('1 – 4')).toBeNull();
+    expect(officePointsExtra(null)).toBeNull();
+    expect(officePointsExtra('   ')).toBeNull();
+  });
+
+  it('lässt einen Text ohne führende Zahl unangetastet', () => {
+    expect(officePointsExtra('nach Aufwand')).toBe('nach Aufwand');
   });
 });
 
@@ -158,7 +199,9 @@ describe('officeToDraft()', () => {
     const result = officeToDraft(saved);
     expect(result.dutiesText).toBe('Buchhaltung\nAbschluss per 31. Mai');
     expect(result.holders).toEqual([
-      { id: 'h-9', memberId: 'm-1', displayName: 'Anna Beispiel', interim: false },
+      // «seit» trägt das Formular mit, ohne es zu zeigen: Ein Speichern darf
+      // das Datum nicht verlieren (UC-041 A8).
+      { id: 'h-9', memberId: 'm-1', displayName: 'Anna Beispiel', interim: false, since: '2024-06-01' },
     ]);
     expect(parseDuties(result.dutiesText)).toEqual(saved.duties);
   });
@@ -186,5 +229,44 @@ describe('sortOffices()', () => {
       office({ id: 'd', title: 'Kassier:in', maxHolders: 1, holders: [holder()] }),
     ];
     expect(sortOffices(list).map((entry) => entry.id)).toEqual(['b', 'c', 'd', 'a']);
+  });
+});
+
+describe('boardRoleIds()', () => {
+  it('gibt die Ämter des Vorstands – den Empfängerkreis einer Sitzung (BR-237)', () => {
+    const list = [
+      office({ id: 'a', title: 'Präsident/in', isBoard: true }),
+      office({ id: 'b', title: 'Webmaster' }),
+      office({ id: 'c', title: 'Kassier:in', isBoard: true }),
+    ];
+    expect(boardRoleIds(list)).toEqual(['a', 'c']);
+  });
+
+  it('gibt eine leere Liste, solange kein Amt zum Vorstand gehört', () => {
+    // Dann bleibt die Voreinstellung leer, und das Formular verlangt die Wahl
+    // – lieber das als eine Sitzung, die stillschweigend an niemanden geht.
+    expect(boardRoleIds([office({ id: 'a' })])).toEqual([]);
+  });
+});
+
+describe('groupOffices()', () => {
+  it('trennt den Vorstand von den übrigen Ämtern (BR-237)', () => {
+    const list = [
+      office({ id: 'a', title: 'Webmaster', maxHolders: 1, holders: [holder()] }),
+      office({ id: 'b', title: 'Präsident/in', isBoard: true, maxHolders: 1, holders: [holder()] }),
+      office({ id: 'c', title: 'Kassier:in', isBoard: true, maxHolders: 1 }),
+    ];
+    const { board, others } = groupOffices(list);
+    // Innerhalb der Gruppe gilt dieselbe Reihenfolge wie sonst: vakant zuerst.
+    expect(board.map((entry) => entry.id)).toEqual(['c', 'b']);
+    expect(others.map((entry) => entry.id)).toEqual(['a']);
+  });
+
+  it('lässt die Vorstandsgruppe leer, solange kein Amt sie trägt', () => {
+    // Dann zeigt die Seite die eine Liste – eine Überschrift ohne Inhalt wäre
+    // schlechter als keine Gruppe.
+    const { board, others } = groupOffices([office({ id: 'a' })]);
+    expect(board).toEqual([]);
+    expect(others).toHaveLength(1);
   });
 });

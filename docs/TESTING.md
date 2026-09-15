@@ -118,23 +118,34 @@ kennt. Sie sind ausgemessen, nicht vermutet:
    expect(screen.getByText('…')).toBeInTheDocument();                          // findet nichts
    ```
 
-4. **Ionic-Ereignisse feuern gar nicht.** `onIonInput`, `onIonChange` und ihre
-   Geschwister erreichen in jsdom keinen Handler – weder über `userEvent` noch
-   über ein von Hand ausgelöstes `CustomEvent`. `ion-input` hat dort auch kein
-   inneres `<input>`, in das man tippen könnte. **Eine Ionic-Eingabe lässt sich
-   in jsdom nicht bedienen.**
+4. **Ionic-Ereignisse kommen nur von Hand.** `onIonInput`, `onIonChange` und
+   ihre Geschwister erreichen den Handler, wenn der Test das Ereignis selbst
+   auslöst – `userEvent` und ein Klick reichen nicht, und in `ion-input` gibt
+   es kein inneres `<input>`, in das man tippen könnte.
 
-   Daraus folgt eine Entwurfsregel, nicht nur eine Testregel: **Die
-   Entscheidung hinter einem Formular gehört in eine reine Funktion in
-   `src/lib/`, nicht in den Ereignis-Handler der Seite.** Dann prüft der Test
-   die Verzweigung vollständig, und die Seite bleibt eine Darstellung.
-   Vorbild ist `resolveSignInAction()` in `src/lib/authError.ts`: Sie
-   entscheidet zwischen «Adresse ungültig», «Link senden» und «mit Passwort
-   anmelden», und `LoginPage` führt nur noch aus.
+   ```ts
+   act(() => {
+     toggle.dispatchEvent(new CustomEvent('ionChange', { detail: { checked: true } }));
+   });
+   ```
 
-   Ein Komponententest prüft deshalb **was in einem Zustand zu sehen ist**,
-   nicht was ein Klick auslöst. Echte Bedienung braucht einen Browser; das ist
-   bewusst zurückgestellt (§4).
+   **Das hängt an einer Zeile Konfiguration.** Vitest löst Pakete über Vites
+   SSR-Pfad mit der Bedingung `node` auf; Ionic baut seine React-Hüllen über
+   `@lit/react`, und dessen Node-Fassung meldet keine Ereignisse an. Die
+   Bedingung steht deshalb in `vite.config.ts` auf `browser` – ohne sie läuft
+   jede Zusicherung über einen umgelegten Schalter still ins Leere und sieht
+   aus wie ein Fehler der Ansicht. Vorbild: `ClubSettingsPage.test.tsx`.
+
+   Die Entwurfsregel bleibt trotzdem: **Die Entscheidung hinter einem Formular
+   gehört in eine reine Funktion in `src/lib/`, nicht in den Ereignis-Handler
+   der Seite.** Dann prüft der Test die Verzweigung vollständig, und die Seite
+   bleibt eine Darstellung. Vorbild ist `resolveSignInAction()` in
+   `src/lib/authError.ts`: Sie entscheidet zwischen «Adresse ungültig», «Link
+   senden» und «mit Passwort anmelden», und `LoginPage` führt nur noch aus.
+
+   Geprüft wird auch dann, **was in einem Zustand zu sehen ist** und **womit
+   die Ansicht speichert** – nicht, ob Ionic seinen Schalter zeichnet. Echte
+   Bedienung braucht einen Browser; das bleibt zurückgestellt (§4).
 
 5. **`IonModal` rendert seinen Inhalt gar nicht.** In jsdom bleibt das Blatt
    leer – auch mit `isOpen`. Ein Test gegen den Inhalt eines Blattes findet
@@ -146,13 +157,14 @@ kennt. Sie sind ausgemessen, nicht vermutet:
    diese Trennung macht die Erklärung der Kontolöschung und die Sperre für den
    einzigen Vorstand prüfbar.
 
-6. **Werte von Formularfeldern sind nicht auslesbar.** `ionProp()` erreicht
-   `disabled` an einem `ion-button` und `routerLink` an einem `ion-item`, aber
-   **nicht** `value` an einem `ion-input` oder `checked` an einem `ion-toggle`:
-   Diese Komponenten verwalten ihren Wert über Refs, die in jsdom nie greifen.
+6. **Werte von Formularfeldern liest `ionProp()`** – `disabled` an einem
+   `ion-button`, `routerLink` an einem `ion-item`, `value` an einem `ion-input`
+   und `checked` an einem `ion-toggle`. Die React-Hülle setzt sie als
+   Eigenschaften am Element; gezeichnet wird in jsdom nichts davon.
 
-   Geprüft wird deshalb, **womit das Formular speichert**, nicht was in den
-   Feldern steht: Die Hülle (`FormModal`) wird durch gewöhnliches HTML ersetzt,
+   Die bessere Zusicherung bleibt, **womit das Formular speichert**: Ein Wert
+   im Feld sagt nur, was React hineingeschrieben hat, die Mutation sagt, was
+   ankommt. Die Hülle (`FormModal`) wird dafür durch gewöhnliches HTML ersetzt,
    der Bestätigen-Knopf geklickt und die Mutation geprüft. Vorbild:
    `ProfileEditModal.test.tsx`.
 

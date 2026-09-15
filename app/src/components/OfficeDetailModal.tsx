@@ -1,7 +1,8 @@
-import { IonBadge, IonButton, IonIcon, IonItem, IonLabel, IonNote } from '@ionic/react';
+import { IonButton, IonIcon, IonItem, IonLabel, IonNote } from '@ionic/react';
 import { documentTextOutline, openOutline } from 'ionicons/icons';
 import { useTranslation } from 'react-i18next';
 import { useClub } from '../hooks/useClub';
+import { useOfficeMarkdown } from '../hooks/useOfficeMarkdown';
 import { useFactsheetUrl } from '../hooks/useOffices';
 import { FormModal } from './FormModal';
 import { useSheetProps } from '../hooks/useSheetProps';
@@ -10,7 +11,7 @@ import { ManageSection } from './ManageSection';
 import { TextSection } from './TextSection';
 import { InlineError } from './StateViews';
 import { formatDate } from '../lib/format';
-import { isVacant, openSeats, type Office } from '../lib/office';
+import { officePointsExtra, type Office } from '../lib/office';
 
 interface OfficeDetailProps {
   office: Office;
@@ -45,24 +46,12 @@ export function OfficeDetail({
   const { t } = useTranslation();
   const { isAdmin } = useClub();
   const factsheet = useFactsheetUrl(office.factsheetPath);
+  const markdown = useOfficeMarkdown();
 
-  const open = openSeats(office);
-  const vacant = isVacant(office);
   const taken = office.holders.filter((holder) => !holder.interim).length;
 
   return (
     <FormModal isOpen={isOpen} title={office.title} onDismiss={onDismiss}>
-      {/* BR-183: Die Vakanz ist das Erste, was jemand wissen will. */}
-      <div className="app-actions">
-        {vacant ? (
-          <IonBadge color="warning" aria-label={t('offices.openSeats', { count: open })}>
-            {open}
-          </IonBadge>
-        ) : (
-          <IonBadge color="success">{t('offices.occupied')}</IonBadge>
-        )}
-      </div>
-
       {office.why && (
         <TextSection title={t('offices.why')} preserveLines>
           {office.why}
@@ -83,16 +72,37 @@ export function OfficeDetail({
       )}
 
       <ListSection title={t('offices.facts')}>
+        {/* Der Aufwand ist Freitext («ca. 12 Spiele à 4 Stunden (jedes 3.
+            Spiel)») und passt nicht in die Wertspalte: Auf schmalen Geräten
+            drückt er das Label auf einen Buchstaben je Zeile. Diese Zeile
+            stapelt deshalb – Label oben, Text darunter, beides umbrechend. */}
         {office.hoursPerSeason && (
           <IonItem>
-            <IonLabel>{t('offices.hours')}</IonLabel>
-            <IonNote slot="end">{office.hoursPerSeason}</IonNote>
+            <IonLabel className="ion-text-wrap">
+              <h2>{t('offices.hours')}</h2>
+              <IonNote>{office.hoursPerSeason}</IonNote>
+            </IonLabel>
           </IonItem>
         )}
-        {office.pointsLabel && (
+        {/* BR-206: Was hier steht, ist die Punktzahl dieser App – nicht mehr
+            die alte Vereinsskala aus `points_label`. Von deren Text bleibt
+            nur der Zusatz («+ Lohn + Spesen»), weil er etwas sagt, das keine
+            Punktzahl ausdrückt. Ohne festgelegten Wert **und** ohne Zusatz
+            bleibt die Zeile weg: ein Amt, über das der Vorstand noch nicht
+            entschieden hat, soll nicht mit einer Lücke werben. */}
+        {(office.seasonPoints !== null || officePointsExtra(office.pointsLabel)) && (
           <IonItem>
             <IonLabel>{t('offices.points')}</IonLabel>
-            <IonNote slot="end">{office.pointsLabel}</IonNote>
+            <IonNote slot="end">
+              {[
+                office.seasonPoints !== null
+                  ? t('offices.pointsValue', { count: office.seasonPoints })
+                  : null,
+                officePointsExtra(office.pointsLabel),
+              ]
+                .filter((part): part is string => Boolean(part))
+                .join(' · ')}
+            </IonNote>
           </IonItem>
         )}
         <IonItem>
@@ -163,6 +173,11 @@ export function OfficeDetail({
         <ManageSection
           actions={[
             onEdit && { label: t('offices.edit'), onClick: () => onEdit(office), detail: true },
+            // UC-041 A7: dasselbe Blatt als Datei für die Vereinsablage.
+            {
+              label: t('offices.markdown.export'),
+              onClick: () => void markdown.exportOffices([office]),
+            },
             onDissolve && {
               label: t('offices.remove'),
               onClick: () => onDissolve(office),

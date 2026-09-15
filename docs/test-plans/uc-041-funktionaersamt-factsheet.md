@@ -2,9 +2,9 @@
 
 **Use Case:** [UC-041](../use_cases/UC-041-funktionaersamt-mit-factsheet.md)
 **Geltungsbereich:** Ämterliste, Formular, Factsheet-PDF, Marktplatz-Abschnitt, Sitzrechnung, Verteiler
-**Anforderungen:** FR-126, FR-127
-**Regeln:** BR-183 bis BR-186
-**Erstellt:** 2026-09-12
+**Anforderungen:** FR-126, FR-127, FR-193, FR-194
+**Regeln:** BR-183 bis BR-186, BR-255, BR-256
+**Erstellt:** 2026-09-12 · **Ergänzt:** 2026-09-15 (TC-008 bis TC-010)
 
 ## Vorbereitung
 
@@ -114,3 +114,53 @@
 | 2 | «Damentrainer:in» öffnen | Jonathan Kissling «ad interim», Badge «1 Sitz frei», Factsheet öffnet Sandros Word-PDF | | |
 | 3 | «Juniorentrainer:in» in der Ämterliste öffnen | Zehn Namen, «Besetzt», «10 von 10 besetzt» | | |
 | 4 | «Kassier:in» prüfen | Nur ein Amt dieses Namens (das alte «Kassier» wurde umbenannt, nicht verdoppelt) | | |
+
+---
+
+## TC-008: Beschreibung ausgeben und in der Ablage öffnen (FR-193, A7, BR-255)
+
+**Priority:** High
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als **V** im Browser ein Amt öffnen, unter «Verwalten» «Beschreibung exportieren (.md)» wählen | Datei `<verein>-amt-<bezeichnung>-<datum>.md` wird heruntergeladen, Toast «1 Ämterbeschreibung ausgegeben.» | | |
+| 2 | Die Datei in einem Editor öffnen | `# Bezeichnung`, darunter ein Kommentar mit der Kennung, dann «Warum es dieses Amt gibt», «Pflichten» als `###`, «Eckdaten» als Aufzählung, «Besetzung» mit «(seit …)» und «(ad interim)» | | |
+| 3 | Dieselbe Datei auf Google Drive hochladen und dort in der Vorschau öffnen | Überschriften und Aufzählung sind gesetzt; der Kommentar mit der Kennung ist **nicht** zu sehen | | |
+| 4 | In der Ämterliste «Alle Beschreibungen exportieren» wählen | Eine Datei `<verein>-aemter-<datum>.md` mit allen Ämtern, je Amt eine `#`-Überschrift | | |
+| 5 | Auf dem **Gerät** (iOS/Android) dieselbe Zeile tippen | Das Teilen-Blatt geht auf und enthält den Text; Abbrechen ergibt «In die Zwischenablage kopiert.» | | |
+| 6 | Die App auf Französisch stellen und erneut exportieren | Die Abschnitte heissen «Pourquoi cette fonction existe», «Tâches», «Données clés», «Titulaires» | | |
+
+---
+
+## TC-009: Beschreibung einlesen – Vorlage, Änderung, Rückfrage (FR-194, A8, BR-256)
+
+**Priority:** High
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als **V** in der Ämterliste «Vorlage herunterladen» wählen | Datei `<verein>-amt-vorlage-<datum>.md`, Toast «Vorlage ausgegeben.» | | |
+| 2 | In der Vorlage die Bezeichnung auf «Getränkechef:in» setzen, eine Pflicht schreiben, Sitze 2, Vorstand «nein» | — | | |
+| 3 | «Beschreibungen einlesen» wählen und die Datei nehmen | Blatt «Was die Datei ändert»: eine Zeile «Getränkechef:in», Abzeichen «Neu», Text «Wird als neues Amt angelegt.» | | |
+| 4 | «1 übernehmen» tippen | Toast «1 Amt übernommen.», die Ämterliste zeigt «Getränkechef:in» mit «2 Sitze frei» | | |
+| 5 | Die in TC-008 exportierte Datei des Amtes ausserhalb der App ändern (einen Satz im Pflichtenheft) und einlesen | Abzeichen «Ändern», darunter «Ändert: Pflichten» – und **nur** das | | |
+| 6 | Übernehmen, danach das Amt öffnen | Der geänderte Satz steht da; Besetzung, Sitze, Punkte und «seit»-Daten sind unverändert (BR-256) | | |
+| 7 | Eine Datei einlesen, die nur `# Getränkechef:in` und zwei Pflichten enthält (keine Eckdaten, keine Besetzung) | «Ändert: Pflichten»; nach dem Übernehmen sind Sitze und Besetzung unverändert | | |
+| 7b | In der Datei eines besetzten Amtes ein «(seit 2024-06-01)» an einen Namen schreiben und einlesen | «Ändert: Besetzt von»; nach dem Übernehmen steht im Detail «seit 01.06.2024». **Setzt Migration `0099` voraus** – ohne sie bleibt das Datum leer und die Zeile meldet die Änderung erneut | | |
+| 8 | Die Datei aller Ämter unverändert einlesen | Jede Zeile sagt «Keine Änderung»; Übernehmen ändert nichts (Liste bleibt gleich) | | |
+| 9 | Eine beliebige Textdatei ohne `#`-Überschrift einlesen | «In dieser Datei steht keine Ämterbeschreibung.», Knopf gesperrt | | |
+| 9b | In einer Datei «Punkte pro Saison: 99999» setzen und einlesen | Zeile gesperrt, roter Hinweis «Ein Amt trägt zwischen 0 und 10 000 Punkten je Saison.»; es wird nichts gespeichert | | |
+| 10 | In der Datei eines Amtes den Kommentar mit der Kennung löschen und die Bezeichnung ändern, dann einlesen | Abzeichen «Neu» – ohne Kennung und ohne gleiche Bezeichnung entsteht ein zweites Amt; abwählen und abbrechen | | |
+| 11 | Zwei Ämter «Co-Präsidium» anlegen, eine Datei mit `# Co-Präsidium` ohne Kennung einlesen | Zeile gesperrt, Hinweis «Zwei Ämter tragen diese Bezeichnung …», Knopf «0 übernehmen» gesperrt | | |
+
+---
+
+## TC-010: Einlesen ist kein Weg an der Rollenprüfung vorbei (BR-255, NFR-011)
+
+**Priority:** High
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als **M** (ohne Vorstandsrolle) die Ämterliste öffnen | Der Abschnitt «Ämterbeschreibungen» fehlt; im Detail eines Amtes fehlt «Verwalten» ganz | | |
+| 2 | Als **V** die Rolle in einem zweiten Browserfenster auf `member` setzen lassen, dann im ersten Fenster eine Datei übernehmen | Fehler «Nur der Vorstand pflegt die Ämter»; es wird nichts gespeichert | | |
+| 3 | Als **F** (anderer Verein) eine Datei mit der Kennung eines fremden Amtes einlesen | Hinweis «Die Kennung in der Datei gehört zu keinem Amt dieses Vereins.»; das Amt entstünde im **eigenen** Verein, das fremde bleibt unberührt | | |
+| 4 | Eine Datei mit zwei Ämtern übernehmen, bei der das zweite scheitert (z. B. Rolle dazwischen entzogen) | «1 übernommen, dann abgebrochen: …»; das erste Amt steht in der Liste, das Blatt bleibt offen | | |

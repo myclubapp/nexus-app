@@ -30,8 +30,8 @@
 | **Agenda** | Trainings (einzeln + Serie), Vereins-Events, **Helfer-Events mit Schichten**, Zu-/Absagen mit Grund, Erinnerung an Unentschlossene, QR-Check-in |
 | **Gamification (der USP)** | Punkte-Ledger (7 Säulen, konfigurierbar), Dashboard mit «Nächste Punkte», Vereins-/Team-Leaderboard, Aufgaben-Marktplatz (einmalig/wiederkehrend), Schicht-Bestätigung → Punkte, **Spider-Selbstsicht** (eigenes Profil vs. Team/Verein) |
 | **Vereins-Gesundheit & Frühwarnung (KERN)** | Health auf drei Ebenen (Verein/Team/Mitglied), Austritts-Frühwarnung mit rollenbasiertem Routing (Trainer + Sportchef/Vorstand), Fürsorge-Hinweise mit Status – Anti-Überwachung by Design (§11.4a) |
-| **News & Benachrichtigungen** | Vereins-News, In-App-Inbox (100%-Fallback), Push (ntfy/APNs/WebPush), granulare Einstellungen |
-| **i18n & Theming** | DE/FR/IT/EN ab erstem Commit, Laufzeit-Theming (White-Label-fähig ohne Builds) |
+| **News & Benachrichtigungen** | Vereins-News, In-App-Inbox (100%-Fallback), Push (ntfy/APNs/WebPush), granulare Einstellungen, **Vereins-Puls als eigenes Mailblatt mit Gruss vom Vorstandsamt** (UC-050, Entscheid vom 15.09.2026) |
+| **i18n & Theming** | DE/FR/IT/EN ab erstem Commit, Laufzeit-Theming (White-Label-fähig ohne Builds), **Ansprache du/Sie pro Verein** mit «Du» als Vorgabe (UC-049, Entscheid vom 15.09.2026) |
 
 ### 2.2 OUT – Ausgelagert oder ersetzt
 
@@ -438,8 +438,8 @@ Design-Grundsatz aus der Speak-up-/Listen-up-Forschung (Palazzo): Sprechkanäle 
 
 ### 13.1 Sitzungen als Termine mit Ämter-Anbindung
 
-- Vorstandssitzung, Teamsitzung, GV = Event vom Typ `meeting` in der Agenda – mit allem, was Termine können (Einladung, Zu-/Absage, Erinnerung; GV-Teilnahme gibt wie gehabt Punkte, Säule 4).
-- **Teilnehmerkreis über Ämtli statt Namenslisten**: Die Einladung geht an Amts-Inhaber:innen (`functionary_roles`: Präsident:in, Kassier:in, Aktuar:in, Sportchef:in …). Wechselt ein Amt die Person, stimmt der Verteiler automatisch – die Ämter-Verwaltung wird damit vom Verzeichnis zum lebenden Organigramm.
+- **Sitzung = Gremiumstermin.** Eine Vorstands- oder Kommissionssitzung ist ein Event vom Typ `meeting` in der Agenda – mit allem, was Termine können (Einladung, Zu-/Absage, Erinnerung). Sie trägt immer einen Empfängerkreis aus Ämtern und nie ein Team; angelegt wird sie nur vom Vorstand (BR-237). Eine **Teambesprechung ist keine Sitzung**, sondern ein gewöhnlicher Termin dieses Teams – sonst gäbe es zwei Wege zu derselben Sache. Die **GV** bleibt ihr eigener Termintyp `gv` und geht an den ganzen Verein; ihre Teilnahme gibt wie gehabt Punkte (Säule 4).
+- **Teilnehmerkreis über Ämtli statt Namenslisten**: Die Einladung geht an Amts-Inhaber:innen (`functionary_roles`: Präsident:in, Kassier:in, Aktuar:in, Sportchef:in …). Wechselt ein Amt die Person, stimmt der Verteiler automatisch – die Ämter-Verwaltung wird damit vom Verzeichnis zum lebenden Organigramm. Welche Ämter den Vorstand bilden, ist ein Merkmal am Amt; diese Menge ist der voreingestellte Empfängerkreis einer Sitzung und zugleich der Verteiler «Vorstand». Der Empfängerkreis entscheidet auch über die **Sichtbarkeit**: Eine Vorstandssitzung steht in der Agenda des Gremiums, nicht in der des ganzen Vereins (BR-238).
 
 ### 13.2 Eingang: Mitglieder-Inputs in die Sitzung
 

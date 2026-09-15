@@ -368,15 +368,23 @@ Regeln:
 - **Ein Eintrag, der an zwei Stellen steht, ist eine Komponente.** Die
   Verwaltungswege stehen in der Seitenleiste **und** auf der Profilseite; sie
   sind deshalb `ClubAdminLinks` und werden dort eingehängt, nicht kopiert.
-- **Verwaltung ist ein eigener Abschnitt, keine Zeile unter «Einstellungen».**
-  `ClubAdminLinks` hängt an beiden Stellen in einer eigenen `ListSection` mit
-  dem Titel `menu.administration` (FR-148). Wer die Einträge in den
-  Einstellungs-Abschnitt einreiht, macht Vorstandswege zu persönlichen
-  Optionen: Das Mitglied kann dann nicht lesen, was es selbst entscheidet und
-  was es für den Verein tut. Der Abschnitt erscheint nur, wenn
-  `isAdmin || isTrainer` – dieselbe Bedingung, die `ClubAdminLinks` selbst
-  prüft; sie steht aussen, weil eine `ListSection` sonst als leere Überschrift
-  stehen bliebe.
+- **Verwaltung ist ein eigener Bereich, keine Zeile unter «Einstellungen».**
+  Wer die Einträge in den Einstellungs-Abschnitt einreiht, macht Vorstandswege
+  zu persönlichen Optionen: Das Mitglied kann dann nicht lesen, was es selbst
+  entscheidet und was es für den Verein tut (FR-148).
+- **Die Überschriften der Verwaltung gehören `ClubAdminLinks`, nicht den
+  Einhängepunkten.** Die Komponente bringt ihre `ListSection`s selbst mit und
+  gliedert nach Sachgebiet – Überblick, Menschen, Punkte & Geld, Verein,
+  Anschlüsse (FR-178). Läge die Überschrift wie früher aussen, hätte jeder der
+  beiden Einhängepunkte eine eigene Gliederung und die beiden liefen
+  auseinander. Ein neuer Weg wird deshalb in die Gruppe gehängt, in der er
+  gesucht wird, nicht hinten angefügt. Zwei Regeln hängen daran: Eine Gruppe,
+  deren Wege alle an ausgeschalteten Modulen hängen, entfällt **samt
+  Überschrift** – sonst bliebe eine leere Gruppe stehen. Und ohne
+  Vorstandsrolle bleibt die Liste flach unter `menu.administration`:
+  Trainer:innen haben höchstens zwei Wege, zwei Überschriften über je einer
+  Zeile gliedern nichts. Ein `hasAdminLinks()` davor braucht nur, wer sonst
+  eine leere Hülle rendern würde – in `AppMenu` der `IonMenuToggle`.
 
 Ein `IonMenuToggle` umschliesst immer einen **ganzen Abschnitt**, nie eine
 einzelne Zeile: Läge es um das einzelne `IonItem`, wäre jede Zeile Einzelkind
@@ -706,8 +714,8 @@ genau eine englische Entsprechung im Code:
 | Vereins-Puls         | `pulse`                        |                                  |
 | Anliegen             | `voice_note`                   | nie «Sprachmemo» im Code         |
 | Amt                  | `functionary_role`             | Verteiler; Factsheet und Vakanz-Anzeige sind Ausbaustufe 2 |
-| Gremium              | `committee_role_ids`           | eine **Menge Ämter**, kein eigenes Objekt (BR-133) |
-| Sitzung              | `event` mit `type = 'meeting'`  | kein eigenes Objekt              |
+| Gremium              | `committee_role_ids`, am Termin `audience_role_ids` | eine **Menge Ämter**, kein eigenes Objekt (BR-133). «Vorstand» ist die Menge der Ämter mit `is_board` |
+| Sitzung              | `event` mit `type = 'meeting'`  | kein eigenes Objekt; immer mit Gremium, nie mit Team (BR-237). Eine Teambesprechung ist ein Termin ihres Teams und heisst nicht Sitzung |
 | Sitzungs-Input       | `meeting_input`                | nie «Antrag» oder «Traktandum» (BR-132) |
 | Anwesenheits-Check-in | `check_in()`                  | UC-013, QR-Code – **nicht** UC-032       |
 | Kontext-Check-in     | `checkin_prompt` / `checkin_response` | UC-032, Befinden; im Client `contextCheckin` |

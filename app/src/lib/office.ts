@@ -36,12 +36,46 @@ export interface Office {
   why: string | null;
   duties: OfficeDuty[];
   hoursPerSeason: string | null;
+  /**
+   * Der Text am Factsheet – die Vereinsskala, wie sie gewachsen ist
+   * («4 + Lohn», «3 + Lohn + Spesen»). **Keine Punktzahl dieser App.**
+   */
   pointsLabel: string | null;
+  /**
+   * Der Punktwert für eine ganze Saison (BR-206), in derselben Einheit wie
+   * jede andere Punktzahl. `null` heisst «noch nicht festgelegt», nicht «null
+   * Punkte» – derselbe Unterschied wie beim Saisonziel (BR-200).
+   */
+  seasonPoints: number | null;
   maxHolders: number;
+  /**
+   * Gehört das Amt zum Vorstand (BR-237)? Die Menge dieser Ämter ist der
+   * Verteiler «Vorstand» und die Voreinstellung des Empfängerkreises einer
+   * Sitzung.
+   */
+  isBoard: boolean;
   contactMemberId: string | null;
   contactName: string | null;
   factsheetPath: string | null;
   holders: OfficeHolder[];
+}
+
+/**
+ * Was am Text des Factsheets neben der alten Helferpunktzahl noch steht.
+ *
+ * `points_label` trug bis `0091` beides: die Zahl der Vereinsskala **und**
+ * Zusätze wie «+ Lohn + Spesen». Die Zahl steht jetzt in `seasonPoints` und
+ * wäre doppelt; der Zusatz sagt weiterhin etwas, das keine Punktzahl
+ * ausdrückt. Deshalb wird die führende Zahl – auch eine Spanne wie «1-4» –
+ * abgeschnitten und nur der Rest angezeigt.
+ */
+export function officePointsExtra(pointsLabel: string | null): string | null {
+  if (!pointsLabel) return null;
+  const rest = pointsLabel
+    .replace(/^\s*\d+\s*(?:[-–]\s*\d+\s*)?/, '')
+    .replace(/^[+·,;\s]+/, '')
+    .trim();
+  return rest.length > 0 ? rest : null;
 }
 
 /** Offene Sitze: Sitze minus Inhaber:innen ohne «ad interim» – wie `office_open_seats()`. */
@@ -103,11 +137,18 @@ export function readDuties(value: unknown): OfficeDuty[] {
 }
 
 export interface OfficeHolderDraft {
-  /** Kennung eines bestehenden Sitzes – hält sein «seit» fest. */
+  /** Kennung eines bestehenden Sitzes – hält seine Geschichte fest. */
   id: string | null;
   memberId: string | null;
   displayName: string;
   interim: boolean;
+  /**
+   * Seit wann die Person den Sitz hält (ISO). Das Formular zeigt das Feld
+   * nicht – es **trägt** es nur weiter, damit ein Speichern aus dem Formular
+   * heraus kein Datum verliert. Geschrieben wird es beim Einlesen einer
+   * Ämterbeschreibung (UC-041 A8), wo es in der Datei steht.
+   */
+  since: string | null;
 }
 
 export interface OfficeDraft {
@@ -116,8 +157,13 @@ export interface OfficeDraft {
   /** Der Inhalt des Textfelds; `parseDuties()` macht die Liste daraus. */
   dutiesText: string;
   hoursPerSeason: string;
+  /** Nur noch der Zusatz («Lohn + Spesen») – die Zahl steht in `seasonPoints`. */
   pointsLabel: string;
+  /** Punkte für eine ganze Saison; `null` heisst «noch nicht festgelegt». */
+  seasonPoints: number | null;
   maxHolders: number;
+  /** Gehört das Amt zum Vorstand (BR-237)? */
+  isBoard: boolean;
   contactMemberId: string | null;
   contactName: string;
   holders: OfficeHolderDraft[];
@@ -127,6 +173,7 @@ export type OfficeProblem =
   | 'titleMissing'
   | 'titleTooLong'
   | 'seatsInvalid'
+  | 'pointsInvalid'
   | 'holderNameMissing'
   | 'tooManyHolders'
   | 'whyTooLong';
@@ -140,6 +187,16 @@ export function validateOffice(draft: OfficeDraft): OfficeProblem[] {
   if (title.length > 80) problems.push('titleTooLong');
   if (!Number.isInteger(draft.maxHolders) || draft.maxHolders < 1 || draft.maxHolders > 50) {
     problems.push('seatsInvalid');
+  }
+  // BR-206: dieselbe Grenze wie `set_office_points()` (0091). Sie steht hier,
+  // weil der Punktwert in einer **zweiten** Buchung an den Server geht: Ohne
+  // die Prüfung wäre das Amt schon gespeichert, wenn der Server den Wert
+  // zurückweist – aus einer eingelesenen Datei genauso wie aus dem Formular.
+  if (
+    draft.seasonPoints !== null &&
+    (!Number.isInteger(draft.seasonPoints) || draft.seasonPoints < 0 || draft.seasonPoints > 10000)
+  ) {
+    problems.push('pointsInvalid');
   }
   if (draft.why.trim().length > 1000) problems.push('whyTooLong');
   // Ein verknüpfter Sitz bekommt seinen Namen vom Mitglied; nur ein Sitz ohne
@@ -164,8 +221,12 @@ export function officeToDraft(office: Office): OfficeDraft {
     why: office.why ?? '',
     dutiesText: dutiesToText(office.duties),
     hoursPerSeason: office.hoursPerSeason ?? '',
-    pointsLabel: office.pointsLabel ?? '',
+    // Der Text zeigt nur noch den Zusatz; die führende Zahl der alten
+    // Vereinsskala steht seit `0091` in `seasonPoints` und wäre doppelt.
+    pointsLabel: officePointsExtra(office.pointsLabel) ?? '',
+    seasonPoints: office.seasonPoints,
     maxHolders: office.maxHolders,
+    isBoard: office.isBoard,
     contactMemberId: office.contactMemberId,
     contactName: office.contactName ?? '',
     holders: office.holders.map((holder) => ({
@@ -173,6 +234,7 @@ export function officeToDraft(office: Office): OfficeDraft {
       memberId: holder.memberId,
       displayName: holder.displayName,
       interim: holder.interim,
+      since: holder.since,
     })),
   };
 }
@@ -183,7 +245,9 @@ export const EMPTY_OFFICE_DRAFT: OfficeDraft = {
   dutiesText: '',
   hoursPerSeason: '',
   pointsLabel: '',
+  seasonPoints: null,
   maxHolders: 1,
+  isBoard: false,
   contactMemberId: null,
   contactName: '',
   holders: [],
@@ -224,4 +288,47 @@ export function sortOffices(offices: readonly Office[]): Office[] {
     if (gap !== 0) return gap;
     return a.title.localeCompare(b.title);
   });
+}
+
+/**
+ * Die Ämter des Vorstands – der Empfängerkreis einer Vorstandssitzung
+ * (BR-237).
+ *
+ * Dieselbe Menge wie `board_role_ids()` in `0095`, nur aus der Liste, die das
+ * Formular ohnehin geladen hat. Der Server bleibt die Instanz, die sie beim
+ * Zustellen auflöst; hier geht es allein um die Voreinstellung.
+ */
+export function boardRoleIds(offices: readonly Office[]): string[] {
+  return offices.filter((office) => office.isBoard).map((office) => office.id);
+}
+
+/**
+ * Die Amts-Kennungen aus einem jsonb-Feld – etwa `events.audience_role_ids`.
+ *
+ * Wie `readDuties()`: Was nicht die erwartete Form hat, ergibt eine leere
+ * Liste statt eines Fehlers. Ein Termin mit unlesbarem Empfängerkreis wäre
+ * sonst gar nicht mehr zu bearbeiten.
+ */
+export function readRoleIds(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((entry): entry is string => typeof entry === 'string');
+}
+
+/**
+ * Die Ämter in zwei Gruppen: der Vorstand und die übrigen.
+ *
+ * Der Vorstand steht als eigene Gruppe, weil er etwas anderes ist als ein Amt
+ * unter vielen – er ist das Gremium, an das Sitzungen und Vorschläge gehen
+ * (BR-237). Innerhalb der Gruppen gilt dieselbe Reihenfolge wie sonst:
+ * vakante zuerst.
+ */
+export function groupOffices(offices: readonly Office[]): {
+  board: Office[];
+  others: Office[];
+} {
+  const sorted = sortOffices(offices);
+  return {
+    board: sorted.filter((office) => office.isBoard),
+    others: sorted.filter((office) => !office.isBoard),
+  };
 }

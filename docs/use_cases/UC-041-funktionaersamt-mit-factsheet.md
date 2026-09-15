@@ -13,6 +13,7 @@
 - Der Verein existiert.
 - Die Person hat im Verein die Rolle admin.
 - Für das Ansehen (Schritte 8–10) genügt die Mitgliedschaft.
+- Ausgeben und Einlesen der Beschreibung (A7, A8) setzen die Rolle admin voraus.
 
 ## Main Success Scenario
 
@@ -82,6 +83,44 @@
 1. System nennt den Grund und behält die vorherige Wahl.
 2. Use case continues at step 4.
 
+### A7: Beschreibung als Datei in die Vereinsablage
+
+**Trigger:** Die Beschreibung soll auch ausserhalb der App liegen – auf Drive, in SharePoint, im Ordner des Präsidiums (nach Schritt 6)
+**Flow:**
+
+1. Vorstand wählt am Amt «Beschreibung exportieren» – oder in der Ämterliste «Alle Beschreibungen exportieren».
+2. System schreibt Warum, Pflichten, Eckdaten und Besetzung als Markdown-Datei und gibt sie heraus: auf dem Gerät ins Teilen-Blatt, im Browser als Download.
+3. Vorstand legt die Datei in der Ablage des Vereins ab.
+4. Use case ends.
+
+### A8: Beschreibung aus einer Datei einlesen
+
+**Trigger:** Eine Beschreibung ist ausserhalb der App entstanden oder dort geändert worden (statt Schritt 1)
+**Flow:**
+
+1. Vorstand lädt bei Bedarf die leere Vorlage herunter und füllt sie aus.
+2. Vorstand wählt «Beschreibungen einlesen» und die Datei.
+3. System ordnet jedes Amt der Datei zu – über die Kennung in der Datei, sonst über die Bezeichnung – und zeigt je Amt, ob es angelegt oder geändert wird und welche Angaben sich ändern.
+4. Vorstand wählt ab, was nicht mitgehen soll, und bestätigt.
+5. System speichert jedes gewählte Amt auf demselben Weg wie das Formular (`save_office()`).
+6. Use case continues at step 7.
+
+### A8a: Die Datei meint kein bestimmtes Amt
+
+**Trigger:** Die Datei trägt keine Kennung, und zwei Ämter heissen gleich – ein Co-Präsidium ist genau das (Schritt 3 von A8)
+**Flow:**
+
+1. System markiert den Eintrag, nennt den Grund und lässt ihn liegen; die übrigen Einträge bleiben wählbar.
+2. Use case continues at step 4 von A8.
+
+### A8b: Die Datei enthält keine Beschreibung
+
+**Trigger:** Die gewählte Datei ist etwas anderes – eine Notiz, ein leeres Blatt (Schritt 2 von A8)
+**Flow:**
+
+1. System sagt, dass keine Ämterbeschreibung darin steht, und nennt den Anfang einer solchen («# Bezeichnung des Amtes»).
+2. Es wird nichts gespeichert. Use case ends.
+
 ## Postconditions
 
 ### Success Postconditions
@@ -89,11 +128,13 @@
 - Das Amt existiert mit Bezeichnung, Pflichten, Aufwand, Punktwert, Sitzen, Besetzung und Ansprechperson.
 - Das Factsheet liegt im Vereinsspeicher unter dem Ordner des Vereins; Mitglieder öffnen es über eine signierte Adresse.
 - Hat das Amt freie Sitze, steht es im Marktplatz unter «Ämter zu vergeben», in der Sitzungsagenda unter den Dauerthemen (UC-031) und im Nachfolge-Vorlauf des Vorstands (UC-024).
+- Die Beschreibung lässt sich als Markdown-Datei ablegen und unverändert wieder einlesen: Was herausgeht, kommt als dasselbe Amt zurück.
 
 ### Failure Postconditions
 
 - Es entsteht kein halbes Amt: Amt und Besetzung werden in einer Transaktion gespeichert.
 - Schlägt der Upload fehl, bleibt das Amt ohne Factsheet und das Formular nennt den Fehler.
+- Bricht das Einlesen mitten in einer Reihe von Ämtern ab, bleibt stehen, was schon gespeichert ist; das Blatt sagt, wie weit es kam, statt einen Erfolg zu behaupten.
 
 ## Business Rules
 
@@ -113,8 +154,31 @@ Der Verteiler für Sitzungs-Inputs (BR-133) wird aus der Besetzung abgeleitet �
 
 Das PDF liegt im Vereinsspeicher unter dem Ordner des Vereins. Lesen dürfen Mitglieder, schreiben der Vorstand – geprüft in den Storage-Policies über den Ordner im Pfad, nicht im Client.
 
+### BR-255: Die Beschreibung ist lesbar, die Kennung unsichtbar
+
+Die Datei ist gewöhnliches Markdown: Überschriften für Warum, Pflichten,
+Eckdaten und Besetzung, die Eckdaten als Aufzählung. Kein YAML-Kopf – er
+stünde in der Vorschau von Drive als Rohtext über dem Blatt. Die einzige
+Maschinenangabe ist die Kennung des Amtes in einem HTML-Kommentar; sie ordnet
+eine zurückkommende Datei dem Amt zu, auch wenn es inzwischen anders heisst,
+und keine Ansicht zeigt sie. Geschrieben wird in der Sprache der App, gelesen
+werden alle vier – sonst liesse ein Verein, der auf Französisch umstellt, seine
+Ablage hinter sich. Fehlt die Kennung und tragen zwei Ämter dieselbe
+Bezeichnung, wird nicht geraten (A8a).
+
+### BR-256: Einlesen ergänzt und ändert, es leert nie
+
+Ein Abschnitt, der in der Datei fehlt oder leer bleibt, ist keine Aussage: Was
+er beschreibt, bleibt unverändert. Ein Amt, das die Datei nicht nennt, bleibt
+unberührt. Gelöscht wird nur in der App. Ohne diese Regel nähme ein Auszug aus
+der Vereinsablage – etwa nur das überarbeitete Pflichtenheft – die Besetzung
+mit, die gar nicht darin steht.
+
 ## Notes
 
 - Gezogen aus `MVP_Scope` §2.3 («Ausbaustufe 2 des Marktplatzes») am 12.09.2026 auf Sandros Auftrag: Die Factsheets seines Vereins liegen unter `docs/marktplatz/97_Funktionäre/`; `build_factsheets.py` erzeugt daraus die fehlenden PDFs und das Import-SQL.
 - Der Punktwert steht als Beschriftung («4 + Lohn»), nicht als Zahl. Eine Gutschrift in App-Punkten am Saisonende (Konzept §4.3) ist eine eigene Punktequelle und nicht Teil dieses Use Cases.
+- A7/A8 kamen am 15.09.2026 auf Sandros Auftrag dazu: Die Ämterbeschreibungen sollen nicht nur in der App liegen, sondern auch in der Vereinsverwaltung auf Drive. Das Format steht in `app/src/lib/officeMarkdown.ts`, der Weg der Datei in `app/src/lib/fileExport.ts` – derselbe wie beim CSV-Export (UC-042, UC-043).
+- Kein zusätzlicher Schreibweg in der Datenbank: Das Einlesen geht durch `save_office()` und `set_office_points()` wie das Formular. Eine Datei ist damit kein Weg an der Rollenprüfung vorbei.
+- Das Factsheet-PDF bleibt aussen vor – es ist eine Binärdatei und liegt ohnehin schon als Datei vor. Ebenso die Zuordnung zu Konten: Die Datei führt Namen, die Verknüpfung entsteht beim Einlesen über den Namen, wenn genau ein Mitglied so heisst.
 - Offen: ein Verteiler an **alle** verknüpften Inhaber:innen eines Amtes (heute: eine Person je Amt, wie seit UC-031).

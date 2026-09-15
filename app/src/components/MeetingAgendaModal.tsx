@@ -11,6 +11,15 @@ import type { AppEvent } from '../lib/database.types';
 
 interface MeetingAgendaProps {
   meeting: AppEvent;
+  /**
+   * Einen zugeordneten Vorschlag öffnen (FR-098/FR-099).
+   *
+   * Die Sammelansicht zeigt, was in dieser Sitzung ansteht – beantwortet wird
+   * es bisher nur im Eingangskorb. Das ist der Weg dorthin und **kein**
+   * Traktandum: Es entsteht kein neues Objekt, es wird nur das geöffnet, was
+   * schon da ist (BR-132).
+   */
+  onOpenInput: (inputId: string) => void;
   onDismiss: () => void;
   /** Das Blatt fährt mit `false` zu; der Inhalt bleibt, bis es unten ist. */
   isOpen?: boolean;
@@ -28,7 +37,12 @@ interface MeetingAgendaProps {
  * `meeting_agenda()` in ihre drei Körbe, und alles, was keiner davon ist, fällt
  * heraus.
  */
-export function MeetingAgenda({ meeting, onDismiss, isOpen = true }: MeetingAgendaProps) {
+export function MeetingAgenda({
+  meeting,
+  onOpenInput,
+  onDismiss,
+  isOpen = true,
+}: MeetingAgendaProps) {
   const { t } = useTranslation();
   const agenda = useMeetingAgenda(meeting.id);
 
@@ -54,7 +68,12 @@ export function MeetingAgenda({ meeting, onDismiss, isOpen = true }: MeetingAgen
               footnote={t('meeting.agendaHint')}
             >
               {grouped.inputs.map((row) => (
-                <IonItem key={row.refId}>
+                <IonItem
+                  key={row.refId}
+                  button
+                  detail
+                  onClick={() => onOpenInput(row.refId)}
+                >
                   {/* Der Vorschlag ist der Primärtext der Zeile, der Stand die Notiz. */}
                   <IonLabel className="ion-text-wrap">
                     <h2 className="app-clamp-3">{row.title}</h2>

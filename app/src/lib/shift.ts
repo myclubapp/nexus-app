@@ -1,23 +1,43 @@
 import type { EventShift } from './database.types';
 
 /**
+ * Der Wert eines Einsatzes, wenn der Verein keine eigene Regel hat.
+ *
+ * Gegenstück zum `coalesce(…, 50)` in `club_shift_base()`. Ein Verein ohne
+ * Punkteordnung soll Schichten nicht plötzlich zu null vergeben.
+ */
+export const DEFAULT_SHIFT_BASE = 50;
+
+/**
  * Vorgeschlagener Punktwert einer Schicht nach ihrer Dauer (Schritt 5).
  *
  * Die Spezifikation nennt «eine Punkteregel passend zur Dauer», weil ein
- * halber Tag und ein ganzer Tag unterschiedlich zählen (BR-042). Die Stufen
- * sind bewusst grob: Sie sind ein Vorschlag, den der Vorstand überschreibt.
+ * halber Tag und ein ganzer Tag unterschiedlich zählen (BR-042). Gemessen wird
+ * am **Einsatz**: vier Stunden sind ein Einsatz und so viel wert, wie die
+ * Regel `shift_done` sagt (`base`). Alles andere ist anteilig, auf das
+ * Fünferraster aufgerundet und bei einem ganzen Tag gedeckelt (BR-205) –
+ * niemand leistet mehr als einen Tag in **einer** Schicht; wer länger
+ * eingeteilt ist, bekommt zwei.
  *
- * **Gegenstück zu `suggested_shift_points()` in `0080`.** Dort leitet die
+ * Die frühere Stufenleiter (25 / 50 / 100) hatte Klippen: Bei exakt 120 und
+ * 300 Minuten verdoppelte sich der Wert um eine Minute, und nach oben war sie
+ * offen – eine Sammelschicht über einen ganzen Anlass zählte wie eine Schicht
+ * von fünf Stunden und einer Minute.
+ *
+ * **Gegenstück zu `suggested_shift_points()` in `0091`.** Dort leitet die
  * Übernahme aus der bisherigen App denselben Wert ab, weil ein fremder
  * Punktwert keine Punktzahl dieser Skala ist (BR-204). Laufen die beiden
  * auseinander, zählt eine übernommene Schicht anders als eine hier angelegte –
  * dieselbe Gefahr wie bei `season_label()`/`seasonLabel()`.
  */
-export function suggestedShiftPoints(durationMinutes: number): number {
-  if (durationMinutes <= 0) return 0;
-  if (durationMinutes <= 120) return 25; // bis zwei Stunden
-  if (durationMinutes <= 300) return 50; // halber Tag
-  return 100; // ganzer Tag
+export function suggestedShiftPoints(
+  durationMinutes: number,
+  base: number = DEFAULT_SHIFT_BASE,
+): number {
+  if (!Number.isFinite(durationMinutes) || durationMinutes <= 0) return 0;
+  if (!Number.isFinite(base) || base <= 0) return 0;
+  // 1200 ist `240 Minuten × 5`: vier Stunden je Einsatz, Rundung auf fünf.
+  return Math.min(Math.ceil((durationMinutes * base) / 1200) * 5, base * 2);
 }
 
 export interface ShiftDraft {

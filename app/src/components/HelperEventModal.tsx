@@ -20,7 +20,13 @@ import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
 import { durationInMinutes } from '../lib/eventSeries';
-import { suggestedShiftPoints, validateShift, type ShiftDraft } from '../lib/shift';
+import { useAllPointRules } from '../hooks/usePointRules';
+import {
+  DEFAULT_SHIFT_BASE,
+  suggestedShiftPoints,
+  validateShift,
+  type ShiftDraft,
+} from '../lib/shift';
 import { formatDateTime } from '../lib/format';
 
 interface HelperEventFormProps {
@@ -44,6 +50,12 @@ export function HelperEventForm({ onDone, onDismiss, isOpen = true }: HelperEven
   const { t } = useTranslation();
   const createEvent = useCreateHelperEvent();
   const publish = usePublishEvent();
+  // BR-205: Der Vorschlag misst am Einsatzwert des Vereins, nicht an einer
+  // Konstanten – sonst schlüge das Formular etwas anderes vor, als die
+  // Übernahme aus der bisherigen App bucht.
+  const { data: pointRules } = useAllPointRules();
+  const shiftBase =
+    pointRules?.find((rule) => rule.code === 'shift_done')?.points ?? DEFAULT_SHIFT_BASE;
 
   const [title, setTitle] = useState('');
   const [startsAt, setStartsAt] = useState('');
@@ -70,7 +82,7 @@ export function HelperEventForm({ onDone, onDismiss, isOpen = true }: HelperEven
 
   const draftDuration = durationInMinutes(draft.startsAt, draft.endsAt) ?? 0;
   // Schritt 5: Der Vorschlag folgt der Dauer, solange niemand selbst wählt.
-  const draftPoints = pointsOverride ?? suggestedShiftPoints(draftDuration);
+  const draftPoints = pointsOverride ?? suggestedShiftPoints(draftDuration, shiftBase);
   const draftProblems = validateShift({ ...draft, points: draftPoints });
 
   // BR-043 und die Postcondition: Warum **und** mindestens eine Schicht.

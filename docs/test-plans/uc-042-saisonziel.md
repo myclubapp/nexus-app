@@ -22,12 +22,12 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **V** Profil → Verwaltung öffnen | Kein Eintrag «Beiträge der Saison» – das Modul ist aus | | |
+| 1 | Als **V** Profil öffnen, Gruppe «Punkte & Geld» | Kein Eintrag «Saisonziel je Mitglied» – das Modul ist aus | | |
 | 2 | Vereinseinstellungen öffnen, Abschnitt «Module» | Zeile «Saisonziel» mit Erklärtext, Schalter aus | | |
 | 3 | Schalter «Saisonziel» einschalten | Direkt darunter erscheint der Abschnitt «Saisonziel» mit dem Feld «Ziel in Punkten» | | |
 | 4 | Die Fussnote lesen | Sie nennt einen Vorschlag, z. B. «4 Einsätze entsprechen 200 Punkten» | | |
 | 5 | «200» eintragen und speichern | Toast «Gespeichert» | | |
-| 6 | Zurück auf Profil → Verwaltung | Eintrag «Beiträge der Saison» ist jetzt da | | |
+| 6 | Zurück auf Profil → «Punkte & Geld» | Eintrag «Saisonziel je Mitglied» ist jetzt da | | |
 
 ---
 
@@ -37,7 +37,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **V** «Beiträge der Saison» öffnen | Drei Kennzahlen oben: Erreicht, Auf dem Weg, Offen | | |
+| 1 | Als **V** «Saisonziel je Mitglied» öffnen | Drei Kennzahlen oben: Erreicht, Auf dem Weg, Offen | | |
 | 2 | Die Liste ansehen | Jede Zeile mit Avatar, Name, Restzahl und Badge «Ist/Soll» | | |
 | 3 | Reihenfolge prüfen | Wer am weitesten zurückliegt, steht zuoberst; Befreite zuunterst | | |
 | 4 | Badge prüfen (VoiceOver bzw. TalkBack) | Vorgelesen wird ein Satz («Ziel noch offen»), angezeigt nur die Zahl | | |

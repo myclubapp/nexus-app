@@ -33,7 +33,13 @@ import {
 } from '../../lib/contributionGoal';
 
 /**
- * Die Beiträge der Saison (UC-042, FR-160).
+ * Das Saisonziel je Mitglied (UC-042, FR-160).
+ *
+ * Die Seite hiess «Beiträge der Saison». Der Begriff «Beitrag» ist im Konzept
+ * richtig – es ist die Leistung fürs Ganze –, stand im Verwaltungsmenü aber
+ * neben «Rechnungsstellung» und las sich dort als Mitgliederbeitrag. Der Titel
+ * nennt jetzt, was die Seite zeigt; im Fliesstext bleibt der Beitrag der
+ * Beitrag.
  *
  * Diese Seite ist der Ersatz für die Helferpunkte-Liste der bisherigen App –
  * mit einem Unterschied: Es gibt nur ein Konto. Ist und Soll stehen in

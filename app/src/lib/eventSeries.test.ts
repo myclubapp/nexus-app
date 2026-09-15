@@ -163,6 +163,7 @@ describe('validateEventDraft', () => {
       why: '',
       teamId: null,
       pointRuleCode: 'training_attend',
+      committeeRoleIds: [],
       ...overrides,
     };
   }
@@ -205,6 +206,27 @@ describe('validateEventDraft', () => {
 
   it('verlangt es bei einem Training nicht', () => {
     expect(validateEventDraft(draft({ type: 'training', why: '' }))).toEqual([]);
+  });
+
+  it('verlangt das Gremium bei einer Sitzung (BR-237)', () => {
+    // Eine Sitzung ohne Empfängerkreis lädt niemanden ein – dieselbe Regel
+    // steht als `check` an der Tabelle (`0095`).
+    expect(validateEventDraft(draft({ type: 'meeting' }))).toContain(
+      'committeeMissing',
+    );
+    expect(
+      validateEventDraft(draft({ type: 'meeting', committeeRoleIds: ['r-1'] })),
+    ).toEqual([]);
+  });
+
+  it('verlangt es bei keinem anderen Termintyp', () => {
+    // Der Empfängerkreis eines Trainings ist sein Team; ein Gremium hätte
+    // hier nichts zu sagen.
+    for (const type of ['training', 'match', 'gv', 'social', 'helper'] as const) {
+      expect(
+        validateEventDraft(draft({ type, why: 'Damit es läuft.' })),
+      ).not.toContain('committeeMissing');
+    }
   });
 
   it('meldet mehrere Mängel gleichzeitig', () => {

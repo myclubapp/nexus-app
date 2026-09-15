@@ -42,7 +42,7 @@ export function useOffices() {
         // Ansprechperson zeigen beide auf `club_members` – ohne den Namen des
         // Fremdschlüssels wäre die Einbettung mehrdeutig.
         .select(
-          'id, title, holder_member_id, held_since, why, duties, hours_per_season, points_label, max_holders, contact_member_id, contact_name, factsheet_path, holder:club_members!functionary_roles_holder_member_id_fkey(display_name), holders:functionary_holders(id, member_id, display_name, interim, since, created_at)',
+          'id, title, holder_member_id, held_since, why, duties, hours_per_season, points_label, season_points, is_board, max_holders, contact_member_id, contact_name, factsheet_path, holder:club_members!functionary_roles_holder_member_id_fkey(display_name), holders:functionary_holders(id, member_id, display_name, interim, since, created_at)',
         )
         .eq('club_id', activeClub!.id)
         .order('title');
@@ -72,7 +72,9 @@ export function useOffices() {
           duties: readDuties(row.duties),
           hoursPerSeason: row.hours_per_season,
           pointsLabel: row.points_label,
+          seasonPoints: row.season_points,
           maxHolders: row.max_holders,
+          isBoard: row.is_board,
           contactMemberId: row.contact_member_id,
           contactName: row.contact_name,
           factsheetPath: row.factsheet_path,
@@ -107,6 +109,9 @@ export function useSaveOffice() {
         p_hours_per_season: draft.hoursPerSeason.trim() || undefined,
         p_points_label: draft.pointsLabel.trim() || undefined,
         p_max_holders: draft.maxHolders,
+        // BR-237: `undefined` hiesse «unverändert» – hier ist der Wert immer
+        // gemeint, weil das Formular ihn zeigt.
+        p_is_board: draft.isBoard,
         p_contact_member_id: draft.contactMemberId ?? undefined,
         p_contact_name: draft.contactName.trim() || undefined,
         p_holders: draft.holders.map((holder) => ({
@@ -114,10 +119,30 @@ export function useSaveOffice() {
           member_id: holder.memberId ?? undefined,
           display_name: holder.displayName.trim(),
           interim: holder.interim,
+          // `undefined` heisst «unverändert»: `save_office()` behält dann das
+          // gespeicherte Datum. Ein Wert kommt aus der eingelesenen
+          // Ämterbeschreibung (UC-041 A8); das Formular reicht ihn durch.
+          since: holder.since ?? undefined,
         })) as unknown as Json,
       });
       if (error) throw new Error(error.message);
-      return data as string;
+      const roleId = data as string;
+
+      // BR-206: Der Punktwert geht über eine eigene Funktion und nicht als
+      // Parameter an `save_office()`. Ein zusätzlicher Parameter mit
+      // Vorgabewert `null` würde bei jedem Speichern aus einem Formular, das
+      // ihn nicht kennt, den Wert stillschweigend löschen.
+      const { error: pointsError } = await supabase.rpc('set_office_points', {
+        p_role_id: roleId,
+        // `null` ist ein gültiger Wert – «noch nicht festgelegt», nicht «null
+        // Punkte». Die generierten Typen kennen für Funktionsparameter keine
+        // Nullbarkeit, deshalb der Cast; PostgREST reicht `null` als SQL-NULL
+        // durch.
+        p_points: draft.seasonPoints as unknown as number,
+      });
+      if (pointsError) throw new Error(pointsError.message);
+
+      return roleId;
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['offices', activeClub?.id] });

@@ -97,7 +97,10 @@ export function OfficeForm({
   function addHolder() {
     setDraft((current) => ({
       ...current,
-      holders: [...current.holders, { id: null, memberId: null, displayName: '', interim: false }],
+      holders: [
+        ...current.holders,
+        { id: null, memberId: null, displayName: '', interim: false, since: null },
+      ],
     }));
   }
 
@@ -188,9 +191,33 @@ export function OfficeForm({
             onIonInput={(e) => patch({ hoursPerSeason: e.detail.value ?? '' })}
           />
         </IonItem>
+        {/* BR-206: die Zahl, die gebucht wird. Leer heisst «noch nicht
+            festgelegt» – nicht «null Punkte»; derselbe Unterschied wie beim
+            Saisonziel (BR-200). */}
         <IonItem>
           <IonInput
+            type="number"
+            inputmode="numeric"
+            min={0}
+            max={10000}
             label={t('offices.points')}
+            labelPlacement="stacked"
+            placeholder={t('offices.seasonPointsLabel')}
+            enterkeyhint="next"
+            value={draft.seasonPoints === null ? '' : String(draft.seasonPoints)}
+            onIonInput={(e) => {
+              const raw = (e.detail.value ?? '').trim();
+              const parsed = Number(raw);
+              patch({
+                seasonPoints: raw === '' || !Number.isFinite(parsed) ? null : Math.round(parsed),
+              });
+            }}
+          />
+        </IonItem>
+        {/* Was keine Punktzahl ist, aber am Amt hängt: Lohn, Spesen. */}
+        <IonItem>
+          <IonInput
+            label={t('offices.pointsExtra')}
             labelPlacement="stacked"
             placeholder={t('offices.pointsLabel')}
             enterkeyhint="next"
@@ -210,6 +237,20 @@ export function OfficeForm({
             value={String(draft.maxHolders)}
             onIonInput={(e) => patch({ maxHolders: Number(e.detail.value ?? '1') })}
           />
+        </IonItem>
+      </ListSection>
+
+      {/* BR-237: Das Merkmal steht in einem eigenen Abschnitt, weil es mehr
+          bewirkt als eine Angabe am Factsheet – es bestimmt, wer zu einer
+          Vorstandssitzung eingeladen wird und wer sie überhaupt sieht. */}
+      <ListSection footnote={t('offices.boardHint')}>
+        <IonItem>
+          <IonToggle
+            checked={draft.isBoard}
+            onIonChange={(e) => patch({ isBoard: e.detail.checked })}
+          >
+            {t('offices.board')}
+          </IonToggle>
         </IonItem>
       </ListSection>
 

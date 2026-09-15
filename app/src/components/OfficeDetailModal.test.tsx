@@ -62,7 +62,9 @@ function office(overrides: Partial<Office> = {}): Office {
     ],
     hoursPerSeason: '60h+',
     pointsLabel: '3 + Lohn + Spesen',
+    seasonPoints: 150,
     maxHolders: 6,
+    isBoard: false,
     contactMemberId: null,
     contactName: 'Sandro Ehrbar',
     factsheetPath: null,
@@ -95,22 +97,26 @@ describe('OfficeDetail', () => {
     expect(screen.getByText('Leitung von Spielen')).toBeInTheDocument();
     expect(screen.getByText('Gemäss den Reglementen von swiss unihockey.')).toBeInTheDocument();
     expect(screen.getByText('60h+')).toBeInTheDocument();
-    expect(screen.getByText('3 + Lohn + Spesen')).toBeInTheDocument();
+    // BR-206: der Punktwert dieser App, nicht die alte Vereinsskala. Vom Text
+    // «3 + Lohn + Spesen» bleibt nur der Zusatz – die 3 stünde sonst neben
+    // den 150 Punkten und behauptete eine zweite Skala.
+    expect(screen.getByText('150 Punkte · Lohn + Spesen')).toBeInTheDocument();
     expect(screen.getByText('Sandro Ehrbar')).toBeInTheDocument();
     expect(screen.getByText('Andrin Vollenweider')).toBeInTheDocument();
     expect(screen.getByText('Patrick Koch')).toBeInTheDocument();
     expect(screen.getByText('ad interim')).toBeInTheDocument();
   });
 
-  it('rechnet die Vakanz aus Sitzen und Belegung – ad interim zählt nicht (BR-183)', () => {
-    renderWithProviders(<OfficeDetail office={office()} onDismiss={() => undefined} />);
-    // Sechs Sitze, eine ordentliche Inhaberin: fünf frei, «1 von 6 besetzt».
-    // guidelines §11 Nr. 18: im Badge nur die Zahl, der Wortlaut als aria-label.
-    expect(screen.getByLabelText('5 Sitze frei')).toHaveTextContent('5');
+  it('nennt die Belegung nur in den Eckdaten – kein Badge unter der Kopfzeile (BR-183)', () => {
+    const { unmount } = renderWithProviders(
+      <OfficeDetail office={office()} onDismiss={() => undefined} />,
+    );
+    // Sechs Sitze, eine ordentliche Inhaberin: «1 von 6 besetzt». Die freien
+    // Sitze stehen in der Liste, im Factsheet genügt die Zeile weiter unten.
     expect(screen.getByText('1 von 6 besetzt')).toBeInTheDocument();
-  });
+    expect(screen.queryByLabelText(/Sitz frei|Sitze frei/)).not.toBeInTheDocument();
+    unmount();
 
-  it('nennt ein voll besetztes Amt besetzt', () => {
     renderWithProviders(
       <OfficeDetail
         office={office({
@@ -120,8 +126,8 @@ describe('OfficeDetail', () => {
         onDismiss={() => undefined}
       />,
     );
-    expect(screen.getByText('Besetzt')).toBeInTheDocument();
-    expect(screen.queryByText(/Sitz frei|Sitze frei/)).not.toBeInTheDocument();
+    expect(screen.getByText('1 von 1 besetzt')).toBeInTheDocument();
+    expect(screen.queryByText('Besetzt')).not.toBeInTheDocument();
   });
 
   it('bietet das PDF nur an, wenn eines hinterlegt ist (BR-186)', () => {

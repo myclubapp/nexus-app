@@ -61,6 +61,19 @@
 1. Vorstand leitet den Input an das zuständige Gremium weiter; der Statusverlauf bleibt erhalten.
 2. Use case continues at step 7.
 
+### A5: Vorschlag aus der Sitzung heraus beantworten
+
+**Trigger:** Vorstand geht in der Sitzung die Sammelansicht durch (A2)
+**Flow:**
+
+1. Vorstand tippt einen zugeordneten Vorschlag an.
+2. System öffnet denselben Triage- und Antwortdialog wie im Eingangskorb.
+3. Vorstand beantwortet oder lehnt ab; der Vorschlag verschwindet aus der Sammelansicht.
+4. Use case continues at step 9.
+
+**Anmerkung:** Es entsteht dabei kein Traktandum und kein Protokolleintrag –
+geöffnet wird nur, was ohnehin schon da ist (BR-132).
+
 ## Postconditions
 
 ### Success Postconditions
@@ -90,3 +103,18 @@ Bereits die Zuordnung zu einer Sitzung ist eine sichtbare Reaktion für die einr
 ### BR-135: Zwei Dauerthemen
 
 Die Sitzungsansicht zeigt neben den Inputs ausschliesslich vakante Ämter und offene Helfereinsätze.
+
+### BR-237: Eine Sitzung ist ein Gremiumstermin
+
+Ein Termin vom Typ `meeting` trägt immer einen Empfängerkreis aus Ämtern und nie ein Team.
+Sitzungen legt ausschliesslich der Vorstand an, und nur bei eingeschaltetem Modul.
+Was ein Team miteinander bespricht, ist ein Termin dieses Teams und heisst nicht Sitzung.
+Welche Ämter zum Vorstand gehören, ist ein Merkmal am Amt; diese Menge ist der
+voreingestellte Empfängerkreis einer Sitzung.
+
+### BR-238: Der Kreis eines Termins
+
+Wer zu einem Termin gehört – eingeladen, erinnert, über die Absage informiert –, ist eine
+einzige Definition: das Gremium, sonst das Team, sonst der Verein. Sie gilt gleichermassen
+für die Sichtbarkeit in der Agenda: Ein Termin mit Gremium erscheint nur bei dessen
+Amtsinhaber:innen und beim Vorstand.

@@ -22,7 +22,7 @@
 2. System zeigt das Ziel in Punkten mit einem Vorschlag aus den aktiven Regeln der Säulen 3 und 7 und nennt den Vorschlag in Einsätzen («entspricht etwa vier halben Tagen»).
 3. Vorstand bestätigt oder ändert die Zahl und speichert.
 4. System hält das Ziel am Verein fest; es gilt ab sofort für die laufende Saison.
-5. Vorstand öffnet «Beiträge der Saison» und sieht jedes aktive Mitglied mit Ist, Soll, Rest und einer Ampel: erreicht, auf dem Weg, offen.
+5. Vorstand öffnet «Saisonziel je Mitglied» und sieht jedes aktive Mitglied mit Ist, Soll, Rest und einer Ampel: erreicht, auf dem Weg, offen.
 6. Vorstand teilt die Liste als CSV – auf dem Gerät über das Teilen-Blatt, im Browser als Datei.
 7. Mitglied öffnet seinen Punktestand und sieht eine Fortschrittskarte: geleistete Beitragspunkte, Ziel, wie viel noch fehlt.
 8. System nennt unter der Karte die nächsten passenden Beiträge – offene Schichten, Aufgaben und vakante Ämter aus dem Marktplatz.

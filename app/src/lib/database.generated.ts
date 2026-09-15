@@ -936,8 +936,10 @@ export type Database = {
           holder_member_id: string | null
           hours_per_season: string | null
           id: string
+          is_board: boolean
           max_holders: number
           points_label: string | null
+          season_points: number | null
           title: string
           updated_at: string
           why: string | null
@@ -953,8 +955,10 @@ export type Database = {
           holder_member_id?: string | null
           hours_per_season?: string | null
           id?: string
+          is_board?: boolean
           max_holders?: number
           points_label?: string | null
+          season_points?: number | null
           title: string
           updated_at?: string
           why?: string | null
@@ -970,8 +974,10 @@ export type Database = {
           holder_member_id?: string | null
           hours_per_season?: string | null
           id?: string
+          is_board?: boolean
           max_holders?: number
           points_label?: string | null
+          season_points?: number | null
           title?: string
           updated_at?: string
           why?: string | null
@@ -1010,6 +1016,75 @@ export type Database = {
             columns: ["holder_member_id"]
             isOneToOne: false
             referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      functionary_terms: {
+        Row: {
+          confirmed_at: string
+          confirmed_by: string | null
+          id: string
+          member_id: string
+          period: number
+          points: number
+          role_id: string
+          season: string
+        }
+        Insert: {
+          confirmed_at?: string
+          confirmed_by?: string | null
+          id?: string
+          member_id: string
+          period: number
+          points?: number
+          role_id: string
+          season: string
+        }
+        Update: {
+          confirmed_at?: string
+          confirmed_by?: string | null
+          id?: string
+          member_id?: string
+          period?: number
+          points?: number
+          role_id?: string
+          season?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "functionary_terms_confirmed_by_fkey"
+            columns: ["confirmed_by"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "functionary_terms_confirmed_by_fkey"
+            columns: ["confirmed_by"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "functionary_terms_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "club_directory"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "functionary_terms_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "club_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "functionary_terms_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "functionary_roles"
             referencedColumns: ["id"]
           },
         ]
@@ -2844,6 +2919,7 @@ export type Database = {
           vacancy_avg_days: number
         }[]
       }
+      board_role_ids: { Args: { p_club_id: string }; Returns: Json }
       book_points_manually: {
         Args: {
           p_club_id: string
@@ -2902,7 +2978,15 @@ export type Database = {
           prev_activated: number
         }[]
       }
+      club_pillars: {
+        Args: { p_club_id: string }
+        Returns: {
+          dimension: string
+          pillar: number
+        }[]
+      }
       club_seasons: { Args: { p_club_id: string }; Returns: string[] }
+      club_shift_base: { Args: { p_club_id: string }; Returns: number }
       clubs_left_without_admin: {
         Args: { p_user_id: string }
         Returns: {
@@ -2917,7 +3001,23 @@ export type Database = {
           user_id: string
         }[]
       }
-      compose_club_pulse: { Args: { p_club_id?: string }; Returns: number }
+      compose_club_pulse: {
+        Args: { p_club_id?: string; p_skip_user?: string }
+        Returns: number
+      }
+      confirm_office_period: {
+        Args: { p_club_id: string; p_period?: number; p_season?: string }
+        Returns: number
+      }
+      confirm_office_term: {
+        Args: {
+          p_member_id: string
+          p_period?: number
+          p_role_id: string
+          p_season?: string
+        }
+        Returns: number
+      }
       confirm_shift: {
         Args: { p_member_id: string; p_shift_id: string }
         Returns: {
@@ -3067,6 +3167,10 @@ export type Database = {
       detect_health_signals: { Args: { p_club_id?: string }; Returns: number }
       detect_succession_gaps: { Args: { p_club_id?: string }; Returns: number }
       dimension_of_pillar: { Args: { p_pillar: number }; Returns: string }
+      dimension_of_rule: {
+        Args: { p_code: string; p_pillar: number }
+        Returns: string
+      }
       discard_pulse: { Args: { p_pulse_id: string }; Returns: undefined }
       disconnect_federation: {
         Args: { p_club_id: string; p_federation: string }
@@ -3097,6 +3201,13 @@ export type Database = {
         }[]
       }
       ensure_demo_club: { Args: never; Returns: string }
+      event_audience: {
+        Args: { p_event_id: string }
+        Returns: {
+          member_id: string
+          user_id: string
+        }[]
+      }
       event_in_scope: { Args: { p_event_id: string }; Returns: boolean }
       event_roster: {
         Args: { p_event_id: string }
@@ -3208,6 +3319,7 @@ export type Database = {
       leaderboard_rows: {
         Args: {
           p_club_id: string
+          p_dimension?: string
           p_limit?: number
           p_period?: string
           p_pillar?: number
@@ -3520,6 +3632,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      request_club_pulse: { Args: { p_club_id: string }; Returns: string }
       request_join: {
         Args: { p_club_id: string; p_team_id?: string }
         Returns: string
@@ -3571,6 +3684,7 @@ export type Database = {
           p_holders?: Json
           p_hours_per_season?: string
           p_id?: string
+          p_is_board?: boolean
           p_max_holders?: number
           p_points_label?: string
           p_title: string
@@ -3585,6 +3699,10 @@ export type Database = {
       season_label: {
         Args: { p_at?: string; p_club_id: string }
         Returns: string
+      }
+      season_period: {
+        Args: { p_at?: string; p_club_id: string }
+        Returns: number
       }
       seed_checkin_prompts: { Args: { p_club_id: string }; Returns: number }
       seed_point_rules: {
@@ -3628,6 +3746,10 @@ export type Database = {
           p_quiet_from?: string
           p_quiet_to?: string
         }
+        Returns: undefined
+      }
+      set_office_points: {
+        Args: { p_points: number; p_role_id: string }
         Returns: undefined
       }
       set_pillar_active: {
@@ -3711,7 +3833,10 @@ export type Database = {
       }
       suggest_modules: { Args: never; Returns: number }
       suggest_task: { Args: { p_task_id: string }; Returns: number }
-      suggested_shift_points: { Args: { p_minutes: number }; Returns: number }
+      suggested_shift_points: {
+        Args: { p_base: number; p_minutes: number }
+        Returns: number
+      }
       sync_federations: { Args: never; Returns: number }
       sync_legacy_sources: { Args: never; Returns: number }
       sync_news_sources: { Args: never; Returns: number }
@@ -3758,6 +3883,7 @@ export type Database = {
       team_ranking_rows: {
         Args: {
           p_club_id: string
+          p_dimension?: string
           p_period?: string
           p_pillar?: number
           p_season?: string

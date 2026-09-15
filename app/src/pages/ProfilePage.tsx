@@ -24,7 +24,7 @@ import { useToast } from '../hooks/useToast';
 import { FormModal } from '../components/FormModal';
 import { DeleteAccountModal } from '../components/DeleteAccountModal';
 import { ProfileEditModal } from '../components/ProfileEditModal';
-import { ClubAdminLinks, hasAdminLinks } from '../components/ClubAdminLinks';
+import { ClubAdminLinks } from '../components/ClubAdminLinks';
 import { ContributionGoalCard } from '../components/ContributionGoalCard';
 import { PASSWORD_MIN_LENGTH, authErrorKey } from '../lib/authError';
 import { SUPPORTED_LANGUAGES } from '../i18n';
@@ -33,8 +33,7 @@ import { formatDate, formatDateTime } from '../lib/format';
 export function ProfilePage() {
   const { t, i18n } = useTranslation();
   const { signOut, user, setPassword } = useAuth();
-  const { activeClub, activeMembership, memberships, setActiveClub, isAdmin, isTrainer } =
-    useClub();
+  const { activeClub, activeMembership, memberships, setActiveClub } = useClub();
   const points = useMyPoints();
   const rules = useRuleLabels();
   const kudos = useMyKudos();
@@ -227,20 +226,17 @@ export function ProfilePage() {
         </IonItem>
       </ListSection>
 
-      {/* FR-148: Die Verwaltungswege stehen in einer eigenen Gruppe, nicht
-          zwischen den persönlichen Einstellungen – sonst liest sich «Mitglieder»
-          wie eine Option des eigenen Kontos. Dieselbe Überschrift wie in
-          `AppMenu`, damit die beiden Einhängepunkte gleich heissen.
+      {/* FR-148: Die Verwaltungswege stehen in eigenen Gruppen, nicht zwischen
+          den persönlichen Einstellungen – sonst liest sich «Mitglieder» wie
+          eine Option des eigenen Kontos. Die Überschriften bringt
+          `ClubAdminLinks` seit FR-178 mit; dadurch stehen hier und in `AppMenu`
+          dieselben, statt zweimal von Hand gesetzt zu werden.
 
-          Die Rollenabfrage steht hier **und** in `ClubAdminLinks`: Die Liste
-          rendert ohne Rolle nichts, die Überschrift bliebe aber als leere
-          Gruppe stehen. Beides ist Bequemlichkeit, kein Schutz – der liegt in
-          `is_club_admin()` und den RLS-Policies. */}
-      {hasAdminLinks(isAdmin, isTrainer) && (
-        <ListSection title={t('menu.administration')}>
-          <ClubAdminLinks />
-        </ListSection>
-      )}
+          Ohne Rolle rendert die Komponente nichts – eine Abfrage davor braucht
+          es nicht mehr, seit die Überschriften innen liegen. Sie wäre ohnehin
+          Bequemlichkeit, kein Schutz: Der liegt in `is_club_admin()` und den
+          RLS-Policies. */}
+      <ClubAdminLinks />
 
       {/* UC-019 Schritt 8: das Dankeswort auf dem eigenen Profil. Es steht
           **vor** der Punktehistorie – die Anerkennung kommt vor der Zahl

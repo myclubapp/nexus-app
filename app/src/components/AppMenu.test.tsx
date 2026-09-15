@@ -110,25 +110,49 @@ describe('AppMenu', () => {
 
     club.isAdmin = true;
     const asAdmin = renderWithProviders(<AppMenu />);
+    // Seit FR-178 nach Sachgebiet gegliedert statt in der Reihenfolge, in der
+    // die Wege gebaut wurden. Die Gliederung ist dieselbe wie auf der
+    // Profilseite – sie kommt aus `ClubAdminLinks`, nicht von hier.
     expect(routerLinks(asAdmin.container)).toEqual([
       '/tabs/profile',
-      // Seit UC-023 zuoberst: die Vereins-Gesundheit.
+      // Überblick: angeschaut, nicht bearbeitet (UC-023, UC-027).
       '/tabs/profile/health',
-      // Seit UC-045 vor dem Vorstandsblock: Teams führen auch Trainer:innen.
-      '/tabs/profile/teams',
-      // Seit UC-027: der Vereins-Puls.
       '/tabs/profile/pulse',
-      '/tabs/profile/club',
+      // Menschen: wer im Verein ist und wer dazukommt.
       '/tabs/profile/members',
+      // Seit UC-045 auch für Trainer:innen – hier beim Vorstand in derselben
+      // Gruppe.
+      '/tabs/profile/teams',
       // Seit UC-031: die Ämter – der Verteiler hinter jedem Gremium (BR-133).
       '/tabs/profile/offices',
-      '/tabs/profile/rules',
-      '/tabs/profile/news',
-      '/tabs/profile/federation',
-      // Seit UC-040: die bisherige myclub-App, bis der Verein ganz hier ist.
-      '/tabs/profile/legacy',
       '/tabs/profile/invite',
       '/tabs/profile/requests',
+      // Punkte & Geld: Saisonziel und Rechnungen hängen an Modulen, die in
+      // dieser Attrappe aus sind – die Regeln stehen immer.
+      '/tabs/profile/rules',
+      // Der Verein als Objekt.
+      '/tabs/profile/club',
+      // Anschlüsse: was von aussen hereinkommt (UC-035, UC-040).
+      '/tabs/profile/news',
+      '/tabs/profile/federation',
+      '/tabs/profile/legacy',
+    ]);
+  });
+
+  it('überschreibt jede Verwaltungsgruppe (FR-178)', () => {
+    // Die Überschriften sind der ganze Zweck der Gliederung: Ohne sie steht
+    // «Mitglieder» neben «Verband verbinden» ohne erkennbaren Grund.
+    club.isAdmin = true;
+    const { container } = renderWithProviders(<AppMenu />);
+
+    expect(headings(container)).toEqual([
+      'Überblick',
+      'Menschen',
+      'Punkte & Geld',
+      'Verein',
+      'Anschlüsse',
+      // Die persönlichen Einstellungen bleiben, wo sie waren.
+      'Einstellungen',
     ]);
   });
 
@@ -145,6 +169,11 @@ describe('AppMenu', () => {
       '/tabs/profile/health',
       '/tabs/profile/teams',
     ]);
+
+    // FR-178: Für sie bleibt die Liste flach unter «Verwaltung». Zwei
+    // Überschriften über je einer Zeile gliedern nichts, sie zerreissen nur.
+    expect(headings(container)).toContain('Verwaltung');
+    expect(headings(container)).not.toContain('Menschen');
   });
 
   it('zeigt keinen Modulweg, solange das Modul aus ist (UC-034, FR-115)', () => {
@@ -159,6 +188,12 @@ describe('AppMenu', () => {
     expect(links).not.toContain('/tabs/profile/pulse');
     expect(links).not.toContain('/tabs/profile/offices');
     expect(links).toContain('/tabs/profile/members');
+
+    // FR-178: «Überblick» führt nur Modulwege. Sind beide aus, entfällt die
+    // Gruppe **samt Überschrift** – eine leere Überschrift sähe aus wie ein
+    // Ladefehler. Die übrigen Gruppen stehen weiter.
+    expect(headings(container)).not.toContain('Überblick');
+    expect(headings(container)).toContain('Menschen');
   });
 
   it('lässt Trainer:innen ohne das Modul «Gesundheit» die Teams', () => {
@@ -220,4 +255,11 @@ function routerLinks(container: HTMLElement): (string | undefined)[] {
   return [...container.querySelectorAll('ion-item')]
     .map((item) => ionProp<string | undefined>(item, 'routerLink'))
     .filter(Boolean);
+}
+
+/** Die Überschriften der Seitenleiste in ihrer Reihenfolge. */
+function headings(container: HTMLElement): (string | undefined)[] {
+  return [...container.querySelectorAll('ion-list-header')].map((node) =>
+    node.textContent?.trim(),
+  );
 }

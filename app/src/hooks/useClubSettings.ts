@@ -1,12 +1,45 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
+import { buildClubSettings } from '../lib/clubSettings';
+import i18n from '../i18n';
 import { useClub } from './useClub';
-import type { ClubSettings } from '../lib/database.types';
+import type { ClubModule, ClubSettings } from '../lib/database.types';
 
 export interface ClubSettingsInput {
   name: string;
   seasonStart: string | null;
   settings: ClubSettings;
+}
+
+/** Was an `clubs` geschrieben wird – jedes Feld wahlfrei, siehe `writeClub()`. */
+interface ClubPatch {
+  name?: string;
+  season_start?: string | null;
+  settings?: ClubSettings;
+}
+
+/**
+ * Den Verein schreiben – und **belegen lassen, dass geschrieben wurde**.
+ *
+ * Ein `update`, das die Policy `clubs_update` nicht durchlässt, trifft keine
+ * Zeile, und PostgREST meldet dafür **keinen** Fehler. Ohne das `select`
+ * bekäme der Aufrufer einen Erfolg zurück, zeigte «Gespeichert» und die
+ * Einstellung stünde beim nächsten Laden wieder auf dem alten Wert. Bleibt die
+ * getroffene Zeile aus, ist das hier ein Fehler.
+ *
+ * Nur die mitgeschickten Spalten werden angefasst: Wer bloss ein Modul
+ * umlegt, schreibt nicht nebenbei den Vereinsnamen aus einem halb getippten
+ * Entwurf mit.
+ */
+async function writeClub(clubId: string, patch: ClubPatch): Promise<void> {
+  const { data, error } = await supabase
+    .from('clubs')
+    .update(patch)
+    .eq('id', clubId)
+    .select('id');
+
+  if (error) throw new Error(error.message);
+  if (!data || data.length === 0) throw new Error(i18n.t('clubSettings.notWritten'));
 }
 
 /**
@@ -24,22 +57,47 @@ export function useSaveClubSettings() {
     mutationFn: async (input: ClubSettingsInput) => {
       if (!activeClub) return;
 
-      const { error } = await supabase
-        .from('clubs')
-        .update({
-          name: input.name.trim(),
-          season_start: input.seasonStart,
-          settings: input.settings,
-        })
-        .eq('id', activeClub.id);
-
-      if (error) throw new Error(error.message);
+      await writeClub(activeClub.id, {
+        name: input.name.trim(),
+        season_start: input.seasonStart,
+        settings: input.settings,
+      });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['memberships'] });
       // Die Saison steckt im Schlüssel der Punkte- und Ranglisten-Abfragen.
       await queryClient.invalidateQueries({ queryKey: ['points'] });
       await queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
+    },
+  });
+}
+
+/**
+ * Die Module schreiben – **sofort beim Umlegen**, nicht erst beim Speichern.
+ *
+ * Ein Modul entscheidet, ob es einen ganzen Bereich gibt. Es gehört damit
+ * nicht in denselben Entwurf wie eine Farbe: Wer den Schalter umlegt und die
+ * Seite verlässt, hat das Modul eingeschaltet – nicht einen Entwurf verworfen.
+ * Der Speichern-Knopf am Fuss der Seite gilt weiter für alles Übrige.
+ *
+ * Mitgeschickt wird die **ganze** Modulkarte, nicht das einzelne Modul: So
+ * schreibt der Aufrufer, was seine Schalter zeigen, und zwei rasch
+ * aufeinanderfolgende Umlegungen können sich nicht gegenseitig zurücknehmen.
+ */
+export function useSaveClubModules() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (modules: Partial<Record<ClubModule, boolean>>) => {
+      if (!activeClub) throw new Error('Kein aktiver Verein');
+
+      await writeClub(activeClub.id, {
+        settings: buildClubSettings(activeClub.settings, { modules }),
+      });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['memberships'] });
     },
   });
 }

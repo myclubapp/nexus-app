@@ -8,23 +8,40 @@ import {
 } from './shift';
 
 describe('suggestedShiftPoints', () => {
-  it('staffelt nach Dauer (BR-042)', () => {
-    // Ein halber Tag und ein ganzer Tag zählen unterschiedlich.
-    expect(suggestedShiftPoints(60)).toBe(25);
+  it('misst am Einsatz: vier Stunden sind der Regelwert (BR-205)', () => {
     expect(suggestedShiftPoints(240)).toBe(50);
-    expect(suggestedShiftPoints(480)).toBe(100);
+    // Die Standard-Heimrunden-Schicht (3 h 40) rundet auf denselben Wert –
+    // sie war in der bisherigen App genau ein Helferpunkt.
+    expect(suggestedShiftPoints(220)).toBe(50);
+    expect(suggestedShiftPoints(120)).toBe(25);
+    expect(suggestedShiftPoints(60)).toBe(15);
   });
 
-  it('liegt an den Grenzen auf der tieferen Stufe', () => {
-    expect(suggestedShiftPoints(120)).toBe(25);
-    expect(suggestedShiftPoints(121)).toBe(50);
-    expect(suggestedShiftPoints(300)).toBe(50);
-    expect(suggestedShiftPoints(301)).toBe(100);
+  it('wächst ohne Klippen', () => {
+    // Die alte Stufenleiter verdoppelte bei 120 und 300 Minuten den Wert
+    // um eine einzige Minute.
+    expect(suggestedShiftPoints(121)).toBe(30);
+    expect(suggestedShiftPoints(300)).toBe(65);
+    expect(suggestedShiftPoints(301)).toBe(65);
+  });
+
+  it('deckelt beim ganzen Tag', () => {
+    expect(suggestedShiftPoints(480)).toBe(100);
+    // Eine Sammelschicht über 14 Stunden ist keine Schicht, sondern eine
+    // fehlende Planung – sie zählt höchstens einen ganzen Tag.
+    expect(suggestedShiftPoints(840)).toBe(100);
+  });
+
+  it('folgt dem Regelwert des Vereins', () => {
+    // Ein Verein mit Saisonziel 400 setzt `shift_done` auf 100.
+    expect(suggestedShiftPoints(240, 100)).toBe(100);
+    expect(suggestedShiftPoints(840, 100)).toBe(200);
   });
 
   it('gibt für eine leere Dauer nichts', () => {
     expect(suggestedShiftPoints(0)).toBe(0);
     expect(suggestedShiftPoints(-30)).toBe(0);
+    expect(suggestedShiftPoints(240, 0)).toBe(0);
   });
 });
 

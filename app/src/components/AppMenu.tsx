@@ -111,17 +111,14 @@ export function AppMenu() {
         )}
 
         {/* Seit UC-023 auch für Trainer:innen: Die Vereins-Gesundheit gehört
-            ihnen für ihr Team (BR-096). Was darin steht, entscheidet
-            `ClubAdminLinks` – hier steht nur, ob der Abschnitt überhaupt
-            erscheint. */}
+            ihnen für ihr Team (BR-096). Was darin steht **und wie es
+            gegliedert ist**, entscheidet seit FR-178 `ClubAdminLinks` selbst –
+            hier steht nur, ob der Bereich überhaupt erscheint. Die
+            Rollenabfrage bleibt aussen, weil der `IonMenuToggle` sonst leer
+            um nichts stünde. */}
         {hasAdminLinks(isAdmin, isTrainer) && (
           <IonMenuToggle autoHide={false}>
-            <ListSection
-              title={t('menu.administration')}
-              footnote={t('menu.administrationHint')}
-            >
-              <ClubAdminLinks />
-            </ListSection>
+            <ClubAdminLinks hint={t('menu.administrationHint')} />
           </IonMenuToggle>
         )}
 

@@ -128,13 +128,19 @@ export interface EventDraft {
   why: string;
   teamId: string | null;
   pointRuleCode: string | null;
+  /**
+   * Die Ämter, an die eine Sitzung geht (FR-096). Für jeden anderen Termintyp
+   * leer – der Empfängerkreis eines Trainings ist sein Team.
+   */
+  committeeRoleIds: string[];
 }
 
 export type EventDraftProblem =
   | 'titleMissing'
   | 'startMissing'
   | 'endBeforeStart'
-  | 'whyMissing';
+  | 'whyMissing'
+  | 'committeeMissing';
 
 /**
  * Was am Entwurf noch fehlt (A5, BR-036).
@@ -158,6 +164,13 @@ export function validateEventDraft(draft: EventDraft): EventDraftProblem[] {
 
   if (requiresWhy(draft.type) && draft.why.trim().length === 0) {
     problems.push('whyMissing');
+  }
+
+  // BR-237: Eine Sitzung gehört ihrem Gremium. Ohne Empfängerkreis gäbe es
+  // niemanden, den sie einlädt – dieselbe Regel steht als `check` an der
+  // Tabelle (`0095`), damit sie auch ohne dieses Formular gilt.
+  if (draft.type === 'meeting' && draft.committeeRoleIds.length === 0) {
+    problems.push('committeeMissing');
   }
 
   return problems;

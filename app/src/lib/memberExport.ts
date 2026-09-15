@@ -1,4 +1,5 @@
 import { toCsv } from './csv';
+import { fileDateStamp, slugify } from './fileExport';
 import { formatDate } from './format';
 
 /**
@@ -191,32 +192,17 @@ export function memberExportCsv(
  * Der Dateiname: `<verein>-mitglieder-<datum>.csv`, mit dem Team dazwischen,
  * wenn nur ein Team exportiert wird.
  *
- * Alles ausser Buchstaben, Ziffern und Bindestrich fällt weg – ein Teamname
- * wie «Herren 1 / A» darf keinen Pfad aufmachen. Die alte App hat dafür
- * `replace(/[^a-zA-Z0-9]/g, "_")` benutzt; Umlaute wurden dort zu
- * Unterstrichen, hier werden sie aufgelöst.
+ * Der Namensbau steht in `fileExport.ts` (`slugify`, `fileDateStamp`), weil
+ * ihn seit UC-041 A7 auch die Ämterbeschreibung braucht: Alles ausser
+ * Buchstaben, Ziffern und Bindestrich fällt weg – ein Teamname wie
+ * «Herren 1 / A» darf keinen Pfad aufmachen.
  */
 export function memberExportFileName(
   clubSlug: string | null | undefined,
   teamName: string | null | undefined,
   today: Date = new Date(),
 ): string {
-  const date = [
-    today.getFullYear(),
-    String(today.getMonth() + 1).padStart(2, '0'),
-    String(today.getDate()).padStart(2, '0'),
-  ].join('-');
-  const parts = [slug(clubSlug) || 'club', 'mitglieder', slug(teamName), date].filter(Boolean);
+  const date = fileDateStamp(today);
+  const parts = [slugify(clubSlug) || 'club', 'mitglieder', slugify(teamName), date].filter(Boolean);
   return `${parts.join('-')}.csv`;
-}
-
-function slug(value: string | null | undefined): string {
-  return (value ?? '')
-    .normalize('NFD')
-    // Kombinierende Zeichen: aus «ü» wird «u», nicht «_».
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/ß/g, 'ss')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
 }

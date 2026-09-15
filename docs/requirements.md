@@ -57,7 +57,8 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-168 | Profilbild aufnehmen      | Als Mitglied möchte ich mein Profilbild aufnehmen oder aus der Mediathek wählen, damit man mich in Listen erkennt.                                             | Medium   | Implemented |
 | FR-019 | Datenschutz-Optionen      | Als Mitglied möchte ich einzeln festlegen, ob E-Mail und Telefonnummer für andere Mitglieder sichtbar sind, damit ich meine Daten kontrolliere.                | High     | Implemented        |
 | FR-020 | Leaderboard-Opt-in        | Als Mitglied möchte ich entscheiden, ob ich in Ranglisten erscheine, damit die Teilnahme freiwillig bleibt.                                                    | High     | Implemented        |
-| FR-148 | Verwaltung als eigene Gruppe | Als Vorstand möchte ich die Verwaltungswege auf der Profilseite in einem eigenen, mit «Verwaltung» überschriebenen Abschnitt finden, damit ich sie von meinen persönlichen Einstellungen unterscheide.        | Medium   | Implemented |
+| FR-148 | Verwaltung als eigene Gruppe | Als Vorstand möchte ich die Verwaltungswege auf der Profilseite in eigenen, überschriebenen Abschnitten finden, damit ich sie von meinen persönlichen Einstellungen unterscheide.        | Medium   | Implemented |
+| FR-178 | Verwaltung nach Sachgebiet gegliedert | Als Vorstand möchte ich die Verwaltungswege nach Sachgebiet gruppiert sehen – Überblick, Menschen, Punkte & Geld, Verein, Anschlüsse –, damit ich einen Weg über die Frage finde, die ihn sucht, statt über die Reihenfolge, in der er gebaut wurde. | Medium   | Implemented |
 
 ### 1.3 Agenda
 
@@ -150,12 +151,18 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-182 | Mail im Vereins-Look      | Als Mitglied möchte ich jede E-Mail des Vereins – Anmeldelink, Meldung, Rechnung – im Auftritt meines Vereins erhalten, mit Logo, Farbe und Vereinsnamen im Absender, damit ich sie erkenne, bevor ich sie öffne (UC-048). | High     | Implemented |
 | FR-183 | Warum in jeder Meldung    | Als Mitglied möchte ich zu jeder Benachrichtigung – in der Inbox wie in der Mail – lesen, warum sie mich erreicht und was meine Antwort bewirkt, damit eine Meldung eine Information ist und keine Aufforderung (K3a, UC-048). | High     | Implemented |
 | FR-184 | Willkommensmail           | Als neues Mitglied möchte ich beim Beitritt eine Mail bekommen, die in einer Minute erklärt, wie der Verein die App nutzt und wozu das Punktesystem da ist, damit ich weiss, was mich erwartet – die Einzelheiten lese ich auf der Website (UC-048). | High     | Implemented |
+| FR-187 | Meldungen in meiner Sprache | Als Mitglied möchte ich jede Benachrichtigung in der Sprache lesen, die ich gewählt habe, damit die Inbox nicht deutsch bleibt, während die App französisch ist (UC-049). | High | Draft |
 | FR-146 | Website-News übernehmen   | Als Vorstand möchte ich beim Aufsetzen des Vereins die bestehenden Beiträge unserer Website übernehmen, damit der Feed ab dem ersten Tag echte Meldungen zeigt. | High | In Progress |
 | FR-147 | Website-News aktuell halten | Als Vorstand möchte ich, dass neue Beiträge unserer Website von selbst im Feed erscheinen, damit ich nichts zweimal schreiben muss. | High | In Progress |
 | FR-149 | Umfang des Website-Imports einstellen | Als Vorstand möchte ich vor dem Verbinden prüfen lassen, ob unsere Website eine WordPress-Schnittstelle hat, und einstellen, wie viele Beiträge und welche Kategorien übernommen werden, damit im Feed steht, was wir wollen, und nicht, was zufällig kommt. | Medium | In Progress |
 | FR-082 | Vereins-Puls komponieren  | Als System möchte ich wöchentlich einen Entwurf mit «Was passiert · Woran arbeiten wir · Wo kannst du dabei sein» erzeugen, damit Verbindung Routine wird (K2). | High | Implemented |
 | FR-083 | Vereins-Puls freigeben    | Als Vorstand möchte ich den Puls-Entwurf in zwei Minuten prüfen und freigeben, damit der Versand wenig Zeit kostet.                                    | High     | Implemented |
 | FR-084 | Symmetrie-Hinweis         | Als Vorstand möchte ich gewarnt werden, wenn seit Wochen nur Aufrufe und keine Verbindungs-Nachrichten ausgingen, damit wir das Muster korrigieren (K1). | High   | Implemented |
+| FR-188 | Puls als eigenes Mailblatt | Als Mitglied möchte ich den Vereins-Puls per E-Mail mit allen drei Abschnitten erhalten, damit ich ihn lesen kann, ohne die App zu öffnen (UC-050). | High | Draft |
+| FR-189 | Vorschau des Pulses | Als Vorstand möchte ich vor der Freigabe sehen, wie der Puls in der App und im Postfach ankommt, damit ich nichts versende, das ich nicht gesehen habe (UC-050). | High | Draft |
+| FR-190 | Beiträge im Puls | Als Mitglied möchte ich im Puls auch die vereinsweiten Beiträge aus App und Website der letzten zwei Wochen finden, damit die Wochenübersicht vollständig ist (UC-050). | Medium | Draft |
+| FR-191 | Grussformel am Amt | Als Vorstand möchte ich einen Grusstext an ein Vorstandsamt hängen, damit der Puls mit Name und Amt grüsst und die Unterschrift bei der Amtsübergabe mitwechselt (UC-050). | Medium | Draft |
+| FR-192 | Porträt zur Grussformel | Als Mitglied möchte ich zum Gruss ein Gesicht sehen, damit der Puls von Menschen kommt und nicht von einem System (UC-050). | Low | Draft |
 
 ### 1.7 «Stimme»: Sprachmemos & Feedback
 
@@ -176,8 +183,11 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 
 | ID     | Titel                     | User Story                                                                                                                                                 | Priority | Status |
 | ------ | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------ |
-| FR-095 | Sitzung als Termin        | Als Vorstand möchte ich eine Sitzung als Termin vom Typ meeting anlegen, damit Einladung, Zu-/Absage und Erinnerung wie bei jedem Termin funktionieren.      | Medium   | Implemented   |
-| FR-096 | Einladung über Ämter      | Als Vorstand möchte ich den Teilnehmerkreis über Ämter statt Namenslisten definieren, damit der Verteiler bei Amtswechsel automatisch stimmt.                | Medium   | Implemented   |
+| FR-095 | Sitzung als Gremiumstermin | Als Vorstand möchte ich eine Sitzung als Termin vom Typ meeting mit einem Gremium statt eines Teams anlegen, damit Einladung, Zu-/Absage und Erinnerung wie bei jedem Termin funktionieren – aber nur beim Gremium. | Medium   | Implemented   |
+| FR-096 | Einladung über Ämter      | Als Vorstand möchte ich den Teilnehmerkreis beim Anlegen der Sitzung über Ämter statt Namenslisten wählen – voreingestellt die Vorstandsämter –, damit der Verteiler bei Amtswechsel automatisch stimmt. | Medium   | Implemented   |
+| FR-179 | Vorstandsamt markieren    | Als Vorstand möchte ich am Amt festhalten, ob es zum Vorstand gehört, damit «Vorstand» ein Verteiler ist und nicht bei jeder Sitzung neu zusammengeklickt werden muss. | Medium   | Implemented   |
+| FR-180 | Sitzung bleibt beim Gremium | Als Amtsinhaber:in möchte ich Sitzungen meines Gremiums in meiner Agenda sehen – und der Verein soll sie nicht sehen –, damit eine Vorstandssitzung nicht im Kalender aller steht. | High     | Implemented   |
+| FR-181 | Vorschlag in der Sitzung beantworten | Als Vorstand möchte ich einen zugeordneten Vorschlag direkt aus der Sammelansicht heraus beantworten, damit ich die Sitzung durchgehen kann, ohne den Eingangskorb zu durchsuchen. | Medium   | Implemented   |
 | FR-097 | Input einreichen          | Als Mitglied möchte ich einen Vorschlag als Text oder Sprachmemo an ein Gremium einreichen, damit meine Idee gehört wird.                                    | High     | Implemented   |
 | FR-098 | Input zuordnen            | Als Vorstand möchte ich einen Input laufend bearbeiten oder einer Sitzung zuordnen, damit die Einreicher:in den Stand kennt.                                 | High     | Implemented   |
 | FR-099 | Dokumentierte Antwort     | Als Vorstand möchte ich jeden behandelten Input mit einer Antwort in 2–3 Sätzen, Datum und Gremium abschliessen, damit nichts versandet.                     | High     | Implemented   |
@@ -207,6 +217,8 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-113 | Saisonbeginn festlegen      | Als Vorstand möchte ich den Saisonbeginn setzen, damit Punkte und Ranglisten auf unsere Saison zugeschnitten sind.                                          | High     | Implemented |
 | FR-114 | Vereins-DNA erfassen        | Als Vorstand möchte ich Warum, Werte, Tonalität und Traditionen hinterlegen, damit alle unterstützenden Textfunktionen unsere Sprache verwenden (K6c).      | Medium   | Partial        |
 | FR-115 | Progressive Aktivierung     | Als Vorstand möchte ich weitere Module erst vorgeschlagen bekommen, wenn der Verein bereit ist, damit uns die App nicht überfordert (K7).                   | High     | Implemented        |
+| FR-185 | Ansprache des Vereins wählen | Als Vorstand möchte ich festlegen, ob unser Verein die Mitglieder duzt oder siezt, damit die App unsere Umgangsform spricht – mit «Du» als Vorgabe (UC-049). | High | Draft |
+| FR-186 | Eine Ansprache in allen Kanälen | Als Mitglied möchte ich in der App, in der Inbox und in jeder E-Mail gleich angesprochen werden, damit der Verein eine Stimme hat und nicht zwei (UC-049). | High | Draft |
 
 ### 1.11 Anschlüsse
 
@@ -263,6 +275,8 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-125 | Rewards-Shop                 | Als Mitglied möchte ich Punkte gegen Belohnungen einlösen, damit sich Einsatz zusätzlich lohnt.                                                    | Low      | Deferred |
 | FR-126 | Funktionärsämter mit Factsheet | Als Vorstand möchte ich Ämter mit Pflichtenheft, Aufwand und Punktwert hinterlegen, damit Interessierte wissen, worauf sie sich einlassen.        | Low      | Implemented |
 | FR-127 | Vakanz-Anzeige               | Als Mitglied möchte ich vakante Ämter im Marktplatz sehen, damit ich eine Lücke füllen kann.                                                       | Low      | Implemented |
+| FR-193 | Ämterbeschreibung exportieren | Als Vorstand möchte ich die Beschreibung eines Amtes – oder aller Ämter – als Markdown-Datei ausgeben, damit sie auch in der Ablage des Vereins liegt (Drive, SharePoint) und ohne diese App lesbar ist (UC-041 A7). | Medium   | Implemented |
+| FR-194 | Ämterbeschreibung einlesen   | Als Vorstand möchte ich eine Ämterbeschreibung aus einer Markdown-Datei einlesen – nach einer Vorlage geschrieben oder zuvor exportiert – und vor dem Speichern sehen, welches Amt sie trifft und was sie ändert (UC-041 A8). | Medium   | Implemented |
 | FR-128 | Meisterschaft                | Als Mitglied möchte ich Spielpläne, Resultate und Tabellen sehen, damit ich den Meisterschaftsverlauf verfolge.                                    | Low      | Deferred |
 | FR-129 | Eltern und Kinder            | Als Elternteil möchte ich mit dem Konto meines Kindes verknüpft sein und stellvertretend antworten, damit Juniorenvereine die App nutzen können.   | Low      | Deferred |
 | FR-130 | Mitglieder-Export            | Als Vorstand möchte ich Mitgliederdaten mit wählbaren Feldern exportieren, damit ich sie extern weiterverwenden kann.                              | Low      | Implemented |

@@ -236,7 +236,19 @@ export function MeetingPage() {
         }}
       />
 
-      <MeetingAgendaModal meeting={agendaFor} onDismiss={() => setAgendaFor(null)} />
+      {/* Das Triage-Blatt liegt **über** der Sammelansicht: Wer eine Sitzung
+          durchgeht, beantwortet einen Vorschlag nach dem anderen und ist
+          danach wieder in der Liste. Ein Vorschlag, der an ein anderes Gremium
+          ging, steht zwar in der Sitzung, gehört aber nicht dieser Person –
+          dann sagt es der Hinweis, statt dass das Antippen ins Leere geht. */}
+      <MeetingAgendaModal
+        meeting={agendaFor}
+        onOpenInput={(inputId) => {
+          if (rows.some((input) => input.id === inputId)) setTriagedId(inputId);
+          else toast.failure(t('meeting.inputNotYours'));
+        }}
+        onDismiss={() => setAgendaFor(null)}
+      />
     </AppPage>
   );
 }

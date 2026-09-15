@@ -19,7 +19,7 @@
 2. System zeigt das Terminformular mit den Termintypen in der Sprache des Vereins.
 3. Trainer:in wählt den Termintyp.
 4. Trainer:in gibt Titel, Beginn, Ende und Ort ein.
-5. Trainer:in wählt das Team oder markiert den Termin als Vereinstermin.
+5. Trainer:in wählt das Team oder markiert den Termin als Vereinstermin. Bei einer Sitzung steht an dieser Stelle das Gremium statt des Teams (A7).
 6. System schlägt die zum Termintyp passende Punkteregel vor.
 7. Trainer:in bestätigt die Punkteregel oder wählt eine andere.
 8. Trainer:in speichert.
@@ -86,6 +86,19 @@
 4. System löscht den Termin samt Antworten, Schichten und Check-in-Token; Sitzungs-Inputs verlieren nur den Bezug. Niemand wird benachrichtigt – ein Termin, der jemandem gefehlt hätte, wird abgesagt, nicht gelöscht.
 5. Use case ends.
 
+### A7: Sitzung
+
+**Trigger:** Der Vorstand wählt in Schritt 3 den Termintyp «Sitzung» (nur bei eingeschaltetem Modul Sitzungs-Anbindung)
+**Flow:**
+
+1. System zeigt statt der Team-Auswahl die Wahl des Gremiums – eine Mehrfachauswahl über die Ämter des Vereins, voreingestellt mit den Vorstandsämtern.
+2. Vorstand bestätigt die Voreinstellung oder wählt andere Ämter.
+3. System weist die Sitzung ab, solange kein Amt gewählt ist (BR-237).
+4. System legt die Sitzung ohne Team an; Einladung, Erinnerung und Absage erreichen ausschliesslich die aktuellen Inhaber:innen dieser Ämter (BR-238, UC-031).
+5. Use case continues at step 9.
+
+**Anmerkung:** Einer Trainer:in steht der Termintyp «Sitzung» nicht zur Wahl. Eine Teambesprechung ist ein gewöhnlicher Termin dieses Teams.
+
 ## Postconditions
 
 ### Success Postconditions
@@ -108,6 +121,8 @@ Die Datenbank kennt technische Termintypen. Wie sie heissen – «Training», «
 ### BR-033: Nur Trainer:innen und Vorstand erfassen Termine
 
 Die Berechtigung wird serverseitig geprüft. Trainer:innen erfassen Termine für ihre Teams.
+Eine Sitzung legt nur der Vorstand an, und sie trägt ein Gremium statt eines Teams
+(BR-237, BR-238 in UC-031).
 
 ### BR-034: Punkteregel ist am Termin verankert
 

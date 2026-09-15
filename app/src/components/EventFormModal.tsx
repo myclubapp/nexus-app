@@ -10,6 +10,9 @@ import {
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { useClub } from '../hooks/useClub';
+import { useOffices } from '../hooks/useOffices';
+import { boardRoleIds, sortOffices } from '../lib/office';
+import { isModuleOn } from '../lib/clubSettings';
 import { parseCapacity } from '../lib/attendance';
 import { usePlanningScope } from '../hooks/usePlanningScope';
 import { usePointRules } from '../hooks/useGamification';
@@ -45,7 +48,10 @@ const EVENT_TYPES: EventType[] = [
   'match',
   'gv',
   'social',
-  // FR-095: Vorstandssitzung, Teamsitzung, GV – ein Termin wie jeder andere.
+  // FR-095: Die Sitzung ist ein Termin wie jeder andere – aber einer des
+  // **Gremiums**. Sie steht deshalb nur dem Vorstand und nur mit dem Modul
+  // «Sitzungen» zur Wahl (BR-237); was ein Team miteinander bespricht, ist ein
+  // Termin dieses Teams und heisst nicht Sitzung.
   'meeting',
 ];
 
@@ -65,8 +71,9 @@ interface EventFormProps {
  */
 export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) {
   const { t } = useTranslation();
-  const { eventLabel } = useClub();
+  const { activeClub, eventLabel } = useClub();
   const scope = usePlanningScope();
+  const offices = useOffices();
   const rules = usePointRules();
   const createEvent = useCreateEvent();
   const announce = useAnnounceEvent();
@@ -89,6 +96,12 @@ export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) 
   const [ruleCode, setRuleCode] = useState<string | null>(null);
   const [ruleTouched, setRuleTouched] = useState(false);
 
+  // Der Empfängerkreis einer Sitzung (FR-096). Wie beim Punktevorschlag:
+  // Solange niemand selbst gewählt hat, gilt der Vorstand; danach steht die
+  // Wahl (Schritt 7 sinngemäss).
+  const [committee, setCommittee] = useState<string[]>([]);
+  const [committeeTouched, setCommitteeTouched] = useState(false);
+
   const [isSeries, setSeries] = useState(false);
   const [rhythm, setRhythm] = useState<SeriesRhythm>('weekly');
   const [until, setUntil] = useState('');
@@ -104,7 +117,32 @@ export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) 
     ? ruleCode
     : suggestedRuleCode(type, availableCodes);
 
-  const draft = { type, title, startsAt, endsAt, location, why, teamId, pointRuleCode: effectiveRuleCode };
+  const isMeeting = type === 'meeting';
+  const canMeet =
+    scope.isBoard && isModuleOn(activeClub?.settings, 'meeting');
+  const availableTypes = EVENT_TYPES.filter(
+    (entry) => entry !== 'meeting' || canMeet,
+  );
+
+  const boardOffices = useMemo(
+    () => boardRoleIds(offices.data ?? []),
+    [offices.data],
+  );
+  const effectiveCommittee = committeeTouched ? committee : boardOffices;
+
+  // Eine Sitzung gehört ihrem Gremium und keinem Team (BR-237) – das gilt
+  // auch dann, wenn vorher ein Team gewählt war und der Typ danach wechselt.
+  const draft = {
+    type,
+    title,
+    startsAt,
+    endsAt,
+    location,
+    why,
+    teamId: isMeeting ? null : teamId,
+    pointRuleCode: effectiveRuleCode,
+    committeeRoleIds: isMeeting ? effectiveCommittee : [],
+  };
   const problems = validateEventDraft(draft);
 
   const seriesRule = useMemo(
@@ -139,7 +177,8 @@ export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) 
         location: location || null,
         why: why || null,
         capacityNeeded: parseCapacity(capacity),
-        teamId,
+        teamId: draft.teamId,
+        committeeRoleIds: draft.committeeRoleIds,
         pointRuleCode: effectiveRuleCode,
         series: seriesRule ?? undefined,
       },
@@ -176,7 +215,7 @@ export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) 
             cancelText={t('common.cancel')}
             okText={t('common.ok')}
           >
-            {EVENT_TYPES.map((entry) => (
+            {availableTypes.map((entry) => (
               <IonSelectOption key={entry} value={entry}>
                 {/* Schritt 2: die Termintypen in der Sprache des Vereins. */}
                 {eventLabel(entry)}
@@ -267,34 +306,77 @@ export function EventForm({ onDone, onDismiss, isOpen = true }: EventFormProps) 
         </ListSection>
       )}
 
-      {/* Schritt 5: Team oder Vereinstermin – Letzteres nur für den Vorstand (C-032). */}
-      <ListSection
-        footnote={
-          !scope.isBoard && !scope.isLoading && scope.teams.length === 0
-            ? t('common.noPlannableTeam')
-            : t(scope.isBoard ? 'eventForm.scopeHint' : 'eventForm.scopeHintTeam')
-        }
-      >
-        <IonItem>
-          <IonSelect
-            label={t('invite.scope')}
-            labelPlacement="stacked"
-            value={teamId}
-            onIonChange={(e) => setTeamId((e.detail.value as string | null) ?? null)}
-            cancelText={t('common.cancel')}
-            okText={t('common.ok')}
-          >
-            {scope.isBoard && (
-              <IonSelectOption value={null}>{t('eventForm.wholeClub')}</IonSelectOption>
-            )}
-            {scope.teams.map((team) => (
-              <IonSelectOption key={team.id} value={team.id}>
-                {team.name}
-              </IonSelectOption>
-            ))}
-          </IonSelect>
-        </IonItem>
-      </ListSection>
+      {/* Schritt 5: Wer gemeint ist. Bei einer Sitzung ist das kein Team,
+          sondern das Gremium (FR-096, BR-237) – deshalb steht hier entweder
+          das eine oder das andere und nie beides. Ein Gremiumstermin mit
+          zusätzlichem Team hätte zwei Empfängerkreise. */}
+      {isMeeting ? (
+        <ListSection
+          footnote={
+            !offices.isLoading && (offices.data ?? []).length === 0
+              ? t('eventForm.noOffices')
+              : t('eventForm.committeeHint')
+          }
+        >
+          <IonItem>
+            <IonSelect
+              multiple
+              label={t('eventForm.committee')}
+              labelPlacement="stacked"
+              value={effectiveCommittee}
+              onIonChange={(e) => {
+                setCommitteeTouched(true);
+                setCommittee((e.detail.value as string[] | null) ?? []);
+              }}
+              cancelText={t('common.cancel')}
+              okText={t('common.ok')}
+            >
+              {sortOffices(offices.data ?? []).map((office) => (
+                <IonSelectOption key={office.id} value={office.id}>
+                  {office.title}
+                </IonSelectOption>
+              ))}
+            </IonSelect>
+          </IonItem>
+        </ListSection>
+      ) : (
+        /* Team oder Vereinstermin – Letzteres nur für den Vorstand (C-032). */
+        <ListSection
+          footnote={
+            !scope.isBoard && !scope.isLoading && scope.teams.length === 0
+              ? t('common.noPlannableTeam')
+              : t(scope.isBoard ? 'eventForm.scopeHint' : 'eventForm.scopeHintTeam')
+          }
+        >
+          <IonItem>
+            <IonSelect
+              label={t('invite.scope')}
+              labelPlacement="stacked"
+              value={teamId}
+              onIonChange={(e) => setTeamId((e.detail.value as string | null) ?? null)}
+              cancelText={t('common.cancel')}
+              okText={t('common.ok')}
+            >
+              {scope.isBoard && (
+                <IonSelectOption value={null}>{t('eventForm.wholeClub')}</IonSelectOption>
+              )}
+              {scope.teams.map((team) => (
+                <IonSelectOption key={team.id} value={team.id}>
+                  {team.name}
+                </IonSelectOption>
+              ))}
+            </IonSelect>
+          </IonItem>
+        </ListSection>
+      )}
+
+      {/* Ohne Gremium erreicht die Einladung niemanden – und der Server nimmt
+          die Sitzung gar nicht erst an (`events_meeting_committee_check`). */}
+      {problems.includes('committeeMissing') && (
+        <IonNote color="danger" className="app-hint">
+          {t('eventForm.committeeMissing')}
+        </IonNote>
+      )}
 
       {/* Schritt 6 und 7: Punkteregel vorgeschlagen, aber änderbar. */}
       <ListSection footnote={t('eventForm.ruleHint')}>

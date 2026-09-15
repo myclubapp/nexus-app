@@ -16,6 +16,8 @@
  * Datei mit blossem `\n` sonst als eine einzige Zeile.
  */
 
+import { deliverFile, type FileDelivery } from './fileExport';
+
 /** Ein Feld: gequotet, enthaltene Anführungszeichen verdoppelt. */
 export function csvCell(value: string | number | null | undefined): string {
   const text = value === null || value === undefined ? '' : String(value);
@@ -48,14 +50,14 @@ export const CSV_BOM = '\uFEFF';
  * Eine CSV herausgeben – nativ ins Teilen-Blatt, im Browser als Datei.
  *
  * Stand bis UC-043 zweimal im Code (`ContributionPage`, dann der
- * Mitglieder-Export). Der Ablauf ist in beiden Fällen derselbe, und ein
- * Abbruch im Teilen-Blatt sieht von aussen aus wie ein Fehlschlag – deshalb
- * bleibt die Zwischenablage als zweiter Weg: Ein Tippen darf nie nichts tun.
+ * Mitglieder-Export). Der Ablauf selbst liegt seit UC-041 A7 in
+ * `fileExport.ts`, weil ihn auch die Ämterbeschreibung als Markdown braucht;
+ * hier bleibt nur, was die CSV davon unterscheidet: das BOM und der Medientyp.
  *
  * Gibt zurück, was geschehen ist, damit die Ansicht die passende Rückmeldung
  * zeigen kann (guidelines §5: kein stiller Erfolg).
  */
-export type CsvDelivery = 'shared' | 'copied' | 'downloaded' | 'failed';
+export type CsvDelivery = FileDelivery;
 
 export async function deliverCsv(options: {
   csv: string;
@@ -64,28 +66,13 @@ export async function deliverCsv(options: {
   canShareNatively: boolean;
   share: (input: { title: string; text: string }) => Promise<unknown>;
 }): Promise<CsvDelivery> {
-  const { csv, fileName, title, share } = options;
-
-  if (options.canShareNatively) {
-    try {
-      await share({ title, text: csv });
-      return 'shared';
-    } catch {
-      try {
-        await navigator.clipboard?.writeText(csv);
-        return 'copied';
-      } catch {
-        return 'failed';
-      }
-    }
-  }
-
-  const blob = new Blob([`${CSV_BOM}${csv}`], { type: 'text/csv;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = fileName;
-  link.click();
-  URL.revokeObjectURL(url);
-  return 'downloaded';
+  return deliverFile({
+    text: options.csv,
+    fileName: options.fileName,
+    title: options.title,
+    mimeType: 'text/csv;charset=utf-8',
+    filePrefix: CSV_BOM,
+    canShareNatively: options.canShareNatively,
+    share: options.share,
+  });
 }

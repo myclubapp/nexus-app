@@ -15,7 +15,7 @@ import {
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { useClub } from '../hooks/useClub';
-import { useSaveClubSettings } from '../hooks/useClubSettings';
+import { useSaveClubModules, useSaveClubSettings } from '../hooks/useClubSettings';
 import {
   useAdoptSample,
   useDropSampleContent,
@@ -62,6 +62,7 @@ export function ClubSettingsPage() {
   const { t } = useTranslation();
   const { activeClub, isAdmin } = useClub();
   const save = useSaveClubSettings();
+  const saveModules = useSaveClubModules();
   const dropSamples = useDropSampleContent();
   const samples = useSampleContent();
   const adopt = useAdoptSample();
@@ -91,6 +92,12 @@ export function ClubSettingsPage() {
   const [confirmDrop, setConfirmDrop] = useState(false);
 
   // Den Entwurf aus dem Verein füllen, sobald er geladen oder gewechselt ist.
+  //
+  // **Nur am Verein, nicht an jedem Ladevorgang.** `activeClub` ist bei jedem
+  // Neuladen der Mitgliedschaften ein neues Objekt; hinge der Effekt daran,
+  // überschriebe er den halb getippten Entwurf mit dem Serverstand – und seit
+  // die Module sofort speichern, geschähe das nach jedem Schalter.
+  const clubId = activeClub?.id;
   useEffect(() => {
     if (!activeClub) return;
     setName(activeClub.name);
@@ -102,7 +109,8 @@ export function ClubSettingsPage() {
     setTopOnly(activeClub.settings?.leaderboard?.topOnly?.toString() ?? '');
     setHidePoints(activeClub.settings?.leaderboard?.hidePoints === true);
     setSeasonGoal(activeClub.settings?.goal?.seasonPoints?.toString() ?? '');
-  }, [activeClub]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clubId]);
 
   // Farben sofort anwenden, damit die Wirkung sichtbar ist. Beim Verlassen
   // ohne Speichern gilt wieder das, was im Verein steht.
@@ -131,6 +139,32 @@ export function ClubSettingsPage() {
   const weakColors = THEME_ROLES.filter(
     (role) => theme?.[role] && !hasEnoughContrast(theme[role]!),
   );
+
+  /**
+   * Ein Modul umlegen – und **sofort** schreiben.
+   *
+   * Der Schalter zeigt den neuen Stand, bevor die Antwort da ist; lehnt der
+   * Server ab, springt er zurück und sagt, warum. Alles andere wäre ein
+   * Schalter, der eine Wirkung behauptet, die es nicht gibt.
+   */
+  function toggleModule(module: ClubModule, enabled: boolean) {
+    const previous = modules;
+    const next = { ...modules, [module]: enabled };
+    setModules(next);
+
+    saveModules.mutate(next, {
+      onSuccess: () =>
+        toast.success(
+          t(enabled ? 'clubSettings.moduleOn' : 'clubSettings.moduleOff', {
+            module: t(`clubSettings.module.${module}.title`),
+          }),
+        ),
+      onError: (cause) => {
+        setModules(previous);
+        toast.failure(cause.message);
+      },
+    });
+  }
 
   function persist() {
     // Welche Datei nach dem Speichern wegzuräumen ist: die bisherige, sofern
@@ -226,9 +260,7 @@ export function ClubSettingsPage() {
               <IonItem key={module}>
                 <IonToggle
                   checked={modules[module] === true}
-                  onIonChange={(e) =>
-                    setModules((current) => ({ ...current, [module]: e.detail.checked }))
-                  }
+                  onIonChange={(e) => toggleModule(module, e.detail.checked)}
                 >
                   <IonLabel className="ion-text-wrap">
                     <h2>{t(`clubSettings.module.${module}.title`)}</h2>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   IonAlert,
   IonBadge,
@@ -16,13 +16,23 @@ import { ListSection } from '../../components/ListSection';
 import { TextSection } from '../../components/TextSection';
 import { OfficeDetailModal } from '../../components/OfficeDetailModal';
 import { OfficeFormModal } from '../../components/OfficeFormModal';
+import { OfficeImportModal } from '../../components/OfficeImportModal';
 import { EmptyState, ErrorState } from '../../components/StateViews';
 import { SkeletonList } from '../../components/Skeletons';
 import { useClub } from '../../hooks/useClub';
+import { useOfficeMarkdown } from '../../hooks/useOfficeMarkdown';
 import { useDeleteOffice, useOffices } from '../../hooks/useOffices';
 import { useRefreshOnEnter } from '../../hooks/useRefreshOnEnter';
 import { useToast } from '../../hooks/useToast';
-import { holderNames, isVacant, openSeats, sortOffices, type Office } from '../../lib/office';
+import {
+  groupOffices,
+  holderNames,
+  isVacant,
+  openSeats,
+  sortOffices,
+  type Office,
+} from '../../lib/office';
+import { OFFICE_MARKDOWN_ACCEPT } from '../../lib/officeMarkdown';
 
 interface OfficePageProps {
   /** Woher die Person kommt: aus dem Profil (Verwaltung) oder aus dem Marktplatz. */
@@ -48,19 +58,36 @@ export function OfficePage({ backHref = '/tabs/profile' }: OfficePageProps) {
   const { isAdmin } = useClub();
   const offices = useOffices();
   const remove = useDeleteOffice();
+  const markdown = useOfficeMarkdown();
   useRefreshOnEnter([['offices']]);
 
   const [openId, setOpenId] = useState<string | null>(null);
   const [editId, setEditId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [dissolving, setDissolving] = useState<Office | null>(null);
+  // Die gewählte Datei, schon gelesen: Das Blatt zeigt daraus, was sie ändert.
+  const [importFile, setImportFile] = useState<{ text: string; name: string } | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
 
   const rows = sortOffices(offices.data ?? []);
   const vacant = rows.filter(isVacant);
+  // BR-237: Der Vorstand steht als eigene Gruppe – er ist das Gremium, an das
+  // Sitzungen und Vorschläge gehen, und nicht ein Amt unter vielen. Führt ein
+  // Verein keine Vorstandsämter, bleibt es bei der einen Liste; eine leere
+  // Gruppe wäre eine Überschrift ohne Inhalt.
+  const { board, others } = groupOffices(rows);
   // Aus der Liste gelesen, nicht kopiert: Nach dem Sichern zeigt das Blatt
   // den neuen Stand.
   const openOffice = rows.find((office) => office.id === openId) ?? null;
   const editOffice = rows.find((office) => office.id === editId) ?? null;
+
+  async function readFile(file: File) {
+    try {
+      setImportFile({ text: await file.text(), name: file.name });
+    } catch {
+      toast.failure(t('offices.markdown.fileError'));
+    }
+  }
 
   function startEdit(office: Office) {
     setOpenId(null);
@@ -130,9 +157,25 @@ export function OfficePage({ backHref = '/tabs/profile' }: OfficePageProps) {
           }
         />
       ) : (
-        <ListSection title={t('offices.list')} footnote={t('offices.hint')}>
-          {rows.map(renderRow)}
-        </ListSection>
+        <>
+          {board.length > 0 && (
+            <ListSection
+              title={t('offices.boardGroup')}
+              footnote={t('offices.boardGroupHint')}
+            >
+              {board.map(renderRow)}
+            </ListSection>
+          )}
+
+          {others.length > 0 && (
+            <ListSection
+              title={t(board.length > 0 ? 'offices.otherGroup' : 'offices.list')}
+              footnote={t('offices.hint')}
+            >
+              {others.map(renderRow)}
+            </ListSection>
+          )}
+        </>
       )}
 
       {vacant.length > 0 && (
@@ -143,6 +186,56 @@ export function OfficePage({ backHref = '/tabs/profile' }: OfficePageProps) {
           </p>
         </TextSection>
       )}
+
+      {/* UC-041 A7/A8: Die Ämterbeschreibungen liegen nicht nur hier, sondern
+          auch in der Ablage des Vereins – auf Drive, in SharePoint, im Ordner
+          des Präsidiums. Der Abschnitt ist die Tür dorthin und zurück; das
+          Einlesen steht bewusst nicht beim Plus, weil es kein leeres Formular
+          öffnet, sondern eine Datei prüft. */}
+      {isAdmin && (
+        <ListSection
+          title={t('offices.markdown.section')}
+          footnote={t('offices.markdown.sectionHint')}
+        >
+          <IonItem
+            button
+            detail={false}
+            disabled={rows.length === 0}
+            onClick={() => void markdown.exportOffices(rows)}
+          >
+            <IonLabel className="ion-text-wrap">
+              <h2>{t('offices.markdown.exportAll')}</h2>
+              <IonNote>{t('offices.markdown.exportAllHint')}</IonNote>
+            </IonLabel>
+          </IonItem>
+          <IonItem button detail={false} onClick={() => fileInput.current?.click()}>
+            <IonLabel className="ion-text-wrap">
+              <h2>{t('offices.markdown.import')}</h2>
+              <IonNote>{t('offices.markdown.importHint')}</IonNote>
+            </IonLabel>
+          </IonItem>
+          <IonItem button detail={false} onClick={() => void markdown.exportTemplate()}>
+            <IonLabel className="ion-text-wrap">
+              <h2>{t('offices.markdown.template')}</h2>
+              <IonNote>{t('offices.markdown.templateHint')}</IonNote>
+            </IonLabel>
+          </IonItem>
+        </ListSection>
+      )}
+
+      {/* Der Dateiwähler ist ein verstecktes Feld – der sichtbare Weg trägt
+          den Namen der Handlung (wie beim Factsheet und beim Zahlungsabgleich). */}
+      <input
+        ref={fileInput}
+        type="file"
+        accept={OFFICE_MARKDOWN_ACCEPT}
+        hidden
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          e.target.value = '';
+          if (file) void readFile(file);
+        }}
+      />
 
       {/* guidelines §2: Die Rückfrage steht **vor** der Aktion, und die Farbe
           des Knopfs kommt aus seiner Rolle – nicht aus einem `color`. */}
@@ -181,6 +274,12 @@ export function OfficePage({ backHref = '/tabs/profile' }: OfficePageProps) {
             : undefined
         }
         onDismiss={() => setOpenId(null)}
+      />
+
+      <OfficeImportModal
+        file={importFile}
+        onDismiss={() => setImportFile(null)}
+        onDone={() => setImportFile(null)}
       />
 
       <OfficeFormModal

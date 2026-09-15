@@ -13,6 +13,12 @@ export interface CreateEventInput {
   location: string | null;
   why: string | null;
   teamId: string | null;
+  /**
+   * FR-096: die Ämter, an die eine Sitzung geht. Der Verteiler wird **beim
+   * Zustellen** aufgelöst (BR-133) – hier stehen deshalb Amts-Kennungen und
+   * keine Namen. Für jeden anderen Termintyp leer.
+   */
+  committeeRoleIds?: string[];
   pointRuleCode: string | null;
   /** FR-029: benötigte Teilnehmerzahl; `null` heisst «kein Bedarf». */
   capacityNeeded: number | null;
@@ -85,6 +91,14 @@ export function useCreateEvent() {
         ends_at: occurrence.endsAt ? toTimestamp(occurrence.endsAt) : null,
         location: input.location?.trim() || null,
         capacity_needed: input.capacityNeeded,
+        // Leer heisst «kein Gremium»: `null` statt `[]`, weil jede Prüfung
+        // serverseitig mit `jsonb_array_length(...)` über `coalesce` geht und
+        // eine leere Liste dort dasselbe bedeutet – aber nur `null` sagt, dass
+        // nie eines gesetzt wurde.
+        audience_role_ids:
+          input.committeeRoleIds && input.committeeRoleIds.length > 0
+            ? (input.committeeRoleIds as unknown as Json)
+            : null,
         point_rule_code: input.pointRuleCode,
         created_by: activeMembership?.id ?? null,
       }));
@@ -173,6 +187,8 @@ export function useUpdateEvent() {
       why?: string | null;
       pointRuleCode?: string | null;
       capacityNeeded?: number | null;
+      /** FR-096: das Gremium einer Sitzung; `undefined` heisst unverändert. */
+      committeeRoleIds?: string[];
     }) => {
       // Typisiert statt Record: Sonst nimmt supabase-js jeden Spaltennamen an,
       // auch einen falsch geschriebenen, und die Änderung liefe ins Leere.
@@ -182,6 +198,9 @@ export function useUpdateEvent() {
       if (input.why !== undefined) patch.why = input.why?.trim() || null;
       if (input.pointRuleCode !== undefined) patch.point_rule_code = input.pointRuleCode;
       if (input.capacityNeeded !== undefined) patch.capacity_needed = input.capacityNeeded;
+      if (input.committeeRoleIds !== undefined) {
+        patch.audience_role_ids = input.committeeRoleIds as unknown as Json;
+      }
       if (Object.keys(patch).length === 0) return;
 
       // Zeiten bleiben aussen vor: Sie unterscheiden die Termine einer Serie

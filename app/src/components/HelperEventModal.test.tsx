@@ -7,6 +7,18 @@ import { renderWithProviders } from '../test/utils';
 const createMutateAsync = vi.fn();
 const publishMutateAsync = vi.fn();
 
+/**
+ * Der Punktvorschlag misst am Einsatzwert des Vereins (BR-205) und holt ihn
+ * über `useAllPointRules()`, das seinerseits `useClub()` braucht. Der Verein
+ * gehört nicht zu dem, was dieser Test prüft – hier steht deshalb die Regel
+ * mit ihrem Standardwert.
+ */
+vi.mock('../hooks/usePointRules', () => ({
+  useAllPointRules: () => ({
+    data: [{ code: 'shift_done', points: 50 }],
+  }),
+}));
+
 vi.mock('../hooks/useHelperEvents', () => ({
   useCreateHelperEvent: () => ({
     mutateAsync: createMutateAsync,

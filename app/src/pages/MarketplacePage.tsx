@@ -461,7 +461,13 @@ export function MarketplacePage() {
                       {[
                         matchedOfficeIds.has(office.id) ? t('offices.matches') : null,
                         office.hoursPerSeason,
-                        office.pointsLabel,
+                        // BR-206: der Punktwert dieser App, nicht die alte
+                        // Vereinsskala. Der Zusatz aus `points_label` gehört
+                        // ins Factsheet, nicht in die Zeile im Marktplatz –
+                        // hier zählt, was der Einsatz bringt.
+                        office.seasonPoints !== null
+                          ? t('offices.pointsValue', { count: office.seasonPoints })
+                          : null,
                       ]
                         .filter((part): part is string => Boolean(part))
                         .join(' · ')}

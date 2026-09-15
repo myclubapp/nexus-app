@@ -72,6 +72,21 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
   },
+  /**
+   * Abhängigkeiten im Test wie im Browser auflösen.
+   *
+   * Vitest schickt die Tests durch Vites SSR-Pfad und löst Pakete deshalb mit
+   * der Bedingung `node` auf. Ionic baut seine React-Hüllen über `@lit/react`,
+   * und dessen Node-Fassung meldet **keine Ereignisse** an: `onIonChange` kam
+   * an keinem `ion-toggle` an, jede Zusicherung über einen umgelegten Schalter
+   * lief ins Leere und sah aus wie ein Fehler der Ansicht. Für den Browser-Bau
+   * ändert das nichts – die App wird nie serverseitig gerendert.
+   */
+  ssr: {
+    resolve: {
+      conditions: ['browser', 'development', 'import', 'default'],
+    },
+  },
   test: {
     environment: 'jsdom',
     globals: true,
