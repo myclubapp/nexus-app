@@ -23,6 +23,9 @@
 - Mindestens ein **Vorstandsamt** mit Inhaber:in (UC-041, `is_board`), dazu ein
   zweites, **unbesetztes** Vorstandsamt für TC-007.
 - Ein Porträtbild als JPG oder PNG, unter 5 MiB.
+- Für TC-008 Schritt 6 auf dem Gerät: Ist der Universal-Link-Strang ausgeliefert,
+  öffnet der Knopf im Mailblatt die App; ohne ihn den Browser. Der Link selbst
+  ist in beiden Fällen derselbe.
 
 ---
 
@@ -144,7 +147,7 @@
 | 3 | Das Postfach von **M** prüfen (bis 5 Minuten, Cron `mail-send`) | Eine Mail «<Verein>: Vereins-Puls» mit den **drei Abschnitten** – nicht eine Zeile mit Link | | |
 | 4 | Den Gruss am Fuss prüfen | Text, Name, Amt; das Porträt lädt erst auf Klick, Name und Amt stehen ohne Bild da (BR-254) | | |
 | 5 | Im selben Zeitraum eine zweite Meldung erzeugen (z.B. eine Aufgabe ausschreiben) | Sie kommt als **eigene** Mail; der Puls bündelt nicht mit (Ausnahme zu BR-213) | | |
-| 6 | Den Knopf «In der App öffnen» antippen | Die Leseansicht des Pulses öffnet sich | | |
+| 6 | Den Knopf «In der App öffnen» antippen | Die Leseansicht des Pulses öffnet sich. **Auf dem Gerät** öffnet sich dabei die installierte App und nicht der Browser, sobald Universal Links / App Links aktiv sind – der Link `<APP_URL>/tabs/pulse/<id>` fällt unter die beanspruchten Pfade. Im Browser öffnet sich die PWA. Beides ist richtig | | |
 | 7 | Die Mail in einem zweiten Programm ansehen (Gmail-Web und Apple Mail) | Kopfband, Abschnitte und Gruss stehen; nichts ist zerfallen | | |
 
 ---
