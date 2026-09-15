@@ -17,6 +17,7 @@
 import {
   brandColor,
   button,
+  copyLink,
   paragraph,
   renderShell,
   whyLine,
@@ -40,6 +41,13 @@ export interface AuthMailInput {
   brand: MailBrand;
   /** Die Adresse hinter der Schaltfläche. */
   confirmUrl: string;
+  /**
+   * Dieselbe Anmeldung als Adresse zum Kopieren (`verifyLink()` in `hook.ts`).
+   *
+   * `null`, wenn die App-Adresse fehlt – dann steht nur die Schaltfläche da,
+   * wie vor UC-048.
+   */
+  copyUrl: string | null;
   year: number;
 }
 
@@ -48,6 +56,8 @@ type ActionStrings = { subject: string; intro: string; action: string; why: stri
 type Strings = {
   greeting: string;
   whyLabel: string;
+  /** Über der Adresse zum Kopieren. */
+  copyLabel: string;
   validity: string;
   footnote: string;
   actions: Record<AuthAction, ActionStrings>;
@@ -57,6 +67,7 @@ const STRINGS: Record<Locale, Strings> = {
   de: {
     greeting: 'Hallo',
     whyLabel: 'Warum diese Mail:',
+    copyLabel: 'Geht die Schaltfläche nicht? Kopiere diese Adresse in deinen Browser:',
     validity: 'Der Link gilt eine Stunde und nur ein einziges Mal.',
     footnote:
       'Diese Mail gehört zu deinem Zugang und lässt sich nicht abbestellen – sie kommt nur, wenn jemand sie anfordert.',
@@ -102,6 +113,7 @@ const STRINGS: Record<Locale, Strings> = {
   fr: {
     greeting: 'Bonjour',
     whyLabel: 'Pourquoi cet e-mail :',
+    copyLabel: 'Le bouton ne fonctionne pas ? Copie cette adresse dans ton navigateur :',
     validity: 'Le lien est valable une heure et une seule fois.',
     footnote:
       'Cet e-mail fait partie de ton accès et ne peut pas être désactivé – il n’arrive que si quelqu’un le demande.',
@@ -147,6 +159,7 @@ const STRINGS: Record<Locale, Strings> = {
   it: {
     greeting: 'Ciao',
     whyLabel: 'Perché questa e-mail:',
+    copyLabel: 'Il pulsante non funziona? Copia questo indirizzo nel tuo browser:',
     validity: 'Il link vale un’ora e una sola volta.',
     footnote:
       'Questa e-mail fa parte del tuo accesso e non si può disattivare – arriva solo se qualcuno la richiede.',
@@ -192,6 +205,7 @@ const STRINGS: Record<Locale, Strings> = {
   en: {
     greeting: 'Hi',
     whyLabel: 'Why this email:',
+    copyLabel: 'Button not working? Copy this address into your browser:',
     validity: 'The link is valid for one hour and only once.',
     footnote:
       'This email belongs to your account access and cannot be switched off – it only arrives when someone asks for it.',
@@ -252,9 +266,14 @@ export function authMail(input: AuthMailInput): { subject: string; html: string;
   // sonst «Dein Anmeldelink» ohne jeden Hinweis, wovon.
   const subject = club ? `${club}: ${a.subject}` : a.subject;
 
+  // Zwei Wege in dieselbe Anmeldung, und die Reihenfolge ist die Aussage: Die
+  // Schaltfläche ist der kurze Weg, die Adresse darunter der, der auch auf
+  // einem anderen Gerät ankommt. Beide lösen denselben Token ein – wer den
+  // einen benutzt, entwertet den anderen (BR-018).
   const sections: MailSection[] = [
     paragraph(a.intro),
     button(a.action, input.confirmUrl, color),
+    ...(input.copyUrl ? [copyLink(t.copyLabel, input.copyUrl)] : []),
     paragraph(t.validity),
     whyLine(t.whyLabel, a.why, color),
   ];

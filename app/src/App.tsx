@@ -30,6 +30,7 @@ import { AuthProvider } from './hooks/useAuth';
 import { ClubProvider } from './hooks/useClub';
 import { LoginPage } from './pages/auth/LoginPage';
 import { AuthCallbackPage } from './pages/auth/AuthCallbackPage';
+import { AuthVerifyPage } from './pages/auth/AuthVerifyPage';
 import { OnboardingPage } from './pages/onboarding/OnboardingPage';
 import { JoinByInvitePage } from './pages/onboarding/JoinByInvitePage';
 import { TabsPage } from './pages/TabsPage';
@@ -85,6 +86,11 @@ export default function App() {
                   }
                 />
                 <Route path="/auth/callback" element={<AuthCallbackPage />} />
+                {/* Der Anmeldelink zum Kopieren (UC-005 A5). Er bringt den
+                    Token-Hash statt eines PKCE-Codes mit und wirkt deshalb
+                    auch in einem Browser, der die Anmeldung nicht begonnen
+                    hat. */}
+                <Route path="/auth/verify" element={<AuthVerifyPage />} />
                 {/* Ohne Anmeldeschranke: Der Einladungslink erreicht Gäste, die
                     noch kein Konto haben (UC-002). Die Seite selbst führt bei
                     Bedarf durch die Anmeldung. */}

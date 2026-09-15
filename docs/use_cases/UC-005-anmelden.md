@@ -57,6 +57,21 @@
 1. System kehrt nach der Anmeldung zur Einladung zurück.
 2. Use case ends.
 
+### A5: Link auf einem anderen Gerät oder in einem anderen Browser öffnen
+
+**Trigger:** Die Person kopiert den Anmeldelink aus der E-Mail und fügt ihn dort ein, wo die Anmeldung nicht begonnen hat (Schritt 4)
+**Flow:**
+
+1. Mitglied kopiert die in der E-Mail ausgeschriebene Adresse und öffnet sie im Browser.
+2. System löst den Token-Hash aus der Adresse ein und meldet das Mitglied an.
+3. Use case continues at step 6.
+
+**Hinweis:** Die Schaltfläche der E-Mail und diese Adresse führen in dieselbe
+Anmeldung, aber auf verschiedenen Wegen. Die Schaltfläche geht über den
+Prüfendpunkt von Supabase und endet mit einem PKCE-Code, der nur dort
+einlösbar ist, wo die Anmeldung begonnen hat. Die ausgeschriebene Adresse
+trägt den Token-Hash direkt in die App und ist deshalb an kein Gerät gebunden.
+
 ## Postconditions
 
 ### Success Postconditions
@@ -78,6 +93,8 @@ Es gibt weder Google- noch Facebook- noch Apple-Login. Die Anmeldung erfolgt aus
 ### BR-018: Anmeldelink ist einmalig
 
 Ein Anmeldelink ist genau einmal einlösbar und läuft nach der vom Backend gesetzten Frist ab.
+Die Schaltfläche der E-Mail und die Adresse zum Kopieren (A5) lösen **denselben** Token ein:
+Wer den einen Weg geht, entwertet damit den anderen.
 
 ### BR-019: Sitzung bleibt bestehen
 

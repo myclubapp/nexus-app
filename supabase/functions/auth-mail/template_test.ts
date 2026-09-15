@@ -3,7 +3,7 @@
  */
 import { assert, assertEquals, assertStringIncludes } from 'jsr:@std/assert@1';
 import { authAction, authMail } from './template.ts';
-import { confirmUrl, verifySignature } from './hook.ts';
+import { confirmUrl, verifyLink, verifySignature } from './hook.ts';
 
 const brand = { clubName: 'Kadetten', color: '#1a73e8', logoUrl: null };
 
@@ -20,6 +20,7 @@ Deno.test('Betreff nennt den Verein, das Blatt trägt seine Farbe', () => {
     locale: 'de',
     brand,
     confirmUrl: 'https://p.supabase.co/auth/v1/verify?token=abc',
+    copyUrl: 'https://app.my-club.ch/auth/verify?token_hash=abc&type=magiclink',
     year: 2026,
   });
   assertEquals(mail.subject, 'Kadetten: Dein Anmeldelink');
@@ -34,6 +35,7 @@ Deno.test('Ohne Verein steht myclub im Betreff und im Kopfband', () => {
     locale: 'fr',
     brand: { clubName: null, color: null, logoUrl: null },
     confirmUrl: 'https://p.supabase.co/auth/v1/verify?token=abc',
+    copyUrl: 'https://app.my-club.ch/auth/verify?token_hash=abc&type=magiclink',
     year: 2026,
   });
   assertEquals(mail.subject, 'Confirme ton adresse');
@@ -49,6 +51,8 @@ Deno.test('Jede Sprache und jeder Anlass ergeben ein Blatt mit Warum', () => {
         locale,
         brand,
         confirmUrl: 'https://p.supabase.co/auth/v1/verify?token=abc',
+    copyUrl: 'https://app.my-club.ch/auth/verify?token_hash=abc&type=magiclink',
+      copyUrl: 'https://app.my-club.ch/auth/verify?token_hash=abc&type=magiclink',
         year: 2026,
       });
       assert(mail.subject.length > 0, `${locale}/${action}`);
@@ -67,6 +71,8 @@ Deno.test('Die Mail bietet keinen Code zum Abtippen an', () => {
       locale,
       brand,
       confirmUrl: 'https://p.supabase.co/auth/v1/verify?token=abc',
+    copyUrl: 'https://app.my-club.ch/auth/verify?token_hash=abc&type=magiclink',
+      copyUrl: 'https://app.my-club.ch/auth/verify?token_hash=abc&type=magiclink',
       year: 2026,
     });
     for (const text of ['Oder gib diesen Code', 'saisis ce code', 'inserisci questo codice', 'enter this code']) {
@@ -74,6 +80,67 @@ Deno.test('Die Mail bietet keinen Code zum Abtippen an', () => {
       assert(!mail.text.includes(text), `${locale} (Text): ${text}`);
     }
   }
+});
+
+// --- Der zweite Weg: die Adresse zum Kopieren -------------------------------
+
+Deno.test('Jede Sprache bietet die Adresse zum Kopieren an – als Text und im Blatt', () => {
+  const copyUrl = 'https://app.my-club.ch/auth/verify?token_hash=abc&type=magiclink';
+  for (const locale of ['de', 'fr', 'it', 'en'] as const) {
+    const mail = authMail({
+      action: 'magiclink',
+      locale,
+      brand,
+      confirmUrl: 'https://p.supabase.co/auth/v1/verify?token=abc',
+      copyUrl,
+      year: 2026,
+    });
+    // Im Blatt ausgeschrieben – eine Schaltfläche lässt sich nicht markieren.
+    // Das `&` steht dort als `&amp;`; so verlangt es HTML, und so liest der
+    // Browser es wieder als `&`.
+    const inHtml = copyUrl.replace('&', '&amp;');
+    assertStringIncludes(mail.html, `href="${inHtml}"`, locale);
+    assertStringIncludes(mail.html, `>${inHtml}</a>`, locale);
+    // Und im Textteil auf einer eigenen Zeile, ohne Satzzeichen daneben.
+    assertStringIncludes(mail.text, `\n${copyUrl}`, locale);
+  }
+});
+
+// Ohne `APP_URL` gibt es die zweite Adresse nicht. Die Mail muss dann trotzdem
+// hinausgehen – sie steht auf dem Weg zur Anmeldung.
+Deno.test('Ohne Kopieradresse bleibt das Blatt vollständig', () => {
+  const mail = authMail({
+    action: 'magiclink',
+    locale: 'de',
+    brand,
+    confirmUrl: 'https://p.supabase.co/auth/v1/verify?token=abc',
+    copyUrl: null,
+    year: 2026,
+  });
+  assertStringIncludes(mail.html, 'Jetzt anmelden');
+  assert(!mail.html.includes('/auth/verify'));
+  assert(!mail.html.includes('Kopiere diese Adresse'));
+});
+
+Deno.test('Die Kopieradresse führt in die App und trägt den Token-Hash', () => {
+  const url = verifyLink('https://app.my-club.ch', 'hash123', 'recovery');
+  assertEquals(
+    url,
+    'https://app.my-club.ch/auth/verify?token_hash=hash123&type=recovery',
+  );
+  // Ein Pfad in APP_URL gehört nicht in die Adresse.
+  assertStringIncludes(
+    verifyLink('https://app.my-club.ch/tabs/dashboard', 'h', 'magiclink')!,
+    'https://app.my-club.ch/auth/verify?',
+  );
+});
+
+Deno.test('Ohne App-Adresse und ohne TLS gibt es keine Kopieradresse', () => {
+  assertEquals(verifyLink(null, 'hash123', 'magiclink'), null);
+  assertEquals(verifyLink(undefined, 'hash123', 'magiclink'), null);
+  assertEquals(verifyLink('', 'hash123', 'magiclink'), null);
+  assertEquals(verifyLink('http://app.my-club.ch', 'hash123', 'magiclink'), null);
+  assertEquals(verifyLink('kein-url', 'hash123', 'magiclink'), null);
 });
 
 Deno.test('Die Bestätigungsadresse entsteht aus dem Prüfendpunkt des Projekts', () => {
