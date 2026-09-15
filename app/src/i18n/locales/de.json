@@ -955,7 +955,8 @@
     "unread_one": "{{count}} ungelesen",
     "unread_other": "{{count}} ungelesen",
     "hint": "Jede Benachrichtigung steht hier – auch ohne Push. Antippen öffnet den Anlass und markiert sie als gelesen.",
-    "gone": "Dieser Eintrag ist nicht mehr da."
+    "gone": "Dieser Eintrag ist nicht mehr da.",
+    "whyLabel": "Warum:"
   },
   "taskCategory": {
     "organisation": "Organisation",
@@ -1334,6 +1335,20 @@
       "notConfigured": "Push ist in dieser Installation noch nicht eingerichtet. Die Inbox enthält alles.",
       "denied": "Push ist für diese App gesperrt. Du kannst das in den Systemeinstellungen ändern – die Inbox enthält weiterhin alles.",
       "ready": "Bereit."
+    },
+    "why": {
+      "event": "Der Verein plant mit deiner Antwort – auch ein Nein hilft.",
+      "points": "Damit du siehst, wofür dein Beitrag gezählt hat.",
+      "task": "Weil der Verein für diese Arbeit Hände braucht.",
+      "news": "Damit du weisst, was im Verein läuft.",
+      "pulse": "Die Woche des Vereins auf einen Blick – damit niemand raten muss.",
+      "health": "Damit im Verein niemand übersehen wird.",
+      "join_request": "Es betrifft deine Mitgliedschaft.",
+      "input": "Damit du siehst, was aus deinem Anliegen geworden ist.",
+      "checkin": "Deine Antwort ist freiwillig und bleibt bei dir.",
+      "system": "Es betrifft deinen Zugang zur App.",
+      "invoice": "Die Beiträge tragen den Vereinsbetrieb.",
+      "general": "Aus deinem Verein."
     }
   },
   "voice": {

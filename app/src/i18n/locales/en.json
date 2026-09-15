@@ -955,7 +955,8 @@
     "unread_one": "{{count}} unread",
     "unread_other": "{{count}} unread",
     "hint": "Every notification is listed here – even without push. Tapping opens the item and marks it as read.",
-    "gone": "This entry is no longer there."
+    "gone": "This entry is no longer there.",
+    "whyLabel": "Why:"
   },
   "taskCategory": {
     "organisation": "Organisation",
@@ -1334,6 +1335,20 @@
       "notConfigured": "Push is not set up in this installation yet. The inbox holds everything.",
       "denied": "Push is blocked for this app. You can change that in the system settings – the inbox still holds everything.",
       "ready": "Ready."
+    },
+    "why": {
+      "event": "The club plans around your answer – a no helps too.",
+      "points": "So you can see what your contribution counted for.",
+      "task": "Because the club needs hands for this work.",
+      "news": "So you know what is going on in the club.",
+      "pulse": "The club’s week at a glance – so nobody has to guess.",
+      "health": "So nobody in the club goes unnoticed.",
+      "join_request": "It concerns your membership.",
+      "input": "So you can see what became of your proposal.",
+      "checkin": "Your answer is voluntary and stays with you.",
+      "system": "It concerns your access to the app.",
+      "invoice": "Membership fees carry the club.",
+      "general": "From your club."
     }
   },
   "voice": {

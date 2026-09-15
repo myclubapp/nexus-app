@@ -22,7 +22,7 @@ export type {
   TablesUpdate,
 } from './database.generated';
 
-/* --- Übergang bis `supabase db push` für `0092`–`0094` gelaufen ist -------
+/* --- Übergang bis `supabase db push` für `0092`–`0096` gelaufen ist -------
  *
  * `types:generate` kennt die neuen Funktionen erst, wenn die Migration remote
  * steht. Bis dahin wird der fehlende Stand **hier** nachgebildet und nicht in
@@ -32,9 +32,23 @@ export type {
  * Nach dem Push und `npm run types:generate` gehört dieser Block gelöscht.
  */
 type Fn = Generated['public']['Functions'];
+type Tbl = Generated['public']['Tables'];
 
 export type Database = Omit<Generated, 'public'> & {
-  public: Omit<Generated['public'], 'Functions'> & {
+  public: Omit<Generated['public'], 'Functions' | 'Tables'> & {
+    /**
+     * `0096`: Jede Meldung trägt ihr Warum (FR-183) und – wenn sie ein eigenes
+     * Blatt im Postfach bekommt – dessen Namen (FR-184). Beides schreibt nur
+     * der Server über `notify()`; die App liest.
+     */
+    Tables: Omit<Tbl, 'notifications'> & {
+      notifications: Omit<Tbl['notifications'], 'Row'> & {
+        Row: Tbl['notifications']['Row'] & {
+          why: string | null;
+          mail_template: string | null;
+        };
+      };
+    };
     Functions: Omit<Fn, 'leaderboard_rows' | 'team_ranking_rows'> & {
       /**
        * `0092`/`0093`: die Säulen dieses Vereins mit ihrer Wertdimension.
@@ -254,7 +268,11 @@ export type NewsSyncStatus = 'ok' | 'error';
  */
 export type ApiStyle = 'pretty' | 'query';
 
-export type Notification = Row<'notifications'>;
+/**
+ * `notifications` – `why` und `mail_template` kommen aus dem Übergangsblock
+ * oben, solange `0096` nicht eingespielt ist.
+ */
+export type Notification = Database['public']['Tables']['notifications']['Row'];
 // Die Sicht `leaderboard` ist mit `0039` gewichen: Die Rangfolge steht nur
 // noch in `leaderboard_rows()`, damit es nicht zwei Beschreibungen derselben
 // Sache gibt. Die Zeilenform liegt in `src/lib/leaderboard.ts`.

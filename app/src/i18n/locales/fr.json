@@ -955,7 +955,8 @@
     "unread_one": "{{count}} non lu",
     "unread_other": "{{count}} non lus",
     "hint": "Chaque notification figure ici, même sans push. Toucher ouvre l'élément concerné et la marque comme lue.",
-    "gone": "Cette entrée n'existe plus."
+    "gone": "Cette entrée n'existe plus.",
+    "whyLabel": "Pourquoi :"
   },
   "taskCategory": {
     "organisation": "Organisation",
@@ -1334,6 +1335,20 @@
       "notConfigured": "Le push n’est pas encore configuré dans cette installation. La boîte contient tout.",
       "denied": "Le push est bloqué pour cette app. Tu peux le changer dans les réglages du système – la boîte contient toujours tout.",
       "ready": "Prêt."
+    },
+    "why": {
+      "event": "Le club planifie avec ta réponse – même un non fait avancer.",
+      "points": "Pour que tu voies ce que ta contribution a compté.",
+      "task": "Parce que le club a besoin de bras pour ce travail.",
+      "news": "Pour que tu saches ce qui se passe au club.",
+      "pulse": "La semaine du club en un coup d’œil – pour que personne ne devine.",
+      "health": "Pour que personne ne passe inaperçu dans le club.",
+      "join_request": "Cela concerne ton adhésion.",
+      "input": "Pour que tu voies ce qu’est devenue ta demande.",
+      "checkin": "Ta réponse est facultative et reste chez toi.",
+      "system": "Cela concerne ton accès à l’app.",
+      "invoice": "Les cotisations font vivre le club.",
+      "general": "De ton club."
     }
   },
   "voice": {

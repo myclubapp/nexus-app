@@ -19,8 +19,8 @@
  *                              genau einen.
  */
 import { createClient } from 'jsr:@supabase/supabase-js@2';
-import { SMTPClient } from 'https://deno.land/x/denomailer@1.6.0/mod.ts';
 import { invoiceMail, type Locale } from './mail.ts';
+import { catchSmtpRejections, fromHeader, openClient, readSmtpConfig } from '../_shared/smtp.ts';
 import {
   buildPdf,
   loadLogo,
@@ -40,43 +40,13 @@ const CORS_HEADERS = {
 // denomailer wirft die Antwort eines abweisenden Servers ausserhalb jedes
 // `await` – ohne diesen Fänger endet der Isolate und der Aufrufer sieht ein
 // leeres 503 (dieselbe Stelle wie in `send-mail`).
-globalThis.addEventListener('unhandledrejection', (event) => {
-  console.error('SMTP: unbehandelte Ablehnung', event.reason);
-  event.preventDefault();
-});
+catchSmtpRejections();
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
   });
-}
-
-interface SmtpConfig {
-  hostname: string;
-  port: number;
-  username: string;
-  password: string;
-  from: string;
-  fromName: string;
-}
-
-/** Liest den Zugang aus den Secrets; nennt die erste fehlende Variable. */
-function readSmtpConfig(): SmtpConfig | string {
-  const required = ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASSWORD', 'MAIL_FROM'] as const;
-  for (const name of required) {
-    if (!Deno.env.get(name)) return `Secret ${name} fehlt`;
-  }
-  const port = Number(Deno.env.get('SMTP_PORT') ?? '587');
-  if (!Number.isInteger(port) || port <= 0) return 'Secret SMTP_PORT ist keine Portnummer';
-  return {
-    hostname: Deno.env.get('SMTP_HOST')!,
-    port,
-    username: Deno.env.get('SMTP_USER')!,
-    password: Deno.env.get('SMTP_PASSWORD')!,
-    from: Deno.env.get('MAIL_FROM')!,
-    fromName: Deno.env.get('MAIL_FROM_NAME') ?? 'myclub',
-  };
 }
 
 /**
@@ -181,14 +151,24 @@ Deno.serve(async (request) => {
 
   const logo = await loadLogo(payload.club.logo_url);
 
-  const client = new SMTPClient({
-    connection: {
-      hostname: smtp.hostname,
-      port: smtp.port,
-      tls: smtp.port === 465,
-      auth: { username: smtp.username, password: smtp.password },
-    },
-  });
+  // UC-048: Die Begleitmail steht im Blatt des Vereins. Die Farbe holt eine
+  // eigene Zeile und nicht `invoice_payload()` – dessen Rumpf gehört der
+  // Rechnung, und eine Abfrage mehr je Lauf (nicht je Rechnung) wiegt weniger
+  // als eine zweite Stelle, an der das Blatt zusammengesetzt wird.
+  const appUrl = Deno.env.get('APP_URL') ?? null;
+  const { data: clubRow, error: clubError } = await admin
+    .from('clubs')
+    .select('settings')
+    .eq('id', payload.club.id)
+    .maybeSingle();
+  // Ohne Farbe geht die Mail in der Grundfarbe hinaus – aber nicht stumm:
+  // Sonst sähe der Verein nur, dass sein Auftritt fehlt, und niemand wüsste
+  // warum.
+  if (clubError) console.error('Vereinsfarbe nicht gelesen', clubError.message);
+  const themeColor =
+    (clubRow?.settings as { theme?: { primary?: string } } | null)?.theme?.primary ?? null;
+
+  const client = openClient(smtp);
 
   let sent = 0;
   const failed: { id: string; error: string }[] = [];
@@ -221,9 +201,12 @@ Deno.serve(async (request) => {
             amount: `${invoice.currency} ${Number(invoice.amount).toFixed(2)}`,
             dueDate: invoice.due_date,
             incompleteAddress: missing.length > 0,
+            color: themeColor,
+            logoUrl: payload.club.logo_url,
+            appUrl,
           });
           await client.send({
-            from: `${smtp.fromName} <${smtp.from}>`,
+            from: fromHeader(smtp, payload.club.name),
             to: invoice.email,
             subject: mail.subject,
             content: mail.text,

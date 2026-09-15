@@ -8,6 +8,10 @@
  * Function verschickt sie über den Vereins-SMTP (Infomaniak, TLS auf 465;
  * STARTTLS auf 587 scheiterte in der Edge-Laufzeit) und quittiert an der Zeile.
  *
+ * Seit UC-048 steht das Blatt in `_shared/mail.ts` und gilt für jede Mail des
+ * Vereins; eine Zeile mit eigenem Blatt (`mail_template`) bekommt statt der
+ * Meldungsliste ihr eigenes Schreiben – heute die Willkommensmail.
+ *
  * Zwei Betriebsarten, beide nur für `service_role`:
  *   { mode: 'run' }          – der Lauf alle fünf Minuten (`0084`, Cron `mail-send`).
  *   { mode: 'test', to }     – eine Probemail an eine Adresse, ohne die
@@ -18,22 +22,11 @@
  * nichts tut, wäre nach zwei Wochen unbemerkt.
  */
 import { createClient } from 'jsr:@supabase/supabase-js@2';
-import { SMTPClient } from 'https://deno.land/x/denomailer@1.6.0/mod.ts';
-import { renderMail, type Locale, type MailGroup, type MailItem } from './template.ts';
+import { renderMail, singleClub, type MailGroup, type MailItem } from './template.ts';
+import { catchSmtpRejections, fromHeader, openClient, readSmtpConfig } from '../_shared/smtp.ts';
+import { LOCALES, type Locale } from '../_shared/mail.ts';
 
-const LOCALES: readonly Locale[] = ['de', 'fr', 'it', 'en'];
-
-/**
- * denomailer liest die Antworten des Servers in einer eigenen Schleife. Weist
- * der Server ein Kommando ab, wirft die Schleife ausserhalb jedes `await` –
- * eine unbehandelte Ablehnung, die den ganzen Isolate beendet, und der
- * Aufrufer sieht nur ein leeres 503. Hier wird sie abgefangen und geloggt;
- * der Fehler erreicht den Aufrufer über das gescheiterte `send()`.
- */
-globalThis.addEventListener('unhandledrejection', (event) => {
-  console.error('SMTP: unbehandelte Ablehnung', event.reason);
-  event.preventDefault();
-});
+catchSmtpRejections();
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -55,47 +48,14 @@ function tokenRole(authorization: string | null): string | null {
   }
 }
 
-interface SmtpConfig {
-  hostname: string;
-  port: number;
-  username: string;
-  password: string;
-  from: string;
-  fromName: string;
-}
-
-/** Liest den Zugang aus den Secrets; nennt die erste fehlende Variable. */
-function readSmtpConfig(): SmtpConfig | string {
-  const required = ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASSWORD', 'MAIL_FROM'] as const;
-  for (const name of required) {
-    if (!Deno.env.get(name)) return `Secret ${name} fehlt`;
-  }
-  const port = Number(Deno.env.get('SMTP_PORT') ?? '587');
-  if (!Number.isInteger(port) || port <= 0) return 'Secret SMTP_PORT ist keine Portnummer';
-  return {
-    hostname: Deno.env.get('SMTP_HOST')!,
-    port,
-    username: Deno.env.get('SMTP_USER')!,
-    password: Deno.env.get('SMTP_PASSWORD')!,
-    from: Deno.env.get('MAIL_FROM')!,
-    fromName: Deno.env.get('MAIL_FROM_NAME') ?? 'myclub',
-  };
-}
-
-function openClient(config: SmtpConfig): SMTPClient {
-  return new SMTPClient({
-    connection: {
-      hostname: config.hostname,
-      port: config.port,
-      // 465 spricht TLS von Anfang an; 587 beginnt im Klartext und wechselt
-      // per STARTTLS – denomailer tut das von selbst, wenn `tls` falsch ist.
-      tls: config.port === 465,
-      auth: { username: config.username, password: config.password },
-    },
-  });
-}
-
-/** Die Zeilen des Abholers, nach Konto gebündelt. */
+/**
+ * Die Zeilen des Abholers, nach Konto gebündelt.
+ *
+ * Eine Zeile mit eigenem Blatt (`mail_template`, z.B. die Willkommensmail aus
+ * UC-048) bündelt nie mit: Sie ist kein Eintrag in einer Liste, sondern ein
+ * eigenes Schreiben. Sie bekommt deshalb ihre eigene Gruppe, auch wenn im
+ * selben Lauf weitere Meldungen für dieselbe Person fällig sind.
+ */
 function groupRows(rows: PendingRow[]): MailGroup[] {
   const groups = new Map<string, MailGroup>();
   for (const row of rows) {
@@ -107,14 +67,19 @@ function groupRows(rows: PendingRow[]): MailGroup[] {
       body: row.body,
       link: row.link,
       createdAt: row.created_at,
+      why: row.why,
+      template: row.mail_template,
       clubName: row.club_name,
       clubColor: row.club_color,
+      clubLogo: row.club_logo,
+      clubWhy: row.club_why,
     };
-    const existing = groups.get(row.user_id);
+    const key = row.mail_template ? `${row.user_id}:${row.id}` : row.user_id;
+    const existing = groups.get(key);
     if (existing) {
       existing.items.push(item);
     } else {
-      groups.set(row.user_id, {
+      groups.set(key, {
         email: row.email,
         locale,
         displayName: row.display_name,
@@ -136,10 +101,14 @@ interface PendingRow {
   club_id: string | null;
   club_name: string | null;
   club_color: string | null;
+  club_logo: string | null;
+  club_why: string | null;
   category: string;
   title: string;
   body: string | null;
   link: string | null;
+  why: string | null;
+  mail_template: string | null;
   created_at: string;
 }
 
@@ -162,6 +131,9 @@ Deno.serve(async (request) => {
   if (typeof config === 'string') return json({ error: config }, 503);
 
   const appUrl = Deno.env.get('APP_URL') ?? null;
+  // Die Website, auf der die Einzelheiten stehen (FR-184). Fehlt sie, lässt
+  // die Willkommensmail den Verweis weg statt ins Leere zu zeigen.
+  const helpUrl = Deno.env.get('MAIL_HELP_URL') ?? null;
 
   if (mode === 'test') {
     const to = payload.to?.trim();
@@ -180,16 +152,20 @@ Deno.serve(async (request) => {
           body: 'Wenn du das liest, ist der Versand eingerichtet.',
           link: '/tabs/profile/notifications',
           createdAt: now,
+          why: 'Damit du siehst, wie eine Mail aus myclub aussieht.',
+          template: null,
           clubName: null,
           clubColor: null,
+          clubLogo: null,
+          clubWhy: null,
         },
       ],
     };
-    const mail = renderMail(group, { appUrl });
+    const mail = renderMail(group, { appUrl, helpUrl });
     const client = openClient(config);
     try {
       await client.send({
-        from: `${config.fromName} <${config.from}>`,
+        from: fromHeader(config, null),
         to,
         subject: mail.subject,
         content: mail.text,
@@ -224,10 +200,12 @@ Deno.serve(async (request) => {
   try {
     for (const group of groups) {
       const ids = group.items.map((item) => item.id);
-      const mail = renderMail(group, { appUrl });
+      const mail = renderMail(group, { appUrl, helpUrl });
       try {
         await client.send({
-          from: `${config.fromName} <${config.from}>`,
+          // Der Verein steht im Absender – aber nur, wenn alle Zeilen aus
+          // demselben stammen. Sonst wäre er für die Hälfte falsch.
+          from: fromHeader(config, singleClub(group.items)),
           to: group.email,
           subject: mail.subject,
           content: mail.text,

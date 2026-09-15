@@ -955,7 +955,8 @@
     "unread_one": "{{count}} non letto",
     "unread_other": "{{count}} non letti",
     "hint": "Ogni notifica è qui, anche senza push. Toccando si apre l'elemento e la notifica viene contrassegnata come letta.",
-    "gone": "Questa voce non esiste più."
+    "gone": "Questa voce non esiste più.",
+    "whyLabel": "Perché:"
   },
   "taskCategory": {
     "organisation": "Organizzazione",
@@ -1334,6 +1335,20 @@
       "notConfigured": "Il push non è ancora configurato in questa installazione. La posta contiene tutto.",
       "denied": "Il push è bloccato per questa app. Puoi cambiarlo nelle impostazioni di sistema – la posta contiene sempre tutto.",
       "ready": "Pronto."
+    },
+    "why": {
+      "event": "La società pianifica con la tua risposta – anche un no aiuta.",
+      "points": "Perché tu veda per cosa è valso il tuo contributo.",
+      "task": "Perché per questo lavoro la società ha bisogno di mani.",
+      "news": "Perché tu sappia cosa succede nella società.",
+      "pulse": "La settimana della società a colpo d’occhio – così nessuno deve indovinare.",
+      "health": "Perché nella società nessuno passi inosservato.",
+      "join_request": "Riguarda la tua adesione.",
+      "input": "Perché tu veda che ne è stato della tua proposta.",
+      "checkin": "La tua risposta è facoltativa e resta con te.",
+      "system": "Riguarda il tuo accesso all’app.",
+      "invoice": "Le quote sostengono la società.",
+      "general": "Dalla tua società."
     }
   },
   "voice": {

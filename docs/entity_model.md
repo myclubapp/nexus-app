@@ -536,6 +536,8 @@ Ein Eintrag der In-App-Inbox; sie erreicht alle Mitglieder unabhängig von Push.
 | title     | Titel der Benachrichtigung        | String    | 160              | Not Null                                |
 | body      | Text der Benachrichtigung         | String    | 1000             | Optional                                |
 | link      | Ziel beim Antippen                | String    | 500              | Optional                                |
+| why       | Warum diese Meldung kommt (FR-183) | String   | 500              | Optional; leer heisst: Standardsatz der Kategorie |
+| mail_template | Eigenes Blatt im Postfach (FR-184) | String | 30               | Optional; heute nur `welcome`           |
 | read_at   | Zeitpunkt des Lesens              | DateTime  | -                | Optional                                |
 | created_at| Zeitpunkt der Zustellung          | DateTime  | -                | Not Null                                |
 | push_wanted | Darf als Push hinaus (UC-028)   | Boolean   | -                | Not Null, Default true                  |
@@ -548,7 +550,7 @@ Ein Eintrag der In-App-Inbox; sie erreicht alle Mitglieder unabhängig von Push.
 | email_claimed_at | Sperre des laufenden Versands | DateTime | -               | Optional; verfällt nach 10 Minuten      |
 | email_error | Letzter Versandfehler           | String    | 500              | Optional                                |
 
-**Constraints:** Jede Zustellung entsteht hier, unabhängig davon, ob zusätzlich ein Push oder eine E-Mail versendet wird. Die Vermerke `push_*` und `email_*` werden beim Entstehen aus NOTIFICATION_SETTINGS berechnet; der Versand holt nur die offenen Zeilen ab und quittiert an ihnen.
+**Constraints:** Jede Zustellung entsteht hier, unabhängig davon, ob zusätzlich ein Push oder eine E-Mail versendet wird. Die Vermerke `push_*` und `email_*` werden beim Entstehen aus NOTIFICATION_SETTINGS berechnet; der Versand holt nur die offenen Zeilen ab und quittiert an ihnen. **Jede Zeile trägt ein Warum** – entweder `why` vom Auslöser oder den Standardsatz ihrer Kategorie (BR-239, `0096`); die Standardsätze stehen in `src/i18n` für die Inbox und in `send-mail/template.ts` für die Mail. Eine Zeile mit `mail_template` bekommt im Postfach ein eigenes Blatt statt der Meldungsliste und wird nie mit anderen gebündelt; je Person und Verein entsteht höchstens eine mit `welcome` (BR-240).
 
 ### NOTIFICATION_PREF
 

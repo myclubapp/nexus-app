@@ -50,6 +50,29 @@ enable_confirmations = true
 
 # Kein Google-/Apple-Login: Magic Link ist der Standardweg (Architektur §3.2).
 
+# ---------------------------------------------------------------------------
+# UC-048: Die Anmeldemails verschickt der Verein selbst.
+#
+# Ohne diesen Hook baut GoTrue die Mail aus seiner eigenen Vorlage: englisch,
+# ohne Vereinsfarbe, ohne Logo, ohne Erklärung, warum sie kommt. Mit ihm reicht
+# GoTrue Anlass, Person und Token an die Function `auth-mail` weiter, die
+# daraus dasselbe Blatt baut wie jede andere Mail des Vereins.
+#
+# **Diese Function steht auf dem Weg zur Anmeldung.** Fällt sie aus, bekommt
+# niemand mehr einen Link; `enabled = false` gibt den Versand sofort an GoTrue
+# zurück. Das Secret ist dasselbe, das in den Function-Secrets als
+# `SEND_EMAIL_HOOK_SECRET` steht (Form: `v1,whsec_<base64>`).
+#
+# Die Adresse zeigt auf das betriebene Projekt, wie `site_url` oben: Diese
+# Datei ist der deklarative Stand **auch für das verknüpfte Projekt**. Für die
+# lokale Entwicklung mit `supabase start` hier auf
+# `http://host.docker.internal:54321/functions/v1/auth-mail` umstellen – und
+# vor dem nächsten `config push` zurückdrehen.
+[auth.hook.send_email]
+enabled = true
+uri = "https://wrtbfmzpoahgjvecbpzh.supabase.co/functions/v1/auth-mail"
+secrets = "env(SEND_EMAIL_HOOK_SECRET)"
+
 # Der Import der Website-News prüft den Aufrufer selbst: `is_club_admin()` für
 # den Vorstand, die Rolle `service_role` für den nächtlichen Abgleich. Das
 # geprüfte JWT ist die Voraussetzung dafür und bleibt deshalb Pflicht.
@@ -64,3 +87,9 @@ verify_jwt = true
 
 [functions.payment-import]
 verify_jwt = true
+
+# UC-048: Der Hook «Send Email». GoTrue schickt kein JWT, sondern signiert den
+# Rumpf nach «Standard Webhooks» – die Function prüft diese Signatur selbst und
+# weist ohne sie mit 401 ab. `verify_jwt = true` würde den Hook aussperren.
+[functions.auth-mail]
+verify_jwt = false

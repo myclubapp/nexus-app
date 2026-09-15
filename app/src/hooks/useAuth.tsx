@@ -10,8 +10,10 @@ import {
 import type { Session, User } from '@supabase/supabase-js';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
+import i18n from '../i18n';
+import { toLanguage } from '../lib/language';
 import { authRedirectUrl, supabase, isConfigured } from '../lib/supabase';
-import { inviteCodeFromUrl, setPendingInvite } from '../lib/invite';
+import { inviteCodeFromUrl, peekPendingInvite, setPendingInvite } from '../lib/invite';
 import { authErrorFromUrl } from '../lib/authError';
 
 interface AuthContextValue {
@@ -124,11 +126,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  /**
+   * Den Anmeldelink anfordern (UC-005).
+   *
+   * `data` landet in `raw_user_meta_data` und **nur beim ersten Mal** – für
+   * ein bestehendes Konto lässt GoTrue es fallen. Genau dafür ist es hier:
+   * Der Hook `auth-mail` (UC-048) baut die Mail im Look des Vereins, kennt
+   * beim allerersten Anmeldelink aber weder Sprache noch Verein. Die Sprache
+   * steht später in `notification_settings` (`useLocaleSync`), der Verein in
+   * der Mitgliedschaft; bis dahin sind diese zwei Angaben die einzige Spur.
+   *
+   * Beides ist **Eingabe und kein Beleg**: `mail_brand()` prüft den Code
+   * gegen `invites`, statt ihm zu glauben.
+   */
   const signInWithMagicLink = useCallback(async (email: string) => {
     setAuthError(null);
+    const inviteCode = peekPendingInvite();
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: authRedirectUrl() },
+      options: {
+        emailRedirectTo: authRedirectUrl(),
+        data: {
+          locale: toLanguage(i18n.language),
+          ...(inviteCode ? { invite_code: inviteCode } : {}),
+        },
+      },
     });
     if (error) throw error;
   }, []);

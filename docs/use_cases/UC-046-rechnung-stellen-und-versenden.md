@@ -38,6 +38,7 @@
 12. System zeigt der Kassier:in den Stand der Periode: wie viele Rechnungen versendet sind und welcher Betrag offen ist.
 
 > Die Rechnung – Blatt wie Begleitmail – erscheint in der Sprache der Person, nicht in der des Vereins.
+> Die Begleitmail steht seit UC-048 im selben Blatt wie jede andere Mail des Vereins: Kopfband mit Logo und Vereinsfarbe, ein «Wofür» zu den Beiträgen, ein Weg zurück in die App.
 
 ## Alternative Flows
 

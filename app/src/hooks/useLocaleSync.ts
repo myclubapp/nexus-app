@@ -1,16 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase, isConfigured } from '../lib/supabase';
-import { SUPPORTED_LANGUAGES, type Language } from '../i18n';
+import { toLanguage } from '../lib/language';
 import { useAuth } from './useAuth';
 
-/** Die Sprache der Oberfläche auf die vier bekannten verengt. */
-export function toLanguage(value: string | undefined): Language {
-  const short = (value ?? '').slice(0, 2).toLowerCase();
-  return (SUPPORTED_LANGUAGES as readonly string[]).includes(short)
-    ? (short as Language)
-    : 'de';
-}
+// `toLanguage` stand bis UC-048 hier. Sie liegt jetzt in `lib/language.ts`,
+// weil `useAuth` sie ebenfalls braucht und dieser Hook `useAuth` importiert.
+// Der Weiterexport hält die bestehenden Importe gültig.
+export { toLanguage };
 
 /**
  * Die Sprache der App auf dem Server nachführen (UC-044).

@@ -195,4 +195,26 @@ describe('InboxPage', () => {
     renderWithProviders(<InboxPage />);
     expect(markRead).not.toHaveBeenCalled();
   });
+
+  // FR-183: Jede Zeile sagt, warum sie da ist – der Satz des Auslösers, sonst
+  // der Standardsatz der Kategorie. Eine Meldung, deren Zweck man erraten
+  // muss, ist eine Aufforderung.
+  it('zeigt den Standardsatz der Kategorie als Warum', () => {
+    const { container } = renderWithProviders(<InboxPage />);
+    expect(container.textContent).toContain('Warum:');
+    expect(container.textContent).toContain('Der Verein plant mit deiner Antwort');
+  });
+
+  it('zieht das Warum des Auslösers dem Standardsatz vor', () => {
+    inbox = [
+      entry({
+        category: 'task',
+        title: 'Kuchenstand am Turnier',
+        why: 'Der Erlös finanziert die Trikots der Junioren.',
+      }),
+    ];
+    const { container } = renderWithProviders(<InboxPage />);
+    expect(container.textContent).toContain('Der Erlös finanziert die Trikots der Junioren.');
+    expect(container.textContent).not.toContain('Hände braucht');
+  });
 });

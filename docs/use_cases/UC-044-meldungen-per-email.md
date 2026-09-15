@@ -21,7 +21,7 @@
 3. Mitglied wählt die Zustellung, wählt Kategorien ab und speichert.
 4. System hält die Wahl und die Sprache der App am Konto fest.
 5. Eine Meldung entsteht. System vermerkt an der Zeile, ob sie per E-Mail hinausgeht und ab wann – sofort oder zum Ende des Tages beziehungsweise der Woche.
-6. Alle fünf Minuten sammelt System die fälligen Zeilen je Konto ein, setzt daraus eine Mail in der Sprache der Person mit Vereinsname und Vereinsfarbe zusammen und verschickt sie über den Vereins-SMTP.
+6. Alle fünf Minuten sammelt System die fälligen Zeilen je Konto ein, setzt daraus eine Mail in der Sprache der Person im Auftritt des Vereins zusammen – Logo, Farbe, Name und je Zeile das Warum (UC-048) – und verschickt sie über den Vereins-SMTP.
 7. System quittiert die verschickten Zeilen. Die Inbox der App bleibt unverändert.
 
 ## Alternative Flows
@@ -95,3 +95,5 @@ SMTP-Server, Benutzer, Kennwort und Absender stehen ausschliesslich als Secrets 
 ### BR-213: Eine Mail je Konto und Lauf
 
 Ein Lauf nimmt ganze Konten: erst die Konten mit fälligen Zeilen, dann alle fälligen Zeilen dieser Konten. Eine Zusammenfassung wird nie über zwei Läufe zerschnitten. Anmeldelinks und Hinweise zur Kontolöschung bleiben davon unberührt (BR-120).
+
+**Ausnahme seit UC-048:** Eine Zeile mit eigenem Blatt (`mail_template`, heute die Willkommensmail) ist kein Eintrag in einer Liste, sondern ein eigenes Schreiben. Sie bekommt ihre eigene Mail, auch wenn im selben Lauf weitere Zeilen desselben Kontos fällig sind.

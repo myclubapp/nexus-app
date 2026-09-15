@@ -1,19 +1,51 @@
 /**
- * Die Mail aus den Meldungen (UC-044) – reine Funktionen, `deno test` in
- * diesem Ordner.
+ * Die Mail aus den Meldungen (UC-044, UC-048) – reine Funktionen,
+ * `deno test` in diesem Ordner.
  *
- * Gerüst aus `github.com/myclubapp/email-templates`: Tabellenlayout auf
- * 600 px, Kopfband in der Vereinsfarbe, Gruss, Inhalt, Fusszeile. Die Texte
- * sind neu und in den vier Sprachen der App; die Inhalte kommen aus den
- * Zeilen von `notifications`, nicht aus einer eigenen Vorlage je Anlass –
- * eine Meldung ist eine Meldung, ob sie in der Inbox oder im Postfach liegt.
+ * Das Blatt selbst steht seit UC-048 in `_shared/mail.ts` und ist für jede
+ * Mailart dasselbe: Kopfband in der Vereinsfarbe, das Logo, wenn eines
+ * hinterlegt ist, Fusszeile mit dem Grund der Zustellung. Hier stehen nur noch
+ * die Texte – in den vier Sprachen der App – und die Entscheidung, welches
+ * Blatt eine Zeile bekommt.
  *
- * Zwei Formen aus derselben Funktion: **eine** Meldung (sofort oder dringend)
- * und die **Zusammenfassung** (täglich oder wöchentlich). Der Unterschied
- * liegt im Betreff und in der Anrede, nicht im Aufbau.
+ * Drei Formen aus derselben Funktion:
+ *   * **eine** Meldung (sofort oder dringend),
+ *   * die **Zusammenfassung** (täglich oder wöchentlich),
+ *   * das **Willkommensblatt** (FR-184) – die einzige Zeile, die ein eigenes
+ *     Blatt trägt, erkennbar an `template = 'welcome'`.
+ *
+ * **Das Warum (FR-183).** Jede Meldung trägt es mit: entweder ihr eigenes –
+ * das `why` der Aufgabe, des Amts, des Termins – oder den Standardsatz ihrer
+ * Kategorie. Der eigene Satz steht immer; der Standardsatz nur, wenn die Mail
+ * **eine** Meldung trägt: In einer Zusammenfassung mit zwölf Zeilen wäre
+ * zwölfmal derselbe Satz Lärm, und die Kategorie steht ohnehin über jeder
+ * Zeile.
+ *
+ * Die Standardsätze stehen hier **und** in `src/i18n/locales/*.json`
+ * (`notifications.why.*`) für die Inbox. Eine Edge Function hat keinen Zugang
+ * zu den Sprachdateien der App; dieselbe Trennung wie bei `invoice-run/mail.ts`.
+ * Wer einen Satz ändert, ändert ihn an beiden Stellen.
  */
 
-export type Locale = 'de' | 'fr' | 'it' | 'en';
+import {
+  appLink,
+  brandColor,
+  button,
+  heading,
+  linkLine,
+  LOCALE_TAGS,
+  notice,
+  paragraph,
+  renderShell,
+  steps,
+  whyLine,
+  type Locale,
+  type MailBrand,
+  type MailSection,
+} from '../_shared/mail.ts';
+
+export { appLink };
+export type { Locale };
 
 export interface MailItem {
   id: string;
@@ -22,8 +54,15 @@ export interface MailItem {
   body: string | null;
   link: string | null;
   createdAt: string;
+  /** Das Warum dieser Meldung, wenn der Auslöser eines mitgegeben hat. */
+  why: string | null;
+  /** Ein eigenes Blatt statt der Meldungsliste, z.B. `welcome`. */
+  template: string | null;
   clubName: string | null;
   clubColor: string | null;
+  clubLogo: string | null;
+  /** Das Warum des Vereins selbst (`clubs.settings.dna.why`, FR-114). */
+  clubWhy: string | null;
 }
 
 export interface MailGroup {
@@ -37,6 +76,8 @@ export interface MailGroup {
 export interface RenderOptions {
   /** Öffentliche Adresse der App; ohne sie gibt es keine Links. */
   appUrl: string | null;
+  /** Die Website, auf der die Einzelheiten stehen (FR-184). */
+  helpUrl?: string | null;
   now?: Date;
 }
 
@@ -46,24 +87,28 @@ export interface RenderedMail {
   text: string;
 }
 
-const FALLBACK_COLOR = '#795deb';
-
-const LOCALE_TAGS: Record<Locale, string> = {
-  de: 'de-CH',
-  fr: 'fr-CH',
-  it: 'it-CH',
-  en: 'en-GB',
-};
-
 type Strings = {
   greeting: (name: string | null) => string;
   intro: (count: number, mode: MailGroup['mode']) => string;
   subjectMany: (count: number, club: string | null) => string;
   open: string;
-  why: string;
+  whyLabel: string;
+  channelWhy: string;
   settings: string;
-  from: (club: string) => string;
   categories: Record<string, string>;
+  /** Der Standardsatz je Kategorie – das Warum, wenn keines mitkam. */
+  categoryWhy: Record<string, string>;
+  welcome: {
+    intro: (club: string) => string;
+    clubWhyLabel: string;
+    how: string;
+    steps: { title: string; body: string }[];
+    whyHeading: string;
+    why: string;
+    open: string;
+    more: string;
+    footnote: (club: string) => string;
+  };
 };
 
 const STRINGS: Record<Locale, Strings> = {
@@ -77,9 +122,10 @@ const STRINGS: Record<Locale, Strings> = {
           : `${count} neue Meldungen aus deinem Verein:`,
     subjectMany: (count, club) => (club ? `${club}: ${count} neue Meldungen` : `${count} neue Meldungen`),
     open: 'In der App öffnen',
-    why: 'Du erhältst diese Mail, weil du in den Benachrichtigungen den E-Mail-Kanal eingeschaltet hast. Die Inbox in der App enthält immer alles.',
+    whyLabel: 'Warum:',
+    channelWhy:
+      'Du erhältst diese Mail, weil du in den Benachrichtigungen den E-Mail-Kanal eingeschaltet hast. Die Inbox in der App enthält immer alles.',
     settings: 'Benachrichtigungen einstellen',
-    from: (club) => `Von ${club}`,
     categories: {
       event: 'Termin',
       points: 'Punkte',
@@ -89,7 +135,53 @@ const STRINGS: Record<Locale, Strings> = {
       input: 'Vorschlag',
       system: 'Anschluss',
       join_request: 'Beitritt',
+      invoice: 'Rechnung',
       general: 'Meldung',
+    },
+    categoryWhy: {
+      event: 'Der Verein plant mit deiner Antwort – auch ein Nein hilft.',
+      points: 'Damit du siehst, wofür dein Beitrag gezählt hat.',
+      task: 'Weil der Verein für diese Arbeit Hände braucht.',
+      news: 'Damit du weisst, was im Verein läuft.',
+      pulse: 'Die Woche des Vereins auf einen Blick – damit niemand raten muss.',
+      input: 'Damit du siehst, was aus deinem Anliegen geworden ist.',
+      system: 'Es betrifft deinen Zugang zur App.',
+      join_request: 'Es betrifft deine Mitgliedschaft.',
+      invoice: 'Die Beiträge tragen den Vereinsbetrieb.',
+      general: 'Aus deinem Verein.',
+    },
+    welcome: {
+      intro: (club) =>
+        `schön, bist du da. ${club} führt den Verein mit myclub. Hier die Übersicht in einer Minute – die Einzelheiten kannst du später nachlesen.`,
+      clubWhyLabel: 'Darum gibt es uns:',
+      how: 'So funktioniert es',
+      steps: [
+        {
+          title: 'Zusagen oder absagen',
+          body: 'Jeder Termin fragt dich, ob du kommst. Deine Antwort ist die Planungsgrundlage – auch ein Nein hilft weiter als ein Schweigen.',
+        },
+        {
+          title: 'Mithelfen, wo es passt',
+          body: 'Aufgaben, Schichten und Ämter stehen offen und nennen immer, wozu sie dienen und wem sie helfen. Du wählst, was zu dir passt.',
+        },
+        {
+          title: 'Punkte kommen von selbst',
+          body: 'Für jeden Beitrag schreibt der Verein Punkte gut – automatisch, ohne dass du etwas melden musst.',
+        },
+        {
+          title: 'Dein Beitrag über die Saison',
+          body: 'Die Übersicht zeigt, wo du stehst. Sie misst deinen eigenen Weg, nicht den Abstand zu anderen.',
+        },
+        {
+          title: 'Alles in der Inbox',
+          body: 'Jede Meldung landet dort. Ob sie zusätzlich per E-Mail kommt und wie oft, entscheidest du in den Einstellungen.',
+        },
+      ],
+      whyHeading: 'Warum das Ganze',
+      why: 'Vereinsarbeit verteilt sich auf wenige Schultern, weil niemand sieht, wer was tut. Wird es sichtbar, lässt es sich teilen – das ist der ganze Gedanke dahinter.',
+      open: 'App öffnen',
+      more: 'Alle Einzelheiten auf der Website',
+      footnote: (club) => `Du erhältst diese Mail einmalig, weil du ${club} beigetreten bist.`,
     },
   },
   fr: {
@@ -102,9 +194,10 @@ const STRINGS: Record<Locale, Strings> = {
           : `${count} nouveaux messages de ton club :`,
     subjectMany: (count, club) => (club ? `${club} : ${count} nouveaux messages` : `${count} nouveaux messages`),
     open: 'Ouvrir dans l’app',
-    why: 'Tu reçois cet e-mail parce que tu as activé le canal e-mail dans les notifications. La boîte de réception de l’app contient toujours tout.',
+    whyLabel: 'Pourquoi :',
+    channelWhy:
+      'Tu reçois cet e-mail parce que tu as activé le canal e-mail dans les notifications. La boîte de réception de l’app contient toujours tout.',
     settings: 'Régler les notifications',
-    from: (club) => `De ${club}`,
     categories: {
       event: 'Rendez-vous',
       points: 'Points',
@@ -114,7 +207,53 @@ const STRINGS: Record<Locale, Strings> = {
       input: 'Proposition',
       system: 'Connexion',
       join_request: 'Adhésion',
+      invoice: 'Facture',
       general: 'Message',
+    },
+    categoryWhy: {
+      event: 'Le club planifie avec ta réponse – même un non fait avancer.',
+      points: 'Pour que tu voies ce que ta contribution a compté.',
+      task: 'Parce que le club a besoin de bras pour ce travail.',
+      news: 'Pour que tu saches ce qui se passe au club.',
+      pulse: 'La semaine du club en un coup d’œil – pour que personne ne devine.',
+      input: 'Pour que tu voies ce qu’est devenue ta demande.',
+      system: 'Cela concerne ton accès à l’app.',
+      join_request: 'Cela concerne ton adhésion.',
+      invoice: 'Les cotisations font vivre le club.',
+      general: 'De ton club.',
+    },
+    welcome: {
+      intro: (club) =>
+        `content que tu sois là. ${club} gère son club avec myclub. Voici l’essentiel en une minute – les détails se lisent plus tard.`,
+      clubWhyLabel: 'Notre raison d’être :',
+      how: 'Comment ça marche',
+      steps: [
+        {
+          title: 'Confirmer ou décliner',
+          body: 'Chaque rendez-vous te demande si tu viens. Ta réponse est la base de la planification – un non aide plus qu’un silence.',
+        },
+        {
+          title: 'Donner un coup de main',
+          body: 'Tâches, créneaux et fonctions sont ouverts et disent toujours à quoi ils servent et à qui ils profitent. Tu choisis ce qui te convient.',
+        },
+        {
+          title: 'Les points viennent tout seuls',
+          body: 'Le club crédite des points pour chaque contribution – automatiquement, sans que tu aies à l’annoncer.',
+        },
+        {
+          title: 'Ta contribution sur la saison',
+          body: 'L’aperçu montre où tu en es. Il mesure ton propre chemin, pas l’écart avec les autres.',
+        },
+        {
+          title: 'Tout dans la boîte de réception',
+          body: 'Chaque message y arrive. C’est toi qui décides s’il part aussi par e-mail, et à quelle fréquence.',
+        },
+      ],
+      whyHeading: 'Pourquoi tout cela',
+      why: 'Le travail associatif repose sur quelques épaules parce que personne ne voit qui fait quoi. Rendu visible, il peut se partager – c’est toute l’idée.',
+      open: 'Ouvrir l’app',
+      more: 'Tous les détails sur le site',
+      footnote: (club) => `Tu reçois cet e-mail une seule fois, parce que tu as rejoint ${club}.`,
     },
   },
   it: {
@@ -127,9 +266,10 @@ const STRINGS: Record<Locale, Strings> = {
           : `${count} nuovi messaggi dalla tua società:`,
     subjectMany: (count, club) => (club ? `${club}: ${count} nuovi messaggi` : `${count} nuovi messaggi`),
     open: 'Apri nell’app',
-    why: 'Ricevi questa e-mail perché hai attivato il canale e-mail nelle notifiche. La posta in arrivo nell’app contiene sempre tutto.',
+    whyLabel: 'Perché:',
+    channelWhy:
+      'Ricevi questa e-mail perché hai attivato il canale e-mail nelle notifiche. La posta in arrivo nell’app contiene sempre tutto.',
     settings: 'Impostare le notifiche',
-    from: (club) => `Da ${club}`,
     categories: {
       event: 'Appuntamento',
       points: 'Punti',
@@ -139,7 +279,53 @@ const STRINGS: Record<Locale, Strings> = {
       input: 'Proposta',
       system: 'Collegamento',
       join_request: 'Adesione',
+      invoice: 'Fattura',
       general: 'Messaggio',
+    },
+    categoryWhy: {
+      event: 'La società pianifica con la tua risposta – anche un no aiuta.',
+      points: 'Perché tu veda per cosa è valso il tuo contributo.',
+      task: 'Perché per questo lavoro la società ha bisogno di mani.',
+      news: 'Perché tu sappia cosa succede nella società.',
+      pulse: 'La settimana della società a colpo d’occhio – così nessuno deve indovinare.',
+      input: 'Perché tu veda che ne è stato della tua proposta.',
+      system: 'Riguarda il tuo accesso all’app.',
+      join_request: 'Riguarda la tua adesione.',
+      invoice: 'Le quote sostengono la società.',
+      general: 'Dalla tua società.',
+    },
+    welcome: {
+      intro: (club) =>
+        `bello che ci sei. ${club} gestisce la società con myclub. Ecco il quadro in un minuto – i dettagli si leggono dopo.`,
+      clubWhyLabel: 'Per questo esistiamo:',
+      how: 'Come funziona',
+      steps: [
+        {
+          title: 'Confermare o disdire',
+          body: 'Ogni appuntamento ti chiede se vieni. La tua risposta è la base della pianificazione – anche un no aiuta più di un silenzio.',
+        },
+        {
+          title: 'Dare una mano',
+          body: 'Compiti, turni e cariche sono aperti e dicono sempre a cosa servono e a chi giovano. Scegli ciò che ti si addice.',
+        },
+        {
+          title: 'I punti arrivano da soli',
+          body: 'Per ogni contributo la società accredita punti – automaticamente, senza che tu debba annunciare nulla.',
+        },
+        {
+          title: 'Il tuo contributo nella stagione',
+          body: 'Il quadro mostra a che punto sei. Misura il tuo percorso, non la distanza dagli altri.',
+        },
+        {
+          title: 'Tutto nella posta in arrivo',
+          body: 'Ogni messaggio finisce lì. Se arrivi anche per e-mail, e quanto spesso, lo decidi tu.',
+        },
+      ],
+      whyHeading: 'Perché tutto questo',
+      why: 'Il lavoro di società pesa su poche spalle perché nessuno vede chi fa cosa. Reso visibile, si può dividere – è tutta qui l’idea.',
+      open: 'Apri l’app',
+      more: 'Tutti i dettagli sul sito',
+      footnote: (club) => `Ricevi questa e-mail una sola volta, perché sei entrato in ${club}.`,
     },
   },
   en: {
@@ -152,9 +338,10 @@ const STRINGS: Record<Locale, Strings> = {
           : `${count} new messages from your club:`,
     subjectMany: (count, club) => (club ? `${club}: ${count} new messages` : `${count} new messages`),
     open: 'Open in the app',
-    why: 'You receive this email because you switched on the email channel in your notification settings. The inbox in the app always holds everything.',
+    whyLabel: 'Why:',
+    channelWhy:
+      'You receive this email because you switched on the email channel in your notification settings. The inbox in the app always holds everything.',
     settings: 'Notification settings',
-    from: (club) => `From ${club}`,
     categories: {
       event: 'Event',
       points: 'Points',
@@ -164,32 +351,56 @@ const STRINGS: Record<Locale, Strings> = {
       input: 'Proposal',
       system: 'Connection',
       join_request: 'Membership',
+      invoice: 'Invoice',
       general: 'Message',
+    },
+    categoryWhy: {
+      event: 'The club plans around your answer – a no helps too.',
+      points: 'So you can see what your contribution counted for.',
+      task: 'Because the club needs hands for this work.',
+      news: 'So you know what is going on in the club.',
+      pulse: 'The club’s week at a glance – so nobody has to guess.',
+      input: 'So you can see what became of your proposal.',
+      system: 'It concerns your access to the app.',
+      join_request: 'It concerns your membership.',
+      invoice: 'Membership fees carry the club.',
+      general: 'From your club.',
+    },
+    welcome: {
+      intro: (club) =>
+        `good to have you here. ${club} runs the club with myclub. Here is the overview in a minute – the details can wait.`,
+      clubWhyLabel: 'This is why we exist:',
+      how: 'How it works',
+      steps: [
+        {
+          title: 'Accept or decline',
+          body: 'Every event asks whether you are coming. Your answer is what the planning rests on – a no helps more than silence.',
+        },
+        {
+          title: 'Lend a hand where it fits',
+          body: 'Tasks, shifts and offices are open and always say what they are for and who they help. You pick what suits you.',
+        },
+        {
+          title: 'Points come by themselves',
+          body: 'The club credits points for every contribution – automatically, with nothing for you to report.',
+        },
+        {
+          title: 'Your contribution over the season',
+          body: 'The overview shows where you stand. It measures your own path, not the gap to others.',
+        },
+        {
+          title: 'Everything in the inbox',
+          body: 'Every message lands there. Whether it also goes out by email, and how often, is yours to decide.',
+        },
+      ],
+      whyHeading: 'Why all this',
+      why: 'Club work rests on a few shoulders because nobody sees who does what. Made visible, it can be shared – that is the whole idea.',
+      open: 'Open the app',
+      more: 'All the details on the website',
+      footnote: (club) => `You receive this email once, because you joined ${club}.`,
     },
   },
 };
-
-export function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-/** Ein Link in die App – nur mit bekannter Adresse, und nur relativ. */
-export function appLink(appUrl: string | null, link: string | null): string | null {
-  if (!appUrl || !link) return null;
-  if (!link.startsWith('/')) return null;
-  return appUrl.replace(/\/+$/, '') + link;
-}
-
-/** Eine Farbe aus den Vereinseinstellungen, sonst die Grundfarbe. */
-export function headerColor(items: MailItem[]): string {
-  const color = items.find((item) => item.clubColor)?.clubColor ?? '';
-  return /^#[0-9a-fA-F]{6}$/.test(color) ? color : FALLBACK_COLOR;
-}
 
 /** Der Verein, wenn alle Meldungen aus demselben stammen. */
 export function singleClub(items: MailItem[]): string | null {
@@ -198,12 +409,47 @@ export function singleClub(items: MailItem[]): string | null {
   return items[0]?.clubName ?? null;
 }
 
+/** Die Marke des Blatts: der Verein der ersten Meldung, die einen nennt. */
+export function brandOf(items: MailItem[]): MailBrand {
+  const source = items.find((item) => item.clubName) ?? items[0];
+  return {
+    clubName: singleClub(items) ?? source?.clubName ?? null,
+    color: items.find((item) => item.clubColor)?.clubColor ?? null,
+    logoUrl: items.find((item) => item.clubLogo)?.clubLogo ?? null,
+  };
+}
+
+/** Die Kopfbandfarbe – aus der Marke, mit der Grundfarbe als Rückfall. */
+export function headerColor(items: MailItem[]): string {
+  return brandColor(brandOf(items).color);
+}
+
 function formatTime(iso: string, locale: Locale): string {
   return new Intl.DateTimeFormat(LOCALE_TAGS[locale], {
     timeZone: 'Europe/Zurich',
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(iso));
+}
+
+/**
+ * Das Warum einer Meldung (FR-183).
+ *
+ * `own` ist das Warum des Auslösers – der Satz, den der Vorstand an der
+ * Aufgabe oder am Amt geschrieben hat. Fehlt er, springt der Standardsatz der
+ * Kategorie ein, aber nur bei einer einzelnen Meldung (`alone`).
+ */
+export function whyText(
+  locale: Locale,
+  category: string,
+  own: string | null,
+  alone: boolean,
+): string | null {
+  const trimmed = own?.trim();
+  if (trimmed) return trimmed;
+  if (!alone) return null;
+  const t = STRINGS[locale];
+  return t.categoryWhy[category] ?? t.categoryWhy.general;
 }
 
 export function subjectFor(group: MailGroup): string {
@@ -216,104 +462,86 @@ export function subjectFor(group: MailGroup): string {
   return t.subjectMany(group.items.length, club);
 }
 
+/** Das Willkommensblatt (FR-184, UC-048). */
+function renderWelcome(
+  group: MailGroup,
+  item: MailItem,
+  options: RenderOptions,
+): RenderedMail {
+  const t = STRINGS[group.locale].welcome;
+  const brand = brandOf([item]);
+  const color = brandColor(brand.color);
+  const club = brand.clubName ?? 'myclub';
+  const dashboard = appLink(options.appUrl, '/tabs/dashboard');
+  const clubWhy = item.clubWhy?.trim();
+
+  const sections: MailSection[] = [paragraph(t.intro(club))];
+  if (clubWhy) sections.push(whyLine(t.clubWhyLabel, clubWhy, color));
+  sections.push(heading(t.how), steps(t.steps, color));
+  sections.push(heading(t.whyHeading), paragraph(t.why));
+  if (dashboard) sections.push(button(t.open, dashboard, color));
+  if (options.helpUrl) sections.push(linkLine(t.more, options.helpUrl, color));
+
+  const subject = subjectFor(group);
+  const shell = renderShell({
+    brand,
+    locale: group.locale,
+    subject,
+    preheader: t.intro(club),
+    greeting: STRINGS[group.locale].greeting(group.displayName) + ',',
+    sections,
+    footnote: t.footnote(club),
+    footnoteLink: null,
+    year: (options.now ?? new Date()).getFullYear(),
+  });
+
+  return { subject, ...shell };
+}
+
 export function renderMail(group: MailGroup, options: RenderOptions): RenderedMail {
+  if (group.items.length === 1 && group.items[0].template === 'welcome') {
+    return renderWelcome(group, group.items[0], options);
+  }
+
   const t = STRINGS[group.locale];
-  const color = headerColor(group.items);
-  const club = singleClub(group.items);
-  const year = (options.now ?? new Date()).getFullYear();
+  const brand = brandOf(group.items);
+  const color = brandColor(brand.color);
+  const club = brand.clubName;
+  const alone = group.items.length === 1;
   const settingsUrl = appLink(options.appUrl, '/tabs/profile/notifications');
-  const brand = club ?? 'myclub';
 
-  const itemsHtml = group.items
-    .map((item) => {
-      const url = appLink(options.appUrl, item.link);
-      const category = t.categories[item.category] ?? t.categories.general;
-      const meta = [category, formatTime(item.createdAt, group.locale)];
-      if (!club && item.clubName) meta.unshift(item.clubName);
-      return `
-            <tr>
-              <td style="padding: 18px 0; border-top: 1px solid #ebebeb;">
-                <p style="margin: 0 0 4px; font-family: Helvetica, Arial, sans-serif; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: #8a8a8a;">${escapeHtml(meta.join(' · '))}</p>
-                <p style="margin: 0 0 6px; font-family: Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 700; line-height: 24px; color: #111111;">${escapeHtml(item.title)}</p>
-                ${item.body ? `<p style="margin: 0 0 10px; font-family: Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; color: #444444;">${escapeHtml(item.body)}</p>` : ''}
-                ${url ? `<p style="margin: 0;"><a href="${escapeHtml(url)}" style="font-family: Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 700; color: ${color}; text-decoration: none;">${escapeHtml(t.open)} →</a></p>` : ''}
-              </td>
-            </tr>`;
-    })
-    .join('');
+  const sections: MailSection[] = [paragraph(t.intro(group.items.length, group.mode))];
 
-  const html = `<!DOCTYPE html>
-<html lang="${group.locale}">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${escapeHtml(subjectFor(group))}</title>
-</head>
-<body style="background-color: #f4f4f4; margin: 0 !important; padding: 0 !important;">
-  <div style="display: none; font-size: 1px; line-height: 1px; max-height: 0; max-width: 0; opacity: 0; overflow: hidden;">${escapeHtml(group.items[0]?.title ?? '')}</div>
-  <table border="0" cellpadding="0" cellspacing="0" width="100%">
-    <tr>
-      <td bgcolor="${color}" align="center" style="padding: 28px 10px 60px;">
-        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
-          <tr>
-            <td align="left" style="font-family: Helvetica, Arial, sans-serif; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: #ffffff; opacity: .9;">${escapeHtml(brand)}</td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td bgcolor="#f4f4f4" align="center" style="padding: 0 10px;">
-        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin-top: -40px;">
-          <tr>
-            <td bgcolor="#ffffff" align="left" style="padding: 32px 30px 12px; border-radius: 6px 6px 0 0;">
-              <p style="margin: 0 0 6px; font-family: Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 700; color: #111111;">${escapeHtml(t.greeting(group.displayName))}</p>
-              <p style="margin: 0; font-family: Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; color: #444444;">${escapeHtml(t.intro(group.items.length, group.mode))}</p>
-            </td>
-          </tr>
-          <tr>
-            <td bgcolor="#ffffff" align="left" style="padding: 6px 30px 30px; border-radius: 0 0 6px 6px;">
-              <table border="0" cellpadding="0" cellspacing="0" width="100%">${itemsHtml}
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td align="left" style="padding: 24px 30px 40px; font-family: Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19px; color: #777777;">
-              <p style="margin: 0 0 8px;">${escapeHtml(t.why)}${settingsUrl ? ` <a href="${escapeHtml(settingsUrl)}" style="color: #555555;">${escapeHtml(t.settings)}</a>` : ''}</p>
-              <p style="margin: 0;">&reg; myclub | the next generation ${year}</p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
+  group.items.forEach((item, index) => {
+    const meta = [t.categories[item.category] ?? t.categories.general, formatTime(item.createdAt, group.locale)];
+    if (!club && item.clubName) meta.unshift(item.clubName);
+    const why = whyText(group.locale, item.category, item.why, alone);
+    sections.push(
+      notice({
+        meta: meta.join(' · '),
+        title: item.title,
+        body: item.body,
+        why: why ? whyLine(t.whyLabel, why, color) : null,
+        url: appLink(options.appUrl, item.link),
+        openLabel: t.open,
+        color,
+        first: index === 0,
+      }),
+    );
+  });
 
-  const textItems = group.items
-    .map((item) => {
-      const url = appLink(options.appUrl, item.link);
-      const lines = [
-        `${t.categories[item.category] ?? t.categories.general} · ${formatTime(item.createdAt, group.locale)}`,
-        item.title,
-      ];
-      if (item.body) lines.push(item.body);
-      if (url) lines.push(url);
-      return lines.join('\n');
-    })
-    .join('\n\n');
+  const subject = subjectFor(group);
+  const shell = renderShell({
+    brand,
+    locale: group.locale,
+    subject,
+    preheader: group.items[0]?.title ?? '',
+    greeting: t.greeting(group.displayName),
+    sections,
+    footnote: t.channelWhy,
+    footnoteLink: settingsUrl ? { label: t.settings, url: settingsUrl } : null,
+    year: (options.now ?? new Date()).getFullYear(),
+  });
 
-  const text = [
-    t.greeting(group.displayName),
-    '',
-    t.intro(group.items.length, group.mode),
-    '',
-    textItems,
-    '',
-    t.why,
-    settingsUrl ?? '',
-  ]
-    .join('\n')
-    .trimEnd();
-
-  return { subject: subjectFor(group), html, text };
+  return { subject, ...shell };
 }

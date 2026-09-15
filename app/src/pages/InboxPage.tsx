@@ -20,6 +20,7 @@ import { taskQuery, useTask } from '../hooks/useTasks';
 import { useToast } from '../hooks/useToast';
 import { formatDateTime } from '../lib/format';
 import { linkTarget, type LinkTarget } from '../lib/linkTarget';
+import { notificationWhy } from '../lib/notificationWhy';
 
 /** Was die Inbox als Blatt öffnet – ein Termin oder eine Aufgabe. */
 type Sheet = Exclude<LinkTarget, { kind: 'page' }>;
@@ -136,6 +137,13 @@ export function InboxPage({ backHref = '/tabs/profile' }: InboxPageProps) {
                 <IonLabel className="ion-text-wrap">
                   <h2>{entry.title}</h2>
                   {entry.body && <p>{entry.body}</p>}
+                  {/* Das Warum (FR-183): der Satz des Auslösers, sonst der
+                      Standardsatz der Kategorie. Er steht an jeder Zeile –
+                      eine Meldung, deren Zweck man erraten muss, ist eine
+                      Aufforderung. */}
+                  <p>
+                    <strong>{t('inbox.whyLabel')}</strong> {notificationWhy(entry, t)}
+                  </p>
                   <IonNote>{formatDateTime(entry.created_at)}</IonNote>
                 </IonLabel>
                 {busyId === entry.id ? (
