@@ -10,138 +10,18 @@
  * `Record<string, unknown>`, und Interfaces bekommen in TypeScript keine
  * implizite Index-Signatur.
  */
-import type { Database as Generated, Json, Tables as Row } from './database.generated';
+import type { Tables as Row } from './database.generated';
 import type { Language } from '../i18n';
 
 export type {
   CompositeTypes,
+  Database,
   Enums,
   Json,
   Tables,
   TablesInsert,
   TablesUpdate,
 } from './database.generated';
-
-/* --- Übergang bis `supabase db push` für `0092`–`0102` gelaufen ist -------
- *
- * `types:generate` kennt die neuen Funktionen erst, wenn die Migration remote
- * steht. Bis dahin wird der fehlende Stand **hier** nachgebildet und nicht in
- * `database.generated.ts` – die Datei wird vollständig überschrieben, jede
- * Handarbeit darin ginge still verloren.
- *
- * Nach dem Push und `npm run types:generate` gehört dieser Block gelöscht.
- */
-type Fn = Generated['public']['Functions'];
-type Tbl = Generated['public']['Tables'];
-
-export type Database = Omit<Generated, 'public'> & {
-  public: Omit<Generated['public'], 'Functions' | 'Tables'> & {
-    /**
-     * `0096`: Jede Meldung trägt ihr Warum (FR-183) und – wenn sie ein eigenes
-     * Blatt im Postfach bekommt – dessen Namen (FR-184). Beides schreibt nur
-     * der Server über `notify()`; die App liest.
-     */
-    Tables: Omit<Tbl, 'notifications' | 'functionary_roles' | 'federation_connections'> & {
-      /**
-       * `0102`: Will dieser Verein die Beiträge dieses Verbands im Feed
-       * (FR-197)? Die Frage sitzt an der **Verbindung**, weil ein Verein an
-       * zwei Verbänden hängen kann. Geschrieben wird sie über
-       * `set_federation_news()`, nie über einen `update` – die Tabelle hat
-       * seit `0058` keine Schreib-Policy.
-       */
-      federation_connections: Omit<Tbl['federation_connections'], 'Row'> & {
-        Row: Tbl['federation_connections']['Row'] & { news_enabled: boolean };
-      };
-      notifications: Omit<Tbl['notifications'], 'Row'> & {
-        Row: Tbl['notifications']['Row'] & {
-          why: string | null;
-          mail_template: string | null;
-        };
-      };
-      /**
-       * `0100`: der Gruss am Amt (FR-191, FR-192). `greeting` ist ein Objekt
-       * Sprache → Text, `greeting_image_url` eine **öffentliche** Adresse –
-       * das Porträt liegt nie im privaten Speicher der Profilbilder (BR-253).
-       */
-      functionary_roles: Omit<Tbl['functionary_roles'], 'Row' | 'Insert' | 'Update'> & {
-        Row: Tbl['functionary_roles']['Row'] & {
-          greeting: Json;
-          greeting_image_url: string | null;
-        };
-        Insert: Tbl['functionary_roles']['Insert'] & {
-          greeting?: Json;
-          greeting_image_url?: string | null;
-        };
-        Update: Tbl['functionary_roles']['Update'] & {
-          greeting?: Json;
-          greeting_image_url?: string | null;
-        };
-      };
-    };
-    Functions: Omit<
-      Fn,
-      'leaderboard_rows' | 'team_ranking_rows' | 'find_club_by_slug'
-    > & {
-      /**
-       * `0101`: Der Kurzname sagt jetzt auch, **ob** der Verein offene
-       * Anfragen annimmt (FR-196, BR-258). Ohne diese Spalte führte das
-       * Formular in einen Knopf, den der Server abweist.
-       */
-      find_club_by_slug: {
-        Args: Fn['find_club_by_slug']['Args'];
-        Returns: { club_id: string; club_name: string; accepts_requests: boolean }[];
-      };
-      /** `0102`: die Verbandsnews dieser Verbindung zu- oder abschalten (FR-197). */
-      set_federation_news: {
-        Args: { p_club_id: string; p_federation: string; p_enabled: boolean };
-        Returns: undefined;
-      };
-      /**
-       * `0092`/`0093`: die Säulen dieses Vereins mit ihrer Wertdimension.
-       * `pillar` ist `null` für eine Dimension ohne eigene Säule («Finanzen»).
-       */
-      club_pillars: {
-        Args: { p_club_id: string };
-        Returns: { pillar: number | null; dimension: string | null }[];
-      };
-      /**
-       * `0094`: den Puls-Entwurf von Hand anstossen (UC-027, A3). Rückgabe ist
-       * die Id des offenen Entwurfs – `null`, wenn der Verein diese Woche
-       * nichts anzukündigen hat.
-       */
-      request_club_pulse: {
-        Args: { p_club_id: string };
-        Returns: string | null;
-      };
-      /**
-       * `0100`: Grusstext und Porträt eines Amtes setzen (FR-191, FR-192).
-       * Eigene Funktion statt Parameter an `save_office()` – ein Formular ohne
-       * diese Felder würde sonst Gruss **und** Belegung löschen.
-       */
-      set_office_greeting: {
-        Args: { p_role_id: string; p_greeting?: Json; p_image?: string };
-        Returns: undefined;
-      };
-      /**
-       * `0100`: die Nutzlast eines Pulses für Blatt und Vorschau (FR-188,
-       * FR-189). `security invoker` – wer den Puls nicht sehen darf, bekommt
-       * `null`, und zwar ohne zweite Rollenprüfung (die Policy aus `0044`).
-       */
-      pulse_payload: {
-        Args: { p_pulse_id: string; p_locale?: string; p_keep?: Json };
-        Returns: Json;
-      };
-      leaderboard_rows: {
-        Args: Fn['leaderboard_rows']['Args'] & { p_dimension?: string };
-        Returns: Fn['leaderboard_rows']['Returns'];
-      };
-      team_ranking_rows: {
-        Args: Fn['team_ranking_rows']['Args'] & { p_dimension?: string };
-        Returns: Fn['team_ranking_rows']['Returns'];
-      };
-    };
-  };
-};
 
 /**
  * Eine Zeile von `export_members()` (0082).
@@ -354,11 +234,8 @@ export type NewsSyncStatus = 'ok' | 'error';
  */
 export type ApiStyle = 'pretty' | 'query';
 
-/**
- * `notifications` – `why` und `mail_template` kommen aus dem Übergangsblock
- * oben, solange `0096` nicht eingespielt ist.
- */
-export type Notification = Database['public']['Tables']['notifications']['Row'];
+/** `notifications` – trägt seit `0096` das Warum und den Namen seines Blatts. */
+export type Notification = Row<'notifications'>;
 // Die Sicht `leaderboard` ist mit `0039` gewichen: Die Rangfolge steht nur
 // noch in `leaderboard_rows()`, damit es nicht zwei Beschreibungen derselben
 // Sache gibt. Die Zeilenform liegt in `src/lib/leaderboard.ts`.

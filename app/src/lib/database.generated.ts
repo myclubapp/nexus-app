@@ -840,6 +840,7 @@ export type Database = {
           federation_club_id: string
           last_error: string | null
           last_sync_at: string | null
+          news_enabled: boolean
           status: string
         }
         Insert: {
@@ -850,6 +851,7 @@ export type Database = {
           federation_club_id: string
           last_error?: string | null
           last_sync_at?: string | null
+          news_enabled?: boolean
           status?: string
         }
         Update: {
@@ -860,6 +862,7 @@ export type Database = {
           federation_club_id?: string
           last_error?: string | null
           last_sync_at?: string | null
+          news_enabled?: boolean
           status?: string
         }
         Relationships: [
@@ -2976,6 +2979,10 @@ export type Database = {
         Returns: string
       }
       claim_task: { Args: { p_task_id: string }; Returns: string }
+      club_accepts_join_requests: {
+        Args: { p_club_id: string }
+        Returns: boolean
+      }
       club_health: {
         Args: { p_club_id: string }
         Returns: {
@@ -3261,11 +3268,13 @@ export type Database = {
           club_id: string
           federation: string
           federation_club_id: string
+          news_enabled: boolean
         }[]
       }
       find_club_by_slug: {
         Args: { p_slug: string }
         Returns: {
+          accepts_requests: boolean
           club_id: string
           club_name: string
         }[]
@@ -3748,6 +3757,10 @@ export type Database = {
         Args: { p_goal: number; p_member_id: string }
         Returns: undefined
       }
+      set_federation_news: {
+        Args: { p_club_id: string; p_enabled: boolean; p_federation: string }
+        Returns: undefined
+      }
       set_health_opt_out: {
         Args: { p_club_id: string; p_opt_out: boolean }
         Returns: number
@@ -3973,6 +3986,21 @@ export type Database = {
           p_title: string
         }
         Returns: string
+      }
+      upsert_federation_news: {
+        Args: {
+          p_author?: string
+          p_body?: string
+          p_body_html?: string
+          p_club_id: string
+          p_external_id: string
+          p_external_url?: string
+          p_federation: string
+          p_image_url?: string
+          p_published_at?: string
+          p_title: string
+        }
+        Returns: boolean
       }
       upsert_legacy_attendance: {
         Args: { p_club_id: string; p_rows: Json }
