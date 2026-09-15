@@ -17,6 +17,8 @@
     "run:android": "npm run sync && cap run android",
     "types:generate": "supabase gen types typescript --linked > src/lib/database.generated.ts",
     "i18n:check": "node scripts/check-i18n.mjs",
+    "assets:generate": "capacitor-assets generate --ios --android",
+    "postassets:generate": "node scripts/post-assets.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -53,6 +55,7 @@
   },
   "devDependencies": {
     "@capacitor/android": "^8.5.1",
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^8.5.1",
     "@capacitor/ios": "^8.5.1",
     "@testing-library/jest-dom": "^7.0.1",

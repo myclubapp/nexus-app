@@ -18,7 +18,7 @@ export default defineConfig({
       // Die Registrierung steht von Hand in main.tsx, weil sie nur im
       // Browser stattfinden darf – siehe den Kommentar dort.
       injectRegister: null,
-      includeAssets: ['favicon.svg', 'apple-touch-icon-180x180.png'],
+      includeAssets: ['favicon-96x96.png', 'apple-touch-icon-180x180.png'],
       manifest: {
         id: '/',
         name: 'myclub',
@@ -47,7 +47,7 @@ export default defineConfig({
             type: 'image/png',
             purpose: 'maskable',
           },
-          { src: 'favicon.svg', sizes: 'any', type: 'image/svg+xml' },
+          { src: 'favicon-96x96.png', sizes: '96x96', type: 'image/png' },
         ],
       },
       workbox: {

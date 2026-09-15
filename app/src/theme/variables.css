@@ -313,36 +313,6 @@ ion-tab-button.tab-selected .app-tab-icon-filled {
   /* Die Anmeldung hat keine Kopfzeile, die den Safe-Area-Rand trüge – auf
      Geräten mit Dynamic Island liegt der Rand bei rund 59 px. */
   padding-top: calc(var(--ion-safe-area-top, 0px) + 32px);
-  /* Der seitliche Rand steht hier und nicht als `ion-padding` am
-     `ion-content`: Dort schöbe er auch das Bild der `SidePicture` vom Rand
-     weg, das bündig abschliessen soll. */
-  padding-inline: var(--app-space-4);
-  padding-bottom: var(--app-space-4);
-}
-
-/* --- Formularseite mit Bild (Anmeldung, Onboarding) ----------------------- */
-/* Unter dieser Breite steht nur das Formular da – dieselbe Grenze, an der im
-   Altbestand `ion-hide-md-down` griff (Ionics `md`). Auf dem Handy gehört die
-   ganze Breite dem Formular; das Bild würde nur Ladezeit kosten. */
-.app-side-picture__image {
-  display: none;
-}
-
-@media (min-width: 768px) {
-  .app-side-picture {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    /* Das Bild füllt die Seite auch dann, wenn das Formular kurz ist. Die
-       100 % richten sich am Scroll-Container des `ion-content` aus, der eine
-       feste Höhe hat. */
-    min-height: 100%;
-  }
-
-  .app-side-picture__image {
-    display: block;
-    background-size: cover;
-    background-position: center;
-  }
 }
 
 /* Natives Farbfeld in den Vereinseinstellungen – Ionic hat keinen Farbwähler. */
