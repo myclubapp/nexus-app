@@ -57,7 +57,7 @@ sagt, warum der Status offen bleibt. **Ein Status wechselt nur mit Beleg.**
 
 | ID      | Was steht, was fehlt                                                                                         |
 | ------- | ------------------------------------------------------------------------------------------------------------ |
-| C-004   | Geräte-Anmeldung für Web Push (`usePushRegistration`) und Inbox stehen; der Versand über ntfy, APNs und VAPID fehlt (FR-079). |
+| C-004   | Anmeldung, Inbox **und Versand** stehen: Web Push nach RFC 8291 (`_shared/webpush.ts`) und APNs über HTTP/2 mit `.p8`-Nachweis (`_shared/apns.ts`), abgeholt von `push-send` im Minutentakt (`0104`). Ausserhalb der Prüfung bleibt `android_ntfy` – dafür wird kein ntfy-Dienst betrieben. |
 
 ## Offen – und warum
 

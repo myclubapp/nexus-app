@@ -49,9 +49,10 @@ import {
  * Inbox ist nicht abschaltbar, und die Seite sagt auch warum. Ein deaktivierter
  * Umschalter erklärt nichts.
  *
- * Push selbst gibt es noch nicht (FR-079). Die Seite sagt das offen, statt
- * Schalter anzubieten, die ins Leere führen – aber die Einstellungen wirken
- * bereits: `notify()` vermerkt an jeder Zeile, ob sie hinausgehen dürfte.
+ * Push gibt es seit UC-052 wirklich (FR-079, FR-199): Web Push im Browser und
+ * in der PWA, APNs in der iOS-App. Die Matrix hier entscheidet, was hinausgeht;
+ * `notify()` wertet sie beim Entstehen jeder Zeile aus, und der Versand holt
+ * nur ab, was den Vermerk trägt.
  *
  * E-Mail gibt es seit UC-044: ein Modus (sofort, täglich, wöchentlich, aus)
  * und dieselbe Matrix je Kategorie – ohne Fürsorge und Befinden, die nie per
@@ -125,7 +126,7 @@ export function NotificationsPage() {
         <>
           <ListSection
             title={t("notifications.push")}
-            footnote={t("notifications.pushPending")}
+            footnote={t("notifications.pushHint")}
           >
             {PUSH_CATEGORIES.map((category) => (
               <IonItem key={category}>
@@ -262,9 +263,9 @@ export function NotificationsPage() {
             </IonButton>
           </div>
 
-          {/* A1: das Gerät anmelden. Bis heute konnte die App Geräte
-              auflisten und abmelden – anmelden konnte sie keines, und die
-              Liste blieb deshalb immer leer. */}
+          {/* A1: das Gerät anmelden. Im Browser ein Abonnement mit VAPID, in
+              der iOS-App ein Token von Apple – welcher Weg, entscheidet
+              `readPushChannel()` (UC-052). */}
           {/* Überschrift, dann Auskunft oder Knopf, dann die Geräteliste:
               Text und Knopfleiste sind keine Zeilen und stehen deshalb
               zwischen Kopf und Liste, nicht in der Liste. */}

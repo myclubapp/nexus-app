@@ -24,6 +24,7 @@ synchron gehalten werden können.
 | [UC-005](UC-005-anmelden.md) | Anmelden | Mitglied | FR-001, FR-002, FR-003 | Implemented |
 | [UC-006](UC-006-konto-loeschen.md) | Konto löschen | Mitglied | FR-012 | Implemented |
 | [UC-051](UC-051-verein-einrichten.md) | Verein einrichten | Vorstand | FR-195, FR-196, FR-197 | Implemented |
+| [UC-053](UC-053-profil-einrichten.md) | Profil einrichten | Mitglied | FR-200 | Partial (nicht eingespielt) |
 
 ### Mitglieder & Teams
 
@@ -78,6 +79,7 @@ synchron gehalten werden können.
 | [UC-044](UC-044-meldungen-per-email.md) | Meldungen per E-Mail erhalten | Mitglied | FR-164, FR-165 | Implemented |
 | [UC-048](UC-048-vereinsmail-und-warum.md) | Mail im Vereins-Look, mit Warum und Begrüssung | Mitglied | FR-182, FR-183, FR-184 | Implemented |
 | [UC-050](UC-050-vereins-puls-persoenlich.md) | Vereins-Puls persönlich gestalten | Vorstand | FR-188 bis FR-192 | Implemented |
+| [UC-052](UC-052-push-versand.md) | Push-Meldungen zustellen | System | FR-199, FR-079 | Partial (nicht in Betrieb) |
 | [UC-038](UC-038-website-news-uebernehmen.md) | News von der Vereins-Website übernehmen | Vorstand | FR-146, FR-147, FR-149 | In Progress |
 
 ### «Stimme» & Dialog
@@ -141,7 +143,7 @@ Ablauf steht in UC-008, die Gliederung der Seite in [`../guidelines.md`](../guid
 
 ## Geschäftsregeln
 
-Die Regeln BR-001 bis BR-262 sind fortlaufend und über alle Use Cases hinweg eindeutig vergeben. **Wer eine neue vergibt, prüft zuerst den höchsten Stand** – zuletzt kollidierten UC-044 und UC-045 auf BR-210 bis BR-213, und UC-048 musste FR-179 bis FR-181 an den parallel gebauten Sitzungs-Strang abgeben.
+Die Regeln BR-001 bis BR-270 sind fortlaufend und über alle Use Cases hinweg eindeutig vergeben. **Wer eine neue vergibt, prüft zuerst den höchsten Stand** – zuletzt kollidierten UC-044 und UC-045 auf BR-210 bis BR-213, und UC-048 musste FR-179 bis FR-181 an den parallel gebauten Sitzungs-Strang abgeben.
 Die vier nicht verhandelbaren Regeln des Projekts sind über mehrere Use Cases verteilt:
 
 | Prinzip | Regeln |

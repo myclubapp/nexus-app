@@ -351,6 +351,41 @@
       "countryCode": "The country is two letters, for example CH or DE."
     }
   },
+  "profileSetup": {
+    "title": "Set up profile",
+    "finish": "Done",
+    "skip": "Later",
+    "done": "Your profile is set. You can change it any time in your profile.",
+    "card": {
+      "title": "Show yourself to the club",
+      "hint": "Photo, name and messages in four steps – takes a minute."
+    },
+    "photo": {
+      "title": "A photo of you?",
+      "hint": "It appears next to your name in the member list, in the leaderboard and at every event. If you would rather not, move on."
+    },
+    "name": {
+      "title": "What should the others call you?",
+      "hint": "Without an entry the part before the @ of your address is shown – nobody chose that."
+    },
+    "contact": {
+      "title": "How can you be reached?",
+      "hint": "Only in case something changes before the event.",
+      "visibility": "Without your consent only the board sees your number.",
+      "emailTitle": "Your address",
+      "emailNote": "You are signed in with {{email}}. It stays as it is – you can change it in your profile."
+    },
+    "notifications": {
+      "title": "How should we reach you?",
+      "hint": "Everything lands in the inbox – that cannot be switched off. The only question is what reaches you on top of that.",
+      "mailTitle": "E-mail",
+      "mailOn": "Already running: one bundled mail daily at 18:00. Cancellations and the membership decision arrive at once.",
+      "pushTitle": "Push",
+      "pushWhy": "So a last-minute cancellation reaches you before you set off.",
+      "pushOn": "This device is registered.",
+      "more": "Set in detail, per category"
+    }
+  },
   "clubSettings": {
     "title": "Club settings",
     "open": "Manage club",
@@ -1338,7 +1373,7 @@
     "inboxAlways": "Every notification lands in the inbox.",
     "inboxWhy": "It cannot be turned off: it is the channel that reaches everyone, even without push.",
     "push": "Push per category",
-    "pushPending": "Push itself is not in service yet. Your choice applies already and will be honoured when sending starts.",
+    "pushHint": "What is off here is not delivered as a push – the inbox still holds it.",
     "email": "Email",
     "emailMode": "Delivery by email",
     "emailModes": {
@@ -1359,7 +1394,7 @@
     "devices": "Registered devices",
     "forget": "Sign out",
     "noDevices": "No device registered yet.",
-    "devicesHint": "Devices will appear here once push is in service.",
+    "devicesHint": "Every registered device is listed here. Whatever you lost, you remove here.",
     "deviceForgotten": "Signed out.",
     "platform": {
       "webpush": "Browser",
@@ -1414,10 +1449,10 @@
       }
     },
     "registerDevice": "Register this device",
-    "deviceRegistered": "Registered. Push will reach you once sending is running.",
+    "deviceRegistered": "Registered. From now on messages reach you on this device too.",
     "pushState": {
-      "unsupported": "This device does not know push notifications. The inbox still holds everything.",
-      "notConfigured": "Push is not set up in this installation yet. The inbox holds everything.",
+      "unsupported": "This device cannot receive push messages. The inbox still holds everything – in the app and in the browser.",
+      "notConfigured": "No push key is on file for this installation. The inbox holds everything.",
       "denied": "Push is blocked for this app. You can change that in the system settings – the inbox still holds everything.",
       "ready": "Ready."
     },

@@ -351,6 +351,41 @@
       "countryCode": "Il paese si scrive con due lettere, per esempio CH o DE."
     }
   },
+  "profileSetup": {
+    "title": "Configura il profilo",
+    "finish": "Fatto",
+    "skip": "Più tardi",
+    "done": "Il tuo profilo è pronto. Puoi modificarlo in ogni momento nel profilo.",
+    "card": {
+      "title": "Fatti conoscere dalla società",
+      "hint": "Foto, nome e messaggi in quattro passi – basta un minuto."
+    },
+    "photo": {
+      "title": "Una foto di te?",
+      "hint": "Compare accanto al tuo nome nell’elenco dei membri, in classifica e a ogni appuntamento. Chi non la vuole, prosegue."
+    },
+    "name": {
+      "title": "Come devono chiamarti gli altri?",
+      "hint": "Senza indicazione compare la parte prima della @ del tuo indirizzo – non l’ha scelta nessuno."
+    },
+    "contact": {
+      "title": "Come sei raggiungibile?",
+      "hint": "Solo nel caso in cui qualcosa cambi prima dell’appuntamento.",
+      "visibility": "Senza autorizzazione il tuo numero lo vede solo il comitato.",
+      "emailTitle": "Il tuo indirizzo",
+      "emailNote": "Sei registrato con {{email}}. Resta com’è – puoi cambiarlo nel profilo."
+    },
+    "notifications": {
+      "title": "Come dobbiamo raggiungerti?",
+      "hint": "Tutto arriva nella posta – non è disattivabile. La domanda è solo che cosa ti raggiunge in più.",
+      "mailTitle": "E-mail",
+      "mailOn": "Già attivo: un invio raggruppato ogni giorno alle 18:00. Le disdette e la decisione sull’adesione arrivano subito.",
+      "pushTitle": "Push",
+      "pushWhy": "Così una disdetta dell’ultimo minuto ti raggiunge prima che tu parta.",
+      "pushOn": "Questo dispositivo è registrato.",
+      "more": "Imposta nel dettaglio, per categoria"
+    }
+  },
   "clubSettings": {
     "title": "Impostazioni della società",
     "open": "Gestire la società",
@@ -1338,7 +1373,7 @@
     "inboxAlways": "Ogni notifica arriva in posta.",
     "inboxWhy": "Non si può disattivare: è il canale che raggiunge tutti, anche senza push.",
     "push": "Push per categoria",
-    "pushPending": "Il push non è ancora in funzione. La tua scelta vale già e sarà rispettata all’avvio.",
+    "pushHint": "Ciò che qui è spento non viene inviato come push – nella posta c’è comunque.",
     "email": "E-mail",
     "emailMode": "Invio per e-mail",
     "emailModes": {
@@ -1359,7 +1394,7 @@
     "devices": "Dispositivi registrati",
     "forget": "Disconnettere",
     "noDevices": "Nessun dispositivo registrato.",
-    "devicesHint": "I dispositivi appariranno qui appena il push sarà in funzione.",
+    "devicesHint": "Ogni dispositivo registrato è elencato qui. Quello che hai perso, lo togli qui.",
     "deviceForgotten": "Disconnesso.",
     "platform": {
       "webpush": "Browser",
@@ -1414,10 +1449,10 @@
       }
     },
     "registerDevice": "Registra questo dispositivo",
-    "deviceRegistered": "Registrato. I push ti raggiungeranno appena l’invio sarà attivo.",
+    "deviceRegistered": "Registrato. Da ora i messaggi ti raggiungono anche su questo dispositivo.",
     "pushState": {
-      "unsupported": "Questo dispositivo non conosce le notifiche push. La posta contiene comunque tutto.",
-      "notConfigured": "Il push non è ancora configurato in questa installazione. La posta contiene tutto.",
+      "unsupported": "Questo dispositivo non può ricevere push. La posta contiene comunque tutto – nell’app e nel browser.",
+      "notConfigured": "Per questa installazione non è depositata alcuna chiave push. La posta contiene tutto.",
       "denied": "Il push è bloccato per questa app. Puoi cambiarlo nelle impostazioni di sistema – la posta contiene sempre tutto.",
       "ready": "Pronto."
     },

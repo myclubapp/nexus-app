@@ -51,6 +51,19 @@ export default defineConfig({
         ],
       },
       workbox: {
+        /**
+         * Der Empfang von Web Push (UC-052). Workbox erzeugt den Service
+         * Worker; diese Zeile setzt ein `importScripts('/push-sw.js')` an
+         * seinen Anfang, und `public/push-sw.js` bringt die beiden
+         * Ereignisse mit, die Workbox nicht kennt: `push` und
+         * `notificationclick`.
+         *
+         * Der Weg über `importScripts` statt über `injectManifest`: Mit
+         * `injectManifest` schriebe die App ihren Service Worker vollständig
+         * selbst – samt Vorrat, Aufräumen und Aktualisierung. Für dreissig
+         * Zeilen Empfang wäre das der falsche Tausch.
+         */
+        importScripts: ['/push-sw.js'],
         // Nur die eigenen Bausteine. Antworten von Supabase bleiben bewusst
         // ungecacht: Ein Punktestand aus dem Vorrat wäre falsch, und ein
         // zwischengespeichertes Token wäre ein Sicherheitsproblem.
