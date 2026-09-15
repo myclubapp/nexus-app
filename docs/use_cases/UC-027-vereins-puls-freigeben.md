@@ -59,6 +59,17 @@
 1. System zeigt die drei Abschnitte zuoberst und den persönlichen Punktestand nachgeordnet.
 2. Use case ends.
 
+### A5: Entwurf von Hand anstossen
+
+**Trigger:** Der Vorstand öffnet den Puls, und es liegt kein Entwurf vor (Schritt 3)
+**Flow:**
+
+1. System erklärt, dass kein Entwurf vorliegt, und bietet an, einen zusammenzustellen.
+2. Vorstand stösst die Zusammenstellung an.
+3. System komponiert den Entwurf aus denselben drei Quellen wie in Schritt 1 und benachrichtigt die übrigen Vorstandsmitglieder; wer angestossen hat, bekommt keine Meldung über die eigene Handlung.
+4. Use case continues at step 4.
+5. Wäre der Entwurf leer, bleibt es bei der Erklärung (A3).
+
 ## Postconditions
 
 ### Success Postconditions
@@ -84,7 +95,7 @@ Der persönliche Punktestand erscheint im Puls nach den drei Abschnitten, nie al
 
 ### BR-115: Freigabe in zwei Minuten
 
-Der Entwurf ist vollständig vorkomponiert. Die Freigabe verlangt keine Texterstellung.
+Der Entwurf ist vollständig vorkomponiert. Die Freigabe verlangt keine Texterstellung. Das gilt auch für den Anstoss von Hand (A5): Er löst dieselbe Zusammenstellung aus, die sonst der wöchentliche Lauf auslöst – geschrieben wird der Puls nie.
 
 ### BR-116: Verbindung vor Aufruf
 

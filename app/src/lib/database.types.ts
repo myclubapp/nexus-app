@@ -22,7 +22,7 @@ export type {
   TablesUpdate,
 } from './database.generated';
 
-/* --- Übergang bis `supabase db push` für `0092` gelaufen ist ---------------
+/* --- Übergang bis `supabase db push` für `0092`–`0094` gelaufen ist -------
  *
  * `types:generate` kennt die neuen Funktionen erst, wenn die Migration remote
  * steht. Bis dahin wird der fehlende Stand **hier** nachgebildet und nicht in
@@ -43,6 +43,15 @@ export type Database = Omit<Generated, 'public'> & {
       club_pillars: {
         Args: { p_club_id: string };
         Returns: { pillar: number | null; dimension: string | null }[];
+      };
+      /**
+       * `0094`: den Puls-Entwurf von Hand anstossen (UC-027, A3). Rückgabe ist
+       * die Id des offenen Entwurfs – `null`, wenn der Verein diese Woche
+       * nichts anzukündigen hat.
+       */
+      request_club_pulse: {
+        Args: { p_club_id: string };
+        Returns: string | null;
       };
       leaderboard_rows: {
         Args: Fn['leaderboard_rows']['Args'] & { p_dimension?: string };

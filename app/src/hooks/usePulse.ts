@@ -90,6 +90,31 @@ export function useReleasePulse() {
   });
 }
 
+/**
+ * Den Entwurf von Hand anstossen (UC-027, A3).
+ *
+ * Komponiert wird weiterhin serverseitig – `request_club_pulse` prüft die
+ * Rolle und das Modul und ruft dann denselben Lauf auf, den der Montag auslöst.
+ * `null` heisst: Der Verein hat diese Woche nichts anzukündigen.
+ */
+export function useComposePulse() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (): Promise<string | null> => {
+      const { data, error } = await supabase.rpc('request_club_pulse', {
+        p_club_id: activeClub!.id,
+      });
+      if (error) throw new Error(error.message);
+      return data ?? null;
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ['pulse-draft', activeClub?.id] });
+    },
+  });
+}
+
 /** A2: «Diese Woche nicht». */
 export function useDiscardPulse() {
   const queryClient = useQueryClient();

@@ -6,6 +6,7 @@
 **Regeln:** BR-113 bis BR-116
 **Erstellt:** 2026-09-10
 **Ergänzt:** 2026-09-11 (Nachtrag `0055`: Modul-Riegel, dritte Quelle, FR-100)
+**Ergänzt:** 2026-09-15 (Nachtrag `0094`: Entwurf von Hand anstossen, A5)
 
 ## Vorbereitung
 
@@ -15,7 +16,8 @@
 - Ein zweiter Verein **ohne** jeden Inhalt für A3.
 - Migrationen `0044_club_pulse.sql` und `0055_pulse_sources.sql` sind
   eingespielt, das Modul «Vereins-Puls» ist eingeschaltet.
-- Von Hand auslösen: `select public.compose_club_pulse();`
+- Von Hand auslösen: `select public.compose_club_pulse();` – oder, seit `0094`,
+  in der App über «Entwurf zusammenstellen» (TC-011).
 
 ---
 
@@ -87,6 +89,27 @@
 | 1 | Für den leeren Verein `compose_club_pulse()` auslösen | Es entsteht **kein** Entwurf | | |
 | 2 | Die Seite dort öffnen | «Diese Woche liegt kein Entwurf vor» | | |
 | 3 | `compose_club_pulse()` zweimal für denselben Verein auslösen | Nur **ein** Entwurf – kein zweiter | | |
+
+---
+
+## TC-011: Entwurf von Hand anstossen (A5, `0094`)
+
+**Priority:** High
+
+Der wöchentliche Lauf ist montags. Wer das Modul an einem Dienstag einschaltet,
+sah bis `0094` eine Seite ohne Handlung.
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als **V** die Puls-Seite öffnen, solange kein Entwurf vorliegt | «Diese Woche liegt kein Entwurf vor» und der Knopf «Entwurf zusammenstellen» | | |
+| 2 | «Entwurf zusammenstellen» wählen | Toast «Der Entwurf liegt bereit», die drei Abschnitte erscheinen | | |
+| 3 | In der Inbox von **V** nachsehen | **Keine** Meldung «Der Vereins-Puls liegt bereit» – wer anstösst, steht schon davor | | |
+| 4 | In der Inbox eines **zweiten Vorstandsmitglieds** nachsehen | Die Meldung ist da | | |
+| 5 | Den Entwurf freigeben, dann erneut anstossen | Ein neuer Entwurf entsteht – der alte ist versendet | | |
+| 6 | Zweimal hintereinander anstossen, ohne freizugeben | Nur **ein** Entwurf; der zweite Anstoss öffnet denselben | | |
+| 7 | Im leeren Verein anstossen | Die Fläche erklärt «Es gibt gerade nichts anzukündigen …» – kein Toast, kein Fehler | | |
+| 8 | Als **M** (kein Vorstand) die Route `/tabs/profile/pulse` direkt aufrufen | Kein Weg dorthin im Menü; wird der Aufruf erzwungen, weist der Server ihn ab | | |
+| 9 | Mit ausgeschaltetem Modul anstossen | Der Server weist ab: «Das Modul Vereins-Puls ist in diesem Verein nicht eingeschaltet» | | |
 
 ---
 

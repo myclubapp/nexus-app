@@ -14,6 +14,7 @@ import { StatCard } from '../components/StatCard';
 import { EmptyState, ErrorState, InlineError } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
 import {
+  useComposePulse,
   useConnectionRatio,
   useDiscardPulse,
   usePulseDraft,
@@ -46,8 +47,13 @@ export function PulsePage() {
   const ratio = useConnectionRatio();
   const release = useReleasePulse();
   const discard = useDiscardPulse();
+  const compose = useComposePulse();
 
   const [intro, setIntro] = useState('');
+  // A3 nach einem Anstoss von Hand: Der Lauf fand nichts. Das gehört in die
+  // Fläche und nicht in einen Toast – die Erklärung muss stehen bleiben,
+  // solange der Bildschirm leer ist (BR-165).
+  const [nothingToTell, setNothingToTell] = useState(false);
   // `null` heisst «noch nichts gestrichen» – dann geht der Entwurf unverändert
   // raus, ohne dass der Client eine Liste schicken muss.
   const [struck, setStruck] = useState<Set<string> | null>(null);
@@ -101,13 +107,40 @@ export function PulsePage() {
       ) : draft.error ? (
         <ErrorState error={draft.error as Error} onRetry={() => void draft.refetch()} />
       ) : !pulse ? (
-        /* A3: Diese Woche liegt nichts vor – BR-165 verlangt trotzdem einen
-           nächsten Schritt. Im Feed kann der Vorstand selbst etwas erzählen,
-           und die Quote oben sagt, warum das zählt. */
-        <EmptyState
-          message={t('pulse.noDraft')}
-          action={{ label: t('pulse.tellSomething'), routerLink: '/tabs/dashboard' }}
-        />
+        /* A3: Es liegt nichts vor – BR-165 verlangt trotzdem einen nächsten
+           Schritt. Seit `0094` ist das der Entwurf selbst: Der wöchentliche
+           Lauf ist montags, und wer bis dahin warten müsste, hätte hier eine
+           Seite ohne Handlung. Bleibt auch dann nichts übrig, kann der Vorstand
+           im Feed selbst etwas erzählen. */
+        <>
+          <EmptyState
+            message={nothingToTell ? t('pulse.nothingToTell') : t('pulse.noDraft')}
+            action={{
+              label: compose.isPending ? t('common.loading') : t('pulse.compose'),
+              onClick: () => {
+                setNothingToTell(false);
+                compose.mutate(undefined, {
+                  onSuccess: (pulseId) => {
+                    if (pulseId) toast.success(t('pulse.composed'));
+                    else setNothingToTell(true);
+                  },
+                  onError: (cause) => toast.failure(cause.message),
+                });
+              },
+            }}
+          />
+          <div className="app-actions">
+            <IonButton
+              expand="block"
+              fill="clear"
+              color="medium"
+              routerLink="/tabs/dashboard"
+            >
+              {t('pulse.tellSomething')}
+            </IonButton>
+            <IonNote>{t('pulse.composeHint')}</IonNote>
+          </div>
+        </>
       ) : (
         <>
           <IonNote className="app-footnote">
