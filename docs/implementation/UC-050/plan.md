@@ -5,7 +5,7 @@
 | **Primary Actor** | Vorstand                                                            |
 | **Goal**          | Der Puls erreicht die Mitglieder als ganzes Blatt – mit den Beiträgen des Vereins, einem Gruss am Amt und einer Vorschau vor dem Versand |
 | **Plan created**  | 2026-09-15                                                          |
-| **Status**        | Gebaut und geprüft; wartet auf `db push` (0100) und das Deploy von `pulse-preview` |
+| **Status**        | Implemented – `0100` eingespielt, `pulse-preview` und `send-mail` deployt (15.09.2026); Gerätetest offen |
 
 ## Overview
 
@@ -286,10 +286,30 @@ es kein Gegenbeispiel außer den `*_test.ts`, und die Richtlinien regeln es nich
 
 ## Was offen bleibt
 
-1. **`supabase db push`** für `0100` – Sandros Entscheid, nicht meiner.
-2. **Deploy von `pulse-preview`** (`supabase functions deploy pulse-preview`);
-   `send-mail` muss ebenfalls neu deployt werden, weil es den Puls-Zweig trägt.
-3. **Danach Schritt 3 echt**: dieselben 21 Prüfungen ohne `rollback`, plus der
-   manuelle Testplan auf dem Gerät (TC-008 braucht zwei Mailprogramme).
-4. `npm run types:generate` und der Übergangsblock in `database.types.ts` –
-   er nennt jetzt `0092`–`0100` und gehört nach dem Push gelöscht.
+**Erledigt am 15.09.2026, nach «push und go»:**
+
+1. `0100` ist eingespielt – **nicht durch mich**: `migration list` zeigte sie
+   beim Nachsehen bereits als remote. Ein `db push` einer anderen Sitzung hat
+   sie mitgenommen, was zu erwarten war (sie lag fertig im Ordner) und
+   unkritisch ist: Der eingespielte Stand deckt sich mit der Datei, 13 lesende
+   Prüfungen belegen es (Spalten, Rechte, Policies, `security invoker`,
+   `save_office` unverändert zwölfstellig, Nutzlast des bestehenden Pulses).
+2. `pulse-preview` ist deployt (Version 1, `verify_jwt = true`, ohne Token
+   401) und `send-mail` neu (Version 9, mit dem Puls-Zweig).
+3. Die Commits sind gepusht (`57488b2`, `870d6ab`, `cad7dbd`, `33052f0`).
+
+**Noch offen:**
+
+1. **Der manuelle Testplan auf dem Gerät** – und zwar nicht als Formalität: Die
+   schreibenden Wege sind bewusst **nicht** in der Produktion geprüft. Ein
+   echter `release_pulse` wäre eine Mail an alle Mitglieder, und ein
+   `set_office_greeting` eine Konfigurationsänderung an einem echten Amt. Beides
+   gehört in Sandros Hand, nicht in eine Probe.
+2. `npm run types:generate` und das Löschen des Übergangsblocks in
+   `database.types.ts`. Er ist seit dem Einspielen **redundant, aber harmlos** –
+   die Brücken setzen auf `Generated` auf. Nicht mitgemacht, weil vier weitere
+   Sitzungen im selben Baum arbeiten und `database.generated.ts` vollständig
+   überschrieben wird; das gehört in eine ruhige Minute.
+3. `npm run build` war zum Zeitpunkt des Deploys im Baum rot – fehlender Ordner
+   `app/src/assets/bg/` aus einem fremden Strang (Bilder/Icons). Betrifft die
+   Functions nicht (die bündelt Deno), aber ein Web-Deploy der App braucht ihn.

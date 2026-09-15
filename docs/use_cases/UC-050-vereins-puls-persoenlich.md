@@ -7,7 +7,7 @@
 **Primary Actor:** Vorstand
 **Secondary Actor:** Mitglied, System
 **Goal:** Der Puls erreicht die Mitglieder als ganzes Blatt – mit den Beiträgen des Vereins, einem Gruss, der einen Absender hat, und einer Vorschau, die vor dem Versand zeigt, was ankommt
-**Status:** In Progress – gebaut und gegen die laufende Datenbank geprüft (21 Verhaltensprüfungen in einer zurückgerollten Transaktion). Die Migration `0100` ist **nicht** eingespielt und `pulse-preview` nicht deployt; bis dahin wirkt nichts davon (Stand 15.09.2026)
+**Status:** Implemented – Migration `0100` ist eingespielt, `pulse-preview` und `send-mail` sind deployt (15.09.2026). 21 Verhaltensprüfungen liefen gegen die laufende Datenbank in einer zurückgerollten Transaktion, 13 weitere lesend gegen den eingespielten Stand. Offen ist der manuelle Testplan auf dem Gerät – die schreibenden Wege (Freigabe mit Blatt, Gruss setzen) prüft er, weil ein echter `release_pulse` eine Mail an alle Mitglieder wäre
 
 ## Preconditions
 
