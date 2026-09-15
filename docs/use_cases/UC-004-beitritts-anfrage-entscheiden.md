@@ -10,6 +10,7 @@
 
 ## Preconditions
 
+- Der Verein lässt offene Beitritts-Anfragen zu (BR-258, FR-196). Ohne diese Freigabe gibt es keine Anfrage, über die zu entscheiden wäre.
 - Ein Gast hat eine Beitritts-Anfrage an den Verein gestellt.
 - Die entscheidende Person hat im Verein die Rolle admin.
 
@@ -76,6 +77,10 @@ Jeder Entscheid hält fest, wer wann entschieden hat.
 ### BR-015: Standardrolle bei Aufnahme
 
 Ohne abweichende Wahl erhält die aufgenommene Person die Rolle member.
+
+### BR-258: Ohne Freigabe keine Anfrage
+
+Ob es diesen Weg in den Verein überhaupt gibt, entscheidet der Vorstand in den Vereinseinstellungen; voreingestellt ist er zu. Die Regel steht vollständig in UC-051 und wird in `request_join()` durchgesetzt – ein Verein, der sie nicht geöffnet hat, sieht nie eine Anfrage.
 
 ### BR-016: Ablehnung ohne Begründungszwang
 

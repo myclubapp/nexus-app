@@ -2,17 +2,22 @@
 
 **Use Case:** [UC-004](../use_cases/UC-004-beitritts-anfrage-entscheiden.md)
 **Geltungsbereich:** Anfrage stellen, Liste offener Anfragen, Aufnehmen, Ablehnen, Zurückziehen
-**Anforderungen:** FR-009, FR-010, FR-078
-**Regeln:** BR-013 bis BR-016
+**Anforderungen:** FR-009, FR-010, FR-078, FR-196
+**Regeln:** BR-013 bis BR-016, BR-258
 **Erstellt:** 2026-09-08
 
 ## Vorbereitung
 
 - Ein Verein mit mindestens einem Team und dem Kurznamen, den `clubs.slug` trägt.
+- **Der Verein lässt offene Anfragen zu** (Vereinseinstellungen → «Beitritt» →
+  «Offene Anfragen zulassen»). Seit `0101` ist das voreingestellt **aus**, und
+  ohne diese Freigabe ist jeder Schritt dieses Plans erwartungsgemäss abgewiesen
+  (BR-258). Wie sich der abgeschaltete Zustand verhält, prüft TC-003 in
+  [uc-051](uc-051-verein-einrichten.md).
 - **V** — ein Konto mit Rolle Vorstand in diesem Verein.
 - **M** — ein Konto mit Rolle Mitglied im selben Verein.
 - **G1**, **G2** — zwei Konten **ohne** Mitgliedschaft.
-- Migration `0010_join_requests.sql` ist eingespielt.
+- Die Migrationen `0010_join_requests.sql` und `0101_public_join_requests.sql` sind eingespielt.
 
 ---
 

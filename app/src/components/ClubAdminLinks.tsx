@@ -3,6 +3,7 @@ import { IonBadge, IonItem, IonLabel, IonNote } from "@ionic/react";
 import { useTranslation } from "react-i18next";
 import { useClub } from "../hooks/useClub";
 import { isModuleOn } from "../lib/clubSettings";
+import { CLUB_SETUP_ROUTE } from "../lib/clubSetup";
 import { usePendingJoinRequests } from "../hooks/useJoinRequests";
 import { ListSection } from "./ListSection";
 
@@ -181,6 +182,17 @@ export function ClubAdminLinks({ hint }: ClubAdminLinksProps) {
               <IonLabel>
                 <h2>{t("clubSettings.title")}</h2>
                 <IonNote>{activeClub?.name}</IonNote>
+              </IonLabel>
+            </IonItem>,
+            /* UC-051: Der Assistent führt durch Verband, Teams,
+               Beispielinhalte und Mitglieder. Er steht hier und nicht nur auf
+               dem Startbildschirm: Die «Erste Schritte»-Karte verschwindet,
+               sobald der Verein loslegt (BR-002) – die Einrichtung soll
+               danach nicht unerreichbar sein. */
+            <IonItem key="setup" button routerLink={CLUB_SETUP_ROUTE} detail>
+              <IonLabel className="ion-text-wrap">
+                <h2>{t("clubSetup.title")}</h2>
+                <IonNote>{t("clubSetup.linkHint")}</IonNote>
               </IonLabel>
             </IonItem>,
           ],

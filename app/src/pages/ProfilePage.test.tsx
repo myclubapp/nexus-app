@@ -173,7 +173,11 @@ describe('ProfilePage', () => {
     ]);
     // Saisonziel und Rechnungen hängen an Modulen, die hier aus sind.
     expect(sectionLinks(container, 'Punkte & Geld')).toEqual(['/tabs/profile/rules']);
-    expect(sectionLinks(container, 'Verein')).toEqual(['/tabs/profile/club']);
+    expect(sectionLinks(container, 'Verein')).toEqual([
+      '/tabs/profile/club',
+      // Seit UC-051: der Einrichtungs-Assistent, kein Modul – er steht immer.
+      '/tabs/profile/setup',
+    ]);
     expect(sectionLinks(container, 'Anschlüsse')).toEqual([
       '/tabs/profile/news',
       '/tabs/profile/federation',
@@ -224,7 +228,11 @@ describe('ProfilePage', () => {
     expect(sectionLinks(container, 'Menschen')).not.toContain('/tabs/profile/offices');
     // Was kein Modul ist, bleibt: Vereinsdaten, Mitglieder, Regeln.
     expect(sectionLinks(container, 'Menschen')).toContain('/tabs/profile/members');
-    expect(sectionLinks(container, 'Verein')).toEqual(['/tabs/profile/club']);
+    expect(sectionLinks(container, 'Verein')).toEqual([
+      '/tabs/profile/club',
+      // Seit UC-051: der Einrichtungs-Assistent, kein Modul – er steht immer.
+      '/tabs/profile/setup',
+    ]);
     expect(sectionLinks(container, 'Punkte & Geld')).toEqual(['/tabs/profile/rules']);
 
     const settings = sectionLinks(container, 'Einstellungen');

@@ -44,6 +44,7 @@ function loadClub() {
 
 const saveSettings = vi.fn();
 const saveModules = vi.fn();
+const saveJoinPolicy = vi.fn();
 const success = vi.fn();
 const failure = vi.fn();
 
@@ -54,6 +55,9 @@ vi.mock('../hooks/useClub', () => ({
 vi.mock('../hooks/useClubSettings', () => ({
   useSaveClubSettings: () => ({ mutate: saveSettings, isPending: false, error: null }),
   useSaveClubModules: () => ({ mutate: saveModules, isPending: false, error: null }),
+  // FR-196: Offene Beitritts-Anfragen zulassen – derselbe Weg wie die Module,
+  // sofort statt als Entwurf.
+  useSaveJoinPolicy: () => ({ mutate: saveJoinPolicy, isPending: false, error: null }),
   // UC-050: wer den Vereins-Puls unterschreibt. Diese Seite ruft es nicht auf –
   // der Mock braucht den Export trotzdem, weil er das ganze Modul ersetzt.
   useSavePulseGreetingRole: () => ({ mutate: vi.fn(), isPending: false, error: null }),

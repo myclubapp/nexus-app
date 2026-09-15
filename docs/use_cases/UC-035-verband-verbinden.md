@@ -22,7 +22,8 @@
 4. Vorstand fügt den API-Schlüssel ein.
 5. System führt einen Testaufruf gegen die Verbandsschnittstelle durch.
 6. System speichert den Schlüssel verschlüsselt, setzt die Verbindung auf aktiv und startet den ersten Abgleich.
-7. System zeigt die Verbandsnews im Feed und führt den Vorstand weiter zu den Teams: Spiele entstehen erst, wenn ein Team mit einem Verbands-Team verknüpft ist (UC-039).
+7. System fragt, ob auch die Beiträge des Verbands im News-Feed erscheinen sollen, und schaltet sie auf Wunsch ein; voreingestellt sind sie aus (FR-197, BR-260). Liefert der gewählte Verband keine Beiträge, steht dort der Grund statt eines Schalters.
+8. System führt den Vorstand weiter zu den Teams: Spiele entstehen erst, wenn ein Team mit einem Verbands-Team verknüpft ist (UC-039).
 
 ## Alternative Flows
 
@@ -65,7 +66,7 @@
 ### Success Postconditions
 
 - Die Verbindung besteht mit dem Status aktiv und einem verschlüsselt abgelegten Schlüssel.
-- Verbandsnews erscheinen im Feed; Spiele folgen den Verknüpfungen der Teams (UC-039).
+- Verbandsnews erscheinen im Feed, **sofern der Verein sie zugeschaltet hat** (BR-260); Spiele folgen den Verknüpfungen der Teams (UC-039).
 
 ### Failure Postconditions
 
@@ -92,4 +93,8 @@ Der Abgleich liest ausschliesslich. Es werden keine Daten an den Verband zurück
 
 ### BR-155: Verbandsausfall stört die App nicht
 
-Fällt die Verbandsschnittstelle aus, bleiben alle Kernfunktionen unverändert nutzbar.
+Fällt die Verbandsschnittstelle aus, bleiben alle Kernfunktionen unverändert nutzbar. Das gilt auch innerhalb des Abgleichs: Ein Newsraum, der nicht antwortet, setzt die Verbindung **nicht** auf Fehler – der Spielplan ist ihr Zweck, die Beiträge sind die Zugabe.
+
+### BR-260: Verbandsnews sind zugeschaltet, nicht voreingestellt
+
+Die Beiträge des Verbands stehen nur im Feed, wenn der Verein sie eingeschaltet hat. Die Einstellung sitzt an der Verbindung, nicht am Verein – ein Verein kann an zwei Verbänden hängen. Die Regel steht vollständig in UC-051.

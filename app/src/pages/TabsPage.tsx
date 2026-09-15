@@ -35,6 +35,7 @@ import { BillingSetupPage } from './club/BillingSetupPage';
 import { EventLabelPage } from './club/EventLabelPage';
 import { MemberPage } from './club/MemberPage';
 import { NewsSourcePage } from './club/NewsSourcePage';
+import { ClubSetupPage } from './club/ClubSetupPage';
 import { FederationPage } from './club/FederationPage';
 import { LegacyImportPage } from './club/LegacyImportPage';
 import { TeamPage } from './club/TeamPage';
@@ -100,6 +101,8 @@ export function TabsPage() {
         <Route path="agenda" element={<AgendaPage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="profile/club" element={<ClubSettingsPage />} />
+        {/* UC-051: die Einrichtung nach der Gründung – überspringbar (BR-259). */}
+        <Route path="profile/setup" element={<ClubSetupPage />} />
         <Route path="profile/invite" element={<InvitePage />} />
         <Route path="profile/requests" element={<JoinRequestPage />} />
         <Route path="profile/members" element={<MemberPage />} />

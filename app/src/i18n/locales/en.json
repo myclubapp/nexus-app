@@ -27,7 +27,8 @@
     "keepEditing": "Keep editing",
     "details": "Details",
     "manage": "Manage",
-    "clear": "Clear"
+    "clear": "Clear",
+    "skip": "Skip"
   },
   "auth": {
     "title": "Welcome",
@@ -101,7 +102,10 @@
     "requestPendingHint": "You will get a message as soon as the board has decided.",
     "requestWaiting": "Waiting for the board’s decision",
     "withdrawRequest": "Withdraw request",
-    "withdrawConfirm": "The request will be withdrawn. You can send a new one at any time."
+    "withdrawConfirm": "The request will be withdrawn. You can send a new one at any time.",
+    "subtitle": "Found a club, redeem an invitation – or ask to join a club.",
+    "clubClosedHint": "This club does not accept open requests.",
+    "clubClosedExplain": "Here the way in is an invitation. The board can allow open requests in the club settings."
   },
   "tabs": {
     "dashboard": "Home",
@@ -420,7 +424,46 @@
     "logoUrlHint": "Or enter the address of a logo that already lives on your website.",
     "moduleOn": "“{{module}}” switched on.",
     "moduleOff": "“{{module}}” switched off.",
-    "notWritten": "Not saved: the club did not accept the change. Only the board may edit it."
+    "notWritten": "Not saved: the club did not accept the change. Only the board may edit it.",
+    "joinTitle": "Joining",
+    "joinPublic": "Allow open requests",
+    "joinPublicBody": "Anyone who knows your short name can send a request. The board decides on each one.",
+    "joinPublicHint": "With the switch off, the only way in is an invitation. Your short name: {{slug}}",
+    "joinOpened": "Open requests are allowed.",
+    "joinClosed": "Open requests are switched off."
+  },
+  "clubSetup": {
+    "title": "Set up the club",
+    "linkHint": "Federation, teams, sample content, members – one step at a time.",
+    "finish": "Done",
+    "later": "Set up later",
+    "federation": {
+      "title": "Is your club part of a federation?",
+      "hint": "Then fixtures and teams come from there. It works without one too – this step can be skipped.",
+      "connected": "Connected"
+    },
+    "news": {
+      "title": "The federation news as well?",
+      "hint": "The federation’s posts will then appear in your club’s news feed."
+    },
+    "teams": {
+      "title": "What are your teams called?",
+      "hint": "Teams organise events, invitations and the leaderboard. A club without teams works too.",
+      "empty": "No team yet. Create one or take them over from the federation."
+    },
+    "samples": {
+      "title": "The sample content",
+      "hint": "So that no screen stays empty, the agenda, the marketplace and the feed hold items marked as samples.",
+      "explain": "Samples book no points and reach nobody. They disappear with the first own content of the same kind – or now, in one step.",
+      "none": "There is no sample content left."
+    },
+    "members": {
+      "title": "How do members get in?",
+      "hint": "Through an invitation link – and, if you want, through a request from someone who knows your short name.",
+      "createLink": "Create invitation link",
+      "linkReady": "The link is ready",
+      "moreInvites": "All invitations"
+    }
   },
   "health": {
     "title": "Club health",
@@ -581,7 +624,8 @@
     "news": {
       "title": "Bring in news from your website",
       "hint": "Take over existing posts"
-    }
+    },
+    "setup": "Set up"
   },
   "invite": {
     "title": "Invitations",
@@ -1992,7 +2036,6 @@
     "teamsFound_other": "{{count}} teams found at the federation",
     "nextStep": "Link your teams to the federation’s teams – only then do games appear.",
     "toTeams": "To the teams",
-    "empty": "No federation connected yet.",
     "problem": {
       "clubIdMissing": "Without a club id there is nothing to sync.",
       "keyMissing": "This federation needs a key."
@@ -2004,7 +2047,12 @@
       "swisshandball": "Swiss Handball",
       "swissturnverband": "Swiss Gymnastics Federation"
     },
-    "startConnect": "Connect a federation"
+    "news": "Federation news",
+    "newsHint": "The federation’s posts then sit in the news feed next to your own. They do not count as a club message.",
+    "newsOn": "The federation news is in the feed.",
+    "newsOff": "No new federation posts will arrive. What is in the feed stays.",
+    "newsPending": "Switched on. The posts will arrive with the next sync: {{reason}}",
+    "newsUnavailable": "This federation does not supply posts."
   },
   "legacy": {
     "title": "Previous myclub app",

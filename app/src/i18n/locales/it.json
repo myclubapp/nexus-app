@@ -27,7 +27,8 @@
     "keepEditing": "Continua a modificare",
     "details": "Dettagli",
     "manage": "Gestire",
-    "clear": "Cancella"
+    "clear": "Cancella",
+    "skip": "Salta"
   },
   "auth": {
     "title": "Benvenuto",
@@ -101,7 +102,10 @@
     "requestPendingHint": "Riceverai un messaggio appena il comitato avrà deciso.",
     "requestWaiting": "In attesa della decisione del comitato",
     "withdrawRequest": "Ritira la richiesta",
-    "withdrawConfirm": "La richiesta viene ritirata. Puoi inviarne una nuova in qualsiasi momento."
+    "withdrawConfirm": "La richiesta viene ritirata. Puoi inviarne una nuova in qualsiasi momento.",
+    "subtitle": "Fondare una società, usare un invito – oppure chiedere di entrare in una società.",
+    "clubClosedHint": "Questa società non accetta richieste aperte.",
+    "clubClosedExplain": "Qui si entra con un invito. Il comitato può consentire le richieste aperte nelle impostazioni della società."
   },
   "tabs": {
     "dashboard": "Home",
@@ -420,7 +424,46 @@
     "logoUrlHint": "Oppure inserisci l’indirizzo di un logo già presente sul vostro sito web.",
     "moduleOn": "«{{module}}» attivato.",
     "moduleOff": "«{{module}}» disattivato.",
-    "notWritten": "Non salvato: la società non ha accettato la modifica. Solo il comitato può modificarla."
+    "notWritten": "Non salvato: la società non ha accettato la modifica. Solo il comitato può modificarla.",
+    "joinTitle": "Adesione",
+    "joinPublic": "Consentire richieste aperte",
+    "joinPublicBody": "Chi conosce il vostro nome breve può inviare una richiesta. Su ognuna decide il comitato.",
+    "joinPublicHint": "Con l’interruttore spento si entra solo con un invito. Il vostro nome breve: {{slug}}",
+    "joinOpened": "Le richieste aperte sono consentite.",
+    "joinClosed": "Le richieste aperte sono disattivate."
+  },
+  "clubSetup": {
+    "title": "Configurare la società",
+    "linkHint": "Federazione, squadre, contenuti d’esempio, membri – passo per passo.",
+    "finish": "Fatto",
+    "later": "Configura più tardi",
+    "federation": {
+      "title": "La vostra società fa parte di una federazione?",
+      "hint": "Allora calendario e squadre arrivano da lì. Senza federazione funziona comunque – questo passo si può saltare.",
+      "connected": "Collegata"
+    },
+    "news": {
+      "title": "Anche le notizie della federazione?",
+      "hint": "I contributi della federazione compariranno nel feed della vostra società."
+    },
+    "teams": {
+      "title": "Come si chiamano le vostre squadre?",
+      "hint": "Le squadre ordinano appuntamenti, inviti e classifica. Una società senza squadre funziona anche.",
+      "empty": "Ancora nessuna squadra. Createne una o riprendetele dalla federazione."
+    },
+    "samples": {
+      "title": "I contenuti d’esempio",
+      "hint": "Perché nessuna schermata resti vuota, agenda, mercato e feed contengono esempi contrassegnati.",
+      "explain": "Gli esempi non registrano punti e non raggiungono nessuno. Spariscono con il primo contenuto proprio dello stesso tipo – o adesso, in un passo.",
+      "none": "Non ci sono più contenuti d’esempio."
+    },
+    "members": {
+      "title": "Come entrano i membri?",
+      "hint": "Con un link d’invito – e, se volete, con una richiesta di chi conosce il vostro nome breve.",
+      "createLink": "Crea link d’invito",
+      "linkReady": "Il link è pronto",
+      "moreInvites": "Tutti gli inviti"
+    }
   },
   "health": {
     "title": "Salute della società",
@@ -581,7 +624,8 @@
     "news": {
       "title": "Recuperare le notizie dal vostro sito",
       "hint": "Riprendere gli articoli esistenti"
-    }
+    },
+    "setup": "Configura"
   },
   "invite": {
     "title": "Inviti",
@@ -1992,7 +2036,6 @@
     "teamsFound_other": "{{count}} squadre trovate presso la federazione",
     "nextStep": "Collegate le vostre squadre a quelle della federazione – solo allora nascono le partite.",
     "toTeams": "Alle squadre",
-    "empty": "Nessuna federazione collegata.",
     "problem": {
       "clubIdMissing": "Senza identificativo della società non c’è nulla da sincronizzare.",
       "keyMissing": "Questa federazione richiede una chiave."
@@ -2004,7 +2047,12 @@
       "swisshandball": "Swiss Handball",
       "swissturnverband": "Federazione svizzera di ginnastica"
     },
-    "startConnect": "Collegare una federazione"
+    "news": "Notizie della federazione",
+    "newsHint": "I contributi della federazione compaiono nel feed, accanto ai vostri. Non contano come messaggio della società.",
+    "newsOn": "Le notizie della federazione sono nel feed.",
+    "newsOff": "Non arrivano più nuovi contributi della federazione. Quelli già nel feed restano.",
+    "newsPending": "Attivato. I contributi arrivano con il prossimo allineamento: {{reason}}",
+    "newsUnavailable": "Questa federazione non fornisce contributi."
   },
   "legacy": {
     "title": "App myclub precedente",

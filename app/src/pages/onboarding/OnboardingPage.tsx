@@ -23,23 +23,36 @@ import {
   useWithdrawJoinRequest,
   type ClubLookup,
 } from '../../hooks/useJoinRequests';
-import { AppPage } from '../../components/AppPage';
+import { AuthShell } from '../../components/AuthShell';
+import { LanguageSwitcher } from '../../components/LanguageSwitcher';
 import { ListSection } from '../../components/ListSection';
+import { TextSection } from '../../components/TextSection';
 import { DateField } from '../../components/DateField';
 import { InlineError } from '../../components/StateViews';
 import { Wizard, type WizardStep } from '../../components/Wizard';
 import { CLUB_KINDS, defaultSeasonStart } from '../../lib/clubKind';
 import { normaliseClubSlug } from '../../lib/joinRequest';
+import { CLUB_SETUP_ROUTE } from '../../lib/clubSetup';
 import type { ClubKind } from '../../lib/database.types';
 
 type Mode = 'create' | 'join' | 'request';
 
 /**
- * Onboarding: gründen oder beitreten (UC-001, UC-002).
+ * Onboarding: gründen oder beitreten (UC-001, UC-002, UC-004).
+ *
+ * **Dasselbe Gerüst wie die Anmeldung** (`AuthShell`): eine zentrierte Spalte
+ * ohne Kopfzeile. Vorher war diese Seite eine `AppPage` mit Kopfzeile, und
+ * darin lag nur das Segment in einer zentrierten Spalte – Eingabefelder und
+ * Knopfleiste nahmen die volle Fensterbreite. Wer die Anmeldung hinter sich
+ * hatte, landete auf einer Seite, die anders aussah als die davor, und auf
+ * einem grossen Bildschirm zog sich das Namensfeld über die ganze Breite.
  *
  * Die Gründung läuft in drei Schritten – Name, Vereinsart, Saisonbeginn –, denn
  * mehr als drei Eingabeschritte sprengen die drei Minuten aus BR-004/NFR-024.
  * Die Vereinsart steuert dabei nur Vorlagen und schränkt nichts ein (BR-001).
+ * Alles Weitere – Verband, Teams, Beispielinhalte, Mitglieder – fragt der
+ * Einrichtungs-Assistent **nach** der Gründung (UC-051), und zwar
+ * überspringbar: Der Verein ist ab Schritt 8 vollständig nutzbar (BR-002).
  *
  * Der Formularzustand liegt hier und nicht im Wizard: Nach einem Fehlschlag
  * bleiben die Eingaben stehen, statt dass die Person sie neu tippt.
@@ -156,26 +169,36 @@ export function OnboardingPage() {
   ];
 
   return (
-    <AppPage title={t('onboarding.welcome')} largeTitle={false}>
-      <div className="app-centered">
-        <IonSegment
-          value={mode}
-          onIonChange={(e) => {
-            setMode(e.detail.value as Mode);
-            setStep(0);
-          }}
-        >
-          <IonSegmentButton value="create">
-            <IonLabel>{t('onboarding.createClub')}</IonLabel>
-          </IonSegmentButton>
-          <IonSegmentButton value="join">
-            <IonLabel>{t('onboarding.hasInvite')}</IonLabel>
-          </IonSegmentButton>
-          <IonSegmentButton value="request">
-            <IonLabel>{t('onboarding.requestJoin')}</IonLabel>
-          </IonSegmentButton>
-        </IonSegment>
-      </div>
+    <AuthShell
+      title={t('onboarding.welcome')}
+      subtitle={t('onboarding.subtitle')}
+      wide
+      footer={
+        <>
+          <LanguageSwitcher />
+          <IonButton fill="clear" size="small" onClick={() => void signOut()}>
+            {t('auth.logout')}
+          </IonButton>
+        </>
+      }
+    >
+      <IonSegment
+        value={mode}
+        onIonChange={(e) => {
+          setMode(e.detail.value as Mode);
+          setStep(0);
+        }}
+      >
+        <IonSegmentButton value="create">
+          <IonLabel>{t('onboarding.createClub')}</IonLabel>
+        </IonSegmentButton>
+        <IonSegmentButton value="join">
+          <IonLabel>{t('onboarding.hasInvite')}</IonLabel>
+        </IonSegmentButton>
+        <IonSegmentButton value="request">
+          <IonLabel>{t('onboarding.requestJoin')}</IonLabel>
+        </IonSegmentButton>
+      </IonSegment>
 
       {mode === 'create' ? (
         <Wizard
@@ -194,11 +217,17 @@ export function OnboardingPage() {
                 kindLabel: clubKind === 'other' ? kindLabel : undefined,
               },
               {
-                // Beim ersten Verein übernimmt das `RedirectIfClubMember`.
-                // Bei einem weiteren (A3) ist die Weiche mit `?another=1`
-                // ausgeschaltet – ohne diesen Sprung bliebe der Wizard stehen
-                // und die nächste Eingabe gründete einen dritten Verein.
-                onSuccess: () => navigate('/tabs/dashboard', { replace: true }),
+                // UC-001, Schritt 10 führt seit UC-051 in den Einrichtungs-
+                // Assistenten und nicht auf das Dashboard: Verband, Teams,
+                // Beispielinhalte und Mitglieder sind die vier Fragen, die
+                // ein frisch gegründeter Verein danach hat. Überspringen
+                // führt von dort aufs Dashboard.
+                //
+                // Der Sprung ist nötig: Beim ersten Verein übernähme sonst
+                // `RedirectIfClubMember`, bei einem weiteren (A3) ist diese
+                // Weiche ausgeschaltet – der Wizard bliebe stehen, und die
+                // nächste Eingabe gründete einen dritten Verein.
+                onSuccess: () => navigate(CLUB_SETUP_ROUTE, { replace: true }),
               },
             )
           }
@@ -283,10 +312,23 @@ export function OnboardingPage() {
                   <IonItem>
                     <IonLabel className="ion-text-wrap">
                       <h2>{foundClub.clubName}</h2>
-                      <IonNote>{t('onboarding.clubFoundHint')}</IonNote>
+                      <IonNote>
+                        {foundClub.acceptsRequests
+                          ? t('onboarding.clubFoundHint')
+                          : t('onboarding.clubClosedHint')}
+                      </IonNote>
                     </IonLabel>
                   </IonItem>
                 </ListSection>
+              )}
+
+              {/* BR-258: Der Verein hat diesen Weg nicht geöffnet. Das ist
+                  kein Fehler der anfragenden Person – deshalb steht hier der
+                  Weg, der bleibt, und keine rote Meldung. */}
+              {foundClub && !foundClub.acceptsRequests && (
+                <TextSection>
+                  <p>{t('onboarding.clubClosedExplain')}</p>
+                </TextSection>
               )}
 
               {lookupFailed && <InlineError message={t('onboarding.clubNotFound')} />}
@@ -301,7 +343,7 @@ export function OnboardingPage() {
                 {foundClub ? (
                   <IonButton
                     expand="block"
-                    disabled={requestJoin.isPending}
+                    disabled={requestJoin.isPending || !foundClub.acceptsRequests}
                     onClick={() =>
                       requestJoin.mutate({ clubId: foundClub.clubId })
                     }
@@ -378,12 +420,6 @@ export function OnboardingPage() {
           </div>
         </>
       )}
-
-      <div className="app-actions">
-        <IonButton fill="clear" size="small" onClick={() => void signOut()}>
-          {t('auth.logout')}
-        </IonButton>
-      </div>
-    </AppPage>
+    </AuthShell>
   );
 }

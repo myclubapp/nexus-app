@@ -132,6 +132,9 @@ describe('AppMenu', () => {
       '/tabs/profile/rules',
       // Der Verein als Objekt.
       '/tabs/profile/club',
+      // Seit UC-051: die Einrichtung, die durch Verband, Teams,
+      // Beispielinhalte und Mitglieder führt.
+      '/tabs/profile/setup',
       // Anschlüsse: was von aussen hereinkommt (UC-035, UC-040).
       '/tabs/profile/news',
       '/tabs/profile/federation',

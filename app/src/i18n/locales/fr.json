@@ -27,7 +27,8 @@
     "keepEditing": "Continuer la modification",
     "details": "Détails",
     "manage": "Gérer",
-    "clear": "Effacer"
+    "clear": "Effacer",
+    "skip": "Passer"
   },
   "auth": {
     "title": "Bienvenue",
@@ -101,7 +102,10 @@
     "requestPendingHint": "Vous recevrez un message dès que le comité aura décidé.",
     "requestWaiting": "En attente de la décision du comité",
     "withdrawRequest": "Retirer la demande",
-    "withdrawConfirm": "La demande sera retirée. Tu peux en envoyer une nouvelle à tout moment."
+    "withdrawConfirm": "La demande sera retirée. Tu peux en envoyer une nouvelle à tout moment.",
+    "subtitle": "Fonder un club, utiliser une invitation – ou demander à rejoindre un club.",
+    "clubClosedHint": "Ce club n’accepte pas les demandes ouvertes.",
+    "clubClosedExplain": "Ici, on entre par une invitation. Le comité peut autoriser les demandes ouvertes dans les réglages du club."
   },
   "tabs": {
     "dashboard": "Accueil",
@@ -420,7 +424,46 @@
     "logoUrlHint": "Ou saisis l’adresse d’un logo déjà présent sur votre site web.",
     "moduleOn": "« {{module}} » activé.",
     "moduleOff": "« {{module}} » désactivé.",
-    "notWritten": "Pas enregistré : le club n'a pas accepté la modification. Seul le comité peut le modifier."
+    "notWritten": "Pas enregistré : le club n'a pas accepté la modification. Seul le comité peut le modifier.",
+    "joinTitle": "Adhésion",
+    "joinPublic": "Autoriser les demandes ouvertes",
+    "joinPublicBody": "Qui connaît votre identifiant court peut faire une demande. Le comité décide de chacune.",
+    "joinPublicHint": "Interrupteur éteint, on n’entre que par une invitation. Votre identifiant court : {{slug}}",
+    "joinOpened": "Les demandes ouvertes sont autorisées.",
+    "joinClosed": "Les demandes ouvertes sont désactivées."
+  },
+  "clubSetup": {
+    "title": "Configurer le club",
+    "linkHint": "Fédération, équipes, contenus d’exemple, membres – étape par étape.",
+    "finish": "Terminé",
+    "later": "Configurer plus tard",
+    "federation": {
+      "title": "Votre club fait-il partie d’une fédération ?",
+      "hint": "Alors calendrier et équipes viennent de là. Sans fédération, cela marche aussi – cette étape peut être passée.",
+      "connected": "Connectée"
+    },
+    "news": {
+      "title": "Les actualités de la fédération aussi ?",
+      "hint": "Les articles de la fédération apparaîtront dans le fil d’actualité de votre club."
+    },
+    "teams": {
+      "title": "Comment s’appellent vos équipes ?",
+      "hint": "Les équipes structurent les rendez-vous, les invitations et le classement. Un club sans équipes fonctionne aussi.",
+      "empty": "Aucune équipe encore. Créez-en une ou reprenez-les de la fédération."
+    },
+    "samples": {
+      "title": "Les contenus d’exemple",
+      "hint": "Pour qu’aucun écran ne reste vide, l’agenda, la place de marché et le fil contiennent des exemples marqués comme tels.",
+      "explain": "Les exemples ne créditent aucun point et n’atteignent personne. Ils disparaissent avec le premier contenu propre du même type – ou maintenant, en une seule fois.",
+      "none": "Il n’y a plus de contenus d’exemple."
+    },
+    "members": {
+      "title": "Comment les membres entrent-ils ?",
+      "hint": "Par un lien d’invitation – et, si vous le souhaitez, par une demande de qui connaît votre identifiant court.",
+      "createLink": "Créer un lien d’invitation",
+      "linkReady": "Le lien est prêt",
+      "moreInvites": "Toutes les invitations"
+    }
   },
   "health": {
     "title": "Santé de la société",
@@ -581,7 +624,8 @@
     "news": {
       "title": "Récupérer les actualités de votre site",
       "hint": "Reprendre les articles existants"
-    }
+    },
+    "setup": "Configurer"
   },
   "invite": {
     "title": "Invitations",
@@ -1992,7 +2036,6 @@
     "teamsFound_other": "{{count}} équipes trouvées chez la fédération",
     "nextStep": "Liez vos équipes à celles de la fédération – les matchs n’apparaissent qu’ensuite.",
     "toTeams": "Vers les équipes",
-    "empty": "Aucune fédération connectée.",
     "problem": {
       "clubIdMissing": "Sans identifiant de club, il n’y a rien à synchroniser.",
       "keyMissing": "Cette fédération exige une clé."
@@ -2004,7 +2047,12 @@
       "swisshandball": "Swiss Handball",
       "swissturnverband": "Fédération suisse de gymnastique"
     },
-    "startConnect": "Connecter une fédération"
+    "news": "Actualités de la fédération",
+    "newsHint": "Les articles de la fédération apparaissent alors dans le fil, à côté des vôtres. Ils ne comptent pas comme message du club.",
+    "newsOn": "Les actualités de la fédération sont dans le fil.",
+    "newsOff": "Plus aucun nouvel article de la fédération n’arrivera. Ce qui est dans le fil y reste.",
+    "newsPending": "Activé. Les articles arriveront à la prochaine synchronisation : {{reason}}",
+    "newsUnavailable": "Cette fédération ne fournit pas d’articles."
   },
   "legacy": {
     "title": "Ancienne app myclub",

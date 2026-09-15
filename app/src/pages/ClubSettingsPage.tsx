@@ -15,7 +15,11 @@ import {
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { useClub } from '../hooks/useClub';
-import { useSaveClubModules, useSaveClubSettings } from '../hooks/useClubSettings';
+import {
+  useSaveClubModules,
+  useSaveClubSettings,
+  useSaveJoinPolicy,
+} from '../hooks/useClubSettings';
 import {
   useAdoptSample,
   useDropSampleContent,
@@ -63,6 +67,7 @@ export function ClubSettingsPage() {
   const { activeClub, isAdmin } = useClub();
   const save = useSaveClubSettings();
   const saveModules = useSaveClubModules();
+  const saveJoinPolicy = useSaveJoinPolicy();
   const dropSamples = useDropSampleContent();
   const samples = useSampleContent();
   const adopt = useAdoptSample();
@@ -79,6 +84,10 @@ export function ClubSettingsPage() {
   const [hidePoints, setHidePoints] = useState(false);
   // UC-042: das Saisonziel in Punkten. Leer heisst «kein Ziel».
   const [seasonGoal, setSeasonGoal] = useState('');
+  // FR-196: Nimmt der Verein offene Beitritts-Anfragen an? Wie die Module ein
+  // eigener Zustand, weil der Schalter sofort schreibt und nicht auf den
+  // Speichern-Knopf wartet.
+  const [joinPublic, setJoinPublic] = useState(false);
 
   // Der Vorschlag für das Saisonziel: vier Einsätze der Regel, die einen
   // Helfereinsatz bucht. Ohne die Regel gibt es keinen Vorschlag – eine Zahl
@@ -109,6 +118,7 @@ export function ClubSettingsPage() {
     setTopOnly(activeClub.settings?.leaderboard?.topOnly?.toString() ?? '');
     setHidePoints(activeClub.settings?.leaderboard?.hidePoints === true);
     setSeasonGoal(activeClub.settings?.goal?.seasonPoints?.toString() ?? '');
+    setJoinPublic(activeClub.settings?.join?.public === true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clubId]);
 
@@ -162,6 +172,25 @@ export function ClubSettingsPage() {
       onError: (cause) => {
         setModules(previous);
         toast.failure(cause.message);
+      },
+    });
+  }
+
+  /**
+   * Offene Beitritts-Anfragen zulassen oder nicht (FR-196) – **sofort**, wie
+   * ein Modul und aus demselben Grund: Der Schalter öffnet einen Weg in den
+   * Verein hinein, er ist kein Entwurf.
+   */
+  function toggleJoinPolicy(enabled: boolean) {
+    const previous = joinPublic;
+    setJoinPublic(enabled);
+
+    saveJoinPolicy.mutate(enabled, {
+      onSuccess: () =>
+        toast.success(t(enabled ? 'clubSettings.joinOpened' : 'clubSettings.joinClosed')),
+      onError: (cause) => {
+        setJoinPublic(previous);
+        toast.failure((cause as Error).message);
       },
     });
   }
@@ -269,6 +298,32 @@ export function ClubSettingsPage() {
                 </IonToggle>
               </IonItem>
             ))}
+          </ListSection>
+
+          {/* FR-196: Der zweite Weg in den Verein hinein – und er ist zu, bis
+              der Vorstand ihn öffnet (BR-258). Der Schalter steht bei den
+              Modulen und nicht bei den Farben: Er entscheidet, ob es ein
+              Formular gibt, durch das jemand hereinkommt.
+
+              **Sofort wirksam**, wie die Module: Wer ihn umlegt und die Seite
+              verlässt, hat den Weg geöffnet und nicht einen Entwurf verworfen.
+              Durchgesetzt wird er in `request_join()` (`0101`). */}
+          <ListSection
+            title={t('clubSettings.joinTitle')}
+            footnote={t('clubSettings.joinPublicHint', { slug: activeClub?.slug ?? '' })}
+          >
+            <IonItem>
+              <IonToggle
+                checked={joinPublic}
+                disabled={saveJoinPolicy.isPending}
+                onIonChange={(e) => toggleJoinPolicy(e.detail.checked)}
+              >
+                <IonLabel className="ion-text-wrap">
+                  <h2>{t('clubSettings.joinPublic')}</h2>
+                  <IonNote>{t('clubSettings.joinPublicBody')}</IonNote>
+                </IonLabel>
+              </IonToggle>
+            </IonItem>
           </ListSection>
 
           <ListSection
