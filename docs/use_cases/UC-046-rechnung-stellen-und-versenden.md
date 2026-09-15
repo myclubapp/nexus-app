@@ -8,7 +8,7 @@
 **Goal:** Für die Mitglieder einer Abrechnungsperiode Rechnungen mit Schweizer QR-Einzahlungsschein erzeugen und zustellen, ohne die App zu verlassen
 **Status:** Implemented
 
-> **Abgrenzung zum MVP-Schnitt:** `MVP_Scope_myclub.md` §3 lagerte die
+> **Abgrenzung zum MVP-Schnitt:** `MVP_Scope_nexus.md` §3 lagerte die
 > Rechnungsstellung in einen eigenständigen Dienst («myclub Billing») aus.
 > Am 14.09.2026 ist anders entschieden worden: Der Dienst läuft **in nexus**,
 > die Rechnungslogik der bisherigen myclub-App wird hier nachgebaut. UC-036

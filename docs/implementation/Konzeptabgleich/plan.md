@@ -9,8 +9,8 @@
 
 ## Overview
 
-Nach der Vision-Prüfung und UC-039 wurden `Konzept_Vereinsapp_Gamification.md`,
-`Technische_Architektur_TeamSpirit.md` und `MVP_Scope_myclub.md` gegen den
+Nach der Vision-Prüfung und UC-039 wurden `Konzept_Gamification_nexus.md`,
+`Technische_Architektur_nexus.md` und `MVP_Scope_nexus.md` gegen den
 Katalog, die Migrationen und den App-Code abgeglichen. Die Befunde stehen im
 Gesprächsprotokoll vom 2026-09-11; dieser Plan führt die Punkte, die **ohne
 Produktentscheid** umsetzbar sind, und hält fest, was einen Entscheid braucht.

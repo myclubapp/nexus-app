@@ -13,7 +13,7 @@ Die bestehende myclub-App kann Mitglieder exportieren: als Verein
 (`club-member-list`) und je Team (`team-member-list`), mit wählbaren Feldern
 (E-Mail, Telefon, Geburtsdatum, Adresse, Teams, Funktionen). nexus kann das
 heute nicht – FR-130 steht auf `Deferred`, und der MVP-Schnitt nennt den
-Mitglieder-Export ausdrücklich als Post-MVP (`MVP_Scope_myclub.md` Zeile 52).
+Mitglieder-Export ausdrücklich als Post-MVP (`MVP_Scope_nexus.md` Zeile 52).
 **Der Projektinhaber hat ihn am 2026-09-14 bestellt; damit ist FR-130 gezogen,
 nicht stillschweigend erweitert.**
 
@@ -126,7 +126,7 @@ Ein leerer Ausschnitt erzeugt keine Datei, sondern einen Hinweis.
 | 12 | Verhaltensprüfung gegen die laufende Datenbank | Probe | erledigt – 13 Prüfungen, siehe unten |
 | 13 | `ai-code-review` und Befunde beheben | — | erledigt |
 | 14 | Manueller Testplan | `docs/test-plans/uc-043-mitglieder-export.md` | erledigt |
-| 15 | Statusabgleich in `requirements.md`, `use_cases/README.md`, `entity_model.md`, `MVP_Scope_myclub.md` | — | erledigt |
+| 15 | Statusabgleich in `requirements.md`, `use_cases/README.md`, `entity_model.md`, `MVP_Scope_nexus.md` | — | erledigt |
 
 ---
 

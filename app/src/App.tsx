@@ -119,12 +119,18 @@ export default function App() {
                     Mitgliedschaften aus dem Netz, und was danach kommt, steht
                     fest – eine Seite mit Kopfzeile und Liste (guidelines §4).
                     Zwei verschiedene Zwischenbilder hintereinander wären ein
-                    Flackern, deshalb reichen beide dasselbe herein. */}
+                    Flackern, deshalb reichen beide dasselbe herein.
+
+                    `detached` ist keine Kür: Das Skelett steht im selben
+                    Route-Element wie `TabsPage`. Als angemeldete `IonPage`
+                    liesse es die Tabs unsichtbar im DOM stehen, sobald die
+                    Mitgliedschaften zwischen etwa 30 und 200 ms brauchen –
+                    siehe `DetachedPage`. */}
                 <Route
                   path="/tabs/*"
                   element={
-                    <RequireAuth pending={<SkeletonPage />}>
-                      <RequireClub pending={<SkeletonPage />}>
+                    <RequireAuth pending={<SkeletonPage detached />}>
+                      <RequireClub pending={<SkeletonPage detached />}>
                         <TabsPage />
                       </RequireClub>
                     </RequireAuth>

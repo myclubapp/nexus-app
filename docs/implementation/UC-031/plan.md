@@ -15,7 +15,7 @@ sondern der Empfänger – ein Anliegen geht an eine Person oder eine Rolle, ein
 Input an ein **Amt**, und Ämter überdauern die Personen, die sie halten
 (BR-133).
 
-Der Leitsatz des Moduls steht in `MVP_Scope_myclub.md` §13: **«Die App
+Der Leitsatz des Moduls steht in `MVP_Scope_nexus.md` §13: **«Die App
 verwaltet nicht die Sitzung, sondern den Dialog um die Sitzung.»** Daraus folgt,
 was hier **nicht** entsteht: keine Traktanden, keine Protokolle, keine
 Beschlussverwaltung, keine freien Aufgabenlisten (BR-132).

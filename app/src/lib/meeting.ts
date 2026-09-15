@@ -1,7 +1,7 @@
 /**
  * Der Dialog um die Sitzung (UC-031).
  *
- * Der Leitsatz des Moduls steht in `MVP_Scope_myclub.md` §13: **«Die App
+ * Der Leitsatz des Moduls steht in `MVP_Scope_nexus.md` §13: **«Die App
  * verwaltet nicht die Sitzung, sondern den Dialog um die Sitzung.»** Was hier
  * fehlt, fehlt deshalb mit Absicht – kein Traktandum, kein Protokoll, keine
  * Beschlussverwaltung (BR-132).

@@ -1,18 +1,19 @@
-# Requirements: myclub nexus
+# Requirements: nexus
 
-Anforderungskatalog der Engagement-Plattform **myclub nexus**.
+Anforderungskatalog der Engagement-Plattform **nexus – rethink communities**.
 
-**Grundlage:** `vision.md` – Purpose, Zielgruppen, Umfang, Nicht-Ziele und Erfolgsdefinition.
+**Grundlage:** [`vision.md`](vision.md) – Purpose, Zielgruppen, Umfang, Nicht-Ziele und Erfolgsdefinition.
 
 **Quellen der Vision (in dieser Rangfolge):**
 
-1. `MVP_Scope_myclub.md` – der massgebende Leistungsschnitt, übersteuert die anderen Dokumente
-2. `Technische_Architektur_TeamSpirit.md` – Stack, Schema, Flows
-3. `Konzept_Vereinsapp_Gamification.md` – die sieben Punkte-Säulen
-4. `Abgleich_Voicible_Manifest.md` – Purpose-Prüfung und die Korrekturen K1–K7
+1. [`MVP_Scope_nexus.md`](MVP_Scope_nexus.md) – der massgebende Leistungsschnitt, übersteuert die anderen Dokumente
+2. [`Technische_Architektur_nexus.md`](Technische_Architektur_nexus.md) – Stack, Flows, Schreibpfade, RLS
+3. [`Konzept_Gamification_nexus.md`](Konzept_Gamification_nexus.md) – die sieben Punkte-Säulen samt Punktwerten
+4. [`nexus_Manifest_Vereinsfuehrungslogik.md`](nexus_Manifest_Vereinsfuehrungslogik.md) – Purpose, fünf Grundsätze, Korrekturen K1–K7
+5. [`Positionierung_nexus_Rethink_Communities.md`](Positionierung_nexus_Rethink_Communities.md) – Segment (Rechtsform Verein) und Marken-Architektur
 
 **Leitsatz:** Die Verwaltung ist das Substrat, das Punktesystem ist das Produkt.
-Jede Anforderung muss sich ihren Platz im MVP-Schnitt (`MVP_Scope_myclub.md` §2.1) verdienen.
+Jede Anforderung muss sich ihren Platz im MVP-Schnitt (`MVP_Scope_nexus.md` §2.1) verdienen.
 
 **Hinweis zur Nummerierung:** Dieser Katalog ist neu durchnummeriert. Die im MVP-Scope §9 zitierten
 alten IDs (FR-057–062 Helfer, FR-063–070 Beiträge, FR-071 J+S, FR-016/017 Eltern) stammen aus dem
@@ -61,6 +62,7 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-020 | Leaderboard-Opt-in        | Als Mitglied möchte ich entscheiden, ob ich in Ranglisten erscheine, damit die Teilnahme freiwillig bleibt.                                                    | High     | Implemented        |
 | FR-148 | Verwaltung als eigene Gruppe | Als Vorstand möchte ich die Verwaltungswege auf der Profilseite in eigenen, überschriebenen Abschnitten finden, damit ich sie von meinen persönlichen Einstellungen unterscheide.        | Medium   | Implemented |
 | FR-178 | Verwaltung nach Sachgebiet gegliedert | Als Vorstand möchte ich die Verwaltungswege nach Sachgebiet gruppiert sehen – Überblick, Menschen, Punkte & Geld, Verein, Anschlüsse –, damit ich einen Weg über die Frage finde, die ihn sucht, statt über die Reihenfolge, in der er gebaut wurde. | Medium   | Implemented |
+| FR-130 | Mitglieder-Export            | Als Vorstand möchte ich Mitgliederdaten mit wählbaren Feldern exportieren, damit ich sie extern weiterverwenden kann.                              | Low      | Implemented |
 
 ### 1.3 Agenda
 
@@ -116,6 +118,10 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-160 | Beitragsübersicht der Saison   | Als Vorstand möchte ich je Mitglied Ist, Soll und Rest mit Ampel sehen und als CSV teilen, damit ich den Verein führen und dem Kassier die Grundlage geben kann.    | Medium   | Implemented |
 | FR-161 | Fortschritt zum Saisonziel     | Als Mitglied möchte ich sehen, wie weit ich beim Saisonziel bin und was ich als Nächstes beitragen kann, damit ich weiss, wo ich stehe.                            | Medium   | Implemented |
 | FR-162 | Hinweis auf fehlende Beiträge  | Als Vorstand möchte ich vor Saisonende erfahren, wie viele Mitglieder noch keinen Beitrag geleistet haben, damit wir rechtzeitig fragen können.                    | Medium   | Implemented |
+| FR-126 | Funktionärsämter mit Factsheet | Als Vorstand möchte ich Ämter mit Pflichtenheft, Aufwand und Punktwert hinterlegen, damit Interessierte wissen, worauf sie sich einlassen.        | Low      | Implemented |
+| FR-127 | Vakanz-Anzeige               | Als Mitglied möchte ich vakante Ämter im Marktplatz sehen, damit ich eine Lücke füllen kann.                                                       | Low      | Implemented |
+| FR-193 | Ämterbeschreibung exportieren | Als Vorstand möchte ich die Beschreibung eines Amtes – oder aller Ämter – als Markdown-Datei ausgeben, damit sie auch in der Ablage des Vereins liegt (Drive, SharePoint) und ohne diese App lesbar ist (UC-041 A7). | Medium   | Implemented |
+| FR-194 | Ämterbeschreibung einlesen   | Als Vorstand möchte ich eine Ämterbeschreibung aus einer Markdown-Datei einlesen – nach einer Vorlage geschrieben oder zuvor exportiert – und vor dem Speichern sehen, welches Amt sie trifft und was sie ändert (UC-041 A8). | Medium   | Implemented |
 
 ### 1.5 Vereins-Gesundheit & Frühwarnung
 
@@ -244,10 +250,10 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-151 | Team mit Verbands-Team verknüpfen | Als Vorstand möchte ich beim Anlegen oder Bearbeiten eines Teams das passende Verbands-Team aus einer Auswahlliste wählen, damit unser bestehendes Team dessen Spielplan erhält. | Low      | Implemented   |
 | FR-152 | Namenshoheit am Teamnamen   | Als Vorstand möchte ich, dass der Verband nur den Grundnamen eines verknüpften Teams pflegt und unser Zusatz erhalten bleibt, damit der Abgleich unsere Bezeichnung nicht überschreibt. | Low      | Implemented   |
 | FR-153 | Verknüpfung lösen           | Als Vorstand möchte ich die Verknüpfung eines Teams zum Verband lösen, damit das Team wieder allein von uns gepflegt wird und bereits importierte Termine bestehen bleiben.          | Low      | Implemented   |
-| FR-154 | Termine aus der bisherigen App übernehmen | Als Vorstand möchte ich die aktuellen Anlässe und Helfer-Events samt Schichten aus der bisherigen myclub-App übernehmen, damit wir während der Umstellung nichts zweimal erfassen. | High     | Implemented   |
+| FR-154 | Termine aus der bisherigen App übernehmen | Als Vorstand möchte ich die aktuellen Anlässe und Helfer-Events samt Schichten aus der bisherigen my-club-App übernehmen, damit wir während der Umstellung nichts zweimal erfassen. | High     | Implemented   |
 | FR-155 | Bisherige App täglich abgleichen | Als System möchte ich die verbundene bisherige App jede Nacht abgleichen, damit neue und geänderte Termine von selbst in der Agenda stehen. | High     | Implemented   |
 | FR-156 | Kalendereintrag auf dem Gerät | Als Mitglied möchte ich einen zugesagten Termin oder eine übernommene Schicht mit Titel, Ort, Zeitfenster und Warum in den Kalender meines Geräts übernehmen, damit der Einsatz dort steht, wo ich meinen Tag plane. | Medium   | Implemented   |
-| FR-156 | Mitglieder, Teams und Zusagen aus der bisherigen App übernehmen | Als Vorstand möchte ich, dass mit den Terminen auch unsere Mitglieder, Teams, Trainings und die Zu- und Absagen aus der bisherigen myclub-App übernommen werden, damit die Umstellung ohne Neuerfassung der Personen gelingt. | High     | Implemented   |
+| FR-156 | Mitglieder, Teams und Zusagen aus der bisherigen App übernehmen | Als Vorstand möchte ich, dass mit den Terminen auch unsere Mitglieder, Teams, Trainings und die Zu- und Absagen aus der bisherigen my-club-App übernommen werden, damit die Umstellung ohne Neuerfassung der Personen gelingt. | High     | Implemented   |
 | FR-197 | Verbandsnews im Feed        | Als Vorstand möchte ich beim Verbinden eines Verbands entscheiden, ob auch seine Beiträge in unserem News-Feed erscheinen, damit wir den Feed bewusst füllen und nicht ungefragt (UC-035, UC-051). | Low      | Implemented   |
 | FR-157 | Kalenderübersicht der Agenda  | Als Mitglied möchte ich die Agenda auch als Monatskalender sehen, in dem Tage mit Terminen markiert sind, damit ich auf einen Blick sehe, wann etwas ansteht, und einen Tag antippen kann, um seine Termine zu öffnen. | Medium   | Implemented   |
 
@@ -263,12 +269,16 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-139 | Beispiel-Aufgaben              | Als Vorstand möchte ich im Marktplatz Beispielaufgaben passend zu unserer Vereinsart vorfinden, damit ich sehe, wie eine gute Ausschreibung aussieht.                  | High     | Implemented |
 | FR-140 | Beispiel-Helfer-Event          | Als Vorstand möchte ich ein Beispiel-Helfer-Event mit Schichten vorfinden, damit ich das Schichtmodell verstehe, bevor ich unseren ersten Anlass ausschreibe.          | Medium   | Implemented |
 | FR-141 | Beispiel-Termine               | Als Vorstand möchte ich Beispieltermine in der Agenda vorfinden, damit Agenda, Zu-/Absage und Check-in nicht ohne Inhalt dastehen.                                     | Medium   | Implemented |
-| FR-142 | Einführungs-News               | Als Mitglied möchte ich beim ersten Öffnen erklärende Beiträge darüber vorfinden, wie myclub nexus funktioniert, damit ich die App ohne Schulung verstehe.             | High     | Implemented |
+| FR-142 | Einführungs-News               | Als Mitglied möchte ich beim ersten Öffnen erklärende Beiträge darüber vorfinden, wie nexus funktioniert, damit ich die App ohne Schulung verstehe.             | High     | Implemented |
 | FR-143 | Beiträge zur Orientierung      | Als Mitglied möchte ich lesen, was Punkte bedeuten, wo ich beitragen kann und was mein Verein über mich sieht, damit ich das System einordnen kann.                    | High     | Implemented |
 | FR-144 | Leere Zustände mit Angebot     | Als Mitglied möchte ich auf jedem Bildschirm ohne Inhalte eine Erklärung und mindestens ein Handlungsangebot sehen, damit ich nie vor einer leeren Fläche stehe.       | High     | Implemented |
 | FR-145 | Demo-Verein zum Ausprobieren   | Als Interessent möchte ich einen vollständig befüllten Demo-Verein betreten, damit ich die App beurteilen kann, ohne einen echten Verein anzulegen.                    | Medium   | Partial |
 
 ### 1.13 Bewusst verschoben (Post-MVP)
+
+> Vorgezogen und deshalb nicht mehr hier: Funktionärsämter mit Factsheet und Vakanz-Anzeige
+> (FR-126/127/193/194, UC-041, 12.09.2026) stehen in §1.4, der Mitglieder-Export (FR-130,
+> UC-043, 14.09.2026) in §1.2.
 
 | ID     | Titel                        | User Story                                                                                                                                        | Priority | Status   |
 | ------ | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | -------- |
@@ -276,13 +286,8 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | FR-123 | Level-System                 | Als Mitglied möchte ich ein Level mit Fortschrittsbalken sehen, damit langfristiger Einsatz sichtbar wird.                                         | Low      | Deferred |
 | FR-124 | Challenges                   | Als Trainer:in möchte ich zeitgebundene Team-Challenges ausschreiben, damit das Team gemeinsam ein Ziel verfolgt.                                  | Low      | Deferred |
 | FR-125 | Rewards-Shop                 | Als Mitglied möchte ich Punkte gegen Belohnungen einlösen, damit sich Einsatz zusätzlich lohnt.                                                    | Low      | Deferred |
-| FR-126 | Funktionärsämter mit Factsheet | Als Vorstand möchte ich Ämter mit Pflichtenheft, Aufwand und Punktwert hinterlegen, damit Interessierte wissen, worauf sie sich einlassen.        | Low      | Implemented |
-| FR-127 | Vakanz-Anzeige               | Als Mitglied möchte ich vakante Ämter im Marktplatz sehen, damit ich eine Lücke füllen kann.                                                       | Low      | Implemented |
-| FR-193 | Ämterbeschreibung exportieren | Als Vorstand möchte ich die Beschreibung eines Amtes – oder aller Ämter – als Markdown-Datei ausgeben, damit sie auch in der Ablage des Vereins liegt (Drive, SharePoint) und ohne diese App lesbar ist (UC-041 A7). | Medium   | Implemented |
-| FR-194 | Ämterbeschreibung einlesen   | Als Vorstand möchte ich eine Ämterbeschreibung aus einer Markdown-Datei einlesen – nach einer Vorlage geschrieben oder zuvor exportiert – und vor dem Speichern sehen, welches Amt sie trifft und was sie ändert (UC-041 A8). | Medium   | Implemented |
 | FR-128 | Meisterschaft                | Als Mitglied möchte ich Spielpläne, Resultate und Tabellen sehen, damit ich den Meisterschaftsverlauf verfolge.                                    | Low      | Deferred |
 | FR-129 | Eltern und Kinder            | Als Elternteil möchte ich mit dem Konto meines Kindes verknüpft sein und stellvertretend antworten, damit Juniorenvereine die App nutzen können.   | Low      | Deferred |
-| FR-130 | Mitglieder-Export            | Als Vorstand möchte ich Mitgliederdaten mit wählbaren Feldern exportieren, damit ich sie extern weiterverwenden kann.                              | Low      | Implemented |
 | FR-131 | J+S-Export                   | Als Vorstand möchte ich Anwesenheiten im AWK-Format exportieren, damit die J+S-Abrechnung ohne Doppelerfassung läuft.                              | Low      | Deferred |
 | FR-132 | Bulk-Import                  | Als Vorstand möchte ich Mitglieder per CSV importieren und personalisiert einladen, damit die Migration eines Bestandsvereins gelingt.             | Low      | Deferred |
 | FR-133 | Kalender-Publishing          | Als Vorstand möchte ich ausgewählte Termintypen als ICS-Feed und Website-Widget publizieren, damit die Vereinswebsite aktuell bleibt.              | Low      | Deferred |
@@ -352,7 +357,7 @@ Vorgänger-Katalog «Abgleich Vorgaben» und gelten hier als ersetzt.
 | C-011 | Rollenprüfung serverseitig     | Berechtigungen werden in RLS-Policies oder Datenbankfunktionen geprüft, nie ausschliesslich im Frontend.                                                 | Technical   | High     | Implemented |
 | C-012 | Deep-Link-Schema               | Das Schema `ch.myclub.nexus` ist in `capacitor.config.ts`, `Info.plist`, `AndroidManifest.xml` und den Supabase-Auth-Redirect-URLs konsistent zu halten. | Technical   | High     | Implemented |
 | C-013 | Laufzeit-Theming               | Vereinsspezifisches Erscheinungsbild entsteht zur Laufzeit aus `clubs.settings`; es gibt keine vereinsspezifischen Build-Konfigurationen.                | Technical   | High     | Implemented |
-| C-014 | Billing ausgelagert            | Rechnungsstellung, QR-Rechnung, Perioden, Positionen, Mahnwesen und Zahlungsabgleich liegen im eigenständigen Dienst «myclub Billing», nicht in der App. | Technical   | High     | Implemented        |
+| C-014 | Rechnungswesen in nexus        | Rechnungsstellung, QR-Rechnung, Perioden, Positionen, Mahnwesen und Zahlungsabgleich laufen seit dem Entscheid vom 14.09.2026 **in nexus** (UC-046/047), nicht in einem ausgelagerten Dienst. Was das Mitglied sieht, bleibt auf Betrag, Fälligkeit, Stand und Link begrenzt (`invoice_refs`, UC-036). | Technical   | High     | Implemented        |
 | C-015 | Rechnungs-Spiegel              | Die App kennt zu einer Rechnung nur Betrag, Fälligkeit, Status und Link; alle weiteren Rechnungsdaten bleiben im Billing-Dienst.                         | Technical   | High     | Implemented        |
 | C-016 | Verbands-Anbindung             | Verbandsdaten werden ausschliesslich über einen API-Key pro Verein bezogen; ein globaler Presync und ein Vereinsverzeichnis existieren nicht.            | Technical   | Medium   | Implemented        |
 | C-017 | Ein Punkte-Ledger              | Es gibt genau einen Punkte-Ledger; ein separates Helferpunkte-Konto mit Soll- und Schwellwerten wird nicht gebaut.                                       | Technical   | High     | Implemented |

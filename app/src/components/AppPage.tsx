@@ -13,6 +13,7 @@ import {
   IonToolbar,
 } from '@ionic/react';
 import { CreateFab, type CreateAction } from './CreateFab';
+import { DetachedPage } from './DetachedPage';
 
 interface AppPageProps {
   /**
@@ -54,6 +55,12 @@ interface AppPageProps {
   subToolbar?: ReactNode;
   /** Aktiviert «Ziehen zum Aktualisieren». */
   onRefresh?: () => Promise<unknown>;
+  /**
+   * Hängt die Seite **nicht** in den Router-Stapel ein ({@link DetachedPage}).
+   * Nur für Zwischenbilder einer Weiche, die im selben Route-Element stehen
+   * wie die Seite danach – sonst bleibt die echte Seite unsichtbar.
+   */
+  detached?: boolean;
   children: ReactNode;
 }
 
@@ -84,13 +91,17 @@ export function AppPage({
   createActions,
   subToolbar,
   onRefresh,
+  detached = false,
   children,
 }: AppPageProps) {
   const { t } = useTranslation();
   const large = largeTitle === false ? null : (largeTitle ?? title);
+  // Dieselbe Hülle, einmal am Router angemeldet und einmal nicht – der Inhalt
+  // steht nur einmal da, damit Zwischenbild und Seite nicht auseinanderlaufen.
+  const Shell = detached ? DetachedPage : IonPage;
 
   return (
-    <IonPage>
+    <Shell>
       <IonHeader translucent>
         <IonToolbar>
           <IonButtons slot="start">
@@ -151,6 +162,6 @@ export function AppPage({
 
         {children}
       </IonContent>
-    </IonPage>
+    </Shell>
   );
 }

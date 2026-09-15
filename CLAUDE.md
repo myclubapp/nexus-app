@@ -4,16 +4,28 @@ Hinweise für Claude Code in diesem Repository.
 
 ## Was das Projekt ist
 
-**myclub nexus** – Engagement-Plattform für Vereine. Ionic React 9 + Capacitor 8
-(iOS, Android, PWA) auf einem Supabase-Backend. Nachfolger der bestehenden
-Ionic-Angular-App unter `github.com/myclubapp/app`, aber ohne Google-Stack:
-kein Firebase, kein FCM, kein Google-Login.
+**nexus – rethink communities** – Engagement-Plattform für Vereine nach Schweizer
+Recht. Ionic React 9 + Capacitor 8 (iOS, Android, PWA) auf einem Supabase-Backend.
+Nachfolger der bestehenden Ionic-Angular-App unter `github.com/myclubapp/app`, aber
+ohne Google-Stack: kein Firebase, kein FCM, kein Google-Login.
+
+**Marke (Entscheid 16.09.2026):** Produkt- und Dachmarke ist **nexus**. «myclub»/
+«my-club» bezeichnet nur noch die Alt-App, die migriert und nicht weiterentwickelt
+wird. Der Arbeitstitel «TeamSpirit» ist abgelöst. Noch offen sind Domain,
+App-Store-Name und Bundle-ID (`ch.myclub.nexus`) – bis dahin bleibt die Bundle-ID
+im Code unverändert.
 
 Massgebende Dokumente in `docs/`, in dieser Rangfolge:
 
-1. `MVP_Scope_myclub.md` – der Leistungsschnitt. Übersteuert die anderen.
-2. `Technische_Architektur_TeamSpirit.md` – Stack, Schema, Flows.
-3. `Konzept_Vereinsapp_Gamification.md` – die sieben Punkte-Säulen.
+1. `MVP_Scope_nexus.md` – der Leistungsschnitt. Übersteuert die anderen.
+2. `Technische_Architektur_nexus.md` – Stack, Flows, Schreibpfade, RLS.
+3. `Konzept_Gamification_nexus.md` – die sieben Punkte-Säulen samt Punktwerten.
+
+Darüber liegen zwei Haltungs-Dokumente, die den Purpose und das Segment festlegen:
+`nexus_Manifest_Vereinsfuehrungslogik.md` (Purpose, fünf Grundsätze, vier
+Arbeitsprinzipien) und `Positionierung_nexus_Rethink_Communities.md` (Segment ist
+die Rechtsform Verein, Marken-Architektur). Das Schema führt `entity_model.md`
+zusammen mit `supabase/migrations/` – nicht das Architektur-Dokument.
 
 **Die Verwaltung ist das Substrat, das Punktesystem ist das Produkt.** Wer eine
 Funktion baut, prüft zuerst, ob sie im MVP-Schnitt (§2.1) steht.
@@ -90,6 +102,19 @@ supabase db push            # Migrationen deployen
 - **Ionic 9 verlangt React Router 6.** `<Route element={…}>` statt `component`,
   `<Navigate replace>` statt `<Redirect>`. Ältere Ionic-React-Beispiele im Netz
   zeigen die v5-Syntax und funktionieren hier nicht.
+- **Eine Weiche darf ihr Zwischenbild nicht als `IonPage` zeigen.** Ionic
+  blendet eine Seite nicht über CSS ein, sondern über einen Übergang, den der
+  `StackManager` beim **Routenwechsel** startet; bis dahin trägt jede frisch
+  eingehängte `IonPage` `ion-page-invisible` (`opacity: 0`). Tauscht
+  `RequireAuth`/`RequireClub` innerhalb derselben Route ihr Skelett gegen die
+  echte Seite, wechselt die Route nicht – die Seite steht vollständig im DOM
+  und bleibt unsichtbar. Im Browser gemessen trifft es jeden Tausch, der
+  zwischen etwa 30 und 200 ms nach dem Routenwechsel landet: genau die Dauer
+  einer Supabase-Abfrage, deshalb «manchmal». Zwischenbilder und Fehlerseiten
+  der Weichen laufen darum über `DetachedPage` (`div.ion-page`, meldet sich
+  nicht beim Outlet an), die echte Seite bleibt die einzige `IonPage` der
+  Route. **jsdom fängt das nicht** – dort läuft kein Übergang, und beide
+  Hüllen ergeben dasselbe DOM.
 - **Das verschachtelte Outlet in `TabsPage` darf kein `ionPage` bekommen.**
   `IonTabs` legt selbst einen `PageManager` um sich – das ist die Seite, die
   das äussere Outlet einblendet. Mit `ionPage` wird zusätzlich das

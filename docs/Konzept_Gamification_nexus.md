@@ -1,15 +1,18 @@
 # Konzept: Vereins-App mit Gamification
-## «TeamSpirit» – Engagement sichtbar machen, Wertschätzung erlebbar machen
+## nexus – Engagement sichtbar machen, Wertschätzung erlebbar machen
+
+> **Markenentscheid 16.09.2026**: Produkt- und Dachmarke ist **nexus – rethink communities**. Der Arbeitstitel «TeamSpirit» ist abgelöst; «myclub»/«my-club» bezeichnet nur noch die Alt-App.
+> Dieses Dokument ist die **Quelle der Punktwerte, Badges, Level-Schwellen und der Ämterliste**. Der Leistungsschnitt steht in [`MVP_Scope_nexus.md`](MVP_Scope_nexus.md) und übersteuert es.
 
 ---
 
 ## 1. Vision & Leitgedanke
 
-Schweizer Vereine leben vom freiwilligen Engagement ihrer Mitglieder – doch dieses Engagement bleibt oft unsichtbar. **TeamSpirit** macht den Einsatz jedes einzelnen Mitglieds sichtbar, würdigt ihn spielerisch und stärkt so den Zusammenhalt im Verein.
+Schweizer Vereine leben vom freiwilligen Engagement ihrer Mitglieder – doch dieses Engagement bleibt oft unsichtbar. **nexus** macht den Einsatz jedes einzelnen Mitglieds sichtbar, würdigt ihn spielerisch und stärkt so den Zusammenhalt im Verein.
 
 **Kernprinzipien:**
 
-- **Verbindung vor Aufruf** – Mitglieder erfahren regelmässig, was passiert, woran gearbeitet wird und wo sie dabei sein können, bevor sie um Hilfe gebeten werden. Jeder Aufruf trägt sein Warum. (Voicible-Manifest, Korrekturen K1–K3)
+- **Erst der Faden, dann die Frage** – Mitglieder erfahren regelmässig, was passiert, woran gearbeitet wird und wo sie dabei sein können, bevor sie um Hilfe gebeten werden. Jeder Aufruf trägt sein Warum. (nexus-Manifest §5, Korrekturen K1–K3)
 - **Spass vor Druck** – Die Gamification soll motivieren, nie unter Druck setzen. Es geht um positive Verstärkung, nicht um Bestrafung bei Inaktivität.
 - **Sinn ist der Motor, Punkte machen ihn sichtbar** – Wertschätzung verstärkt intrinsische Motivation, sie ersetzt sie nicht (V7).
 - **Wertschätzung im Zentrum** – Jeder Beitrag zählt: ob Torschützin, Helfer am Grillstand oder treues Mitglied seit 20 Jahren.
@@ -403,7 +406,7 @@ Intelligente, nicht aufdringliche Benachrichtigungen halten Mitglieder engagiert
 
 | Komponente | Technologie | Begründung |
 |---|---|---|
-| **App (iOS/Android/Web)** | Ionic React + Capacitor | Eine Codebasis für Web-App und native Apps; UI-Referenz: myclub-App |
+| **App (iOS/Android/Web)** | Ionic React + Capacitor | Eine Codebasis für Web-App und native Apps; UI-Referenz: my-club-App (Alt-App) |
 | **Backend** | 100% Supabase (Open Source) | Kein separater Server; jederzeit self-hostbar → Exit-Fähigkeit |
 | **Geschäftslogik (Punkte-Engine)** | Postgres-Funktionen (security definer) | Transaktional, atomar, manipulationssicher |
 | **HTTP-Logik (Push, Webhooks, Jobs)** | Supabase Edge Functions (Deno) | Serverless, direkt in Supabase deployt |
@@ -427,14 +430,14 @@ Intelligente, nicht aufdringliche Benachrichtigungen halten Mitglieder engagiert
 
 ## 13. Monetarisierung
 
-> Aktualisiert gemäss «MVP-Scope myclub» (Entscheid 5): **Gamification Basic ist Kern des Basis-Abos** – myclub positioniert sich als Engagement-Plattform, nicht als weitere Mitgliederverwaltung. Die Ausbaustufe (Badges, Level, Challenges, Ämter) plus das **Mitgliederwert-Cockpit** bilden das Add-on «Engagement Pro» (~CHF 6.90/Mt). Details und das Mitgliederwert-Konzept (Kundenwert-Ansatz nach Sales Excellence/CX, intern für Mitglieder angewendet): MVP-Scope §7 und §11.
+> Aktualisiert gemäss «MVP-Scope nexus» (Entscheid 5): **Gamification Basic ist Kern des Basis-Abos** – nexus positioniert sich als Engagement-Plattform, nicht als weitere Mitgliederverwaltung. Die Ausbaustufe (Badges, Level, Challenges, Ämter) plus das **Mitgliederwert-Cockpit** bilden das Add-on «Engagement Pro» (~CHF 6.90/Mt). Details und das Mitgliederwert-Konzept (Kundenwert-Ansatz nach Sales Excellence/CX, intern für Mitglieder angewendet): MVP-Scope §7 und §11.
 
 | Stufe | Inhalt | Preis |
 |---|---|---|
-| **myclub Basis** | Kern inkl. Helfer-Schichten, News, Push, Agenda | micro CHF 0 (≤20 Mitglieder) / small 6.90 / medium 12.90 / large 24.90 pro Monat |
-| **Add-on Gamification** | Punkte, Dashboard, Leaderboards, Aufgaben-Marktplatz (Stufe 2: Badges, Level, Challenges, Funktionärsämter) | ~CHF 4.90/Mt |
+| **nexus Basis** | Kern inkl. Helfer-Schichten, News, Push, Agenda | micro CHF 0 (≤20 Mitglieder) / small 6.90 / medium 12.90 / large 24.90 pro Monat |
+| **Add-on Engagement Pro** | Ausbaustufe 2: Badges, Level, Challenges, Rewards, vertiefte Analytics, Puls-Umfragen (Gamification Basic ist im Basis-Abo) | ~CHF 6.90/Mt |
 | **Add-on Verband** | Verbands-Sync (Spielpläne, Resultate, Tabellen) via API-Key pro Verein | CHF 5.90/Mt |
-| **myclub Billing** | Eigenständiger Rechnungsdienst (QR-Rechnung, Perioden, Mahnwesen), voll in myclub integriert | eigene Preisliste |
+| **nexus Billing** | Rechnungsbereich in nexus: QR-Rechnung, Perioden, Mahnwesen, Zahlungsabgleich (UC-046/047, seit 14.09.2026 in der App statt ausgelagert) | eigene Preisliste |
 | Premium / White-Label | Eigene Marke für Verbände und Grossvereine (Laufzeit-Theming) | individuell |
 
 Helfer-Schichten und Gamification teilen sich einen einzigen Punkte-Ledger: Die Schicht-Bestätigung bucht direkt Gamification-Punkte (Säule 3); ein separates Helferpunkte-Konto gibt es nicht mehr. Säule 6 («Rechnung pünktlich bezahlt») wird vom Billing-Webhook gespeist.
@@ -503,6 +506,6 @@ Helfer-Schichten und Gamification teilen sich einen einzigen Punkte-Ledger: Die 
 
 ## 16. Zusammenfassung
 
-**TeamSpirit** kombiniert praxisnahe Vereinsverwaltung mit einem durchdachten Gamification-System, das auf Wertschätzung und Gemeinschaft setzt. Durch die sieben Punktesäulen wird jede Form von Engagement gewürdigt – vom Trainingsbesuch über den pünktlich bezahlten Vereinsbeitrag, den freiwillig geschriebenen Matchbericht bis zur langjährigen Vereinstreue. Der Aufgaben-Marktplatz sorgt dafür, dass wichtige Vereinsarbeiten nicht an wenigen Schultern hängen bleiben, sondern fair verteilt und sichtbar belohnt werden – und macht mit digitalen Factsheets und Vakanz-Anzeige auch die Funktionärsämter transparent und attraktiv. Konfigurierbare Punkte, Badges und Challenges stellen sicher, dass jeder Verein das System auf seine Kultur und Bedürfnisse abstimmen kann.
+**nexus** kombiniert praxisnahe Vereinsverwaltung mit einem durchdachten Gamification-System, das auf Wertschätzung und Gemeinschaft setzt. Durch die sieben Punktesäulen wird jede Form von Engagement gewürdigt – vom Trainingsbesuch über den pünktlich bezahlten Vereinsbeitrag, den freiwillig geschriebenen Matchbericht bis zur langjährigen Vereinstreue. Der Aufgaben-Marktplatz sorgt dafür, dass wichtige Vereinsarbeiten nicht an wenigen Schultern hängen bleiben, sondern fair verteilt und sichtbar belohnt werden – und macht mit digitalen Factsheets und Vakanz-Anzeige auch die Funktionärsämter transparent und attraktiv. Konfigurierbare Punkte, Badges und Challenges stellen sicher, dass jeder Verein das System auf seine Kultur und Bedürfnisse abstimmen kann.
 
 > **Leitspruch: «Jeder Einsatz zählt – mach ihn sichtbar.»**

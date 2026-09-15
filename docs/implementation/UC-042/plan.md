@@ -11,7 +11,7 @@
 
 Die alte myclub-App verlangte vier Helferpunkte je Saison und führte dafür ein
 zweites Konto neben dem Punktesystem. Der MVP-Schnitt hat dieses Soll
-gestrichen (`MVP_Scope_myclub.md` §2.1, Zeile 106) und die Rangliste nach
+gestrichen (`MVP_Scope_nexus.md` §2.1, Zeile 106) und die Rangliste nach
 Säule 3 an seine Stelle gesetzt. Dieser Use Case baut die dort genannte
 Ausbaustufe: ein **Saisonziel auf dem bestehenden Ledger**, als zuschaltbares
 Modul, in derselben Einheit wie alle Punkte.

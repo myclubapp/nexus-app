@@ -106,11 +106,22 @@ export function SkeletonCard({ cards = 2 }: { cards?: number }) {
  * sich selbst widerruft. Die Ansage für Bedienhilfen übernimmt das
  * `role="status"` mit `aria-label`, weil ein Skelett keinen Text hat.
  */
-export function SkeletonPage({ rows = 4 }: { rows?: number }) {
+export function SkeletonPage({
+  rows = 4,
+  detached = false,
+}: {
+  rows?: number;
+  /**
+   * Für Zwischenbilder einer Weiche, die im selben Route-Element stehen wie
+   * die Seite danach – siehe `DetachedPage`.
+   */
+  detached?: boolean;
+}) {
   const { t } = useTranslation();
 
   return (
     <AppPage
+      detached={detached}
       title={<IonSkeletonText animated style={{ width: '35%' }} />}
       largeTitle={<IonSkeletonText animated style={{ width: '55%' }} />}
     >
