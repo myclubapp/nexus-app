@@ -10,18 +10,48 @@
  * `Record<string, unknown>`, und Interfaces bekommen in TypeScript keine
  * implizite Index-Signatur.
  */
-import type { Tables as Row } from './database.generated';
+import type { Database as Generated, Tables as Row } from './database.generated';
 import type { Language } from '../i18n';
 
 export type {
   CompositeTypes,
-  Database,
   Enums,
   Json,
   Tables,
   TablesInsert,
   TablesUpdate,
 } from './database.generated';
+
+/* --- Übergang bis `supabase db push` für `0092` gelaufen ist ---------------
+ *
+ * `types:generate` kennt die neuen Funktionen erst, wenn die Migration remote
+ * steht. Bis dahin wird der fehlende Stand **hier** nachgebildet und nicht in
+ * `database.generated.ts` – die Datei wird vollständig überschrieben, jede
+ * Handarbeit darin ginge still verloren.
+ *
+ * Nach dem Push und `npm run types:generate` gehört dieser Block gelöscht.
+ */
+type Fn = Generated['public']['Functions'];
+
+export type Database = Omit<Generated, 'public'> & {
+  public: Omit<Generated['public'], 'Functions'> & {
+    Functions: Omit<Fn, 'leaderboard_rows' | 'team_ranking_rows'> & {
+      /** `0092`: die Säulen dieses Vereins mit ihrer Wertdimension. */
+      club_pillars: {
+        Args: { p_club_id: string };
+        Returns: { pillar: number; dimension: string | null }[];
+      };
+      leaderboard_rows: {
+        Args: Fn['leaderboard_rows']['Args'] & { p_dimension?: string };
+        Returns: Fn['leaderboard_rows']['Returns'];
+      };
+      team_ranking_rows: {
+        Args: Fn['team_ranking_rows']['Args'] & { p_dimension?: string };
+        Returns: Fn['team_ranking_rows']['Returns'];
+      };
+    };
+  };
+};
 
 /**
  * Eine Zeile von `export_members()` (0082).

@@ -181,8 +181,6 @@
       "season": "Saison",
       "all": "Gesamt"
     },
-    "pillar": "Säule",
-    "allPillars": "Alle Säulen",
     "filterHint": "Kürzere Zeiträume zeigen auch, wer neu dabei ist.",
     "yourRank": "Dein Rang: {{rank}}",
     "teams": "Teams",
@@ -192,7 +190,14 @@
     "teamsEmpty": "Noch kein Team mit Punkten in diesem Zeitraum",
     "rankGap": "Weitere Ränge dazwischen",
     "currentSeason": "Laufende Saison",
-    "teamMembers": "{{count}} Mitglieder"
+    "teamMembers": "{{count}} Mitglieder",
+    "source": "Punktequelle",
+    "sourceAll": "Alle Säulen",
+    "sourceHint": "Nichts gewählt heisst: alle Punkte zählen. Die Gruppen sind die fünf Dimensionen aus «Meine Stärken».",
+    "wholeDimension": "Alles",
+    "wholeDimensionAria": "Alles aus {{name}}",
+    "otherPillars": "Weitere",
+    "emptyFiltered": "Noch keine Punkte aus «{{name}}» in diesem Zeitraum"
   },
   "agenda": {
     "title": "Agenda",

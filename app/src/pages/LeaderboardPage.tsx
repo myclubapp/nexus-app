@@ -11,7 +11,9 @@ import {
   useIonRouter,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
+  useClubPillars,
   useClubSeasons,
   useLeaderboard,
   useMyTeams,
@@ -24,15 +26,18 @@ import { ListSection } from '../components/ListSection';
 import { MemberAvatar } from '../components/MemberAvatar';
 import { EmptyState, ErrorState } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
+import { PointSourceModal } from '../components/PointSourceModal';
 import {
+  ALL_POINTS,
   LEADERBOARD_PERIODS,
   hasRankGap,
   hidesPoints,
   leaderboardLimit,
   ownRank,
+  sourceQuery,
   type LeaderboardPeriod,
+  type PointSource,
 } from '../lib/leaderboard';
-import { PILLARS, type Pillar } from '../lib/pointRule';
 
 type Scope = 'club' | 'team' | 'teams';
 
@@ -43,14 +48,26 @@ export function LeaderboardPage() {
   const myTeams = useMyTeams();
   // Die Tab-Seite bleibt gemountet; erst das erneute Betreten lädt nach, was
   // nach `staleTime` veraltet ist (Lifecycle-Kapitel).
-  useRefreshOnEnter([['leaderboard'], ['team-ranking'], ['my-teams'], ['club-seasons']]);
+  useRefreshOnEnter([
+    ['leaderboard'],
+    ['team-ranking'],
+    ['my-teams'],
+    ['club-seasons'],
+    ['club-pillars'],
+  ]);
 
   const [scope, setScope] = useState<Scope>('club');
   const [period, setPeriod] = useState<LeaderboardPeriod>('season');
-  const [pillar, setPillar] = useState<Pillar | null>(null);
+  // FR-048: Punkte einer Säule – oder einer ganzen Wertdimension, damit die
+  // Rangliste dieselben Namen trägt wie «Meine Stärken» (`0092`).
+  const [source, setSource] = useState<PointSource>(ALL_POINTS);
+  const [sourceOpen, setSourceOpen] = useState(false);
   // Konzept §7.3, Saisonarchiv: `null` ist die laufende Saison.
   const [season, setSeason] = useState<string | null>(null);
   const seasons = useClubSeasons();
+  const clubPillars = useClubPillars();
+  const pillars = clubPillars.data ?? [];
+  const { pillar, dimension } = sourceQuery(source);
   const hidePoints = hidesPoints(activeClub?.settings);
 
   const teams = myTeams.data ?? [];
@@ -64,6 +81,7 @@ export function LeaderboardPage() {
     teamId: scope === 'team' ? activeTeamId : null,
     period,
     pillar,
+    dimension,
     limit: leaderboardLimit(activeClub?.settings),
     season: period === 'season' ? season : null,
   });
@@ -71,6 +89,7 @@ export function LeaderboardPage() {
   const teamRanking = useTeamRanking({
     period,
     pillar,
+    dimension,
     season: period === 'season' ? season : null,
   });
   const teamRows = teamRanking.data ?? [];
@@ -172,22 +191,16 @@ export function LeaderboardPage() {
             </IonSelect>
           </IonItem>
         )}
-        <IonItem>
-          <IonSelect
-            label={t('leaderboard.pillar')}
-            value={pillar}
-            onIonChange={(e) => setPillar((e.detail.value as Pillar | null) ?? null)}
-            cancelText={t('common.cancel')}
-            okText={t('common.ok')}
-          >
-            <IonSelectOption value={null}>{t('leaderboard.allPillars')}</IonSelectOption>
-            {PILLARS.map((entry) => (
-              <IonSelectOption key={entry} value={entry}>
-                {t(`pointRules.pillar.${entry}`)}
-              </IonSelectOption>
-            ))}
-          </IonSelect>
-        </IonItem>
+        {/* Die Auswahl ist ein Blatt und kein `IonSelect`: Sie gruppiert die
+            Säulen unter ihren Wertdimensionen, und Überschriften kennt ein
+            `IonSelect` nicht. Führt der Verein nur eine einzige Säule, gibt es
+            nichts zu wählen – dann steht die Zeile gar nicht erst da. */}
+        {pillars.length > 1 && (
+          <IonItem button detail onClick={() => setSourceOpen(true)}>
+            <IonLabel>{t('leaderboard.source')}</IonLabel>
+            <IonNote slot="end">{sourceLabel(t, source)}</IonNote>
+          </IonItem>
+        )}
       </ListSection>
 
       {scope === 'teams' ? (
@@ -200,12 +213,20 @@ export function LeaderboardPage() {
           />
         ) : teamRows.length === 0 ? (
           <EmptyState
-            message={t('leaderboard.teamsEmpty')}
+            message={
+              source.kind === 'all'
+                ? t('leaderboard.teamsEmpty')
+                : t('leaderboard.emptyFiltered', { name: sourceLabel(t, source) })
+            }
             /* Ein anderer Tab: `root` startet ihn dort, ohne Fremd-History. */
-            action={{
-              label: t('agenda.title'),
-              onClick: () => router.push('/tabs/agenda', 'root'),
-            }}
+            action={
+              source.kind === 'all'
+                ? {
+                    label: t('agenda.title'),
+                    onClick: () => router.push('/tabs/agenda', 'root'),
+                  }
+                : { label: t('common.reset'), onClick: () => setSource(ALL_POINTS) }
+            }
           />
         ) : (
           <IonList inset>
@@ -241,11 +262,21 @@ export function LeaderboardPage() {
         />
       ) : rows.length === 0 ? (
         <EmptyState
-          message={t('leaderboard.empty')}
-          action={{
-            label: t('agenda.title'),
-            onClick: () => router.push('/tabs/agenda', 'root'),
-          }}
+          message={
+            source.kind === 'all'
+              ? t('leaderboard.empty')
+              : t('leaderboard.emptyFiltered', { name: sourceLabel(t, source) })
+          }
+          /* Wer eine Säule ohne Buchungen wählt, sitzt sonst in einer leeren
+             Liste ohne Ausweg – der Weg zurück gehört hierher. */
+          action={
+            source.kind === 'all'
+              ? {
+                  label: t('agenda.title'),
+                  onClick: () => router.push('/tabs/agenda', 'root'),
+                }
+              : { label: t('common.reset'), onClick: () => setSource(ALL_POINTS) }
+          }
         />
       ) : (
         <IonList inset>
@@ -276,6 +307,29 @@ export function LeaderboardPage() {
           ))}
         </IonList>
       )}
+
+      <PointSourceModal
+        isOpen={sourceOpen}
+        value={source}
+        pillars={pillars}
+        onChange={setSource}
+        onDismiss={() => setSourceOpen(false)}
+      />
     </AppPage>
   );
+}
+
+/**
+ * Wie die geltende Wahl in der Zeile steht: der Name der Dimension, der Name
+ * der Säule – oder «Alle Säulen», wenn nichts eingegrenzt ist.
+ */
+function sourceLabel(t: TFunction, source: PointSource): string {
+  switch (source.kind) {
+    case 'dimension':
+      return t(`dimensions.${source.dimension}.title`);
+    case 'pillar':
+      return t(`pointRules.pillar.${source.pillar}`);
+    default:
+      return t('leaderboard.sourceAll');
+  }
 }

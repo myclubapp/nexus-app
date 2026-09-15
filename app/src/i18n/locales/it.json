@@ -181,8 +181,6 @@
       "season": "Stagione",
       "all": "Totale"
     },
-    "pillar": "Pilastro",
-    "allPillars": "Tutti i pilastri",
     "filterHint": "Periodi più brevi mostrano anche chi è arrivato da poco.",
     "yourRank": "Il tuo rango: {{rank}}",
     "teams": "Squadre",
@@ -192,7 +190,14 @@
     "teamsEmpty": "Nessuna squadra con punti in questo periodo",
     "rankGap": "Altre posizioni in mezzo",
     "currentSeason": "Stagione in corso",
-    "teamMembers": "{{count}} membri"
+    "teamMembers": "{{count}} membri",
+    "source": "Origine dei punti",
+    "sourceAll": "Tutti i pilastri",
+    "sourceHint": "Nessuna scelta significa che contano tutti i punti. I gruppi sono le cinque dimensioni di «I miei punti forti».",
+    "wholeDimension": "Tutto",
+    "wholeDimensionAria": "Tutto da {{name}}",
+    "otherPillars": "Altri",
+    "emptyFiltered": "Ancora nessun punto da «{{name}}» in questo periodo"
   },
   "agenda": {
     "title": "Agenda",

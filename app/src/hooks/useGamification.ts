@@ -7,8 +7,8 @@ import {
 import { supabase, isConfigured } from '../lib/supabase';
 import { seasonLabel } from '../lib/season';
 import type { PointRule, PointTransaction } from '../lib/database.types';
-import type { LeaderboardEntry, LeaderboardPeriod } from '../lib/leaderboard';
-import type { Dimension, ValueDimension } from '../lib/dimensions';
+import type { ClubPillar, LeaderboardEntry, LeaderboardPeriod } from '../lib/leaderboard';
+import { DIMENSIONS, type Dimension, type ValueDimension } from '../lib/dimensions';
 import { useClub } from './useClub';
 
 /** Punktestand und Verlauf des angemeldeten Mitglieds in der laufenden Saison. */
@@ -64,6 +64,13 @@ export interface LeaderboardOptions {
   teamId?: string | null;
   period?: LeaderboardPeriod;
   pillar?: number | null;
+  /**
+   * Eine ganze Wertdimension statt einer einzelnen Säule (`0092`).
+   *
+   * Welche Säulen dazugehören, entscheidet der Server – dieselbe Abbildung,
+   * aus der auch das Netzdiagramm entsteht.
+   */
+  dimension?: Dimension | null;
   limit?: number;
   /** Konzept §7.3, Saisonarchiv: eine vergangene Saison; leer heisst die laufende. */
   season?: string | null;
@@ -79,10 +86,17 @@ export interface LeaderboardOptions {
  */
 export function useLeaderboard(options: LeaderboardOptions = {}) {
   const { activeClub } = useClub();
-  const { teamId = null, period = 'season', pillar = null, limit = 20, season = null } = options;
+  const {
+    teamId = null,
+    period = 'season',
+    pillar = null,
+    dimension = null,
+    limit = 20,
+    season = null,
+  } = options;
 
   return useQuery({
-    queryKey: ['leaderboard', activeClub?.id, teamId, period, pillar, limit, season],
+    queryKey: ['leaderboard', activeClub?.id, teamId, period, pillar, dimension, limit, season],
     enabled: Boolean(activeClub) && isConfigured,
     // BR-092: höchstens fünf Minuten alt. Gerechnet wird live, gehalten wird
     // fünf Minuten – die Rangliste ist damit nie älter, als die Regel erlaubt.
@@ -93,6 +107,7 @@ export function useLeaderboard(options: LeaderboardOptions = {}) {
         p_team_id: teamId ?? undefined,
         p_period: period,
         p_pillar: pillar ?? undefined,
+        p_dimension: dimension ?? undefined,
         p_limit: limit,
         p_season: season ?? undefined,
       });
@@ -127,13 +142,13 @@ export interface TeamRankingEntry {
  * erscheint, stehen dort.
  */
 export function useTeamRanking(
-  options: Pick<LeaderboardOptions, 'period' | 'pillar' | 'season'> = {},
+  options: Pick<LeaderboardOptions, 'period' | 'pillar' | 'dimension' | 'season'> = {},
 ) {
   const { activeClub } = useClub();
-  const { period = 'season', pillar = null, season = null } = options;
+  const { period = 'season', pillar = null, dimension = null, season = null } = options;
 
   return useQuery({
-    queryKey: ['team-ranking', activeClub?.id, period, pillar, season],
+    queryKey: ['team-ranking', activeClub?.id, period, pillar, dimension, season],
     enabled: Boolean(activeClub) && isConfigured,
     staleTime: 5 * 60_000,
     queryFn: async (): Promise<TeamRankingEntry[]> => {
@@ -141,6 +156,7 @@ export function useTeamRanking(
         p_club_id: activeClub!.id,
         p_period: period,
         p_pillar: pillar ?? undefined,
+        p_dimension: dimension ?? undefined,
         p_season: season ?? undefined,
       });
       if (error) throw new Error(error.message);
@@ -173,6 +189,39 @@ export function useClubSeasons() {
       const { data, error } = await supabase.rpc('club_seasons', { p_club_id: activeClub!.id });
       if (error) throw new Error(error.message);
       return data ?? [];
+    },
+  });
+}
+
+/**
+ * Die Säulen, die dieser Verein führt – je mit ihrer Wertdimension (`0092`).
+ *
+ * Zwei Dinge auf einmal: Die Ranglisten-Auswahl zeigt **nur** Säulen, in denen
+ * dieser Verein überhaupt Punkte vergibt (vorher standen alle sieben da, auch
+ * die, die zuverlässig auf eine leere Liste führten), und sie gruppiert sie
+ * nach den Dimensionen von «Meine Stärken». Die Zuordnung kommt vom Server;
+ * eine zweite Liste im Client wäre eine zweite Wahrheit.
+ */
+export function useClubPillars() {
+  const { activeClub } = useClub();
+
+  return useQuery({
+    queryKey: ['club-pillars', activeClub?.id],
+    enabled: Boolean(activeClub) && isConfigured,
+    // Eine Vereinseinstellung, keine Kennzahl: Sie ändert sich, wenn jemand
+    // eine Regel ein- oder ausschaltet.
+    staleTime: 60 * 60_000,
+    queryFn: async (): Promise<ClubPillar[]> => {
+      const { data, error } = await supabase.rpc('club_pillars', {
+        p_club_id: activeClub!.id,
+      });
+      if (error) throw new Error(error.message);
+      return (data ?? []).map((row) => ({
+        pillar: row.pillar as ClubPillar['pillar'],
+        dimension: DIMENSIONS.includes(row.dimension as Dimension)
+          ? (row.dimension as Dimension)
+          : null,
+      }));
     },
   });
 }

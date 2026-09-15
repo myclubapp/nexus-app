@@ -181,8 +181,6 @@
       "season": "Saison",
       "all": "Total"
     },
-    "pillar": "Pilier",
-    "allPillars": "Tous les piliers",
     "filterHint": "Des périodes plus courtes montrent aussi celles et ceux qui viennent d’arriver.",
     "yourRank": "Ton rang : {{rank}}",
     "teams": "Équipes",
@@ -192,7 +190,14 @@
     "teamsEmpty": "Aucune équipe avec des points sur cette période",
     "rankGap": "D’autres rangs entre-deux",
     "currentSeason": "Saison en cours",
-    "teamMembers": "{{count}} membres"
+    "teamMembers": "{{count}} membres",
+    "source": "Source des points",
+    "sourceAll": "Tous les piliers",
+    "sourceHint": "Aucune sélection signifie que tous les points comptent. Les groupes sont les cinq dimensions de « Mes forces ».",
+    "wholeDimension": "Tout",
+    "wholeDimensionAria": "Tout de {{name}}",
+    "otherPillars": "Autres",
+    "emptyFiltered": "Pas encore de points de « {{name}} » sur cette période"
   },
   "agenda": {
     "title": "Agenda",

@@ -181,8 +181,6 @@
       "season": "Season",
       "all": "All time"
     },
-    "pillar": "Pillar",
-    "allPillars": "All pillars",
     "filterHint": "Shorter periods also show who has just joined.",
     "yourRank": "Your rank: {{rank}}",
     "teams": "Teams",
@@ -192,7 +190,14 @@
     "teamsEmpty": "No team with points in this period yet",
     "rankGap": "More ranks in between",
     "currentSeason": "Current season",
-    "teamMembers": "{{count}} members"
+    "teamMembers": "{{count}} members",
+    "source": "Point source",
+    "sourceAll": "All pillars",
+    "sourceHint": "Nothing selected means every point counts. The groups are the five dimensions from «My strengths».",
+    "wholeDimension": "All",
+    "wholeDimensionAria": "All of {{name}}",
+    "otherPillars": "Other",
+    "emptyFiltered": "No points from «{{name}}» in this period yet"
   },
   "agenda": {
     "title": "Agenda",

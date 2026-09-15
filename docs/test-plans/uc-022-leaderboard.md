@@ -2,8 +2,8 @@
 
 **Use Case:** [UC-022](../use_cases/UC-022-leaderboard-einsehen.md)
 **Geltungsbereich:** Vereins- und Team-Rangliste, Zeitraum, Säule, eigene Position, Opt-out
-**Anforderungen:** FR-046 bis FR-049
-**Regeln:** BR-089 bis BR-093
+**Anforderungen:** FR-046 bis FR-049, FR-177
+**Regeln:** BR-089 bis BR-093, BR-208
 **Erstellt:** 2026-09-09
 
 ## Vorbereitung
@@ -14,7 +14,8 @@
 - **M3** — Mitglied **ohne** Team.
 - **M4** — Mitglied mit vielen Punkten und **abgewählter** Ranglisten-Teilnahme.
 - **M5** — Mitglied in **zwei** Teams.
-- Migration `0039_leaderboard.sql` ist eingespielt.
+- Migrationen `0039_leaderboard.sql`, `0065_leaderboard_seasons.sql` und
+  `0092_leaderboard_dimension_filter.sql` sind eingespielt.
 
 ---
 
@@ -67,10 +68,41 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Säule «Helfer» (3) wählen | Nur Helferpunkte zählen – die frühere Helfer-Auswertung ohne eigenes Modul | | |
-| 2 | Ein Mitglied ohne Punkte dieser Säule suchen | Es steht nicht in der Liste | | |
-| 3 | Eine Buchung **von Hand** in Säule 7 prüfen | Sie zählt bei Säule 7 mit, obwohl sie keine Regel hat | | |
-| 4 | Auf «Alle Säulen» zurückwechseln | Die Summen entsprechen wieder dem Gesamtbild | | |
+| 1 | Zeile «Punktequelle» antippen | Ein Blatt öffnet sich; die Säulen stehen unter den Überschriften der fünf Dimensionen | | |
+| 2 | Säule «Freiwilliges Engagement» (3) wählen | Das Blatt schliesst, die Zeile nennt die Säule, nur Helferpunkte zählen – die frühere Helfer-Auswertung ohne eigenes Modul | | |
+| 3 | Ein Mitglied ohne Punkte dieser Säule suchen | Es steht nicht in der Liste | | |
+| 4 | Eine Buchung **von Hand** in Säule 7 prüfen | Sie zählt bei Säule 7 mit, obwohl sie keine Regel hat | | |
+| 5 | Im Blatt oben rechts «Zurücksetzen» tippen | Die Zeile steht wieder auf «Alle Säulen», die Summen entsprechen dem Gesamtbild | | |
+
+---
+
+## TC-004a: Ganze Wertdimension (FR-177, A1a, BR-208)
+
+**Priority:** High
+**Preconditions:** Als **M1** angemeldet; der Verein bucht in Säule 3 **und** 7.
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Blatt «Punktequelle» öffnen | Die Überschriften tragen dieselben Namen wie «Meine Stärken» im Profil: Engagement, Ehrenamt, Netzwerk, Treue | | |
+| 2 | Unter «Ehrenamt» den Chip «Alles» wählen | Die Rangliste zeigt die Summe aus Säule 3 **und** Säule 7 | | |
+| 3 | Die Punktzahl mit der Summe beider Einzelsäulen vergleichen | Sie stimmt überein (BR-208) | | |
+| 4 | Unter «Netzwerk» nachsehen | Dort steht **kein** Chip «Alles» – die Dimension besteht nur aus «Vereinsleben» | | |
+| 5 | Auf «Teams» wechseln | Die Team-Rangliste ist mit derselben Dimension eingegrenzt | | |
+| 6 | Im Profil «Meine Stärken» öffnen und eine Dimension antippen | Die dort genannten Säulen sind dieselben wie im Blatt der Rangliste | | |
+
+---
+
+## TC-004b: Auswahl und leerer Zustand (A1b)
+
+**Priority:** Medium
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als Vorstand eine Säule in den Punkteregeln **abschalten**, die nie gebucht wurde | Sie verschwindet aus dem Blatt «Punktequelle» – vorher standen immer alle sieben da | | |
+| 2 | Dieselbe Säule wieder einschalten | Sie steht wieder zur Wahl | | |
+| 3 | Eine aktive Säule **ohne** Buchungen wählen | Der leere Zustand nennt die gewählte Quelle beim Namen | | |
+| 4 | Die angebotene Aktion «Zurücksetzen» tippen | Die Eingrenzung ist aufgehoben, die volle Rangliste steht wieder da | | |
+| 5 | Einen Verein mit nur **einer** Säule öffnen | Die Zeile «Punktequelle» fehlt ganz – es gibt nichts zu wählen | | |
 
 ---
 
