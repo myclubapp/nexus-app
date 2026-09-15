@@ -5,7 +5,7 @@
 | **Primary Actor** | Vorstand                                                            |
 | **Goal**          | Nach der Gründung Schritt für Schritt durch Verband, Verbandsnews, Teams, Beispielinhalte und Mitglieder führen – überspringbar, jeder Schritt sofort wirksam |
 | **Plan created**  | 2026-09-15                                                          |
-| **Status**        | Implemented – `0101`/`0102` gegen die laufende Datenbank geprüft (24/24 grün, in einer zurückgerollten Transaktion); **noch nicht eingespielt** und `sync-federation` noch nicht deployt |
+| **Status**        | Implemented – `0101`/`0102` eingespielt, `sync-federation` deployt (v12) und `SWISSUNIHOCKEY_NEWS_TOKEN` gesetzt (15.09.2026). Gerätetest offen |
 
 ## Overview
 
@@ -134,7 +134,24 @@ ebenso, und es gibt keinen Verweis ins Leere.
 
 ## Offen / Betrieb
 
-1. `supabase db push` für `0101` und `0102` – vom Auto-Mode-Classifier blockiert, Sandro löst ihn aus. Bis dahin überbrückt ein Block in `app/src/lib/database.types.ts` die Typen; er ist dort als Übergang markiert.
-2. `supabase functions deploy sync-federation`
-3. `supabase secrets set SWISSUNIHOCKEY_NEWS_TOKEN=…` – der Token steht im alten Backend (`myclubapp/backend`, `graphql/swissunihockey/resolvers.ts`). Ohne ihn meldet der Abgleich ehrlich «Für diesen Verband sind keine News eingerichtet», genau wie die drei Verbände ohne Schnittstelle.
-4. Gerätetest nach `docs/test-plans/uc-051-verein-einrichten.md`.
+**Erledigt am 15.09.2026**, alles von Sandro ausgelöst (die drei Befehle sind im
+Auto-Modus gesperrt): `supabase db push` für `0101`/`0102`,
+`supabase functions deploy sync-federation` (Version 12),
+`supabase secrets set SWISSUNIHOCKEY_NEWS_TOKEN`. Danach ist der Übergangsblock
+in `app/src/lib/database.types.ts` gefallen (`83ae1f4`) – und zwar **ganz**, weil
+auch der Rest, den er überbrückte (`0092`–`0100`), längst live ist.
+
+Nach dem Einspielen gegen die laufende Datenbank nachgemessen: Die beiden Wege,
+die zwischen Merge und Push kaputt waren, tragen wieder – `find_club_by_slug`
+gibt drei Spalten zurück, `federation_connections.news_enabled` ist lesbar.
+
+Offen bleibt:
+
+1. **Der Gerätetest** nach `docs/test-plans/uc-051-verein-einrichten.md`
+   (9 Testfälle). Er ist das Einzige, was sich nicht vom Rechner aus belegen
+   lässt: Teilen-Blatt, Zwischenablage, Segment und Schrittführung auf einem
+   echten Gerät.
+2. **Kein Verein hat offene Anfragen zugelassen** (BR-258 wirkt): Von drei
+   Vereinen steht der Schalter bei keinem auf an. Das ist die gewollte
+   Voreinstellung, heisst aber auch, dass FR-009 erst nach einer bewussten
+   Freigabe wieder einen Weg hat.
