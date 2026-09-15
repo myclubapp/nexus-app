@@ -318,3 +318,39 @@ export function useRemoveFactsheet() {
     },
   });
 }
+
+/**
+ * Die fälligen Amtsquartale gutschreiben (BR-264, UC-041 A9).
+ *
+ * Der Weg gibt es zweimal, und das ist Absicht: Der Cron `office-credit`
+ * bucht täglich, was fällig ist – dieser Knopf ist für den Vorstand, der nicht
+ * bis morgen früh warten will, etwa direkt nachdem er einem Amt seinen
+ * Punktwert gegeben oder eine Inhaberin verknüpft hat. Beide rufen dieselbe
+ * Kernfunktion, und der Unique-Index über `(role_id, member_id, season,
+ * period)` macht den zweiten Lauf still.
+ *
+ * Zurück kommt die **Zahl der neuen Buchungen** – null ist kein Fehler,
+ * sondern die häufigste Antwort: Es war schon alles gebucht.
+ */
+export function useConfirmOfficeDue() {
+  const queryClient = useQueryClient();
+  const { activeClub } = useClub();
+
+  return useMutation({
+    mutationFn: async (): Promise<number> => {
+      const { data, error } = await supabase.rpc('confirm_office_due', {
+        p_club_id: activeClub!.id,
+      });
+      if (error) throw new Error(error.message);
+      return data ?? 0;
+    },
+    onSuccess: () => {
+      // Der eigene Punktestand und das Saisonziel ändern sich mit – wer sein
+      // Amt gerade gutgeschrieben bekommt, soll es ohne Neuladen sehen.
+      void queryClient.invalidateQueries({ queryKey: ['points-summary'] });
+      void queryClient.invalidateQueries({ queryKey: ['contribution-goal'] });
+      void queryClient.invalidateQueries({ queryKey: ['contribution-overview'] });
+      void queryClient.invalidateQueries({ queryKey: ['points-history'] });
+    },
+  });
+}

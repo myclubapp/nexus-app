@@ -29,6 +29,7 @@ import {
   contributionCsv,
   goalColor,
   goalProgress,
+  plannedProgress,
   type ContributionRow,
 } from '../../lib/contributionGoal';
 
@@ -102,6 +103,7 @@ export function ContributionPage() {
     const csv = contributionCsv(rows, [
       t('seasonGoal.csvName'),
       t('seasonGoal.csvEarned'),
+      t('seasonGoal.csvPlanned'),
       t('seasonGoal.csvGoal'),
       t('seasonGoal.csvRemaining'),
       t('seasonGoal.csvState'),
@@ -205,11 +207,23 @@ export function ContributionPage() {
                         ? t('seasonGoal.earnedOnly', { points: row.earned })
                         : t('seasonGoal.remaining', { points: row.remaining })}
                   </p>
+                  {/* FR-198: Wer eingeteilt ist, braucht keine Ansprache. Die
+                      Zahl steht hier, damit der Vorstand beim Durchgehen der
+                      Liste nicht jemanden mahnt, dessen Beitrag längst im
+                      Kalender steht (BR-201, BR-266). */}
+                  {row.planned > 0 && row.state !== 'reached' && (
+                    <p>{t('seasonGoal.plannedShort', { points: row.planned })}</p>
+                  )}
                   {row.goal !== null && row.goal > 0 && (
                     <IonProgressBar
                       className="app-goal-bar"
                       color={goalColor(row.state)}
                       value={goalProgress(row.earned, row.goal)}
+                      buffer={
+                        row.planned > 0 && row.state !== 'reached'
+                          ? plannedProgress(row.earned, row.planned, row.goal)
+                          : 1
+                      }
                     />
                   )}
                 </IonLabel>

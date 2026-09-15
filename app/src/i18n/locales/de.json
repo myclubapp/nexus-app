@@ -1744,6 +1744,17 @@
       "imported_one": "{{count}} Amt übernommen.",
       "imported_other": "{{count}} Ämter übernommen.",
       "partial": "{{count}} übernommen, dann abgebrochen: {{error}}"
+    },
+    "credit": {
+      "section": "Punkte fürs Amt",
+      "sectionHint": "Ein Amt wird quartalsweise gutgeschrieben. Das geschieht jede Nacht von selbst – hier lässt es sich sofort auslösen, etwa direkt nach einem neuen Punktwert.",
+      "action": "Fällige Quartale gutschreiben",
+      "seats_one": "{{count}} Sitz mit Punktwert und verknüpftem Konto",
+      "seats_other": "{{count}} Sitze mit Punktwert und verknüpftem Konto",
+      "noneCreditable": "Kein Sitz hat beides: einen Punktwert und ein verknüpftes Konto.",
+      "done_one": "{{count}} Quartal gutgeschrieben.",
+      "done_other": "{{count}} Quartale gutgeschrieben.",
+      "nothing": "Es war schon alles gutgeschrieben."
     }
   },
   "checkin": {
@@ -2205,6 +2216,7 @@
     "exempt": "Befreit",
     "remaining": "Noch {{points}} Punkte",
     "earnedOnly": "{{points}} Punkte",
+    "plannedShort": "{{points}} Punkte eingeplant",
     "export": "Als CSV teilen",
     "exported": "Datei erstellt",
     "goalTitle": "Eigenes Ziel",
@@ -2215,6 +2227,7 @@
     "goalInvalid": "Das Ziel muss null oder grösser sein.",
     "csvName": "Name",
     "csvEarned": "Geleistet",
+    "csvPlanned": "Eingeplant",
     "csvGoal": "Ziel",
     "csvRemaining": "Offen",
     "csvState": "Stand",
@@ -2229,6 +2242,7 @@
       "title": "Dein Saisonziel",
       "season": "Saison {{season}}",
       "remaining": "Noch {{points}} Punkte bis zum Ziel",
+      "planned": "{{points}} Punkte sind bereits eingeplant – angemeldete Schichten, übernommene Aufgaben, dein Amt.",
       "reached": "Dein Beitrag für diese Saison ist beisammen.",
       "badgeLabel": "{{earned}} von {{goal}} Punkten",
       "openHint": "Diese Beiträge passen zu dir und zählen aufs Ziel.",

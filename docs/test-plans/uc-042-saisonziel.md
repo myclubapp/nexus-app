@@ -2,8 +2,8 @@
 
 **Use Case:** [UC-042](../use_cases/UC-042-saisonziel-beitrag.md)
 **Geltungsbereich:** Modulschalter, Vereinsziel, Beitragsübersicht mit Ampel, CSV-Export, Fortschrittskarte, abweichendes Ziel, Vorstands-Signal
-**Anforderungen:** FR-158 bis FR-162, NFR-039
-**Regeln:** BR-197 bis BR-204
+**Anforderungen:** FR-158 bis FR-162, FR-198, NFR-039
+**Regeln:** BR-197 bis BR-204, BR-263 bis BR-266
 **Erstellt:** 2026-09-14
 
 ## Vorbereitung
@@ -39,7 +39,7 @@
 | ---- | ------ | --------------- | --------- | ----- |
 | 1 | Als **V** «Saisonziel je Mitglied» öffnen | Drei Kennzahlen oben: Erreicht, Auf dem Weg, Offen | | |
 | 2 | Die Liste ansehen | Jede Zeile mit Avatar, Name, Restzahl und Badge «Ist/Soll» | | |
-| 3 | Reihenfolge prüfen | Wer am weitesten zurückliegt, steht zuoberst; Befreite zuunterst | | |
+| 3 | Reihenfolge prüfen | Wer am weitesten zurückliegt, steht zuoberst; Befreite zuunterst. **Eingeplantes zählt dabei mit** (BR-266) – wer eingeteilt ist, rutscht nach unten, siehe TC-012 | | |
 | 4 | Badge prüfen (VoiceOver bzw. TalkBack) | Vorgelesen wird ein Satz («Ziel noch offen»), angezeigt nur die Zahl | | |
 | 5 | Balkenfarbe prüfen | Unter 50 % rot, ab 50 % orange, ab 100 % grün | | |
 
@@ -154,3 +154,70 @@
 | 1 | Den Saisonbeginn so verschieben, dass eine neue Saison gilt | Rückfrage zum Saisonwechsel erscheint | | |
 | 2 | Bestätigen, dann die Übersicht öffnen | Ist steht bei allen auf 0, das Ziel bleibt stehen | | |
 | 3 | Die Punktehistorie eines Mitglieds öffnen | Die Buchungen der Vorsaison sind unverändert lesbar | | |
+
+---
+
+## TC-011: Eingeplante Punkte auf der Fortschrittskarte (FR-198, BR-265)
+
+**Priority:** High
+**Vorbedingung:** Migration `0103` ist eingespielt. **M** hat das Vereinsziel (200) und keine Buchung dieser Saison.
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als **M** den Punktestand öffnen | Die Karte zeigt «0/200», keine Zeile über Eingeplantes | | |
+| 2 | Als **M** eine künftige Schicht über 4 Stunden übernehmen (50 Punkte) | – | | |
+| 3 | Zurück auf den Punktestand, Ansicht aktualisieren | Unter dem Balken steht «50 Punkte eingeplant»; das Abzeichen zeigt weiter **0/200** | | |
+| 4 | Den Balken ansehen | Ein zweiter, blasser Abschnitt reicht bis zu einem Viertel; der farbige Teil bleibt bei null | | |
+| 5 | Die Zeile «Noch … bis zum Ziel» lesen | Sie nennt **200**, nicht 150 – der Rest zählt zum Geleisteten, nicht zur Zusage | | |
+| 6 | Als **V** die Schicht bestätigen (UC-013) | – | | |
+| 7 | Als **M** aktualisieren | Abzeichen «50/200», die Zeile über Eingeplantes ist **weg** – dieselben Punkte stehen nicht zweimal | | |
+| 8 | Als **M** ein künftiges Training zusagen | Die Zeile über Eingeplantes erscheint **nicht** – Säule 1 zählt nicht aufs Ziel | | |
+| 9 | Die Vorschläge unter der Karte durchsehen | Nur Schichten, Aufgaben und Ämter; **kein** Training und **kein** Spiel | | |
+
+---
+
+## TC-012: Eingeplantes in der Vorstandsübersicht (BR-266)
+
+**Priority:** Medium
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als **V** «Saisonziel je Mitglied» öffnen | Bei **M** aus TC-011 steht unter dem Rest eine Zeile «… Punkte eingeplant» | | |
+| 2 | Die Reihenfolge der Liste prüfen | **M** steht **nicht** ganz oben, obwohl sein Ist null ist – wer eingeteilt ist, braucht keine Ansprache | | |
+| 3 | Die Liste als CSV teilen und öffnen | Die Spalte «Eingeplant» steht zwischen «Geleistet» und «Ziel»; die Zahlen sind **nicht** addiert | | |
+| 4 | Saisonbeginn so setzen, dass weniger als acht Wochen bleiben, `detect_contribution_gaps()` auslösen | Die gemeldete Zahl zählt **M** nicht mit | | |
+
+---
+
+## TC-013: Punkte fürs Amt gutschreiben (UC-041 A9, BR-264)
+
+**Priority:** High
+**Vorbedingung:** Ein Amt mit Punktwert (z. B. 200) und einer Inhaber:in **mit verknüpftem Konto**.
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als **V** die Ämterseite öffnen | Abschnitt «Punkte fürs Amt» mit der Zahl der buchbaren Sitze | | |
+| 2 | Ein Amt öffnen und seinen Punktwert auf leer setzen, speichern | Die Zahl im Abschnitt sinkt um die Sitze dieses Amtes | | |
+| 3 | Den Wert wieder setzen | Die Zahl steigt zurück | | |
+| 4 | «Fällige Quartale gutschreiben» antippen | Toast nennt die Zahl der gutgeschriebenen Quartale (im zweiten Quartal der Saison: zwei je Sitz) | | |
+| 5 | Als Inhaber:in die Punktehistorie öffnen | Zwei Buchungen «Amt ausgeübt» mit je einem Viertel des Saisonwerts, Säule 7 | | |
+| 6 | Als Inhaber:in die Meldungen öffnen | Eine Meldung je Quartal, mit dem Namen des Amtes | | |
+| 7 | Als Inhaber:in den Punktestand öffnen | Die Fortschrittskarte zeigt die Buchungen als **geleistet** und die restlichen Quartale als **eingeplant** | | |
+| 8 | Als **V** erneut «Fällige Quartale gutschreiben» | Toast «Es war schon alles gutgeschrieben» – es entsteht keine zweite Buchung | | |
+| 9 | Als **M** (ohne Vorstandsrolle) die Ämterseite öffnen | Der Abschnitt «Punkte fürs Amt» fehlt | | |
+
+---
+
+## TC-014: Termine tragen ihre Punkteregel (BR-263)
+
+**Priority:** Medium
+**Vorbedingung:** Ein Verein mit übernommenen Terminen aus der bisherigen App oder vom Verband.
+
+| Step | Action | Expected Result | Pass/Fail | Notes |
+| ---- | ------ | --------------- | --------- | ----- |
+| 1 | Als **V** ein übernommenes Training in der Agenda öffnen und bearbeiten | Das Feld «Punkteregel» steht auf «Training besucht» | | |
+| 2 | Ein übernommenes Spiel öffnen | Die Regel steht auf «Spiel bestritten» | | |
+| 3 | Einen Helferanlass öffnen | Die Regel ist **leer** – der Beitrag ist die Schicht | | |
+| 4 | Bei einem Training die Regel von Hand auf «leer» setzen und speichern | Sie bleibt leer | | |
+| 5 | Den nächtlichen Abgleich auslösen (UC-040) | Die Regel bleibt **leer** – der Abgleich überschreibt keine Entscheidung | | |
+| 6 | Als **M** an einem Training mit Regel einchecken | Der Punktestand wächst um den Regelwert; der Erfolgsdialog nennt die Punkte | | |

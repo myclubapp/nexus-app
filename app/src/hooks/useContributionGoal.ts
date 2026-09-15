@@ -16,6 +16,12 @@ export interface MyContributionGoal {
   season: string;
   goal: number;
   earned: number;
+  /**
+   * Zugesagt und noch nicht gebucht (FR-198): angemeldete Schichten,
+   * übernommene Aufgaben, das laufende Amt. **Nicht** in `earned` enthalten –
+   * eine Zusage ist keine Leistung, und die Ampel hängt am Geleisteten.
+   */
+  planned: number;
   remaining: number;
   state: GoalState;
 }
@@ -48,6 +54,7 @@ export function useMyContributionGoal() {
         season: row.season ?? '',
         goal: row.goal ?? 0,
         earned: row.earned ?? 0,
+        planned: row.planned ?? 0,
         remaining: row.remaining ?? 0,
         state: row.state as GoalState,
       };
@@ -73,6 +80,7 @@ export function useContributionOverview(enabled = true) {
         avatar_url: row.avatar_url,
         goal: row.goal,
         earned: row.earned ?? 0,
+        planned: row.planned ?? 0,
         remaining: row.remaining,
         state: row.state as GoalState,
       }));

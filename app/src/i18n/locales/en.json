@@ -1744,6 +1744,17 @@
       "imported_one": "{{count}} office imported.",
       "imported_other": "{{count}} offices imported.",
       "partial": "{{count}} imported, then stopped: {{error}}"
+    },
+    "credit": {
+      "section": "Points for the office",
+      "sectionHint": "An office is credited each quarter. That happens automatically every night – here you can trigger it right away, for instance straight after setting a point value.",
+      "action": "Credit the quarters due",
+      "seats_one": "{{count}} seat with a point value and a linked account",
+      "seats_other": "{{count}} seats with a point value and a linked account",
+      "noneCreditable": "No seat has both: a point value and a linked account.",
+      "done_one": "{{count}} quarter credited.",
+      "done_other": "{{count}} quarters credited.",
+      "nothing": "Everything was credited already."
     }
   },
   "checkin": {
@@ -2205,6 +2216,7 @@
     "exempt": "Exempt",
     "remaining": "{{points}} points to go",
     "earnedOnly": "{{points}} points",
+    "plannedShort": "{{points}} points lined up",
     "export": "Share as CSV",
     "exported": "File created",
     "goalTitle": "Individual goal",
@@ -2215,6 +2227,7 @@
     "goalInvalid": "The goal must be zero or more.",
     "csvName": "Name",
     "csvEarned": "Earned",
+    "csvPlanned": "Planned",
     "csvGoal": "Goal",
     "csvRemaining": "Open",
     "csvState": "State",
@@ -2229,6 +2242,7 @@
       "title": "Your season goal",
       "season": "Season {{season}}",
       "remaining": "{{points}} points to go",
+      "planned": "{{points}} points are already lined up – shifts you signed up for, tasks you took on, your office.",
       "reached": "Your contribution for this season is complete.",
       "badgeLabel": "{{earned}} of {{goal}} points",
       "openHint": "These contributions suit you and count towards the goal.",

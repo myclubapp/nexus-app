@@ -13,8 +13,6 @@
 import type { Tables as Row } from './database.generated';
 import type { Language } from '../i18n';
 
-import type { Database as GeneratedDatabase } from './database.generated';
-
 export type {
   CompositeTypes,
   Enums,
@@ -24,24 +22,82 @@ export type {
   TablesUpdate,
 } from './database.generated';
 
-/**
- * **Übergangsblock, bis `0105` eingespielt ist.**
- *
- * `database.generated.ts` kennt nur, was in der laufenden Datenbank steht.
- * Solange die Migration wartet, fehlt `finish_profile_setup()` dort – und
- * `supabase.rpc('finish_profile_setup')` wäre ein Typfehler, obwohl der
- * Aufruf richtig ist.
- *
- * Nach `supabase db push` und `npm run types:generate` fällt dieser Block
- * ersatzlos weg; dann steht `Database` wieder in der Liste oben.
- *
- * Die Funktionen des Versands (`pending_push`, `mark_push_sent`,
- * `drop_push_token` …) stehen hier **nicht**: Sie gehören der Edge Function
- * und `service_role`, die App ruft sie nie auf.
- */
-export type Database = Omit<GeneratedDatabase, 'public'> & {
-  public: Omit<GeneratedDatabase['public'], 'Functions'> & {
-    Functions: GeneratedDatabase['public']['Functions'] & {
+// --- Übergang, bis `0103` und `0105` eingespielt sind -----------------------
+// `db push` löst Sandro aus; bis dahin kennt `types:generate` die geänderten
+// Signaturen nicht. Der Block bildet **nur** nach, was die beiden wartenden
+// Migrationen an Funktionen ändern – keine Tabelle wächst, deshalb bleibt
+// `Row` unangetastet.
+//
+// **Ein** Block für beide Stränge, nicht zwei: Zwei `export type Database` in
+// derselben Datei sind für Git kein Konflikt (sie stehen an verschiedenen
+// Stellen), für TypeScript aber ein doppelter Bezeichner. Genau so ist es beim
+// Zusammenführen von `0103` mit `0105` aufgelaufen.
+//
+// **Nach dem Push gehört er gelöscht** (und `Database` wieder in den
+// Re-Export oben) – aber erst, wenn **beide** Migrationen stehen. Der Typcheck
+// zeigt dann sofort, was noch daran hängt.
+//
+// Die Funktionen des Push-Versands (`pending_push`, `mark_push_sent`,
+// `drop_push_token` …) stehen hier **nicht**: Sie gehören der Edge Function
+// und `service_role`, die App ruft sie nie auf.
+import type { Database as Generated } from './database.generated';
+
+type ContributionGoalRow = {
+  season: string;
+  goal: number;
+  earned: number;
+  /** `0103` FR-198: zugesagt und noch nicht gebucht. */
+  planned: number;
+  remaining: number;
+  state: string;
+};
+
+export type Database = Omit<Generated, 'public'> & {
+  public: Omit<Generated['public'], 'Functions'> & {
+    Functions: Omit<
+      Generated['public']['Functions'],
+      'my_contribution_goal' | 'contribution_overview' | 'next_contributions'
+    > & {
+      my_contribution_goal: {
+        Args: { p_club_id: string };
+        Returns: ContributionGoalRow[];
+      };
+      contribution_overview: {
+        Args: { p_club_id: string };
+        Returns: {
+          member_id: string;
+          name: string;
+          avatar_url: string;
+          goal: number;
+          earned: number;
+          /** `0103` FR-198. */
+          planned: number;
+          remaining: number;
+          state: string;
+        }[];
+      };
+      next_contributions: {
+        Args: {
+          p_club_id: string;
+          p_limit?: number;
+          /** `0103` BR-265: nur, was auf das Saisonziel zählt. */
+          p_contribution_only?: boolean;
+        };
+        Returns: {
+          kind: string;
+          ref_id: string;
+          title: string;
+          detail: string;
+          points: number;
+          when_at: string;
+        }[];
+      };
+      /** `0103` BR-264: alle fälligen Quartale der Ämter nachbuchen. */
+      confirm_office_due: {
+        Args: { p_club_id: string };
+        Returns: number;
+      };
+      /** `0105` FR-200: den Profil-Assistenten abschliessen. */
       finish_profile_setup: {
         Args: { p_member_id: string };
         Returns: undefined;

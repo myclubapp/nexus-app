@@ -360,22 +360,37 @@ export interface NextContribution {
  * Unterdeckung jeder Schicht und den Geltungsbereich jeder Aufgabe. Im Client
  * wären das drei Abfragen und drei Kopien derselben Regeln.
  *
+ * `contributionOnly` schneidet auf die **Beitragssäulen** zu (BR-265): Die
+ * Zielkarte darf unter ihrem Balken nur zeigen, was diesen Balken auch bewegt
+ * – ein Training bringt Punkte, aber keine aufs Saisonziel. Das Dashboard
+ * fragt ohne den Schalter und zeigt weiterhin alles.
+ *
+ * Der Schalter gehört in den `queryKey`: Sonst bekäme die zweite Sicht die
+ * Liste der ersten aus dem Zwischenspeicher.
+ *
  * `(kind, refId)` ist der Schlüssel der Liste – auch in der Anzeige (Dashboard
  * und `ContributionGoalCard`). Dass er eindeutig ist, hält die Abfrage: Ein
  * Schicht-Vorschlag trägt den **Termin** als `refId`, und davon steht seit
  * `0097` höchstens einer je Termin (BR-083). Fällt diese Begrenzung, wird aus
  * einem Helferanlass mit zwölf Schichten wieder ein doppelter React-Key.
  */
-export function useNextContributions(limit = 5) {
+export function useNextContributions(limit = 5, contributionOnly = false) {
   const { activeClub, activeMembership } = useClub();
 
   return useQuery({
-    queryKey: ['next-contributions', activeClub?.id, activeMembership?.id, limit],
+    queryKey: [
+      'next-contributions',
+      activeClub?.id,
+      activeMembership?.id,
+      limit,
+      contributionOnly,
+    ],
     enabled: Boolean(activeClub) && Boolean(activeMembership) && isConfigured,
     queryFn: async (): Promise<NextContribution[]> => {
       const { data, error } = await supabase.rpc('next_contributions', {
         p_club_id: activeClub!.id,
         p_limit: limit,
+        p_contribution_only: contributionOnly,
       });
       if (error) throw new Error(error.message);
       return (data ?? []).map((row) => ({
