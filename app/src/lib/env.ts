@@ -31,17 +31,29 @@ function required(name: string, value: string | undefined): string {
   return value;
 }
 
+/**
+ * Die Rückfälle stehen bewusst auf `||` und nicht auf `??`.
+ *
+ * Vite ersetzt `import.meta.env.VITE_*` beim Bauen durch den Text aus der
+ * Umgebung. Eine Variable, die gesetzt, aber leer ist – die leere Zeile in
+ * `.env.example`, ein leeres Feld in den Vercel-Einstellungen – wird damit zu
+ * `''` und nicht zu `undefined`. `??` greift dort nicht: `webRedirectUrl`
+ * bliebe leer, und `authRedirectUrl()` in supabase.ts schickte den
+ * Anmeldelink auf `/auth/callback` statt auf die volle Adresse. Mit `||` ist
+ * «nicht gesetzt» und «leer gesetzt» dasselbe, so wie die Kommentare in
+ * `.env.example` es zusagen.
+ */
 export const env: AppEnv = {
   supabaseUrl: required('VITE_SUPABASE_URL', import.meta.env.VITE_SUPABASE_URL),
   supabaseAnonKey: required(
     'VITE_SUPABASE_ANON_KEY',
     import.meta.env.VITE_SUPABASE_ANON_KEY,
   ),
-  appScheme: import.meta.env.VITE_APP_SCHEME ?? 'ch.myclub.nexus',
+  appScheme: import.meta.env.VITE_APP_SCHEME || 'ch.myclub.nexus',
   webRedirectUrl:
-    import.meta.env.VITE_WEB_REDIRECT_URL ??
+    import.meta.env.VITE_WEB_REDIRECT_URL ||
     (typeof window !== 'undefined' ? window.location.origin : ''),
-  vapidPublicKey: import.meta.env.VITE_VAPID_PUBLIC_KEY ?? '',
+  vapidPublicKey: import.meta.env.VITE_VAPID_PUBLIC_KEY || '',
 };
 
 export const isConfigured = Boolean(env.supabaseUrl && env.supabaseAnonKey);
