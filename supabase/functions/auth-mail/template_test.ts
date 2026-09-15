@@ -20,13 +20,11 @@ Deno.test('Betreff nennt den Verein, das Blatt trägt seine Farbe', () => {
     locale: 'de',
     brand,
     confirmUrl: 'https://p.supabase.co/auth/v1/verify?token=abc',
-    token: '123456',
     year: 2026,
   });
   assertEquals(mail.subject, 'Kadetten: Dein Anmeldelink');
   assertStringIncludes(mail.html, 'bgcolor="#1a73e8"');
   assertStringIncludes(mail.html, 'Jetzt anmelden');
-  assertStringIncludes(mail.html, '123456');
   assertStringIncludes(mail.html, 'ignoriere die Mail');
 });
 
@@ -36,7 +34,6 @@ Deno.test('Ohne Verein steht myclub im Betreff und im Kopfband', () => {
     locale: 'fr',
     brand: { clubName: null, color: null, logoUrl: null },
     confirmUrl: 'https://p.supabase.co/auth/v1/verify?token=abc',
-    token: null,
     year: 2026,
   });
   assertEquals(mail.subject, 'Confirme ton adresse');
@@ -52,26 +49,31 @@ Deno.test('Jede Sprache und jeder Anlass ergeben ein Blatt mit Warum', () => {
         locale,
         brand,
         confirmUrl: 'https://p.supabase.co/auth/v1/verify?token=abc',
-        token: '000111',
         year: 2026,
       });
       assert(mail.subject.length > 0, `${locale}/${action}`);
       assertStringIncludes(mail.html, 'https://p.supabase.co/auth/v1/verify?token=abc');
-      assertStringIncludes(mail.html, '000111');
     }
   }
 });
 
-Deno.test('Ein leerer Token erzeugt keinen Codeblock', () => {
-  const mail = authMail({
-    action: 'magiclink',
-    locale: 'de',
-    brand,
-    confirmUrl: 'https://p.supabase.co/auth/v1/verify?token=abc',
-    token: '',
-    year: 2026,
-  });
-  assert(!mail.html.includes('Oder gib diesen Code'));
+// Die Mail bot einmal einen Code zum Abtippen an. Die App hat ihn nie
+// eingelöst – es gibt kein `verifyOtp` –, also verspricht die Mail ihn auch
+// nicht mehr. Dieser Test hält fest, dass keiner zurückkommt.
+Deno.test('Die Mail bietet keinen Code zum Abtippen an', () => {
+  for (const locale of ['de', 'fr', 'it', 'en'] as const) {
+    const mail = authMail({
+      action: 'magiclink',
+      locale,
+      brand,
+      confirmUrl: 'https://p.supabase.co/auth/v1/verify?token=abc',
+      year: 2026,
+    });
+    for (const text of ['Oder gib diesen Code', 'saisis ce code', 'inserisci questo codice', 'enter this code']) {
+      assert(!mail.html.includes(text), `${locale}: ${text}`);
+      assert(!mail.text.includes(text), `${locale} (Text): ${text}`);
+    }
+  }
 });
 
 Deno.test('Die Bestätigungsadresse entsteht aus dem Prüfendpunkt des Projekts', () => {

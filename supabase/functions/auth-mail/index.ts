@@ -51,6 +51,8 @@ interface HookPayload {
     user_metadata?: Record<string, unknown> | null;
   };
   email_data?: {
+    // GoTrue schickt den Code weiterhin mit. Die Mail zeigt ihn nicht mehr an:
+    // Die App hat kein `verifyOtp`, der Code hätte nirgends hingekonnt.
     token?: string;
     token_hash?: string;
     redirect_to?: string;
@@ -157,7 +159,6 @@ Deno.serve(async (request) => {
       locale,
       brand,
       confirmUrl: link,
-      token: payload.email_data?.token ?? null,
       year: new Date().getFullYear(),
     });
 

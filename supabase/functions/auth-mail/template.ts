@@ -40,8 +40,6 @@ export interface AuthMailInput {
   brand: MailBrand;
   /** Die Adresse hinter der Schaltfläche. */
   confirmUrl: string;
-  /** Der sechsstellige Code – der zweite Weg, wenn der Link nicht trägt. */
-  token: string | null;
   year: number;
 }
 
@@ -50,7 +48,6 @@ type ActionStrings = { subject: string; intro: string; action: string; why: stri
 type Strings = {
   greeting: string;
   whyLabel: string;
-  codeLabel: string;
   validity: string;
   footnote: string;
   actions: Record<AuthAction, ActionStrings>;
@@ -60,7 +57,6 @@ const STRINGS: Record<Locale, Strings> = {
   de: {
     greeting: 'Hallo',
     whyLabel: 'Warum diese Mail:',
-    codeLabel: 'Oder gib diesen Code in der App ein:',
     validity: 'Der Link gilt eine Stunde und nur ein einziges Mal.',
     footnote:
       'Diese Mail gehört zu deinem Zugang und lässt sich nicht abbestellen – sie kommt nur, wenn jemand sie anfordert.',
@@ -106,7 +102,6 @@ const STRINGS: Record<Locale, Strings> = {
   fr: {
     greeting: 'Bonjour',
     whyLabel: 'Pourquoi cet e-mail :',
-    codeLabel: 'Ou saisis ce code dans l’app :',
     validity: 'Le lien est valable une heure et une seule fois.',
     footnote:
       'Cet e-mail fait partie de ton accès et ne peut pas être désactivé – il n’arrive que si quelqu’un le demande.',
@@ -152,7 +147,6 @@ const STRINGS: Record<Locale, Strings> = {
   it: {
     greeting: 'Ciao',
     whyLabel: 'Perché questa e-mail:',
-    codeLabel: 'Oppure inserisci questo codice nell’app:',
     validity: 'Il link vale un’ora e una sola volta.',
     footnote:
       'Questa e-mail fa parte del tuo accesso e non si può disattivare – arriva solo se qualcuno la richiede.',
@@ -198,7 +192,6 @@ const STRINGS: Record<Locale, Strings> = {
   en: {
     greeting: 'Hi',
     whyLabel: 'Why this email:',
-    codeLabel: 'Or enter this code in the app:',
     validity: 'The link is valid for one hour and only once.',
     footnote:
       'This email belongs to your account access and cannot be switched off – it only arrives when someone asks for it.',
@@ -249,22 +242,6 @@ export function authAction(value: string | null | undefined): AuthAction {
   return known.includes(value as AuthAction) ? (value as AuthAction) : 'magiclink';
 }
 
-/**
- * Der Code als abgesetzter Block.
- *
- * Kein `<code>`: Mailprogramme geben dem Element keine verlässliche Schrift.
- * Ein Tabellenfeld mit Sperrsatz liest sich überall gleich.
- */
-function codeBlock(label: string, token: string): MailSection {
-  return {
-    html: `<p style="margin: 18px 0 8px; font-family: Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #777777;">${label}</p>
-              <table border="0" cellpadding="0" cellspacing="0"><tr>
-                <td bgcolor="#f4f4f4" style="padding: 12px 20px; border-radius: 6px; font-family: 'Courier New', Courier, monospace; font-size: 24px; letter-spacing: .18em; font-weight: 700; color: #111111;">${token}</td>
-              </tr></table>`,
-    text: `${label} ${token}`,
-  };
-}
-
 export function authMail(input: AuthMailInput): { subject: string; html: string; text: string } {
   const t = STRINGS[input.locale] ?? STRINGS.de;
   const a = t.actions[input.action];
@@ -279,13 +256,8 @@ export function authMail(input: AuthMailInput): { subject: string; html: string;
     paragraph(a.intro),
     button(a.action, input.confirmUrl, color),
     paragraph(t.validity),
+    whyLine(t.whyLabel, a.why, color),
   ];
-  // Der Code ist nur bei einer Ziffernfolge ein Code – GoTrue schickt bei
-  // manchen Anlässen eine leere Zeichenkette.
-  if (input.token && /^[0-9]{4,10}$/.test(input.token)) {
-    sections.push(codeBlock(t.codeLabel, input.token));
-  }
-  sections.push(whyLine(t.whyLabel, a.why, color));
 
   const shell = renderShell({
     brand: input.brand,
