@@ -3,6 +3,7 @@ import {
   PASSWORD_MIN_LENGTH,
   authErrorFromUrl,
   authErrorKey,
+  isSessionGone,
   resolveSignInAction,
 } from './authError';
 
@@ -92,6 +93,60 @@ describe('authErrorKey', () => {
     expect(authErrorKey('EMAIL LINK IS INVALID OR HAS EXPIRED')).toBe(
       'auth.error.linkExpired',
     );
+  });
+});
+
+describe('isSessionGone', () => {
+  // Abmelden gilt für alle Geräte. Das andere Gerät merkt es erst hier.
+  it.each([
+    'Session not found',
+    'session_not_found',
+    'Auth session missing!',
+    'Session from session_id claim in JWT does not exist',
+    'Invalid Refresh Token: Refresh Token Not Found',
+    'refresh_token_not_found',
+    'JWT expired',
+  ])('erkennt %s als widerrufene Sitzung', (message) => {
+    expect(isSessionGone(message)).toBe(true);
+  });
+
+  it.each(['', null, undefined, 'Invalid login credentials', 'Email rate limit exceeded'])(
+    'hält %s nicht für eine widerrufene Sitzung',
+    (message) => {
+      expect(isSessionGone(message)).toBe(false);
+    },
+  );
+
+  it('unterscheidet nicht nach Gross- und Kleinschreibung', () => {
+    expect(isSessionGone('SESSION NOT FOUND')).toBe(true);
+  });
+});
+
+describe('authErrorKey und die widerrufene Sitzung', () => {
+  it('nennt die widerrufene Sitzung beim Namen', () => {
+    expect(authErrorKey('Session not found')).toBe('auth.error.sessionExpired');
+  });
+
+  // «JWT expired» enthält 'expired' und liefe sonst in die Meldung über
+  // abgelaufene Anmeldelinks – die hier nichts erklärt.
+  it('hält ein abgelaufenes Token vom Anmeldelink auseinander', () => {
+    expect(authErrorKey('JWT expired')).toBe('auth.error.sessionExpired');
+    expect(authErrorKey('Email link is invalid or has expired')).toBe(
+      'auth.error.linkExpired',
+    );
+  });
+
+  it('nimmt den übergebenen Rückfall statt der Anmeldemeldung', () => {
+    expect(authErrorKey('something odd', 'auth.error.passwordSaveFailed')).toBe(
+      'auth.error.passwordSaveFailed',
+    );
+    expect(authErrorKey(undefined, 'auth.error.passwordSaveFailed')).toBe(
+      'auth.error.passwordSaveFailed',
+    );
+  });
+
+  it('bleibt ohne Rückfall bei der allgemeinen Meldung', () => {
+    expect(authErrorKey('something odd')).toBe('auth.error.generic');
   });
 });
 

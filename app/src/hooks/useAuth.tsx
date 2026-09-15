@@ -14,7 +14,7 @@ import i18n from '../i18n';
 import { toLanguage } from '../lib/language';
 import { authRedirectUrl, supabase, isConfigured } from '../lib/supabase';
 import { inviteCodeFromUrl, peekPendingInvite, setPendingInvite } from '../lib/invite';
-import { authErrorFromUrl } from '../lib/authError';
+import { authErrorFromUrl, isSessionGone } from '../lib/authError';
 
 interface AuthContextValue {
   session: Session | null;
@@ -165,13 +165,87 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
   }, []);
 
-  const setPassword = useCallback(async (password: string) => {
-    const { error } = await supabase.auth.updateUser({ password });
-    if (error) throw error;
+  /**
+   * Eine Sitzung aufräumen, die es auf dem Server nicht mehr gibt.
+   *
+   * Abmelden gilt für alle Geräte (`signOut()` weiter unten, bewusst ohne
+   * `scope`). Das andere Gerät erfährt davon aber nichts: Es hält sein Token
+   * weiter und zeigt ein angemeldetes Profil, bis ein Schreibversuch mit
+   * «Session not found» scheitert. Hier wird der örtliche Rest weggeräumt –
+   * `scope: 'local'`, weil auf dem Server nichts mehr zu widerrufen ist und
+   * ein globaler Aufruf ohne gültige Sitzung selbst scheitern würde.
+   *
+   * `setSession(null)` führt über `RequireAuth` zurück auf den
+   * Anmeldebildschirm.
+   */
+  const endDeadSession = useCallback(async () => {
+    await supabase.auth.signOut({ scope: 'local' });
+    setSession(null);
   }, []);
+
+  /**
+   * Beim Zurückkommen prüfen, ob die Sitzung noch gilt.
+   *
+   * Ein Widerruf auf einem anderen Gerät erreicht dieses hier nicht von
+   * selbst: supabase-js merkt ihn erst, wenn das Zugriffstoken abläuft und
+   * die Erneuerung scheitert – bis dahin steht die App scheinbar angemeldet
+   * da, und die Person erfährt es erst beim nächsten Schreibversuch.
+   * `getUser()` fragt den Server und beantwortet es sofort.
+   *
+   * Geprüft wird beim Start und bei jeder Rückkehr in den Vordergrund, nicht
+   * fortlaufend: Es ist ein Netzaufruf, und das Zurückkommen ist genau der
+   * Moment, in dem jemand wieder etwas tun will.
+   */
+  useEffect(() => {
+    if (!isConfigured) return;
+
+    async function verifySession() {
+      // Ohne gespeicherte Sitzung gibt es nichts zu prüfen – `getUser()`
+      // meldete hier nur «Auth session missing».
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) return;
+
+      const { error } = await supabase.auth.getUser();
+      if (error && isSessionGone(error.message)) await endDeadSession();
+    }
+
+    void verifySession();
+
+    if (Capacitor.isNativePlatform()) {
+      const handle = CapacitorApp.addListener('appStateChange', ({ isActive }) => {
+        if (isActive) void verifySession();
+      });
+      return () => {
+        void handle.then((listener) => listener.remove());
+      };
+    }
+
+    if (typeof document === 'undefined') return;
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') void verifySession();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, [endDeadSession]);
+
+  const setPassword = useCallback(
+    async (password: string) => {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) {
+        if (isSessionGone(error.message)) await endDeadSession();
+        throw error;
+      }
+    },
+    [endDeadSession],
+  );
 
   const clearAuthError = useCallback(() => setAuthError(null), []);
 
+  /**
+   * Abmelden gilt für **alle** Geräte. `signOut()` ohne `scope` ist der
+   * globale Fall von Supabase – bewusst so: Wer sein Konto abmeldet, soll es
+   * überall abgemeldet haben, nicht nur auf dem Gerät in der Hand.
+   */
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
     setSession(null);

@@ -53,7 +53,9 @@
       "wrongPassword": "E-Mail-Adresse oder Passwort stimmen nicht.",
       "rateLimited": "Zu viele Versuche. Bitte warte einen Moment.",
       "emailNotConfirmed": "Diese Adresse ist noch nicht bestätigt. Öffne zuerst den Link in deinem Postfach.",
-      "passwordTooShort": "Das Passwort ist zu kurz."
+      "passwordTooShort": "Das Passwort ist zu kurz.",
+      "sessionExpired": "Du bist nicht mehr angemeldet. Abmelden gilt für alle Geräte – bitte melde dich neu an.",
+      "passwordSaveFailed": "Das Passwort liess sich nicht setzen. Bitte nochmals versuchen."
     }
   },
   "onboarding": {

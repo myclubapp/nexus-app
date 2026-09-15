@@ -53,7 +53,9 @@
       "wrongPassword": "Indirizzo e-mail o password non corrispondono.",
       "rateLimited": "Troppi tentativi. Attendi un momento.",
       "emailNotConfirmed": "Questo indirizzo non è ancora confermato. Apri prima il link nella tua casella di posta.",
-      "passwordTooShort": "La password è troppo corta."
+      "passwordTooShort": "La password è troppo corta.",
+      "sessionExpired": "Non sei più connesso. La disconnessione vale per tutti i dispositivi: accedi di nuovo.",
+      "passwordSaveFailed": "Non è stato possibile impostare la password. Riprova."
     }
   },
   "onboarding": {

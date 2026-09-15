@@ -80,7 +80,12 @@ export function ProfilePage() {
       toast.success(t('profile.passwordSaved'));
     } catch (cause) {
       setPasswordError(
-        t(authErrorKey(cause instanceof Error ? cause.message : undefined)),
+        t(
+          authErrorKey(
+            cause instanceof Error ? cause.message : undefined,
+            'auth.error.passwordSaveFailed',
+          ),
+        ),
       );
     } finally {
       setSavingPassword(false);

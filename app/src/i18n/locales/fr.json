@@ -53,7 +53,9 @@
       "wrongPassword": "L’adresse e-mail ou le mot de passe ne correspond pas.",
       "rateLimited": "Trop de tentatives. Veuillez patienter un instant.",
       "emailNotConfirmed": "Cette adresse n’est pas encore confirmée. Ouvrez d’abord le lien dans votre boîte mail.",
-      "passwordTooShort": "Le mot de passe est trop court."
+      "passwordTooShort": "Le mot de passe est trop court.",
+      "sessionExpired": "Tu n’es plus connecté. La déconnexion vaut pour tous les appareils – reconnecte-toi.",
+      "passwordSaveFailed": "Le mot de passe n’a pas pu être enregistré. Merci de réessayer."
     }
   },
   "onboarding": {

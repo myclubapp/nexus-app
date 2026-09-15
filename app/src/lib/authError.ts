@@ -32,16 +32,59 @@ export function authErrorFromUrl(url: string): string | null {
 }
 
 /**
+ * Meldungen, hinter denen eine Sitzung steckt, die es auf dem Server nicht
+ * mehr gibt.
+ *
+ * Abmelden gilt in dieser App für **alle** Geräte: `signOut()` läuft ohne
+ * `scope`, und Supabase widerruft dann jede Sitzung des Kontos. Das ist so
+ * gewollt – nur erfährt das andere Gerät nichts davon. Es hält sein Token
+ * weiter, zeigt ein angemeldetes Profil und scheitert erst beim nächsten
+ * Schreiben mit «Session not found».
+ *
+ * GoTrue formuliert denselben Sachverhalt je nach Endpunkt anders, deshalb
+ * die Liste. Sie steht **vor** der Prüfung auf «expired» in `authErrorKey`:
+ * «JWT expired» trüge sonst die Meldung über abgelaufene Anmeldelinks.
+ */
+const SESSION_GONE_PATTERNS = [
+  'session not found',
+  'session_not_found',
+  'session missing',
+  'session expired',
+  'session_expired',
+  'session from session_id claim in jwt does not exist',
+  'refresh token not found',
+  'refresh_token_not_found',
+  'invalid refresh token',
+  'jwt expired',
+];
+
+export function isSessionGone(message: string | null | undefined): boolean {
+  const text = (message ?? '').toLowerCase();
+  if (!text) return false;
+  return SESSION_GONE_PATTERNS.some((pattern) => text.includes(pattern));
+}
+
+/**
  * Übersetzungsschlüssel zu einer Fehlermeldung des Backends.
  *
  * Supabase antwortet auf Englisch und unübersetzt. Die Zuordnung deckt die
  * Fälle ab, die eine Person tatsächlich sieht; alles andere fällt auf eine
  * allgemeine Meldung zurück, damit nie ein englischer Satz stehen bleibt.
+ *
+ * `fallback` gibt es, weil der allgemeine Text vom Anmeldebildschirm kommt
+ * («Die Anmeldung hat nicht geklappt»). Im Profil wird kein Konto angemeldet,
+ * sondern ein Passwort gesetzt – dort nennt derselbe Satz den falschen
+ * Vorgang.
  */
-export function authErrorKey(message: string | null | undefined): string {
+export function authErrorKey(
+  message: string | null | undefined,
+  fallback = 'auth.error.generic',
+): string {
   const text = (message ?? '').toLowerCase();
 
-  if (!text) return 'auth.error.generic';
+  if (!text) return fallback;
+  // Vor 'expired': «JWT expired» ist keine Sache des Anmeldelinks.
+  if (isSessionGone(text)) return 'auth.error.sessionExpired';
   if (text.includes('expired') || text.includes('otp_expired')) {
     return 'auth.error.linkExpired';
   }
@@ -57,7 +100,7 @@ export function authErrorKey(message: string | null | undefined): string {
   if (text.includes('password') && text.includes('should be at least')) {
     return 'auth.error.passwordTooShort';
   }
-  return 'auth.error.generic';
+  return fallback;
 }
 
 /** Mindestlänge eines Passworts – dieselbe Vorgabe wie in Supabase. */

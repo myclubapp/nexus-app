@@ -53,7 +53,9 @@
       "wrongPassword": "Email address or password does not match.",
       "rateLimited": "Too many attempts. Please wait a moment.",
       "emailNotConfirmed": "This address is not confirmed yet. Open the link in your inbox first.",
-      "passwordTooShort": "The password is too short."
+      "passwordTooShort": "The password is too short.",
+      "sessionExpired": "You are no longer signed in. Signing out applies to every device – please sign in again.",
+      "passwordSaveFailed": "The password could not be set. Please try again."
     }
   },
   "onboarding": {
