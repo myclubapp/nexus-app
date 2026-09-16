@@ -14,12 +14,12 @@ import { AppPage } from '../components/AppPage';
 import { ListSection } from '../components/ListSection';
 import { TextSection } from '../components/TextSection';
 import { FormModal } from '../components/FormModal';
+import { MemberSelect } from '../components/MemberPicker';
 import { NoteAnswerModal } from '../components/NoteAnswerModal';
 import { EmptyState, ErrorState, InlineError } from '../components/StateViews';
 import { SkeletonList } from '../components/Skeletons';
 import { useClub } from '../hooks/useClub';
 import { useTeams } from '../hooks/useInvites';
-import { useMembers } from '../hooks/useMembers';
 import {
   useAnonThreads,
   useFollowUpAnon,
@@ -69,7 +69,6 @@ export function VoicePage() {
   const quota = useVoiceQuota();
   const submit = useSubmitVoiceNote();
   const teams = useTeams();
-  const members = useMembers();
   const ticketHashes = useTicketHashes();
   const threads = useAnonThreads(ticketHashes);
   const followUp = useFollowUpAnon();
@@ -403,27 +402,13 @@ export function VoicePage() {
             </IonItem>
 
             {draft.target === 'person' && (
-              <IonItem>
-                <IonSelect
-                  label={t('voice.person')}
-                  labelPlacement="stacked"
-                  value={draft.targetMemberId}
-                  onIonChange={(e) =>
-                    setDraft((current) => ({
-                      ...current,
-                      targetMemberId: e.detail.value as string,
-                    }))
-                  }
-                  cancelText={t('common.cancel')}
-                  okText={t('common.ok')}
-                >
-                  {(members.data ?? []).map((member) => (
-                    <IonSelectOption key={member.id} value={member.id}>
-                      {member.display_name}
-                    </IonSelectOption>
-                  ))}
-                </IonSelect>
-              </IonItem>
+              <MemberSelect
+                label={t('voice.person')}
+                value={draft.targetMemberId}
+                onChange={(memberId) =>
+                  setDraft((current) => ({ ...current, targetMemberId: memberId }))
+                }
+              />
             )}
 
             {draft.target === 'team' && (

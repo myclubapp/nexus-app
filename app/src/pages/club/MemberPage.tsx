@@ -321,10 +321,6 @@ export function MemberPage() {
       {/* UC-021: Buchen und Korrigieren – dasselbe Blatt, zwei Wege. */}
       <BookPointsModal
         isOpen={bookFor !== null || correcting !== null}
-        members={all.map((member) => ({
-          id: member.id,
-          displayName: member.display_name,
-        }))}
         preselected={bookFor ?? []}
         correcting={correcting}
         correctingLabel={

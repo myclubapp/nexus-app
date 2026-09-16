@@ -2,12 +2,14 @@ import { describe, expect, it } from 'vitest';
 import {
   ASSIGNABLE_ROLES,
   EMPTY_MEMBER_FILTER,
+  EMPTY_MEMBER_PICK_FILTER,
   addressLines,
   firstName,
   initials,
   MEMBER_STATUSES,
   filterMembers,
   isLastAdmin,
+  pickableMembers,
   type FilterableMember,
 } from './member';
 
@@ -90,6 +92,35 @@ describe('filterMembers', () => {
     const original = [...people];
     filterMembers(people, EMPTY_MEMBER_FILTER);
     expect(people).toEqual(original);
+  });
+});
+
+describe('pickableMembers', () => {
+  const ids = (list: FilterableMember[]) => list.map((entry) => entry.id);
+
+  it('bietet ohne Filter alle an, auch wer in keinem Team ist', () => {
+    expect(ids(pickableMembers(people, EMPTY_MEMBER_PICK_FILTER))).toEqual([
+      'm2',
+      'm4',
+      'm3',
+      'm1',
+    ]);
+  });
+
+  it('verbindet mehrere Teams mit «oder»', () => {
+    // m2 ist in beiden; mit «und» bliebe nur sie übrig.
+    const result = pickableMembers(people, { search: '', teamIds: ['t1', 't2'] });
+    expect(ids(result)).toEqual(['m2', 'm4', 'm1']);
+  });
+
+  it('lässt beim Team-Filter weg, wer in keinem Team ist', () => {
+    const result = pickableMembers(people, { search: '', teamIds: ['t2'] });
+    expect(ids(result)).toEqual(['m2', 'm4']);
+  });
+
+  it('nimmt Suche und Teams zusammen', () => {
+    const result = pickableMembers(people, { search: 'zü', teamIds: ['t1', 't2'] });
+    expect(ids(result)).toEqual(['m1']);
   });
 });
 

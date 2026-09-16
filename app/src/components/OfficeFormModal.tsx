@@ -5,16 +5,14 @@ import {
   IonItem,
   IonLabel,
   IonNote,
-  IonSelect,
-  IonSelectOption,
   IonTextarea,
   IonToggle,
 } from '@ionic/react';
 import { useTranslation } from 'react-i18next';
 import { useClub } from '../hooks/useClub';
-import { useMembers } from '../hooks/useMembers';
 import { useRemoveFactsheet, useSaveOffice, useUploadFactsheet } from '../hooks/useOffices';
 import { FormModal } from './FormModal';
+import { MemberSelect } from './MemberPicker';
 import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
@@ -61,7 +59,6 @@ export function OfficeForm({
 }: OfficeFormProps) {
   const { t } = useTranslation();
   const { activeClub } = useClub();
-  const members = useMembers();
   const save = useSaveOffice();
   const upload = useUploadFactsheet();
   const removeFactsheet = useRemoveFactsheet();
@@ -131,7 +128,6 @@ export function OfficeForm({
   }
 
   const hasFactsheet = Boolean(office?.factsheetPath) && !removeRequested;
-  const memberList = members.data ?? [];
 
   return (
     <FormModal
@@ -274,30 +270,18 @@ export function OfficeForm({
         )}
         {draft.holders.map((holder, index) => (
           <div key={holder.id ?? `new-${index}`}>
-            <IonItem>
-              <IonSelect
-                label={t('offices.holderMember')}
-                labelPlacement="stacked"
-                value={holder.memberId ?? ''}
-                cancelText={t('common.cancel')}
-                okText={t('common.ok')}
-                onIonChange={(e) => {
-                  const memberId = (e.detail.value as string) || null;
-                  const member = memberList.find((entry) => entry.id === memberId);
-                  patchHolder(index, {
-                    memberId,
-                    displayName: member?.display_name ?? holder.displayName,
-                  });
-                }}
-              >
-                <IonSelectOption value="">{t('offices.holderNoMember')}</IonSelectOption>
-                {memberList.map((member) => (
-                  <IonSelectOption key={member.id} value={member.id}>
-                    {member.display_name}
-                  </IonSelectOption>
-                ))}
-              </IonSelect>
-            </IonItem>
+            <MemberSelect
+              label={t('offices.holderMember')}
+              noneLabel={t('offices.holderNoMember')}
+              fallbackName={holder.displayName}
+              value={holder.memberId}
+              onChange={(memberId, member) =>
+                patchHolder(index, {
+                  memberId,
+                  displayName: member?.display_name ?? holder.displayName,
+                })
+              }
+            />
             <IonItem>
               <IonInput
                 label={t('offices.holderName')}
@@ -330,30 +314,18 @@ export function OfficeForm({
       </ListSection>
 
       <ListSection title={t('offices.contact')}>
-        <IonItem>
-          <IonSelect
-            label={t('offices.contactMember')}
-            labelPlacement="stacked"
-            value={draft.contactMemberId ?? ''}
-            cancelText={t('common.cancel')}
-            okText={t('common.ok')}
-            onIonChange={(e) => {
-              const memberId = (e.detail.value as string) || null;
-              const member = memberList.find((entry) => entry.id === memberId);
-              patch({
-                contactMemberId: memberId,
-                contactName: member?.display_name ?? draft.contactName,
-              });
-            }}
-          >
-            <IonSelectOption value="">{t('offices.contactNone')}</IonSelectOption>
-            {memberList.map((member) => (
-              <IonSelectOption key={member.id} value={member.id}>
-                {member.display_name}
-              </IonSelectOption>
-            ))}
-          </IonSelect>
-        </IonItem>
+        <MemberSelect
+          label={t('offices.contactMember')}
+          noneLabel={t('offices.contactNone')}
+          fallbackName={draft.contactName}
+          value={draft.contactMemberId}
+          onChange={(memberId, member) =>
+            patch({
+              contactMemberId: memberId,
+              contactName: member?.display_name ?? draft.contactName,
+            })
+          }
+        />
         <IonItem>
           <IonInput
             label={t('offices.contactLabel')}

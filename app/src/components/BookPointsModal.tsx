@@ -11,6 +11,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useBookPoints, useReversePoints } from '../hooks/useGamification';
 import { FormModal } from './FormModal';
+import { MemberSelect } from './MemberPicker';
 import { useSheetProps } from '../hooks/useSheetProps';
 import { ListSection } from './ListSection';
 import { InlineError } from './StateViews';
@@ -19,14 +20,8 @@ import { canCorrect, validateManualBooking } from '../lib/points';
 import { PILLARS, type Pillar } from '../lib/pointRule';
 import type { PointTransaction } from '../lib/database.types';
 
-export interface BookableMember {
-  id: string;
-  displayName: string;
-}
-
 interface BookPointsProps {
-  /** Auswahl für die Buchung; die vorausgewählten Ids stehen in `preselected`. */
-  members: readonly BookableMember[];
+  /** Wer beim Öffnen schon gewählt ist – aus der Mitgliederliste heraus. */
   preselected?: readonly string[];
   /** Ist gesetzt, wird korrigiert statt gebucht (A1). */
   correcting?: PointTransaction | null;
@@ -48,7 +43,6 @@ interface BookPointsProps {
  * daneben entsteht eine Gegenbuchung (BR-085). Das Blatt sagt das auch.
  */
 export function BookPoints({
-  members,
   preselected = [],
   correcting = null,
   correctingLabel,
@@ -123,23 +117,12 @@ export function BookPoints({
         <>
           {/* A3: derselbe Wert und dieselbe Notiz für mehrere Personen. */}
           <ListSection title={t('bookPoints.who')} footnote={t('bookPoints.whoHint')}>
-            <IonItem>
-              <IonSelect
-                multiple
-                label={t('bookPoints.members')}
-                labelPlacement="stacked"
-                value={memberIds}
-                onIonChange={(e) => setMemberIds((e.detail.value as string[]) ?? [])}
-                cancelText={t('common.cancel')}
-                okText={t('common.ok')}
-              >
-                {members.map((member) => (
-                  <IonSelectOption key={member.id} value={member.id}>
-                    {member.displayName}
-                  </IonSelectOption>
-                ))}
-              </IonSelect>
-            </IonItem>
+            <MemberSelect
+              multiple
+              label={t('bookPoints.members')}
+              value={memberIds}
+              onChange={setMemberIds}
+            />
           </ListSection>
 
           <ListSection title={t('bookPoints.what')} footnote={t('bookPoints.pointsHint')}>
@@ -200,7 +183,6 @@ export function BookPoints({
     </FormModal>
   );
 }
-
 
 /** Blatt-Hülle; der Inhalt entsteht beim Öffnen und fällt erst, wenn das Blatt unten ist. */
 export function BookPointsModal({

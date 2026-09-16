@@ -76,6 +76,39 @@ export function filterMembers<T extends FilterableMember>(
     .sort((a, b) => a.display_name.localeCompare(b.display_name, 'de'));
 }
 
+/**
+ * Der Filter im Mitglieder-Wähler (`MemberPicker`): Suche und **beliebig
+ * viele** Teams. Die Mitgliederliste kennt nur ein Team, weil ihr Export an
+ * genau einem hängt (BR-205); beim Auswählen gibt es diese Grenze nicht.
+ */
+export interface MemberPickFilter {
+  search: string;
+  /** Leer heisst: alle Teams – und auch, wer in keinem ist. */
+  teamIds: readonly string[];
+}
+
+export const EMPTY_MEMBER_PICK_FILTER: MemberPickFilter = { search: '', teamIds: [] };
+
+/**
+ * Die Mitglieder, die der Wähler anbietet – sortiert wie die Mitgliederliste.
+ *
+ * Mehrere Teams verbinden sich mit «oder»: Wer in einem der gewählten Teams
+ * ist, steht in der Liste. «Und» ergäbe bei zwei Teams fast immer eine leere
+ * Liste, und niemand sucht «die, die in beiden spielen».
+ */
+export function pickableMembers<T extends FilterableMember>(
+  members: readonly T[],
+  filter: MemberPickFilter,
+): T[] {
+  const inTeams =
+    filter.teamIds.length === 0
+      ? members
+      : members.filter((member) =>
+          member.teamIds.some((teamId) => filter.teamIds.includes(teamId)),
+        );
+  return filterMembers(inTeams, { ...EMPTY_MEMBER_FILTER, search: filter.search });
+}
+
 /** Ist die Person die einzige mit Vorstandsrechten (BR-026)? */
 export function isLastAdmin(
   members: readonly FilterableMember[],
