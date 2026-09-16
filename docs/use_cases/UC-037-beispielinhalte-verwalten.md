@@ -18,7 +18,7 @@
 1. System legt bei der Gründung zur Vereinsart passende Beispielinhalte an: zwei Termine in der Agenda, ein Helfer-Event mit zwei Schichten, drei Aufgaben im Marktplatz und drei Einführungs-Beiträge im News-Feed.
 2. System kennzeichnet jeden dieser Inhalte sichtbar als Beispiel und erklärt in einem Satz, wozu er dient.
 3. Vorstand öffnet nacheinander die fünf Tabs.
-4. System zeigt auf jedem Tab Inhalte statt einer leeren Fläche: gefüllte Agenda, gefüllter Marktplatz, gefüllter Feed, ein Dashboard mit erklärtem Punktestand und eine Rangliste mit Hinweis auf ihren Zweck.
+4. System zeigt auf jedem Tab Inhalte statt einer leeren Fläche: gefüllte Agenda, gefüllter Marktplatz, gefüllter Feed, ein erklärter Punktestand auf dem Wirkungs-Tab und eine Rangliste mit Hinweis auf ihren Zweck.
 5. Vorstand erfasst seinen ersten eigenen Termin.
 6. System entfernt daraufhin die Beispieltermine, weil der Verein nun eigene Inhalte dieser Art hat.
 7. Vorstand wählt in den Vereinseinstellungen «Beispielinhalte entfernen».

@@ -12,6 +12,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { I18nextProvider } from 'react-i18next';
 import { act, useSyncExternalStore, type ReactNode } from 'react';
 import i18n from '../i18n';
+import { ionProp } from '../test/utils';
 
 // Der Test misst den Router, nicht das Backend: Anmeldung und Mitgliedschaft
 // sind gesetzt, alle Datenquellen liefern leer.
@@ -108,6 +109,10 @@ vi.mock('../hooks/useGamification', () => ({
   useRuleLabels: () => emptyQuery,
   useLeaderboard: () => emptyQuery,
   useMyTeams: () => emptyQuery,
+  useTeamRanking: () => emptyQuery,
+  useClubSeasons: () => emptyQuery,
+  useClubPillars: () => emptyQuery,
+  useValueDimensions: () => emptyQuery,
   useAllPoints: () => emptyQuery,
 }));
 // Seit UC-017 liegen die Aufgaben-Hooks in einem eigenen Modul.
@@ -129,8 +134,15 @@ vi.mock('../hooks/useAgenda', () => ({
   useRespondToEvent: () => ({ mutate: () => {}, isPending: false }),
   useCheckIn: () => ({ mutate: () => {}, isPending: false }),
 }));
+// Auch `NewsPage` hängt an diesem Modul – `TabsPage` importiert sie für die
+// Route `dashboard/news`, also müssen ihre Namen hier stehen, obwohl der Test
+// die Seite nie rendert.
 vi.mock('../hooks/useNews', () => ({
   useNews: () => emptyQuery,
+  // Ohne Beiträge aus mindestens zwei Herkünften erscheint die Wahl nicht.
+  useNewsOrigins: () => ({ ...emptyQuery, data: { own: 0, website: 0, federation: 0 } }),
+  useAllNews: () => ({ ...emptyQuery, data: { pages: [] }, hasNextPage: false }),
+  useShareNews: () => async () => {},
   useInbox: () => emptyQuery,
   useMarkNotificationRead: () => ({ mutate: () => {}, isPending: false }),
   // Seit UC-026 schreibt und verwaltet das Dashboard News.
@@ -179,6 +191,45 @@ describe('TabsPage', () => {
       () => expect(container.querySelectorAll('.ion-page-invisible')).toHaveLength(0),
       { timeout: 5000 },
     );
+  }, 20000);
+
+  /**
+   * Der Weg von der Startseite in den ganzen Feed (UC-026, A5).
+   *
+   * Er steht hier und nicht in `NewsPage.test.tsx`, weil er die **Verbindung**
+   * prüft: Die Route `dashboard/news` muss in `TabsPage` angemeldet sein, und
+   * der Knopf muss auf sie zeigen. Eine Seite, die niemand erreicht, ist so
+   * gut wie nicht gebaut.
+   *
+   * `ion-button` bekommt in jsdom keine ARIA-Rolle, und `routerLink` kommt
+   * als DOM-Eigenschaft an, nicht als Attribut – gesucht wird deshalb über
+   * den Text, gelesen über `ionProp()`.
+   */
+  it('führt von der Startseite in den ganzen Feed', async () => {
+    const { container } = renderAppAt('/tabs/dashboard');
+
+    expect(await screen.findByText('Hallo Alex')).toBeInTheDocument();
+
+    const links = [...container.querySelectorAll('ion-button')]
+      .filter((element) => element.textContent?.trim() === 'Alle anzeigen')
+      .map((element) => ionProp<string>(element, 'routerLink'));
+
+    expect(links).toContain('/tabs/dashboard/news');
+  }, 20000);
+
+  /**
+   * Bis zum 16.09.2026 war die Rangliste der dritte Tab; seither liegt sie
+   * unter «Wirkung». Wer sie als Lesezeichen hat oder im Verlauf zurückgeht,
+   * darf nicht ins Leere laufen – die alte Route leitet weiter.
+   */
+  it('führt die alte Ranglisten-Route an ihren neuen Ort', async () => {
+    renderAppAt('/tabs/leaderboard');
+
+    // Der Titel steht zweimal im DOM: in der Kopfzeile und als grosser Titel.
+    expect(await screen.findAllByText('Ranglisten', undefined, { timeout: 5000 })).not.toHaveLength(
+      0,
+    );
+    await waitFor(() => expect(window.location.pathname).toBe('/tabs/impact/ranking'));
   }, 20000);
 
   /**

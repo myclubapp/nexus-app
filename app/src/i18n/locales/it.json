@@ -115,7 +115,7 @@
   "tabs": {
     "dashboard": "Home",
     "marketplace": "Compiti",
-    "leaderboard": "Classifiche",
+    "impact": "Impatto",
     "agenda": "Agenda",
     "profile": "Profilo"
   },
@@ -133,22 +133,25 @@
   "dashboard": {
     "title": "Home",
     "greeting": "Ciao {{name}}",
-    "seasonPoints": "Punti in questa stagione",
-    "streak": "{{count}} settimane di allenamento di fila",
-    "streakDays": "{{count}} di fila",
-    "nextPoints": "Prossimi punti",
-    "nextPointsHint": "Contributi concreti attualmente aperti – e adatti a te.",
     "openTasks": "Compiti aperti",
     "upcoming": "Prossimamente",
     "upcomingHint": "Le tue squadre e tutto ciò che riguarda l’intera società. L’agenda mostra il calendario completo.",
     "latestNews": "Novità",
-    "noNews": "Al momento nessuna novità",
+    "allNews": "Mostra tutte",
+    "noNews": "Al momento nessuna novità"
+  },
+  "impact": {
+    "title": "Il mio impatto",
+    "seasonPoints": "Punti in questa stagione",
     "careerPoints": "Totale dall’entrata",
-    "nothingOpen": "Al momento non c’è nulla. Va bene anche così.",
     "welcome": "Benvenuta, benvenuto nella società",
     "welcomeHint": "Ancora nessuna registrazione. Il primo contributo è qui sotto.",
-    "recentBookings": "Ultimi accrediti",
-    "allBookings": "Mostra tutto",
+    "streak": "{{count}} settimane di allenamento di fila",
+    "streakHint": "Ancora {{count}} settimane al prossimo bonus di serie.",
+    "streakDays": "{{count}} di fila",
+    "nextPoints": "Prossimi punti",
+    "nextPointsHint": "Contributi concreti attualmente aperti – e adatti a te.",
+    "nothingOpen": "Al momento non c’è nulla. Va bene anche così.",
     "kind": {
       "event": "Appuntamento",
       "shift": "Turno",
@@ -157,7 +160,11 @@
     "seasonTrend": "Andamento stagione",
     "seasonTrendHint": "Punti per mese dall’inizio della stagione.",
     "seasonTrendDescription": "Punti per mese su {{count}} mesi, {{points}} punti in totale in questa stagione",
-    "streakHint": "Ancora {{count}} settimane al prossimo bonus di serie."
+    "recentBookings": "Ultimi accrediti",
+    "allBookings": "Mostra tutto",
+    "strengths": "Di cosa è fatto il tuo contributo",
+    "ranking": "A che punto è la società?",
+    "rankingHint": "Le classifiche della società – per stagione, pilastro e squadra."
   },
   "marketplace": {
     "title": "Compiti",
@@ -2035,7 +2042,14 @@
   "news": {
     "share": "Condividi",
     "linkCopied": "Link copiato",
-    "readOnWebsite": "Leggi l’articolo completo sul sito"
+    "readOnWebsite": "Leggi l’articolo completo sul sito",
+    "origin": {
+      "all": "Tutte",
+      "own": "Società",
+      "website": "Sito web",
+      "federation": "Federazione",
+      "empty": "Al momento nessun articolo da questa fonte"
+    }
   },
   "eventEdit": {
     "title": "Modifica appuntamento",

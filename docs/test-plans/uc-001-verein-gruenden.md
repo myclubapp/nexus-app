@@ -167,7 +167,7 @@
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
 | 1 | Alle fünf Tabs nacheinander öffnen | Keiner zeigt einen Fehler; leere Tabs erklären ihren Zweck | | |
-| 2 | Tab «Ranglisten» | Zeigt «Noch keine Punkte in dieser Saison», nicht eine leere Fläche | | |
+| 2 | Tab «Wirkung» → «Wie steht der Verein?» | Zeigt «Noch keine Punkte in dieser Saison», nicht eine leere Fläche | | |
 | 3 | Über «Erste Schritte» eine Einladung erstellen | Geht ohne vorherige Einstellung (UC-003) | | |
 | 4 | Vereinseinstellungen öffnen und wieder schliessen, **ohne** zu speichern | Der Verein funktioniert unverändert weiter | | |
 

@@ -18,14 +18,14 @@
 
 ---
 
-## TC-001: Dashboard (Hauptablauf)
+## TC-001: Wirkungs-Tab (Hauptablauf)
 
 **Priority:** High
 **Preconditions:** Als **M1** angemeldet.
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Dashboard öffnen | Zwei Kennzahlen: Saison **und** Gesamt seit Eintritt (BR-081) | | |
+| 1 | Tab «Wirkung» öffnen | Zwei Kennzahlen: Saison **und** Gesamt seit Eintritt (BR-081) | | |
 | 2 | Die Zahlen mit der Historie vergleichen | Der Gesamtstand enthält die Buchungen der Vorsaison, der Saisonstand nicht | | |
 | 3 | Nach einem Rang oder Vergleich suchen | Es gibt keinen (BR-084) | | |
 | 4 | «Zuletzt gutgeschrieben» ansehen | Drei Buchungen mit **Anlass**, Datum und Wert – kein Regelcode wie `task_done` | | |
@@ -43,7 +43,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **M2** (ohne Team) das Dashboard öffnen | Der Team-Termin steht **nicht** unter den Vorschlägen | | |
+| 1 | Als **M2** (ohne Team) den Tab «Wirkung» öffnen | Der Team-Termin steht **nicht** unter den Vorschlägen | | |
 | 2 | Als **M1** (im Team) prüfen | Der Team-Termin steht da | | |
 | 3 | Als **M1** auf einen Termin zusagen und neu laden | Der Termin verschwindet aus den Vorschlägen | | |
 | 4 | Die bereits übernommene Aufgabe suchen | Sie wird **nicht** vorgeschlagen | | |
@@ -58,10 +58,10 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **M2** (ohne Buchung) das Dashboard öffnen | Statt eines leeren Stands eine Begrüssung mit Hinweis (A1) | | |
+| 1 | Als **M2** (ohne Buchung) den Tab «Wirkung» öffnen | Statt eines leeren Stands eine Begrüssung mit Hinweis (A1) | | |
 | 2 | Darunter prüfen | Der nächste erreichbare Beitrag steht da | | |
 | 3 | Alle offenen Termine, Schichten und Aufgaben schliessen | — | | |
-| 4 | Das Dashboard neu laden | «Gerade steht nichts an» statt eines leeren Bereichs (A4) | | |
+| 4 | Den Tab «Wirkung» neu laden | «Gerade steht nichts an» statt eines leeren Bereichs (A4) | | |
 
 ---
 
@@ -71,7 +71,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Auf dem Dashboard «Alle anzeigen» wählen | Die Punktehistorie öffnet sich | | |
+| 1 | Auf dem Wirkungs-Tab «Alle anzeigen» wählen | Die Punktehistorie öffnet sich | | |
 | 2 | Die Saison-Auswahl in der Kopfzeile prüfen | Sie nennt «Alle» und jede Saison mit Buchungen | | |
 | 3 | Eine Saison wählen | Nur deren Buchungen stehen da, die Summe passt | | |
 | 4 | Nach einer Säule filtern | Nur Buchungen dieser Säule bleiben | | |
@@ -106,7 +106,7 @@
 | 1 | Saisonstart des Vereins auf den 1. Juni setzen | — | | |
 | 2 | Eine Buchung am **31. Mai** prüfen | Sie gehört zur **Vorsaison** | | |
 | 3 | Eine Buchung am **1. Juni** prüfen | Sie gehört zur neuen Saison | | |
-| 4 | Die Saisonangabe auf dem Dashboard mit der in der Rangliste vergleichen | Beide nennen dieselbe Saison | | |
+| 4 | Die Saisonangabe auf dem Wirkungs-Tab mit der in der Rangliste vergleichen | Beide nennen dieselbe Saison | | |
 
 ---
 
@@ -116,7 +116,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **M1** das Dashboard offen lassen und die App in den Hintergrund legen | — | | |
+| 1 | Als **M1** den Tab «Wirkung» offen lassen und die App in den Hintergrund legen | — | | |
 | 2 | Als **V** eine Aufgabe von **M1** bestätigen | — | | |
 | 3 | Als **M1** zur App zurückkehren | Der Punktestand steht ohne Zutun auf dem neuen Wert | | |
 | 4 | Zusätzlich nach unten ziehen | Alle Bereiche laden neu | | |

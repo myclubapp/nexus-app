@@ -26,7 +26,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Tab «Rangliste» öffnen | Die Vereinsrangliste der laufenden Saison mit Rang, Name und Punktzahl | | |
+| 1 | Tab «Wirkung» → «Wie steht der Verein?» öffnen | Die Vereinsrangliste der laufenden Saison mit Rang, Name und Punktzahl | | |
 | 2 | Die eigene Zeile suchen | Sie ist hervorgehoben (Schritt 3) | | |
 | 3 | Die Fussnote lesen | Sie nennt den eigenen Rang | | |
 | 4 | Nach einer Kennzeichnung der letzten Plätze suchen | Es gibt keine, und keine Aufforderung an schlecht Platzierte (BR-089) | | |
@@ -83,12 +83,12 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Blatt «Punktequelle» öffnen | Die Überschriften tragen dieselben Namen wie «Meine Stärken» im Profil: Engagement, Ehrenamt, Netzwerk, Treue | | |
+| 1 | Blatt «Punktequelle» öffnen | Die Überschriften tragen dieselben Namen wie das Netzdiagramm auf dem Wirkungs-Tab: Engagement, Ehrenamt, Netzwerk, Treue | | |
 | 2 | Unter «Ehrenamt» den Chip «Alles» wählen | Die Rangliste zeigt die Summe aus Säule 3 **und** Säule 7 | | |
 | 3 | Die Punktzahl mit der Summe beider Einzelsäulen vergleichen | Sie stimmt überein (BR-208) | | |
 | 4 | Unter «Netzwerk» nachsehen | Dort steht **kein** Chip «Alles» – die Dimension besteht nur aus «Vereinsleben» | | |
 | 5 | Auf «Teams» wechseln | Die Team-Rangliste ist mit derselben Dimension eingegrenzt | | |
-| 6 | Im Profil «Meine Stärken» öffnen und eine Dimension antippen | Die dort genannten Säulen sind dieselben wie im Blatt der Rangliste | | |
+| 6 | Auf dem Wirkungs-Tab eine Dimension antippen | Die dort genannten Säulen sind dieselben wie im Blatt der Rangliste | | |
 
 ---
 

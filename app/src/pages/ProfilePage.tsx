@@ -25,7 +25,6 @@ import { FormModal } from '../components/FormModal';
 import { DeleteAccountModal } from '../components/DeleteAccountModal';
 import { ProfileEditModal } from '../components/ProfileEditModal';
 import { ClubAdminLinks } from '../components/ClubAdminLinks';
-import { ContributionGoalCard } from '../components/ContributionGoalCard';
 import { PASSWORD_MIN_LENGTH, authErrorKey } from '../lib/authError';
 import { PROFILE_SETUP_ROUTE } from '../lib/profileSetup';
 import { SUPPORTED_LANGUAGES } from '../i18n';
@@ -194,10 +193,6 @@ export function ProfilePage() {
           <IonLabel>{t('profileSetup.title')}</IonLabel>
         </IonItem>
 
-        <IonItem button routerLink="/tabs/profile/strengths" detail>
-          <IonLabel>{t('dimensions.title')}</IonLabel>
-        </IonItem>
-
         {/* UC-025: Für jedes Mitglied, nicht nur für Zuständige – es ist die
             Seite über die eigene Person. */}
         <IonItem button routerLink="/tabs/profile/transparency" detail>
@@ -269,16 +264,11 @@ export function ProfilePage() {
         </ListSection>
       )}
 
-      {/* UC-042: der eigene Fortschritt zum Saisonziel – vor der Historie,
-          weil er sagt, was noch ansteht, und die Historie, was war. Ohne
-          Modul und ohne Ziel rendert die Karte nichts. */}
-      <ContributionGoalCard />
-
       <ListSection
         title={t('profile.pointHistory')}
         action={
           <IonButton fill="clear" size="small" routerLink="/tabs/profile/points">
-            {t('dashboard.allBookings')}
+            {t('impact.allBookings')}
           </IonButton>
         }
       >

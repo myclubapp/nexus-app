@@ -29,7 +29,7 @@ export function leaderboardLimit(settings: ClubSettings | null | undefined): num
  *
  * Eine Anonymisierungsoption, keine Verschleierung: Die Reihenfolge bleibt,
  * nur die Zahl, an der sich Vergleiche entzünden, fällt weg. Die eigene Zahl
- * steht weiterhin auf dem Dashboard.
+ * steht weiterhin auf dem Wirkungs-Tab.
  */
 export function hidesPoints(settings: ClubSettings | null | undefined): boolean {
   return settings?.leaderboard?.hidePoints === true;

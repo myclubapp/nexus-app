@@ -50,14 +50,6 @@ vi.mock('../hooks/useClub', () => ({
 vi.mock('../hooks/useGamification', () => ({
   useMyPoints: () => ({ transactions: [] }),
   useRuleLabels: () => ({ data: [] }),
-  // UC-042: Die Fortschrittskarte holt sich die Vorschläge von hier.
-  useNextContributions: () => ({ data: [] }),
-}));
-
-// UC-042: Ohne Ziel rendert die Karte nichts – das ist der Normalfall dieser
-// Seite und deshalb die Voreinstellung der Attrappe (A2, A3, A7).
-vi.mock('../hooks/useContributionGoal', () => ({
-  useMyContributionGoal: () => ({ data: null }),
 }));
 
 vi.mock('../hooks/useTasks', () => ({

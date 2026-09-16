@@ -1,7 +1,5 @@
 import {
   IonButton,
-  IonCard,
-  IonCardContent,
   IonCol,
   IonGrid,
   IonIcon,
@@ -15,23 +13,13 @@ import {
 import { createOutline, documentOutline } from 'ionicons/icons';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Share } from '@capacitor/share';
 import { useAuth } from '../hooks/useAuth';
 import { useClub } from '../hooks/useClub';
 import { usePlanningScope } from '../hooks/usePlanningScope';
-import {
-  useMyPoints,
-  useMyPointsSummary,
-  useNextContributions,
-  useRuleLabels,
-  useMyStreak,
-} from '../hooks/useGamification';
 import { useAgenda, useRespondToEvent, type AgendaEvent } from '../hooks/useAgenda';
 import { useMembers } from '../hooks/useMembers';
-import { useTasks } from '../hooks/useTasks';
 import { useRefreshOnEnter } from '../hooks/useRefreshOnEnter';
-import { MonthBars } from '../components/MonthBars';
-import { useNews } from '../hooks/useNews';
+import { useNews, useNewsOrigins, useShareNews } from '../hooks/useNews';
 import { useNewsSource } from '../hooks/useNewsSources';
 import { useIsNewClub } from '../hooks/useOnboarding';
 import { AppPage } from '../components/AppPage';
@@ -42,17 +30,14 @@ import { FirstStepsCard } from '../components/FirstStepsCard';
 import { ProfileSetupCard } from '../components/ProfileSetupCard';
 import { InboxButton } from '../components/InboxButton';
 import { NewsCard } from '../components/NewsCard';
+import { NewsOriginSegment } from '../components/NewsOriginSegment';
 import { NewsDetailModal } from '../components/NewsDetailModal';
 import { NewsFormModal } from '../components/NewsFormModal';
 import { ListSection } from '../components/ListSection';
-import { StatCard } from '../components/StatCard';
-import { TaskDetailModal } from '../components/TaskDetailModal';
 import { EmptyState, ErrorState } from '../components/StateViews';
-import { SkeletonList, SkeletonNewsCards, SkeletonStats } from '../components/Skeletons';
-import { formatDate, formatDateTime } from '../lib/format';
+import { SkeletonList, SkeletonNewsCards } from '../components/Skeletons';
+import { formatDateTime } from '../lib/format';
 import { firstName } from '../lib/member';
-import { canShareNatively } from '../lib/invite';
-import { bookingLabel, pointsPerMonth } from '../lib/points';
 import { holdsShift, respondsViaShifts } from '../lib/attendance';
 import { useToast } from '../hooks/useToast';
 import {
@@ -60,6 +45,7 @@ import {
   shouldOfferSetupCard,
   shouldStartSetup,
 } from '../lib/profileSetup';
+import type { NewsOrigin } from '../lib/news';
 import type { News } from '../lib/database.types';
 
 export function DashboardPage() {
@@ -76,22 +62,19 @@ export function DashboardPage() {
   });
   // Die geöffnete News – das Detail-Blatt mit Bild und Volltext.
   const [openNews, setOpenNews] = useState<News | null>(null);
-  // Termin und Aufgabe öffnen sich hier als Blatt statt in ihrem Tab: Ionic
-  // will keinen Knopf, der von Tab 1 nach Tab 2 führt – für Inhalt quer über
-  // Tabs empfiehlt es das Modal (Navigation-Kapitel). Nur die Kennung im
-  // Zustand: Das Blatt zeigt so immer den Stand der Liste.
+  // Welche Herkunft der Feed zeigt. Er startet bei «alle» – die Wahl ist ein
+  // Griff für den Ausnahmefall, keine Voreinstellung, die etwas versteckt.
+  const [origin, setOrigin] = useState<NewsOrigin>('all');
+  // Der Termin öffnet sich hier als Blatt statt in der Agenda: Ionic will
+  // keinen Knopf, der von Tab 1 nach Tab 2 führt – für Inhalt quer über Tabs
+  // empfiehlt es das Modal (Navigation-Kapitel). Nur die Kennung im Zustand:
+  // Das Blatt zeigt so immer den Stand der Liste.
   const [detailEventId, setDetailEventId] = useState<string | null>(null);
   const [decliningEvent, setDecliningEvent] = useState<{
     id: string;
     startsAt: string;
   } | null>(null);
-  const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const isNewClub = useIsNewClub();
-  const points = useMyPoints();
-  const summary = useMyPointsSummary();
-  const streak = useMyStreak();
-  const suggestions = useNextContributions(5);
-  const rules = useRuleLabels();
   // Die Startseite ist persönlich: Hier stehen die eigenen Teams und das, was
   // dem ganzen Verein gilt – nicht der Kalender aller Teams. Die RLS grenzt
   // Mitglieder und Trainer:innen ohnehin so ab (`event_in_scope()`, `0073`);
@@ -105,24 +88,20 @@ export function DashboardPage() {
     { teamIds: scope.myTeamIds },
     { enabled: !scope.isLoading },
   );
-  const tasks = useTasks();
   const members = useMembers();
   const respond = useRespondToEvent();
-  const news = useNews(5);
+  const news = useNews(5, origin);
+  const newsOrigins = useNewsOrigins();
   const newsSource = useNewsSource();
+  const shareNews = useShareNews();
 
   // Die Tab-Seite bleibt gemountet; erst das erneute Betreten lädt nach, was
   // nach `staleTime` veraltet ist (Lifecycle-Kapitel).
   useRefreshOnEnter([
-    ['points'],
-    ['points-summary'],
-    ['my-streak'],
-    ['next-contributions'],
-    ['rule-labels'],
     ['agenda'],
-    ['tasks'],
     ['members'],
     ['news'],
+    ['news-origins'],
     ['news-source'],
     ['club-is-new'],
     ['inbox'],
@@ -160,13 +139,6 @@ export function DashboardPage() {
     });
 
   const nextEvents = (agenda.data ?? []).slice(0, 3);
-  const recent = points.transactions.slice(0, 3);
-  // Konzept §7.1: der Saisonverlauf – Punkte je Monat seit Saisonstart.
-  const months = pointsPerMonth(points.transactions, activeClub?.season_start);
-  const hasTrend = months.some((entry) => entry.points > 0);
-  // A1: Wer noch keine Buchung hat, bekommt keinen leeren Stand, sondern eine
-  // Begrüssung – und darunter den nächsten erreichbaren Beitrag.
-  const isNewcomer = summary.isSuccess && summary.data.bookingCount === 0;
 
   // Dieselbe Grundgesamtheit wie in der Agenda: wer kein Anmeldekonto hat,
   // lässt sich nicht erreichen und zählt im Detail nicht als «keine Antwort».
@@ -174,7 +146,6 @@ export function DashboardPage() {
     (m) => m.status !== 'left' && m.user_id !== null,
   );
   const detailEvent = (agenda.data ?? []).find((entry) => entry.id === detailEventId) ?? null;
-  const openTask = (tasks.data ?? []).find((entry) => entry.id === openTaskId) ?? null;
 
   /**
    * Der eigene Antwortstand zu einem Termin – die Ampel aus der Agenda
@@ -211,41 +182,6 @@ export function DashboardPage() {
     return teamId ? activeMembers.filter((m) => m.teamIds.includes(teamId)) : activeMembers;
   }
 
-  /**
-   * Schritt 6: Der Vorschlag führt dorthin, wo er eingelöst wird – als Blatt
-   * über dieser Seite. Nur wenn die Liste den Gegenstand (noch) nicht kennt,
-   * wechselt die Seite in den Tab, und zwar als dessen Wurzel: So bleibt
-   * keine Fremd-History, über die der Android-Zurück-Knopf wanderte.
-   */
-  function openSuggestion(kind: string, refId: string) {
-    if (kind === 'task') {
-      if ((tasks.data ?? []).some((entry) => entry.id === refId)) setOpenTaskId(refId);
-      else router.push(`/tabs/marketplace?task=${refId}`, 'root');
-      return;
-    }
-    if ((agenda.data ?? []).some((entry) => entry.id === refId)) setDetailEventId(refId);
-    else router.push(`/tabs/agenda?event=${refId}`, 'root');
-  }
-
-  /**
-   * Eine übernommene News weitergeben – über das Teilen-Blatt des Geräts,
-   * im Browser als kopierter Link. Geteilt wird die Quelle, nicht die App:
-   * Der Verweis führt Aussenstehende auf die Website des Vereins.
-   */
-  async function shareNews(entry: News) {
-    const url = entry.external_url;
-    if (!url) return;
-    if (canShareNatively()) {
-      try {
-        await Share.share({ title: entry.title, url });
-        return;
-      } catch {
-        // Abbruch im Teilen-Dialog ist kein Fehler – dann bleibt Kopieren.
-      }
-    }
-    await navigator.clipboard?.writeText(url);
-    toast.success(t('news.linkCopied'));
-  }
 
   return (
     <AppPage
@@ -272,9 +208,6 @@ export function DashboardPage() {
       }
       onRefresh={() =>
         Promise.all([
-          summary.refetch(),
-          points.refetch(),
-          suggestions.refetch(),
           agenda.refetch(),
           news.refetch(),
         ])
@@ -294,47 +227,10 @@ export function DashboardPage() {
         />
       )}
 
-      {/* BR-081: Saison und Gesamt getrennt. BR-084: keine Vergleichszahl –
-          hier steht der eigene Beitrag, der Rang gehört in die Rangliste. */}
-      {summary.isLoading ? (
-        <SkeletonStats />
-      ) : summary.error ? (
-        <ErrorState
-          error={summary.error as Error}
-          onRetry={() => void summary.refetch()}
-        />
-      ) : (
-        <div className="app-stat-row">
-          <StatCard
-            value={summary.data?.seasonPoints ?? 0}
-            label={t('dashboard.seasonPoints')}
-          />
-          <StatCard
-            value={summary.data?.careerPoints ?? 0}
-            label={t('dashboard.careerPoints')}
-            accent="tertiary"
-          />
-        </div>
-      )}
-
-      {/* Konzept §4.1 Säule 1 und §10: die Trainingsserie und der Weg zum
-          nächsten Bonus – ein Satz, keine Warnung. */}
-      {(streak.data ?? 0) > 0 && (
-        <ListSection>
-          <IonItem lines="none">
-            <IonLabel className="ion-text-wrap">
-              <h2>{t('dashboard.streak', { count: streak.data ?? 0 })}</h2>
-              <IonNote>
-                {t('dashboard.streakHint', { count: 4 - ((streak.data ?? 0) % 4) })}
-              </IonNote>
-            </IonLabel>
-          </IonItem>
-        </ListSection>
-      )}
-
-      {/* Was als Nächstes ansteht, steht oben: Der eigene Punktestand ist die
-          Auskunft, der nächste Termin die Handlung. Die Termine öffnen ihr
-          Detail hier als Blatt – kein Sprung in die Agenda. */}
+      {/* Was als Nächstes ansteht, steht zuoberst: Die Startseite beantwortet
+          «was läuft im Verein», nicht «wo stehe ich» – das steht seit dem
+          16.09.2026 auf dem Wirkungs-Tab. Die Termine öffnen ihr Detail hier
+          als Blatt – kein Sprung in die Agenda. */}
       <IonListHeader>
         <IonLabel>{t('dashboard.upcoming')}</IonLabel>
       </IonListHeader>
@@ -401,140 +297,42 @@ export function DashboardPage() {
         </ListSection>
       )}
 
-      {isNewcomer && (
-        <ListSection footnote={t('dashboard.welcomeHint')}>
-          <IonItem lines="none">
-            <IonLabel className="ion-text-wrap">
-              <h2>{t('dashboard.welcome')}</h2>
-            </IonLabel>
-          </IonItem>
-        </ListSection>
-      )}
-
-      {/* Schritt 4: konkrete Beiträge statt Regeln. Skelett, Fehler und
-          Leerzustand stehen neben der Liste, nicht in ihr. */}
-      <IonListHeader>
-        <IonLabel>{t('dashboard.nextPoints')}</IonLabel>
-      </IonListHeader>
-      {suggestions.isLoading ? (
-        <SkeletonList />
-      ) : suggestions.error ? (
-        <ErrorState
-          error={suggestions.error as Error}
-          onRetry={() => void suggestions.refetch()}
-        />
-      ) : (suggestions.data ?? []).length === 0 ? (
-        /* A4: sagen, dass gerade nichts ansteht – statt eines leeren Feldes. */
-        <EmptyState
-          message={t('dashboard.nothingOpen')}
-          action={{
-            label: t('marketplace.title'),
-            onClick: () => router.push('/tabs/marketplace', 'root'),
-          }}
-        />
-      ) : (
-        <ListSection footnote={t('dashboard.nextPointsHint')}>
-          {(suggestions.data ?? []).map((entry) => (
-            <IonItem
-              key={`${entry.kind}-${entry.refId}`}
-              button
-              detail
-              onClick={() => openSuggestion(entry.kind, entry.refId)}
-            >
-              <IonLabel className="ion-text-wrap">
-                <h2>{entry.title}</h2>
-                <IonNote>
-                  {t(`dashboard.kind.${entry.kind}`)}
-                  {entry.whenAt ? ` · ${formatDate(entry.whenAt)}` : ''}
-                </IonNote>
-              </IonLabel>
-              {/* Ohne hinterlegte Regel steht hier keine Zahl – eine Null wäre
-                  eine Behauptung über den Wert des Beitrags. */}
-              {entry.points !== null && entry.points > 0 && (
-                <IonNote slot="end" color="primary">
-                  +{entry.points}
-                </IonNote>
-              )}
-            </IonItem>
-          ))}
-        </ListSection>
-      )}
-
-      {/* Der Rückblick steht unter dem, was ansteht: erst die nächste
-          Handlung, dann die eigene Bilanz. Das Diagramm steht in einer Karte –
-          ein Item ist eine Zeile, kein Behälter für eine Grafik. */}
-      {hasTrend && (
-        <>
-          <IonListHeader>
-            <IonLabel>{t('dashboard.seasonTrend')}</IonLabel>
-          </IonListHeader>
-          <IonCard>
-            <IonCardContent>
-              <MonthBars
-                months={months}
-                description={t('dashboard.seasonTrendDescription', {
-                  count: months.length,
-                  points: summary.data?.seasonPoints ?? 0,
-                })}
-              />
-            </IonCardContent>
-          </IonCard>
-          <IonNote className="app-footnote">{t('dashboard.seasonTrendHint')}</IonNote>
-        </>
-      )}
-
-      {/* Schritt 3: die letzten Buchungen mit Datum, Anlass und Wert. */}
-      {recent.length > 0 && (
-        <ListSection
-          title={t('dashboard.recentBookings')}
-          action={
-            /* Eine Unterseite des Profil-Tabs: `root` startet den Tab dort,
-               ohne Fremd-History. */
-            <IonButton
-              fill="clear"
-              size="small"
-              routerLink="/tabs/profile/points"
-              routerDirection="root"
-            >
-              {t('dashboard.allBookings')}
-            </IonButton>
-          }
-        >
-          {recent.map((entry) => (
-            <IonItem key={entry.id}>
-              <IonLabel className="ion-text-wrap">
-                <h2>{bookingLabel(entry, rules.data ?? [])}</h2>
-                <IonNote>{formatDateTime(entry.created_at)}</IonNote>
-              </IonLabel>
-              <IonNote slot="end" color={entry.points >= 0 ? 'primary' : 'danger'}>
-                {entry.points >= 0 ? `+${entry.points}` : entry.points}
-              </IonNote>
-            </IonItem>
-          ))}
-        </ListSection>
-      )}
-
       {/* Die News als Karten im Raster der bestehenden myclub-App: eine Spalte
           auf dem Telefon, zwei auf dem Tablet, drei auf dem Laptop. Das Raster
           steht unter der Überschrift, nicht in einer Liste. */}
       <IonListHeader>
         <IonLabel>{t('dashboard.latestNews')}</IonLabel>
+        {/* Eine Unterseite **desselben** Tabs, wie die Inbox – deshalb der
+            gewöhnliche Vorwärts-Übergang und kein `root` wie bei «Alle
+            Buchungen», das in den Profil-Tab wechselt. Ein Knopf, der den Tab
+            wechselt, ist bei Ionic ein Fehler. */}
+        <IonButton fill="clear" size="small" routerLink="/tabs/dashboard/news">
+          {t('dashboard.allNews')}
+        </IonButton>
       </IonListHeader>
+      {/* Dieselbe Leiste wie auf der News-Seite, damit «Verband» an beiden
+          Orten dasselbe heisst. Sie zeigt sich nur bei mehr als einer
+          Herkunft und nur mit den Herkünften, die es wirklich gibt. */}
+      <NewsOriginSegment value={origin} onChange={setOrigin} counts={newsOrigins.data} />
       {news.isLoading ? (
         <SkeletonNewsCards />
       ) : (news.data ?? []).length === 0 ? (
         <EmptyState
-          message={t('dashboard.noNews')}
+          /* Bei gesetzter Wahl ist der Feed nicht leer, sondern die eine
+             Quelle – sonst führte «keine Neuigkeiten» in die Irre. */
+          message={origin === 'all' ? t('dashboard.noNews') : t('news.origin.empty')}
           action={
-            isTrainer
-              ? {
-                  label: t('newsForm.title'),
-                  onClick: () => setNewsForm({ open: true, editing: null }),
-                }
-              : {
-                  label: t('agenda.title'),
-                  onClick: () => router.push('/tabs/agenda', 'root'),
-                }
+            origin !== 'all'
+              ? { label: t('news.origin.all'), onClick: () => setOrigin('all') }
+              : isTrainer
+                ? {
+                    label: t('newsForm.title'),
+                    onClick: () => setNewsForm({ open: true, editing: null }),
+                  }
+                : {
+                    label: t('agenda.title'),
+                    onClick: () => router.push('/tabs/agenda', 'root'),
+                  }
           }
         />
       ) : (
@@ -624,21 +422,6 @@ export function DashboardPage() {
         }}
       />
 
-      {/* Dasselbe Blatt wie im Marktplatz (UC-018). */}
-      <TaskDetailModal
-        task={openTask}
-        onDismiss={() => setOpenTaskId(null)}
-        onDone={(outcome, warned) => {
-          setOpenTaskId(null);
-          if (outcome === 'claimed') {
-            toast.success(t('marketplace.claimed'));
-          } else if (outcome === 'submitted') {
-            toast.success(t('taskDetail.reported'));
-          } else {
-            toast.success(t(warned ? 'taskDetail.releasedWarned' : 'taskDetail.released'));
-          }
-        }}
-      />
     </AppPage>
   );
 }

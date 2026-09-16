@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { isEditable, publishedTitle, validateNews, type NewsDraft } from './news';
+import {
+  NEWS_ORIGINS,
+  isEditable,
+  publishedTitle,
+  sourcesOf,
+  validateNews,
+  type NewsDraft,
+} from './news';
 
 function draft(overrides: Partial<NewsDraft> = {}): NewsDraft {
   return { title: 'Sommerfest', body: '', imageUrl: '', teamId: null, ...overrides };
@@ -65,5 +72,28 @@ describe('publishedTitle (FR-100)', () => {
 
   it('publiziert nicht ohne Titel – eine News ohne Überschrift gibt es nicht', () => {
     expect(publishedTitle(true, false, '   ')).toBeNull();
+  });
+});
+
+describe('sourcesOf', () => {
+  it('trennt die beiden übernommenen Quellen, legt aber die eigene Hand zusammen', () => {
+    // `club`, `team` und «Aus dem Vorstand» schreibt der Verein in dieser App.
+    expect(sourcesOf('own')).toEqual(['club', 'team', 'board']);
+    // Website und Verband bleiben getrennt: Wer den Feed durchsucht, sucht
+    // meist genau eine der beiden.
+    expect(sourcesOf('website')).toEqual(['website']);
+    expect(sourcesOf('federation')).toEqual(['federation']);
+  });
+
+  it('deckt jeden Wert des Constraints genau einmal ab', () => {
+    // Eine Quelle, die in keiner Herkunft steht, wäre nur noch unter «Alle»
+    // zu sehen; eine, die in zweien steht, erschiene doppelt.
+    const all = NEWS_ORIGINS.flatMap((origin) => sourcesOf(origin) ?? []);
+    expect([...all].sort()).toEqual(['board', 'club', 'federation', 'team', 'website']);
+    expect(new Set(all).size).toBe(all.length);
+  });
+
+  it('grenzt «alle» gar nicht ein', () => {
+    expect(sourcesOf('all')).toBeNull();
   });
 });

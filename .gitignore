@@ -45,3 +45,6 @@ supabase/.branches/
 supabase/.temp/
 
 .vercel
+
+# Claude Code: Arbeitsbäume paralleler Sitzungen (eigene Checkouts)
+.claude/worktrees/

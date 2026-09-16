@@ -1,27 +1,154 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { supabase, isConfigured } from '../lib/supabase';
 import type { News, Notification } from '../lib/database.types';
 import { useClub } from './useClub';
-import type { NewsDraft } from '../lib/news';
+import { NEWS_ORIGINS, sourcesOf, type NewsDraft, type NewsOrigin } from '../lib/news';
 import { useAuth } from './useAuth';
+import { useToast } from './useToast';
+import { canShareNatively } from '../lib/invite';
+import { Share } from '@capacitor/share';
+import { useTranslation } from 'react-i18next';
 
-export function useNews(limit = 20) {
+/**
+ * Der Feed – wahlweise nur die eine oder die andere Herkunft.
+ *
+ * Die Eingrenzung läuft in der **Abfrage**, nicht über dem Ergebnis: Die Liste
+ * bricht nach `limit` Zeilen ab, und ein Verband, der wöchentlich schreibt,
+ * füllt die längst (siehe `NewsOrigin`). Ein Filter über den bereits geholten
+ * fünf Zeilen zeigte in genau dem Fall, der ihn nötig macht, nichts an.
+ */
+export function useNews(limit = 20, origin: NewsOrigin = 'all') {
   const { activeClub } = useClub();
 
   return useQuery({
-    queryKey: ['news', activeClub?.id, limit],
+    queryKey: ['news', activeClub?.id, limit, origin],
     enabled: Boolean(activeClub) && isConfigured,
     queryFn: async (): Promise<News[]> => {
-      const { data, error } = await supabase
-        .from('news')
-        .select('*')
-        .eq('club_id', activeClub!.id)
+      const sources = sourcesOf(origin);
+      let query = supabase.from('news').select('*').eq('club_id', activeClub!.id);
+      if (sources) query = query.in('source', sources);
+
+      const { data, error } = await query
         .order('published_at', { ascending: false })
         .limit(limit);
       if (error) throw new Error(error.message);
       return data ?? [];
     },
   });
+}
+
+/**
+ * Wie viele Beiträge je Herkunft im Feed stehen.
+ *
+ * Die Wahl über dem Feed zeigt nur Herkünfte, die es wirklich gibt – ein
+ * Verein ohne Verbandsverbindung soll keinen Schalter sehen, der nichts tut
+ * (dasselbe Muster wie das Saison-Segment in `PointHistoryPage`). Ob eine
+ * Verbindung besteht, steht in `federation_connections`; die liest die Policy
+ * aus `0058` aber nur dem Vorstand vor. Gezählt wird deshalb hier, wo jedes
+ * Mitglied lesen darf: eine `head`-Abfrage je Herkunft, ohne Nutzlast,
+ * parallel.
+ */
+export function useNewsOrigins() {
+  const { activeClub } = useClub();
+
+  return useQuery({
+    queryKey: ['news-origins', activeClub?.id],
+    enabled: Boolean(activeClub) && isConfigured,
+    queryFn: async (): Promise<Record<Exclude<NewsOrigin, 'all'>, number>> => {
+      const count = async (origin: NewsOrigin) => {
+        const { count: rows, error } = await supabase
+          .from('news')
+          .select('id', { count: 'exact', head: true })
+          .eq('club_id', activeClub!.id)
+          .in('source', sourcesOf(origin) ?? []);
+        if (error) throw new Error(error.message);
+        return rows ?? 0;
+      };
+
+      const counted = await Promise.all(NEWS_ORIGINS.map((entry) => count(entry)));
+      return Object.fromEntries(
+        NEWS_ORIGINS.map((entry, index) => [entry, counted[index]]),
+      ) as Record<Exclude<NewsOrigin, 'all'>, number>;
+    },
+  });
+}
+
+/** Wie viele Beiträge die News-Seite je Nachladen holt. */
+export const NEWS_PAGE_SIZE = 20;
+
+/**
+ * Der ganze Feed, seitenweise (UC-026, A5).
+ *
+ * Die Startseite zeigt fünf Karten; alles Ältere lag bisher unerreichbar
+ * dahinter. Geblättert wird wie in der Punktehistorie: `range()` je Seite,
+ * nachgeladen vom `IonInfiniteScroll`.
+ *
+ * Sortiert wird über zwei Schlüssel. Übernommene Beiträge tragen häufig
+ * dieselbe Zeit – die Website-Beiträge dieses Vereins stehen zu dritt auf
+ * derselben Minute –, und zwei Zeilen mit gleichem `published_at` sprängen
+ * sonst zwischen zwei Seiten hin und her: einmal doppelt, einmal gar nicht.
+ */
+export function useAllNews(origin: NewsOrigin = 'all') {
+  const { activeClub } = useClub();
+
+  return useInfiniteQuery({
+    queryKey: ['news-all', activeClub?.id, origin],
+    enabled: Boolean(activeClub) && isConfigured,
+    initialPageParam: 0,
+    queryFn: async ({ pageParam }): Promise<News[]> => {
+      const sources = sourcesOf(origin);
+      let query = supabase.from('news').select('*').eq('club_id', activeClub!.id);
+      if (sources) query = query.in('source', sources);
+
+      const { data, error } = await query
+        .order('published_at', { ascending: false })
+        .order('id', { ascending: false })
+        .range(pageParam, pageParam + NEWS_PAGE_SIZE - 1);
+      if (error) throw new Error(error.message);
+      return data ?? [];
+    },
+    // Eine volle Seite verspricht eine nächste; eine kürzere war die letzte.
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.length < NEWS_PAGE_SIZE ? undefined : pages.length * NEWS_PAGE_SIZE,
+  });
+}
+
+/**
+ * Eine übernommene News weitergeben – über das Teilen-Blatt des Geräts, im
+ * Browser als kopierter Link.
+ *
+ * Geteilt wird die **Quelle**, nicht die App: Der Verweis führt Aussenstehende
+ * auf die Website des Vereins oder des Verbands. Ein Beitrag ohne
+ * `external_url` – alles selbst Geschriebene und jeder Verbandsbeitrag, denn
+ * Publishr liefert keine Adresse – lässt sich nicht teilen; die Karte bietet
+ * den Knopf dann gar nicht erst an.
+ *
+ * Als Hook und nicht als Funktion, weil zwei Seiten denselben Weg brauchen
+ * (Startseite und News-Seite) und beide Übersetzung und Meldung dazu.
+ */
+export function useShareNews() {
+  const { t } = useTranslation();
+  const toast = useToast();
+
+  return async function shareNews(entry: News): Promise<void> {
+    const url = entry.external_url;
+    if (!url) return;
+    if (canShareNatively()) {
+      try {
+        await Share.share({ title: entry.title, url });
+        return;
+      } catch {
+        // Abbruch im Teilen-Dialog ist kein Fehler – dann bleibt Kopieren.
+      }
+    }
+    await navigator.clipboard?.writeText(url);
+    toast.success(t('news.linkCopied'));
+  };
 }
 
 /**
@@ -97,6 +224,8 @@ export function usePublishNews() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['news', activeClub?.id] });
+      void queryClient.invalidateQueries({ queryKey: ['news-all', activeClub?.id] });
+      void queryClient.invalidateQueries({ queryKey: ['news-origins', activeClub?.id] });
       void queryClient.invalidateQueries({ queryKey: ['inbox'] });
     },
   });
@@ -128,6 +257,8 @@ export function useUpdateNews() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['news', activeClub?.id] });
+      void queryClient.invalidateQueries({ queryKey: ['news-all', activeClub?.id] });
+      void queryClient.invalidateQueries({ queryKey: ['news-origins', activeClub?.id] });
     },
   });
 }
@@ -150,6 +281,8 @@ export function useRetractNews() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['news', activeClub?.id] });
+      void queryClient.invalidateQueries({ queryKey: ['news-all', activeClub?.id] });
+      void queryClient.invalidateQueries({ queryKey: ['news-origins', activeClub?.id] });
     },
   });
 }

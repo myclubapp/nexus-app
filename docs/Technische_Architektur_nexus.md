@@ -424,14 +424,25 @@ Secrets (APNs-Key, ntfy-Zugang, VAPID-Keys, CRON_SECRET) via `supabase secrets s
 
 ## 8. Ionic React App: Aufbau
 
-### Seitenstruktur (Tabs – Layout-Referenz: my-club)
+### Seitenstruktur (Tabs)
 ```
-🏠 Dashboard      → Punkte, Level, Streak, «Nächste Punkte», offene Aufgaben, News
+🏠 Start          → Was im Verein läuft: nächste Termine, News, Inbox
 📋 Marktplatz     → Aufgaben + vakante Ämter (Filter: Team, Kategorie, Frist)
-🏆 Ranglisten     → Team-/Vereins-Leaderboard, Kategorien, Zeiträume
+✨ Wirkung        → Saisonziel, Punktestand, die fünf Wertdimensionen, «Nächste
+                    Punkte», Saisonverlauf – und darunter die Ranglisten
 📅 Agenda         → Trainings, Spiele (Verbands-Sync), Events, Helfer-Schichten, QR-Check-in
 👤 Profil         → Badges, Historie, Rechnungen (QR), Kinder (Eltern), Einstellungen
 ```
+
+> **Der dritte Tab ist bewusst nicht die Rangliste** (Entscheid 16.09.2026).
+> In der alten my-club-App trug er die **Meisterschaftstabelle** des Verbands
+> und erschien nur Vereinen mit freigeschaltetem Modul. Übernommen wurde beim
+> Portieren das Symbol, nicht der Inhalt: Aus dem Tabellenstand des Teams
+> wurde ein Vergleich der Mitglieder untereinander – und der hatte damit einen
+> Dauerplatz in der Fusszeile, während BR-084 ihn auf der Startseite
+> verbietet. Das Manifest stellt «Wir vor Rangliste»; die Ranglisten liegen
+> deshalb unter `/tabs/impact/ranking`. Die Meisterschaftstabelle selbst
+> entsteht später am Team (FR-128, `Deferred`), nicht wieder als Tab.
 
 ### Wichtige Plugins & Libraries (Google-frei)
 | Baustein | Zweck |

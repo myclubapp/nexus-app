@@ -41,6 +41,16 @@ import {
 
 type Scope = 'club' | 'team' | 'teams';
 
+/**
+ * Die Ranglisten des Vereins (FR-048, FR-049) – seit dem 16.09.2026 eine
+ * Unterseite des Wirkungs-Tabs statt ein Tab für sich.
+ *
+ * Der Platz in der Leiste war aus der alten myclub-App geerbt, wo der
+ * Trophäen-Tab die Meisterschaftstabelle des Verbands trug. Hier vergleicht
+ * er Mitglieder untereinander – und das Manifest stellt «Wir vor Rangliste».
+ * Die Seite selbst bleibt, wie sie war: derselbe Zeitraum, dieselbe Säule,
+ * dasselbe Saisonarchiv.
+ */
 export function LeaderboardPage() {
   const { t } = useTranslation();
   const router = useIonRouter();
@@ -101,6 +111,7 @@ export function LeaderboardPage() {
   return (
     <AppPage
       title={t('leaderboard.title')}
+      backHref="/tabs/impact"
       subToolbar={
         <IonSegment value={scope} onIonChange={(e) => setScope(e.detail.value as Scope)}>
           <IonSegmentButton value="club">
