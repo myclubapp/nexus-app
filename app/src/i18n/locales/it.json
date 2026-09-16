@@ -799,6 +799,14 @@
     "contact": "Contatto",
     "emergencyLabel": "Emergenza"
   },
+  "memberPicker": {
+    "choose": "Scegli",
+    "selected_one": "{{count}} selezionato",
+    "selected_other": "{{count}} selezionati",
+    "apply": "Applica",
+    "applyCount_one": "Applica {{count}}",
+    "applyCount_other": "Applica {{count}}"
+  },
   "pointRules": {
     "title": "Regole dei punti",
     "empty": "Nessuna regola al momento",

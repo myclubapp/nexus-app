@@ -13,6 +13,22 @@ vi.mock('../hooks/useGamification', () => ({
   useReversePoints: () => ({ mutate: reverseMutate, isPending: false, error: null }),
 }));
 
+/**
+ * Die Mitgliederwahl ist ein eigenes Blatt mit eigenem Test
+ * (`MemberPicker.test.tsx`); hier zählt nur, dass sie angeboten wird und
+ * welche Auswahl in die Buchung geht. Der Stub hält ausserdem `useMembers()`
+ * fern, das einen Vereinskontext verlangt.
+ */
+vi.mock('./MemberPicker', () => ({
+  MemberSelect: ({
+    label,
+    value,
+  }: {
+    label: string;
+    value: readonly string[];
+  }) => <button type="button">{`${label}: ${value.join(', ')}`}</button>,
+}));
+
 vi.mock('./FormModal', () => ({
   FormModal: ({
     children,
@@ -36,11 +52,6 @@ vi.mock('./FormModal', () => ({
     </div>
   ),
 }));
-
-const MEMBERS = [
-  { id: 'm-1', displayName: 'Anna Beispiel' },
-  { id: 'm-2', displayName: 'Bea Muster' },
-];
 
 const original = {
   id: 'tx-1',
@@ -68,7 +79,6 @@ describe('BookPoints', () => {
   function renderBooking(preselected: string[] = []) {
     return renderWithProviders(
       <BookPoints
-        members={MEMBERS}
         preselected={preselected}
         onDone={vi.fn()}
         onDismiss={vi.fn()}
@@ -79,7 +89,6 @@ describe('BookPoints', () => {
   function renderCorrection() {
     return renderWithProviders(
       <BookPoints
-        members={MEMBERS}
         correcting={original}
         correctingLabel="Kuchen für den Elternabend"
         onDone={vi.fn()}
@@ -99,10 +108,11 @@ describe('BookPoints', () => {
     expect(container.textContent).toContain('nennt ihren Anlass');
   });
 
-  it('bietet alle Mitglieder zur Auswahl an (A3)', () => {
-    const { container } = renderBooking();
-    expect(container.textContent).toContain('Anna Beispiel');
-    expect(container.textContent).toContain('Bea Muster');
+  it('führt zur Mitgliederwahl und nimmt die Vorauswahl mit (A3)', () => {
+    // Gewählt wird im Blatt `MemberPicker` – mit Suche und Team-Filter, weil
+    // ein Verein über hundert Mitglieder hat.
+    renderBooking(['m-1', 'm-2']);
+    expect(screen.getByRole('button', { name: 'Mitglieder: m-1, m-2' })).toBeInTheDocument();
   });
 
   it('sagt, dass ein Abzug nicht hier entsteht (BR-087)', () => {
@@ -132,7 +142,7 @@ describe('BookPoints', () => {
     // Beides steht schon fest: Die Gegenbuchung erbt es von der Buchung.
     const { container } = renderCorrection();
     expect(container.textContent).not.toContain('Für wen');
-    expect(container.textContent).not.toContain('Anna Beispiel');
+    expect(screen.queryByRole('button', { name: /Mitglieder:/ })).toBeNull();
   });
 
   it('schreibt beim Öffnen nichts in die Datenbank', () => {

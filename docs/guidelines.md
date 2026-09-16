@@ -415,6 +415,7 @@ Bestand in `src/components/`. Vor jedem neuen Bauteil hier nachsehen.
 | `ClubAdminLinks`   | Die Verwaltungswege des Vorstands als Listeneinträge; einmal definiert, in `AppMenu` und auf der Profilseite eingehängt            |
 | `LanguageSwitcher` | Sprachwahl über `IonSelect`                                                                                                       |
 | `DateField`        | Datum, Uhrzeit oder beides über `IonDatetime` in einem Wähler-Blatt (ohne Karten-Übergang, siehe §2); die Formulare behalten ihre Zeichenketten, übersetzt wird in `lib/dateInput.ts`. Jeder Wähler der App trägt `locale={appLocale()}` und `{...DATETIME_DEFAULTS}` aus `lib/format.ts` – Schweizer Sprache, Montag als Wochenstart, Stunden 00–23; `isDateEnabled` nur dort setzen, wo eine Tagesregel fachlich gilt |
+| `MemberSelect` / `MemberPickerModal` | **Der einzige Weg, Mitglieder auszuwählen.** Die Zeile trägt die Wahl, das Blatt dahinter Suche, Teams als eine Mehrfachauswahl-Zeile («oder»), Avatar, Team und Status – einfach (tippen wirkt sofort) oder mehrfach (Entwurf bis «Übernehmen»), mit optionaler Zeile «niemand». Die Daten holt es selbst (`useMembers()`, `useTeams()`); Aufrufer geben nur Beschriftung und Wert |
 | `MemberAvatar`     | Der Avatar einer Person – Bild aus `avatar_url`, sonst Initialen auf der Vereinsfarbe; in Mitgliederliste, Team und Rangliste dieselbe Zeile |
 | `TeamDetailModal`  | Ein Team als Blatt: Name, Bereich, Mitglieder mit Wischen zum Entfernen, «Team löschen» unter «Verwalten» mit Rückfrage – der Riegel sitzt in `delete_team()` |
 | `FederationTeamSection` | Der Abschnitt «Verbands-Team» in «Team anlegen» und im Team-Blatt: laden, wählen, Zusatz, lösen – und der Hinweis, wenn kein Verband verbunden ist (UC-039) |
@@ -901,6 +902,9 @@ ist er der Hauptweg. Er ist deshalb als **PWA** eingerichtet
     der Kopfzeile, ein `IonActionSheet` als Menü, ein loser «Bearbeiten»-Knopf
     im Inhalt. Und **Bearbeiten ohne Löschen**: Was sich ändern lässt, hat
     eine rote letzte Zeile mit Rückfrage (§2).
+20. **Ein `IonSelect` über Mitglieder.** Dessen Auswahl-Blatt kennt weder
+    Suche noch Filter; bei über hundert Mitgliedern ist es eine Scrollstrecke.
+    Personen wählt man über `MemberSelect` (§3).
 
 ---
 

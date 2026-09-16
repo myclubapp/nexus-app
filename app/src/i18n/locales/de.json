@@ -799,6 +799,14 @@
     "contact": "Kontakt",
     "emergencyLabel": "Notfall"
   },
+  "memberPicker": {
+    "choose": "Wählen",
+    "selected_one": "{{count}} gewählt",
+    "selected_other": "{{count}} gewählt",
+    "apply": "Übernehmen",
+    "applyCount_one": "{{count}} übernehmen",
+    "applyCount_other": "{{count}} übernehmen"
+  },
   "pointRules": {
     "title": "Punkteregeln",
     "empty": "Noch keine Regeln vorhanden",
