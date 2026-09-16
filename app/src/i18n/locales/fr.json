@@ -115,7 +115,7 @@
   "tabs": {
     "dashboard": "Accueil",
     "marketplace": "Missions",
-    "leaderboard": "Classements",
+    "impact": "Impact",
     "agenda": "Agenda",
     "profile": "Profil"
   },
@@ -133,22 +133,25 @@
   "dashboard": {
     "title": "Accueil",
     "greeting": "Bonjour {{name}}",
-    "seasonPoints": "Points cette saison",
-    "streak": "{{count}} semaines d’entraînement d’affilée",
-    "streakDays": "{{count}} d'affilée",
-    "nextPoints": "Prochains points",
-    "nextPointsHint": "Des contributions concrètes actuellement ouvertes – et qui te correspondent.",
     "openTasks": "Missions ouvertes",
     "upcoming": "À venir",
     "upcomingHint": "Tes équipes et tout ce qui concerne l’ensemble du club. L’agenda montre le calendrier complet.",
     "latestNews": "Actualités",
-    "noNews": "Aucune actualité pour l'instant",
+    "allNews": "Tout afficher",
+    "noNews": "Aucune actualité pour l'instant"
+  },
+  "impact": {
+    "title": "Mon impact",
+    "seasonPoints": "Points cette saison",
     "careerPoints": "Total depuis l’entrée",
-    "nothingOpen": "Rien à faire pour l’instant. C’est bien aussi.",
     "welcome": "Bienvenue au club",
     "welcomeHint": "Aucune écriture encore. La première contribution est juste en dessous.",
-    "recentBookings": "Derniers crédits",
-    "allBookings": "Tout afficher",
+    "streak": "{{count}} semaines d’entraînement d’affilée",
+    "streakHint": "Encore {{count}} semaines jusqu’au prochain bonus de série.",
+    "streakDays": "{{count}} d'affilée",
+    "nextPoints": "Prochains points",
+    "nextPointsHint": "Des contributions concrètes actuellement ouvertes – et qui te correspondent.",
+    "nothingOpen": "Rien à faire pour l’instant. C’est bien aussi.",
     "kind": {
       "event": "Rendez-vous",
       "shift": "Créneau",
@@ -157,7 +160,11 @@
     "seasonTrend": "Saison en cours",
     "seasonTrendHint": "Points par mois depuis le début de la saison.",
     "seasonTrendDescription": "Points par mois sur {{count}} mois, {{points}} points au total cette saison",
-    "streakHint": "Encore {{count}} semaines jusqu’au prochain bonus de série."
+    "recentBookings": "Derniers crédits",
+    "allBookings": "Tout afficher",
+    "strengths": "Ce qui compose ta contribution",
+    "ranking": "Où en est la société ?",
+    "rankingHint": "Les classements de la société – par saison, pilier et équipe."
   },
   "marketplace": {
     "title": "Missions",
@@ -2035,7 +2042,14 @@
   "news": {
     "share": "Partager",
     "linkCopied": "Lien copié",
-    "readOnWebsite": "Lire l’article complet sur le site"
+    "readOnWebsite": "Lire l’article complet sur le site",
+    "origin": {
+      "all": "Toutes",
+      "own": "Club",
+      "website": "Site web",
+      "federation": "Fédération",
+      "empty": "Aucun article de cette source pour l’instant"
+    }
   },
   "eventEdit": {
     "title": "Modifier le rendez-vous",

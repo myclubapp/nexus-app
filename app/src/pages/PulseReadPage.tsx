@@ -56,7 +56,7 @@ export function PulseReadPage() {
           <div className="app-stat-row">
             <StatCard
               value={points.data?.seasonPoints ?? 0}
-              label={t('dashboard.seasonPoints')}
+              label={t('impact.seasonPoints')}
             />
           </div>
           <IonNote className="app-footnote">{t('pulse.pointsHint')}</IonNote>

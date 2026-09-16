@@ -115,7 +115,7 @@
   "tabs": {
     "dashboard": "Home",
     "marketplace": "Tasks",
-    "leaderboard": "Rankings",
+    "impact": "Impact",
     "agenda": "Agenda",
     "profile": "Profile"
   },
@@ -133,22 +133,25 @@
   "dashboard": {
     "title": "Home",
     "greeting": "Hello {{name}}",
-    "seasonPoints": "Points this season",
-    "streak": "{{count}} weeks of training in a row",
-    "streakDays": "{{count}} in a row",
-    "nextPoints": "Next points",
-    "nextPointsHint": "Concrete contributions open right now – and a fit for you.",
     "openTasks": "Open tasks",
     "upcoming": "Coming up",
     "upcomingHint": "Your teams and everything that concerns the whole club. The agenda shows the full calendar.",
     "latestNews": "News",
-    "noNews": "No news at the moment",
+    "allNews": "Show all",
+    "noNews": "No news at the moment"
+  },
+  "impact": {
+    "title": "My impact",
+    "seasonPoints": "Points this season",
     "careerPoints": "Total since joining",
-    "nothingOpen": "Nothing is open right now. That is fine too.",
     "welcome": "Welcome to the club",
     "welcomeHint": "No bookings yet. The first contribution is right below.",
-    "recentBookings": "Recently credited",
-    "allBookings": "Show all",
+    "streak": "{{count}} weeks of training in a row",
+    "streakHint": "{{count}} more weeks until the next streak bonus.",
+    "streakDays": "{{count}} in a row",
+    "nextPoints": "Next points",
+    "nextPointsHint": "Concrete contributions open right now – and a fit for you.",
+    "nothingOpen": "Nothing is open right now. That is fine too.",
     "kind": {
       "event": "Event",
       "shift": "Shift",
@@ -157,7 +160,11 @@
     "seasonTrend": "Season so far",
     "seasonTrendHint": "Points per month since the season started.",
     "seasonTrendDescription": "Points per month over {{count}} months, {{points}} points in total this season",
-    "streakHint": "{{count}} more weeks until the next streak bonus."
+    "recentBookings": "Recently credited",
+    "allBookings": "Show all",
+    "strengths": "What your contribution is made of",
+    "ranking": "How is the club doing?",
+    "rankingHint": "The club rankings – by season, pillar and team."
   },
   "marketplace": {
     "title": "Tasks",
@@ -2035,7 +2042,14 @@
   "news": {
     "share": "Share",
     "linkCopied": "Link copied",
-    "readOnWebsite": "Read the full article on the website"
+    "readOnWebsite": "Read the full article on the website",
+    "origin": {
+      "all": "All",
+      "own": "Club",
+      "website": "Website",
+      "federation": "Federation",
+      "empty": "No posts from this source right now"
+    }
   },
   "eventEdit": {
     "title": "Edit event",

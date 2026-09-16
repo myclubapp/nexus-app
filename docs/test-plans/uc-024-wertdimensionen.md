@@ -25,7 +25,7 @@
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Profil → «Meine Stärken» öffnen | Ein Netzdiagramm mit **fünf** beschrifteten Achsen (Schritt 2) | | |
+| 1 | Tab «Wirkung» öffnen | Ein Netzdiagramm mit **fünf** beschrifteten Achsen (Schritt 2) | | |
 | 2 | Die Beschriftungen lesen | Engagement, Ehrenamt, Finanzen, Netzwerk, Treue – lesbar, nicht abgeschnitten | | |
 | 3 | Die Legende lesen | Fläche = du, gestrichelt = Team, gepunktet = Verein (Schritt 3) | | |
 | 4 | Nach einer Gesamtnote oder einem Rang suchen | Es gibt keine (BR-101) | | |
@@ -56,7 +56,7 @@ Rechnung fristgerecht bezahlt und abgeglichen (UC-047).
 
 | Step | Action | Expected Result | Pass/Fail | Notes |
 | ---- | ------ | --------------- | --------- | ----- |
-| 1 | Als **M1** «Meine Stärken» öffnen | «Finanzen» trägt einen Wert – nicht «nicht erhoben» | | |
+| 1 | Als **M1** den Tab «Wirkung» öffnen | «Finanzen» trägt einen Wert – nicht «nicht erhoben» | | |
 | 2 | «Finanzen» antippen | Die Erklärung nennt die pünktliche Bezahlung, **nicht** ein Modul, das noch kommt | | |
 | 3 | «Treue» ansehen | Die Zahlungspunkte zählen dort **nicht** mehr mit | | |
 | 4 | Im Punkteverlauf die Buchung «Rechnung pünktlich bezahlt» suchen | Sie steht unverändert in Säule 6 – die Punktevergabe hat sich nicht geändert | | |

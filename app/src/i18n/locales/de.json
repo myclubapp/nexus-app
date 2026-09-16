@@ -115,7 +115,7 @@
   "tabs": {
     "dashboard": "Start",
     "marketplace": "Marktplatz",
-    "leaderboard": "Ranglisten",
+    "impact": "Wirkung",
     "agenda": "Agenda",
     "profile": "Profil"
   },
@@ -133,22 +133,25 @@
   "dashboard": {
     "title": "Start",
     "greeting": "Hallo {{name}}",
-    "seasonPoints": "Punkte diese Saison",
-    "streak": "{{count}} Wochen Trainingsserie",
-    "streakDays": "{{count}} in Folge",
-    "nextPoints": "Nächste Punkte",
-    "nextPointsHint": "Konkrete Beiträge, die gerade offen sind – und zu dir passen.",
     "openTasks": "Offene Aufgaben",
     "upcoming": "Als Nächstes",
     "upcomingHint": "Deine Teams und alles, was dem ganzen Verein gilt. Den ganzen Kalender zeigt die Agenda.",
     "latestNews": "Neuigkeiten",
-    "noNews": "Zurzeit keine Neuigkeiten",
+    "allNews": "Alle anzeigen",
+    "noNews": "Zurzeit keine Neuigkeiten"
+  },
+  "impact": {
+    "title": "Meine Wirkung",
+    "seasonPoints": "Punkte diese Saison",
     "careerPoints": "Gesamt seit Eintritt",
-    "nothingOpen": "Gerade steht nichts an. Das ist auch mal gut so.",
     "welcome": "Willkommen im Verein",
     "welcomeHint": "Noch keine Buchung. Der erste Beitrag steht gleich darunter.",
-    "recentBookings": "Zuletzt gutgeschrieben",
-    "allBookings": "Alle anzeigen",
+    "streak": "{{count}} Wochen Trainingsserie",
+    "streakHint": "Noch {{count}} Wochen bis zum nächsten Serien-Bonus.",
+    "streakDays": "{{count}} in Folge",
+    "nextPoints": "Nächste Punkte",
+    "nextPointsHint": "Konkrete Beiträge, die gerade offen sind – und zu dir passen.",
+    "nothingOpen": "Gerade steht nichts an. Das ist auch mal gut so.",
     "kind": {
       "event": "Termin",
       "shift": "Schicht",
@@ -157,7 +160,11 @@
     "seasonTrend": "Saisonverlauf",
     "seasonTrendHint": "Punkte je Monat seit Saisonstart.",
     "seasonTrendDescription": "Punkte je Monat über {{count}} Monate, insgesamt {{points}} Punkte in dieser Saison",
-    "streakHint": "Noch {{count}} Wochen bis zum nächsten Serien-Bonus."
+    "recentBookings": "Zuletzt gutgeschrieben",
+    "allBookings": "Alle anzeigen",
+    "strengths": "Woraus dein Beitrag besteht",
+    "ranking": "Wie steht der Verein?",
+    "rankingHint": "Die Ranglisten des Vereins – nach Saison, Säule und Team."
   },
   "marketplace": {
     "title": "Marktplatz",
@@ -2035,7 +2042,14 @@
   "news": {
     "share": "Teilen",
     "linkCopied": "Link kopiert",
-    "readOnWebsite": "Ganzen Beitrag auf der Website lesen"
+    "readOnWebsite": "Ganzen Beitrag auf der Website lesen",
+    "origin": {
+      "all": "Alle",
+      "own": "Verein",
+      "website": "Website",
+      "federation": "Verband",
+      "empty": "Zurzeit keine Beiträge aus dieser Quelle"
+    }
   },
   "eventEdit": {
     "title": "Termin bearbeiten",

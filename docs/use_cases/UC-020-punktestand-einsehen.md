@@ -14,7 +14,7 @@
 
 ## Main Success Scenario
 
-1. Mitglied öffnet das Dashboard.
+1. Mitglied öffnet den Tab «Wirkung».
 2. System zeigt den Punktestand der laufenden Saison und den Gesamtstand seit Vereinseintritt.
 3. System zeigt die letzten Punktebuchungen mit Datum, Anlass und Wert.
 4. System zeigt unter «Nächste Punkte» konkrete Vorschläge: der nächste Termin mit seinem Punktwert, offene Schichten mit Unterdeckung und Aufgaben, die zum Beitrags-Profil passen.
@@ -41,7 +41,7 @@
 
 ### A3: Punktestand aktualisiert sich live
 
-**Trigger:** Während das Dashboard offen ist, wird eine Buchung erzeugt
+**Trigger:** Während der Tab «Wirkung» offen ist, wird eine Buchung erzeugt
 **Flow:**
 
 1. System aktualisiert den angezeigten Stand ohne Zutun des Mitglieds.
@@ -64,7 +64,7 @@
 
 ### Failure Postconditions
 
-- Das Dashboard zeigt einen Ladefehler mit Wiederholungsmöglichkeit.
+- Die Seite zeigt einen Ladefehler mit Wiederholungsmöglichkeit.
 - Der zuletzt bekannte Stand bleibt aus dem Lesecache sichtbar.
 
 ## Business Rules
@@ -83,6 +83,6 @@ Die Saisonzuordnung einer Buchung folgt derselben Berechnung in Datenbank und Ap
 
 Je Termin steht höchstens **ein** Schicht-Vorschlag, die früheste offene Schicht. Ein Helferanlass trägt ein Dutzend Schichten; alle zu nennen füllte die kurze Liste mit demselben Anlass, und weil der Vorschlag ohnehin an den Termin führt, wäre die zweite Zeile dieselbe Adresse. Wer antippt, sieht am Termin alle offenen Schichten.
 
-### BR-084: Keine Vergleichszahl im Dashboard
+### BR-084: Keine Vergleichszahl beim eigenen Beitrag
 
-Das Dashboard zeigt den eigenen Beitrag. Ein Rangvergleich gehört in die Rangliste und ist abwählbar.
+Der Tab «Wirkung» zeigt den eigenen Beitrag. Ein Rangvergleich gehört in die Rangliste – sie liegt eine Ebene tiefer und ist abwählbar.

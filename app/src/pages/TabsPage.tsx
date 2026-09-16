@@ -18,11 +18,13 @@ import {
   listOutline,
   person,
   personOutline,
-  trophy,
-  trophyOutline,
+  sparkles,
+  sparklesOutline,
 } from 'ionicons/icons';
 import { DashboardPage } from './DashboardPage';
+import { NewsPage } from './NewsPage';
 import { MarketplacePage } from './MarketplacePage';
+import { ImpactPage } from './ImpactPage';
 import { LeaderboardPage } from './LeaderboardPage';
 import { AgendaPage } from './AgendaPage';
 import { ProfilePage } from './ProfilePage';
@@ -95,10 +97,19 @@ export function TabsPage() {
         <Route path="dashboard" element={<DashboardPage />} />
         {/* FR-078: die Inbox aus der Kopfzeile der Start-Seite, mit Zurück dorthin. */}
         <Route path="dashboard/inbox" element={<InboxPage backHref="/tabs/dashboard" />} />
+        {/* UC-026, A5: der ganze Feed – die Startseite zeigt nur die fünf neuesten. */}
+        <Route path="dashboard/news" element={<NewsPage />} />
         <Route path="marketplace" element={<MarketplacePage />} />
         {/* UC-041: die Ämterliste aus dem Marktplatz, mit Zurück dorthin. */}
         <Route path="marketplace/offices" element={<OfficePage backHref="/tabs/marketplace" />} />
-        <Route path="leaderboard" element={<LeaderboardPage />} />
+        {/* UC-020, UC-024, UC-042: der eigene Beitrag. Die Rangliste liegt
+            eine Ebene darunter – sie ist die Sicht auf den Verein, nicht die
+            Sicht auf einen selbst. */}
+        <Route path="impact" element={<ImpactPage />} />
+        <Route path="impact/ranking" element={<LeaderboardPage />} />
+        {/* Bis 16.09.2026 war die Rangliste der dritte Tab. Wer sie noch als
+            Lesezeichen oder im Verlauf hat, landet an ihrem neuen Ort. */}
+        <Route path="leaderboard" element={<Navigate to="/tabs/impact/ranking" replace />} />
         <Route path="agenda" element={<AgendaPage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="profile/club" element={<ClubSettingsPage />} />
@@ -152,9 +163,9 @@ export function TabsPage() {
           <TabIcon outline={listOutline} filled={list} />
           <IonLabel>{t('tabs.marketplace')}</IonLabel>
         </IonTabButton>
-        <IonTabButton tab="leaderboard" href="/tabs/leaderboard">
-          <TabIcon outline={trophyOutline} filled={trophy} />
-          <IonLabel>{t('tabs.leaderboard')}</IonLabel>
+        <IonTabButton tab="impact" href="/tabs/impact">
+          <TabIcon outline={sparklesOutline} filled={sparkles} />
+          <IonLabel>{t('tabs.impact')}</IonLabel>
         </IonTabButton>
         <IonTabButton tab="agenda" href="/tabs/agenda">
           <TabIcon outline={calendarOutline} filled={calendar} />

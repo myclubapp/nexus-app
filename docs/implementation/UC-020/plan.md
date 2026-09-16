@@ -7,6 +7,13 @@
 | **Plan created**  | 2026-09-09                                                          |
 | **Status**        | Done                                                                |
 
+> **Nachtrag 16.09.2026:** Was dieser Plan «Dashboard» nennt, steht seither auf
+> dem Tab «Wirkung» (`ImpactPage`) – Punktestand, Serie, «Nächste Punkte»,
+> Saisonverlauf und letzte Buchungen sind dorthin gezogen, zusammen mit dem
+> Netzdiagramm aus UC-024 und der Zielkarte aus UC-042. Die Startseite
+> beantwortet seither «was läuft im Verein». An den Zusagen ändert das nichts;
+> BR-084 gilt jetzt für den Wirkungs-Tab.
+
 ## Overview
 
 Das Dashboard ist die Seite, die ein Mitglied am häufigsten sieht – und die

@@ -15,7 +15,7 @@
 
 ## Main Success Scenario
 
-1. Mitglied öffnet im Profil «Meine Stärken».
+1. Mitglied öffnet den Tab «Wirkung»; das Netzdiagramm steht dort unter «Woraus dein Beitrag besteht».
 2. System zeigt ein Netzdiagramm mit den fünf Dimensionen Engagement, Ehrenamt, Finanzen, Netzwerk und Treue, jeweils auf einer Skala von null bis hundert.
 3. System legt den Team-Durchschnitt und den Vereins-Durchschnitt als Vergleichslinien darüber.
 4. System benennt die stärkste Dimension in positiver Formulierung.
