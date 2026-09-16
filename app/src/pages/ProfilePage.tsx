@@ -27,6 +27,7 @@ import { ProfileEditModal } from '../components/ProfileEditModal';
 import { ClubAdminLinks } from '../components/ClubAdminLinks';
 import { ContributionGoalCard } from '../components/ContributionGoalCard';
 import { PASSWORD_MIN_LENGTH, authErrorKey } from '../lib/authError';
+import { PROFILE_SETUP_ROUTE } from '../lib/profileSetup';
 import { SUPPORTED_LANGUAGES } from '../i18n';
 import { formatDate, formatDateTime } from '../lib/format';
 
@@ -185,6 +186,12 @@ export function ProfilePage() {
 
         <IonItem button routerLink="/tabs/profile/notifications" detail>
           <IonLabel>{t('notifications.title')}</IonLabel>
+        </IonItem>
+
+        {/* UC-053: Der Assistent bleibt erreichbar, auch nachdem er
+            übersprungen wurde – sonst wäre «überspringen» endgültig. */}
+        <IonItem button routerLink={PROFILE_SETUP_ROUTE} detail>
+          <IonLabel>{t('profileSetup.title')}</IonLabel>
         </IonItem>
 
         <IonItem button routerLink="/tabs/profile/strengths" detail>

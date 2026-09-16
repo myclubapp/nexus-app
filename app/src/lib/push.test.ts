@@ -1,25 +1,90 @@
 import { describe, expect, it } from 'vitest';
-import { pushReadiness, subscriptionToken, vapidKeyToBytes } from './push';
+import {
+  pushChannel,
+  pushReadiness,
+  subscriptionToken,
+  vapidKeyToBytes,
+  type PushChannel,
+} from './push';
+
+const VAPID =
+  'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U';
 
 function input(overrides: Partial<Parameters<typeof pushReadiness>[0]> = {}) {
   return {
-    hasServiceWorker: true,
-    hasPushManager: true,
+    channel: 'webpush' as PushChannel,
     permission: 'default' as NotificationPermission | null,
-    vapidKey: 'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U',
+    vapidKey: VAPID,
     ...overrides,
   };
 }
+
+describe('pushChannel (UC-052)', () => {
+  it('nimmt im Browser den Web-Push-Weg', () => {
+    expect(
+      pushChannel({
+        isNative: false,
+        platform: 'web',
+        hasServiceWorker: true,
+        hasPushManager: true,
+      }),
+    ).toBe('webpush');
+  });
+
+  it('nimmt in der iOS-App den Apple-Weg', () => {
+    // Entscheidend ist die Plattform, nicht der WebView: Ein `PushManager` im
+    // WKWebView wäre wirkungslos, und umgekehrt braucht APNs keinen.
+    expect(
+      pushChannel({
+        isNative: true,
+        platform: 'ios',
+        hasServiceWorker: false,
+        hasPushManager: false,
+      }),
+    ).toBe('ios_apns');
+  });
+
+  it('kennt für die Android-App keinen Weg', () => {
+    // `android_ntfy` steht in der Datenbank, aber es gibt keinen betriebenen
+    // ntfy-Dienst – und ein Kanal ohne Dienst ist ein Knopf, der nichts tut.
+    expect(
+      pushChannel({
+        isNative: true,
+        platform: 'android',
+        hasServiceWorker: true,
+        hasPushManager: true,
+      }),
+    ).toBe('unsupported');
+  });
+
+  it('kennt ohne Push-Schnittstelle keinen Weg', () => {
+    // iOS-Safari ausserhalb der PWA etwa.
+    expect(
+      pushChannel({
+        isNative: false,
+        platform: 'web',
+        hasServiceWorker: true,
+        hasPushManager: false,
+      }),
+    ).toBe('unsupported');
+    expect(
+      pushChannel({
+        isNative: false,
+        platform: 'web',
+        hasServiceWorker: false,
+        hasPushManager: true,
+      }),
+    ).toBe('unsupported');
+  });
+});
 
 describe('pushReadiness (UC-028, A1/A2)', () => {
   it('nennt ein taugliches Gerät bereit', () => {
     expect(pushReadiness(input())).toBe('ready');
   });
 
-  it('nennt ein Gerät ohne Push-Schnittstelle nicht bereit', () => {
-    // iOS-Safari ausserhalb der PWA etwa. Kein Fehler – eine Auskunft.
-    expect(pushReadiness(input({ hasPushManager: false }))).toBe('unsupported');
-    expect(pushReadiness(input({ hasServiceWorker: false }))).toBe('unsupported');
+  it('nennt ein Gerät ohne Weg nicht bereit', () => {
+    expect(pushReadiness(input({ channel: 'unsupported' }))).toBe('unsupported');
   });
 
   it('sagt, wenn kein VAPID-Schlüssel hinterlegt ist', () => {
@@ -29,14 +94,20 @@ describe('pushReadiness (UC-028, A1/A2)', () => {
     expect(pushReadiness(input({ vapidKey: '   ' }))).toBe('notConfigured');
   });
 
+  it('verlangt auf dem Apple-Weg keinen VAPID-Schlüssel', () => {
+    // Der Schlüssel gehört dem Browser-Weg. Auf iOS hängt nichts an einer
+    // Variablen der App – dort wäre «noch nicht eingerichtet» falsch.
+    expect(pushReadiness(input({ channel: 'ios_apns', vapidKey: '' }))).toBe('ready');
+  });
+
   it('nennt eine verweigerte Erlaubnis beim Namen (A2)', () => {
     expect(pushReadiness(input({ permission: 'denied' }))).toBe('denied');
   });
 
-  it('prüft die Schnittstelle vor dem Schlüssel', () => {
-    // Ein Gerät ohne Push-Schnittstelle bleibt auch mit Schlüssel eines –
-    // «noch nicht eingerichtet» wäre dort die falsche Auskunft.
-    expect(pushReadiness(input({ hasPushManager: false, vapidKey: '' }))).toBe(
+  it('prüft den Weg vor dem Schlüssel', () => {
+    // Ein Gerät ohne Weg bleibt auch mit Schlüssel eines – «noch nicht
+    // eingerichtet» wäre dort die falsche Auskunft.
+    expect(pushReadiness(input({ channel: 'unsupported', vapidKey: '' }))).toBe(
       'unsupported',
     );
   });
@@ -44,7 +115,7 @@ describe('pushReadiness (UC-028, A1/A2)', () => {
 
 describe('vapidKeyToBytes', () => {
   it('macht aus base64url eine Bytefolge', () => {
-    const bytes = vapidKeyToBytes('BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U');
+    const bytes = vapidKeyToBytes(VAPID);
     // Ein unkomprimierter P-256-Punkt: 65 Bytes, beginnend mit 0x04.
     expect(bytes).toHaveLength(65);
     expect(bytes[0]).toBe(4);

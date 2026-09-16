@@ -2,6 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- Push (UC-052). `development` gilt für jeden Build aus Xcode; TestFlight
+	     und App Store bekommen beim Signieren automatisch `production`. Der
+	     Versand muss das wissen: Ein Token aus einem Xcode-Build gilt nur an
+	     api.sandbox.push.apple.com. Er findet es selbst heraus und merkt es
+	     sich an der Zeile (`push_tokens.environment`, Migration 0104).
+
+	     Xcode setzt diesen Schlüssel beim Hinzufügen der Capability «Push
+	     Notifications» selbst – und wirft dabei die Kommentare dieser Datei
+	     weg. Wer sie vermisst, findet sie hier wieder. -->
+	<key>aps-environment</key>
+	<string>development</string>
 	<!-- Universal Links: Ein https-Link aus einer E-Mail öffnet die App statt
 	     Safari. Welche Pfade das betrifft, entscheidet nicht diese Datei,
 	     sondern https://app.my-club.ch/.well-known/apple-app-site-association –

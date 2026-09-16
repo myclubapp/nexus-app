@@ -1,16 +1,16 @@
 /**
- * Push-Registrierung (UC-028, A1 und A2).
+ * Push-Registrierung (UC-028, A1 und A2; seit UC-052 auch der Apple-Weg).
  *
- * **Der Transport fehlt weiterhin** – es gibt keinen Versanddienst, der
- * `notifications.push_wanted` abholt (FR-079). Was hier entsteht, ist die
- * Hälfte, die ohne ihn schon Sinn ergibt und ohne die er nichts ausrichten
- * könnte: die **Anmeldung des Geräts**. Bis heute konnte die App registrierte
- * Geräte auflisten und abmelden – registrieren konnte sie keines.
+ * **Kein Google** (CLAUDE.md): Im Browser und in der PWA läuft Push über
+ * VAPID, den Standard des Browsers – der Push-Dienst transportiert einen
+ * Umschlag, den nur das Gerät öffnen kann. In der iOS-App läuft er über APNs,
+ * weil es dort keinen zweiten Weg gibt. FCM kommt in keinem der beiden vor.
  *
- * **Kein Google** (CLAUDE.md): Der Weg hier ist Web Push mit VAPID, also der
- * Standard des Browsers. FCM kommt nicht vor; auf Android läuft derselbe Weg
- * über UnifiedPush/ntfy, auf iOS über APNs – beides sind native Kanäle und
- * gehören zu `cap sync`, nicht hierher.
+ * **Android nativ bleibt vorerst aussen vor.** `push_tokens` kennt den Kanal
+ * `android_ntfy` seit `0004`, aber es gibt keinen betriebenen ntfy-Dienst –
+ * und ein Kanal ohne Dienst ist ein Knopf, der nichts tut. Die Android-App
+ * verweist deshalb auf die Inbox (BR-117), und wer dort Push will, installiert
+ * die PWA. Sobald ein ntfy-Dienst steht, kommt der Kanal hier dazu.
  */
 
 /** Die Kanäle, die `push_tokens.platform` kennt (Constraint aus `0004`). */
@@ -35,9 +35,34 @@ export function vapidKeyToBytes(base64Url: string): Uint8Array {
   return bytes;
 }
 
+/**
+ * Auf welchem Weg dieses Gerät Push empfängt.
+ *
+ * Die Entscheidung fällt **vor** der Frage nach der Erlaubnis, weil sie über
+ * zwei völlig verschiedene Abläufe entscheidet: Der Browser braucht einen
+ * Service Worker, ein Abonnement und den VAPID-Schlüssel; die iOS-App braucht
+ * nichts davon, sondern das Plugin und ein Token von Apple.
+ */
+export type PushChannel = 'webpush' | 'ios_apns' | 'unsupported';
+
+export function pushChannel(input: {
+  isNative: boolean;
+  /** `Capacitor.getPlatform()`: 'ios', 'android' oder 'web'. */
+  platform: string;
+  hasServiceWorker: boolean;
+  hasPushManager: boolean;
+}): PushChannel {
+  // In der nativen App entscheidet das Betriebssystem, nicht der WebView: Ein
+  // `PushManager` im WKWebView wäre wirkungslos, und auf Android fehlt der
+  // Dienst (siehe oben).
+  if (input.isNative) return input.platform === 'ios' ? 'ios_apns' : 'unsupported';
+
+  return input.hasServiceWorker && input.hasPushManager ? 'webpush' : 'unsupported';
+}
+
 export type PushReadiness =
   | 'ready'
-  /** Der Browser kennt keine Push-Schnittstelle – etwa iOS-Safari ohne PWA. */
+  /** Kein Weg auf diesem Gerät – iOS-Safari ohne PWA, die Android-App. */
   | 'unsupported'
   /** Es ist kein VAPID-Schlüssel hinterlegt; ohne ihn gibt es nichts zu abonnieren. */
   | 'notConfigured'
@@ -52,13 +77,15 @@ export type PushReadiness =
  * nicht bedienen lässt (docs/TESTING.md §6.4).
  */
 export function pushReadiness(input: {
-  hasServiceWorker: boolean;
-  hasPushManager: boolean;
+  channel: PushChannel;
   permission: NotificationPermission | null;
   vapidKey: string;
 }): PushReadiness {
-  if (!input.hasServiceWorker || !input.hasPushManager) return 'unsupported';
-  if (input.vapidKey.trim() === '') return 'notConfigured';
+  if (input.channel === 'unsupported') return 'unsupported';
+  // Der Schlüssel betrifft allein den Browser-Weg. Für APNs wäre
+  // «noch nicht eingerichtet» die falsche Auskunft: Dort hängt nichts an einer
+  // Variablen der App, sondern am Schlüssel des Versanddienstes.
+  if (input.channel === 'webpush' && input.vapidKey.trim() === '') return 'notConfigured';
   if (input.permission === 'denied') return 'denied';
   return 'ready';
 }

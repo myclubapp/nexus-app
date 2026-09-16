@@ -13,15 +13,42 @@
 import type { Tables as Row } from './database.generated';
 import type { Language } from '../i18n';
 
+import type { Database as GeneratedDatabase } from './database.generated';
+
 export type {
   CompositeTypes,
-  Database,
   Enums,
   Json,
   Tables,
   TablesInsert,
   TablesUpdate,
 } from './database.generated';
+
+/**
+ * **Übergangsblock, bis `0105` eingespielt ist.**
+ *
+ * `database.generated.ts` kennt nur, was in der laufenden Datenbank steht.
+ * Solange die Migration wartet, fehlt `finish_profile_setup()` dort – und
+ * `supabase.rpc('finish_profile_setup')` wäre ein Typfehler, obwohl der
+ * Aufruf richtig ist.
+ *
+ * Nach `supabase db push` und `npm run types:generate` fällt dieser Block
+ * ersatzlos weg; dann steht `Database` wieder in der Liste oben.
+ *
+ * Die Funktionen des Versands (`pending_push`, `mark_push_sent`,
+ * `drop_push_token` …) stehen hier **nicht**: Sie gehören der Edge Function
+ * und `service_role`, die App ruft sie nie auf.
+ */
+export type Database = Omit<GeneratedDatabase, 'public'> & {
+  public: Omit<GeneratedDatabase['public'], 'Functions'> & {
+    Functions: GeneratedDatabase['public']['Functions'] & {
+      finish_profile_setup: {
+        Args: { p_member_id: string };
+        Returns: undefined;
+      };
+    };
+  };
+};
 
 /**
  * Eine Zeile von `export_members()` (0082).
@@ -187,7 +214,18 @@ export type Club = Omit<Row<'clubs'>, 'settings'> & {
   settings: ClubSettings | null;
 };
 
-export type ClubMember = Row<'club_members'>;
+/**
+ * `club_members` – trägt seit `0105` den Zeitpunkt, an dem der Profil-Assistent
+ * gefragt hat (UC-053).
+ *
+ * **Übergangsblock.** Solange `0105` nicht eingespielt ist, kennt
+ * `database.generated.ts` die Spalte nicht. Nach `supabase db push` und
+ * `npm run types:generate` fällt der Zusatz ersatzlos weg – dann steht hier
+ * wieder `Row<'club_members'>`.
+ */
+export type ClubMember = Row<'club_members'> & {
+  profile_setup_at: string | null;
+};
 
 /** `events` – `type` wird auf die Terminarten verengt. */
 export type AppEvent = Omit<Row<'events'>, 'type'> & {

@@ -13,9 +13,10 @@ import {
   useIonRouter,
 } from '@ionic/react';
 import { createOutline, documentOutline } from 'ionicons/icons';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Share } from '@capacitor/share';
+import { useAuth } from '../hooks/useAuth';
 import { useClub } from '../hooks/useClub';
 import { usePlanningScope } from '../hooks/usePlanningScope';
 import {
@@ -38,6 +39,7 @@ import { AttendanceStatusIcon } from '../components/AttendanceStatusIcon';
 import { DeclineModal } from '../components/DeclineModal';
 import { EventDetailModal } from '../components/EventDetailModal';
 import { FirstStepsCard } from '../components/FirstStepsCard';
+import { ProfileSetupCard } from '../components/ProfileSetupCard';
 import { InboxButton } from '../components/InboxButton';
 import { NewsCard } from '../components/NewsCard';
 import { NewsDetailModal } from '../components/NewsDetailModal';
@@ -53,11 +55,17 @@ import { canShareNatively } from '../lib/invite';
 import { bookingLabel, pointsPerMonth } from '../lib/points';
 import { holdsShift, respondsViaShifts } from '../lib/attendance';
 import { useToast } from '../hooks/useToast';
+import {
+  PROFILE_SETUP_ROUTE,
+  shouldOfferSetupCard,
+  shouldStartSetup,
+} from '../lib/profileSetup';
 import type { News } from '../lib/database.types';
 
 export function DashboardPage() {
   const { t } = useTranslation();
   const router = useIonRouter();
+  const { user } = useAuth();
   const { activeClub, activeMembership, eventLabel, isTrainer } = useClub();
   // C-032: Ändern darf, wer für das Team der News oder des Termins plant.
   const scope = usePlanningScope();
@@ -119,6 +127,37 @@ export function DashboardPage() {
     ['club-is-new'],
     ['inbox'],
   ]);
+
+  /**
+   * Der Profil-Assistent geht einmal von selbst auf (UC-053, FR-200).
+   *
+   * **Hier und nicht in einer Weiche.** `RequireClub` tauscht sein
+   * Zwischenbild innerhalb derselben Route – genau der Fall, den CLAUDE.md
+   * beschreibt: Die Seite stünde vollständig im DOM und bliebe unsichtbar.
+   * Ein Routenwechsel aus einer eingeblendeten Seite heraus hat dieses
+   * Problem nicht.
+   *
+   * Der Merker verhindert die Schleife: Nach dem Ausstieg kehrt die Person
+   * hierher zurück, und bis die aufgefrischte Mitgliedschaft eintrifft, sagt
+   * der Zwischenstand noch «nie gefragt».
+   */
+  const setupOffered = useRef(false);
+  useEffect(() => {
+    if (setupOffered.current || !activeMembership) return;
+    if (!shouldStartSetup({ profileSetupAt: activeMembership.profile_setup_at })) return;
+
+    setupOffered.current = true;
+    router.push(PROFILE_SETUP_ROUTE, 'forward');
+  }, [activeMembership, router]);
+
+  const offerSetupCard =
+    Boolean(activeMembership) &&
+    shouldOfferSetupCard({
+      avatarUrl: activeMembership?.avatar_url,
+      displayName: activeMembership?.display_name,
+      accountEmail: user?.email,
+      profileSetupAt: activeMembership?.profile_setup_at,
+    });
 
   const nextEvents = (agenda.data ?? []).slice(0, 3);
   const recent = points.transactions.slice(0, 3);
@@ -241,6 +280,11 @@ export function DashboardPage() {
         ])
       }
     >
+      {/* UC-053: der Weg zurück, wenn der Assistent übersprungen wurde. Über
+          der Vereinskarte, weil er die Person betrifft und nicht den Verein –
+          und weil er in zwei Fingertipps erledigt und dann weg ist. */}
+      {offerSetupCard && <ProfileSetupCard />}
+
       {isNewClub.data && activeClub && (
         <FirstStepsCard
           clubName={activeClub.name}

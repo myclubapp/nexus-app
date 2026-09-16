@@ -11,6 +11,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    // MARK: - Push (UC-052)
+    //
+    // Diese zwei Methoden sind die Brücke zwischen iOS und dem Capacitor-Plugin,
+    // und sie sind der teuerste Stolperstein des ganzen Apple-Wegs: Ohne sie
+    // bleibt `PushNotifications.register()` **wortlos stumm**. Keine Ausnahme,
+    // keine Fehlermeldung – das Ereignis `registration` kommt schlicht nie an,
+    // und in der Ansicht dreht sich der Ladekreis, bis die Frist abläuft
+    // (`lib/nativePush.ts`).
+    //
+    // Der Grund: Apple schickt das Gerätetoken an den `UIApplicationDelegate`.
+    // Das Plugin hat dort nichts zu suchen und hört stattdessen auf eine
+    // Mitteilung im `NotificationCenter` – die hier entsteht. `cap sync`
+    // schreibt sie nicht; sie gehört zum Projekt.
+
+    func application(_ application: UIApplication,
+                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications,
+                                        object: deviceToken)
+    }
+
+    func application(_ application: UIApplication,
+                     didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications,
+                                        object: error)
+    }
+
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.

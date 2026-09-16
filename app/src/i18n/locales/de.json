@@ -351,6 +351,41 @@
       "countryCode": "Das Land steht als zwei Buchstaben, zum Beispiel CH oder DE."
     }
   },
+  "profileSetup": {
+    "title": "Profil einrichten",
+    "finish": "Fertig",
+    "skip": "Später",
+    "done": "Dein Profil steht. Ändern kannst du es jederzeit im Profil.",
+    "card": {
+      "title": "Zeig dich dem Verein",
+      "hint": "Bild, Name und Meldungen in vier Schritten – dauert eine Minute."
+    },
+    "photo": {
+      "title": "Ein Bild von dir?",
+      "hint": "Es steht neben deinem Namen in der Mitgliederliste, in der Rangliste und an jedem Termin. Wer keines will, geht weiter."
+    },
+    "name": {
+      "title": "Wie sollen dich die anderen nennen?",
+      "hint": "Ohne Angabe steht der Teil vor dem @ deiner Adresse da – den hat niemand gewählt."
+    },
+    "contact": {
+      "title": "Wie bist du erreichbar?",
+      "hint": "Nur für den Fall, dass beim Anlass etwas dazwischenkommt.",
+      "visibility": "Ohne Freigabe sieht deine Nummer nur der Vorstand.",
+      "emailTitle": "Deine Adresse",
+      "emailNote": "Angemeldet bist du mit {{email}}. Sie bleibt, wie sie ist – ändern kannst du sie im Profil."
+    },
+    "notifications": {
+      "title": "Wie sollen wir dich erreichen?",
+      "hint": "Alles landet in der Inbox – das ist nicht abschaltbar. Die Frage ist nur, was dich zusätzlich erreicht.",
+      "mailTitle": "E-Mail",
+      "mailOn": "Läuft bereits: eine gebündelte Mail täglich um 18:00. Absagen und der Beitritts-Entscheid kommen sofort.",
+      "pushTitle": "Push",
+      "pushWhy": "Damit eine kurzfristige Absage dich erreicht, bevor du losfährst.",
+      "pushOn": "Dieses Gerät ist angemeldet.",
+      "more": "Einzeln einstellen, je Kategorie"
+    }
+  },
   "clubSettings": {
     "title": "Vereinseinstellungen",
     "open": "Verein verwalten",
@@ -1338,7 +1373,7 @@
     "inboxAlways": "Jede Benachrichtigung landet in der Inbox.",
     "inboxWhy": "Sie ist nicht abschaltbar: Sie ist der Weg, der alle erreicht – auch ohne Push.",
     "push": "Push je Kategorie",
-    "pushPending": "Push selbst ist noch nicht in Betrieb. Deine Wahl gilt trotzdem ab sofort und wird beim Start des Versands beachtet.",
+    "pushHint": "Was hier aus ist, wird nicht als Push zugestellt – in der Inbox steht es trotzdem.",
     "email": "E-Mail",
     "emailMode": "Zustellung per E-Mail",
     "emailModes": {
@@ -1359,7 +1394,7 @@
     "devices": "Registrierte Geräte",
     "forget": "Abmelden",
     "noDevices": "Noch kein Gerät registriert.",
-    "devicesHint": "Geräte erscheinen hier, sobald Push in Betrieb ist.",
+    "devicesHint": "Jedes angemeldete Gerät steht hier. Was du verloren hast, meldest du hier ab.",
     "deviceForgotten": "Abgemeldet.",
     "platform": {
       "webpush": "Browser",
@@ -1414,10 +1449,10 @@
       }
     },
     "registerDevice": "Dieses Gerät anmelden",
-    "deviceRegistered": "Angemeldet. Push erreicht dich, sobald der Versand läuft.",
+    "deviceRegistered": "Angemeldet. Ab jetzt erreichen dich Meldungen auch auf diesem Gerät.",
     "pushState": {
-      "unsupported": "Dieses Gerät kennt keine Push-Nachrichten. Die Inbox enthält trotzdem alles.",
-      "notConfigured": "Push ist in dieser Installation noch nicht eingerichtet. Die Inbox enthält alles.",
+      "unsupported": "Dieses Gerät kann keine Push-Meldungen empfangen. Die Inbox enthält trotzdem alles – in der App und im Browser.",
+      "notConfigured": "Für diese Installation ist kein Push-Schlüssel hinterlegt. Die Inbox enthält alles.",
       "denied": "Push ist für diese App gesperrt. Du kannst das in den Systemeinstellungen ändern – die Inbox enthält weiterhin alles.",
       "ready": "Bereit."
     },

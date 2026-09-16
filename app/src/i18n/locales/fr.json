@@ -351,6 +351,41 @@
       "countryCode": "Le pays s’écrit en deux lettres, par exemple CH ou DE."
     }
   },
+  "profileSetup": {
+    "title": "Configurer le profil",
+    "finish": "Terminé",
+    "skip": "Plus tard",
+    "done": "Ton profil est en place. Tu peux le modifier à tout moment dans le profil.",
+    "card": {
+      "title": "Montre-toi au club",
+      "hint": "Photo, nom et messages en quatre étapes – une minute suffit."
+    },
+    "photo": {
+      "title": "Une photo de toi ?",
+      "hint": "Elle apparaît à côté de ton nom dans la liste des membres, au classement et à chaque rendez-vous. Sans photo, passe à la suite."
+    },
+    "name": {
+      "title": "Comment les autres doivent-ils t’appeler ?",
+      "hint": "Sans indication, c’est la partie avant le @ de ton adresse qui s’affiche – personne ne l’a choisie."
+    },
+    "contact": {
+      "title": "Comment te joindre ?",
+      "hint": "Uniquement au cas où quelque chose changerait avant le rendez-vous.",
+      "visibility": "Sans autorisation, seul le comité voit ton numéro.",
+      "emailTitle": "Ton adresse",
+      "emailNote": "Tu es connecté avec {{email}}. Elle reste telle quelle – tu peux la changer dans le profil."
+    },
+    "notifications": {
+      "title": "Comment devons-nous te joindre ?",
+      "hint": "Tout arrive dans la boîte – impossible de la désactiver. La question est seulement ce qui t’atteint en plus.",
+      "mailTitle": "E-mail",
+      "mailOn": "Déjà actif : un envoi groupé chaque jour à 18h00. Les annulations et la décision d’adhésion arrivent immédiatement.",
+      "pushTitle": "Push",
+      "pushWhy": "Pour qu’une annulation de dernière minute t’atteigne avant que tu partes.",
+      "pushOn": "Cet appareil est enregistré.",
+      "more": "Régler en détail, par catégorie"
+    }
+  },
   "clubSettings": {
     "title": "Paramètres du club",
     "open": "Gérer le club",
@@ -1338,7 +1373,7 @@
     "inboxAlways": "Chaque notification arrive dans la boîte.",
     "inboxWhy": "Elle ne se désactive pas : c’est le canal qui atteint tout le monde, même sans push.",
     "push": "Push par catégorie",
-    "pushPending": "Le push n’est pas encore en service. Ton choix s’applique déjà et sera respecté au démarrage.",
+    "pushHint": "Ce qui est désactivé ici n’est pas envoyé en push – la boîte le contient quand même.",
     "email": "E-mail",
     "emailMode": "Envoi par e-mail",
     "emailModes": {
@@ -1359,7 +1394,7 @@
     "devices": "Appareils enregistrés",
     "forget": "Déconnecter",
     "noDevices": "Aucun appareil enregistré.",
-    "devicesHint": "Les appareils apparaîtront ici dès que le push sera en service.",
+    "devicesHint": "Chaque appareil enregistré figure ici. Ce que tu as perdu, tu le retires ici.",
     "deviceForgotten": "Déconnecté.",
     "platform": {
       "webpush": "Navigateur",
@@ -1414,10 +1449,10 @@
       }
     },
     "registerDevice": "Enregistrer cet appareil",
-    "deviceRegistered": "Enregistré. Les push t’atteindront dès que l’envoi fonctionnera.",
+    "deviceRegistered": "Enregistré. Les messages t’atteindront désormais aussi sur cet appareil.",
     "pushState": {
-      "unsupported": "Cet appareil ne connaît pas les notifications push. La boîte contient tout de même tout.",
-      "notConfigured": "Le push n’est pas encore configuré dans cette installation. La boîte contient tout.",
+      "unsupported": "Cet appareil ne peut pas recevoir de push. La boîte contient tout de même tout – dans l’app et dans le navigateur.",
+      "notConfigured": "Aucune clé push n’est déposée pour cette installation. La boîte contient tout.",
       "denied": "Le push est bloqué pour cette app. Tu peux le changer dans les réglages du système – la boîte contient toujours tout.",
       "ready": "Prêt."
     },

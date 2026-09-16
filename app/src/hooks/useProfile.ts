@@ -173,3 +173,32 @@ export function useLeaderboardOptIn() {
     },
   });
 }
+
+/**
+ * Die Einrichtung abschliessen (UC-053, FR-200).
+ *
+ * Wird beim Beenden **und** beim Überspringen aufgerufen: Beides ist eine
+ * Antwort auf die Frage, ob jemand den Assistenten gesehen hat (BR-270).
+ * Danach geht er nicht mehr von selbst auf – die Wege über das Dashboard und
+ * die Profilseite bleiben.
+ */
+export function useFinishProfileSetup() {
+  const queryClient = useQueryClient();
+  const { activeMembership } = useClub();
+
+  return useMutation({
+    mutationFn: async () => {
+      if (!activeMembership) throw new Error('Kein aktives Mitglied');
+
+      const { error } = await supabase.rpc('finish_profile_setup', {
+        p_member_id: activeMembership.id,
+      });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: async () => {
+      // Der Zeitpunkt steckt in der Mitgliedschaft; ohne diesen Schritt stünde
+      // der Assistent beim nächsten Wechsel des Tabs erneut da.
+      await queryClient.invalidateQueries({ queryKey: ['memberships'] });
+    },
+  });
+}

@@ -3,6 +3,7 @@ import { useIonRouter } from '@ionic/react';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { deepLinkTarget } from '../lib/deepLink';
+import { onNativePushAction } from '../lib/nativePush';
 
 /**
  * Führt die App an den Ort, den ein Link von aussen nennt.
@@ -44,6 +45,33 @@ export function DeepLinkRouter() {
     const handle = CapacitorApp.addListener('appUrlOpen', ({ url }) => go(url));
     return () => {
       void handle.then((listener) => listener.remove());
+    };
+  }, []);
+
+  /**
+   * Dasselbe für die angetippte Push-Meldung (UC-052).
+   *
+   * Eigener Effekt und nicht im obigen: Eine Push-Meldung trägt keine
+   * vollständige Adresse, sondern den fertigen Pfad aus `notifications.link` –
+   * sie muss `deepLinkTarget` nicht passieren, und die beanspruchten Präfixe
+   * gelten für sie nicht. Nur iOS: Auf Android gibt es den Kanal nicht
+   * (`lib/push.ts`), und ein Zuhörer auf ein Plugin ohne Dienst wäre eine
+   * Zusage ohne Deckung.
+   */
+  useEffect(() => {
+    if (Capacitor.getPlatform() !== 'ios') return;
+
+    let dispose: (() => void) | null = null;
+    let cancelled = false;
+
+    void onNativePushAction((link) => latest.current.push(link, 'root')).then((off) => {
+      if (cancelled) off();
+      else dispose = off;
+    });
+
+    return () => {
+      cancelled = true;
+      dispose?.();
     };
   }, []);
 
