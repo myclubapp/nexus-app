@@ -68,3 +68,37 @@ export function publishedTitle(
   if (!asNews || decline) return null;
   return title.trim() === '' ? null : title.trim();
 }
+
+/**
+ * Woher ein Beitrag kommt – die Wahl über dem Feed.
+ *
+ * Drei Herkünfte aus fünf `news.source`-Werten. Zusammengelegt ist nur, was
+ * dieselbe Hand geschrieben hat: `club`, `team` und `board` sind der Verein,
+ * der in dieser App tippt. Getrennt bleiben die beiden **übernommenen**
+ * Quellen – die eigene Website (UC-038) und der Verband (FR-197) –, denn wer
+ * den Feed durchsucht, sucht meist genau eine davon.
+ *
+ * Die Wahl ist nötig geworden, weil der Feed nach Datum sortiert und sonst
+ * nichts: Ein Verband veröffentlicht wöchentlich, eine Vereins-Website in der
+ * Sommerpause monatelang nicht – dann füllen die Verbandsbeiträge jeden Platz,
+ * und die Vereinsbeiträge verschwinden, ohne gelöscht worden zu sein.
+ */
+export type NewsOrigin = 'all' | 'own' | 'website' | 'federation';
+
+/** Die Herkünfte in der Reihenfolge, in der sie im Segment stehen. */
+export const NEWS_ORIGINS: Exclude<NewsOrigin, 'all'>[] = ['own', 'website', 'federation'];
+
+/**
+ * Die `news.source`-Werte hinter einer Herkunft – `null` heisst «alle».
+ *
+ * Jeder Wert des Constraints `news_source_check` muss in **genau einer**
+ * Herkunft stehen. Eine Quelle, die in keiner steht, wäre nur noch unter
+ * «Alle» zu sehen und aus jeder gefilterten Ansicht verschwunden;
+ * `news.test.ts` hält die Vollständigkeit fest.
+ */
+export function sourcesOf(origin: NewsOrigin): string[] | null {
+  if (origin === 'own') return ['club', 'team', 'board'];
+  if (origin === 'website') return ['website'];
+  if (origin === 'federation') return ['federation'];
+  return null;
+}

@@ -602,6 +602,14 @@ ion-tab-button.tab-selected .app-tab-icon-filled {
 }
 
 /* --- News-Karten (Schnitt der bestehenden myclub-App) ---------------------- */
+
+/* Die Wahl der Herkunft steht über dem Raster und richtet sich an dessen
+   Rändern aus – das Raster trägt seitlich denselben Abstand. */
+.app-news-origin {
+  margin: var(--app-space-2) calc(var(--app-space-2) * 2);
+  width: auto;
+}
+
 .app-news-grid {
   padding: 0 var(--app-space-2);
 }
