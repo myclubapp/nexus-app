@@ -1744,6 +1744,17 @@
       "imported_one": "{{count}} fonction reprise.",
       "imported_other": "{{count}} fonctions reprises.",
       "partial": "{{count}} repris, puis interrompu : {{error}}"
+    },
+    "credit": {
+      "section": "Points de la fonction",
+      "sectionHint": "Une fonction est créditée par trimestre. Cela se fait automatiquement chaque nuit – ici, tu peux le déclencher tout de suite, par exemple juste après avoir fixé une valeur en points.",
+      "action": "Créditer les trimestres dus",
+      "seats_one": "{{count}} siège avec valeur en points et compte lié",
+      "seats_other": "{{count}} sièges avec valeur en points et compte lié",
+      "noneCreditable": "Aucun siège n'a les deux : une valeur en points et un compte lié.",
+      "done_one": "{{count}} trimestre crédité.",
+      "done_other": "{{count}} trimestres crédités.",
+      "nothing": "Tout était déjà crédité."
     }
   },
   "checkin": {
@@ -2205,6 +2216,7 @@
     "exempt": "Dispensé",
     "remaining": "Encore {{points}} points",
     "earnedOnly": "{{points}} points",
+    "plannedShort": "{{points}} points planifiés",
     "export": "Partager en CSV",
     "exported": "Fichier créé",
     "goalTitle": "Objectif propre",
@@ -2215,6 +2227,7 @@
     "goalInvalid": "L'objectif doit être zéro ou plus.",
     "csvName": "Nom",
     "csvEarned": "Accompli",
+    "csvPlanned": "Planifié",
     "csvGoal": "Objectif",
     "csvRemaining": "Ouvert",
     "csvState": "État",
@@ -2229,6 +2242,7 @@
       "title": "Ton objectif de saison",
       "season": "Saison {{season}}",
       "remaining": "Encore {{points}} points jusqu'à l'objectif",
+      "planned": "{{points}} points sont déjà planifiés – créneaux où tu es inscrit, tâches reprises, ta fonction.",
       "reached": "Ta contribution pour cette saison est complète.",
       "badgeLabel": "{{earned}} points sur {{goal}}",
       "openHint": "Ces contributions te correspondent et comptent pour l'objectif.",

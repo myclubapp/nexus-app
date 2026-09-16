@@ -1744,6 +1744,17 @@
       "imported_one": "{{count}} carica ripresa.",
       "imported_other": "{{count}} cariche riprese.",
       "partial": "{{count}} riprese, poi interrotto: {{error}}"
+    },
+    "credit": {
+      "section": "Punti della carica",
+      "sectionHint": "Una carica viene accreditata ogni trimestre. Avviene automaticamente ogni notte – qui puoi farlo subito, ad esempio dopo aver fissato un valore in punti.",
+      "action": "Accreditare i trimestri dovuti",
+      "seats_one": "{{count}} seggio con valore in punti e account collegato",
+      "seats_other": "{{count}} seggi con valore in punti e account collegato",
+      "noneCreditable": "Nessun seggio ha entrambi: un valore in punti e un account collegato.",
+      "done_one": "{{count}} trimestre accreditato.",
+      "done_other": "{{count}} trimestri accreditati.",
+      "nothing": "Era già tutto accreditato."
     }
   },
   "checkin": {
@@ -2205,6 +2216,7 @@
     "exempt": "Esentato",
     "remaining": "Ancora {{points}} punti",
     "earnedOnly": "{{points}} punti",
+    "plannedShort": "{{points}} punti pianificati",
     "export": "Condividi come CSV",
     "exported": "File creato",
     "goalTitle": "Obiettivo personale",
@@ -2215,6 +2227,7 @@
     "goalInvalid": "L'obiettivo deve essere zero o superiore.",
     "csvName": "Nome",
     "csvEarned": "Svolto",
+    "csvPlanned": "Pianificato",
     "csvGoal": "Obiettivo",
     "csvRemaining": "Aperto",
     "csvState": "Stato",
@@ -2229,6 +2242,7 @@
       "title": "Il tuo obiettivo stagionale",
       "season": "Stagione {{season}}",
       "remaining": "Ancora {{points}} punti all'obiettivo",
+      "planned": "{{points}} punti sono già pianificati – turni a cui ti sei iscritto, compiti assunti, la tua carica.",
       "reached": "Il tuo contributo per questa stagione è completo.",
       "badgeLabel": "{{earned}} punti su {{goal}}",
       "openHint": "Questi contributi fanno per te e contano per l'obiettivo.",

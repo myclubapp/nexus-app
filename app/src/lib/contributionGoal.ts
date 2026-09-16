@@ -50,6 +50,25 @@ export function goalProgress(earned: number, goal: number | null): number {
 }
 
 /**
+ * Der Anteil, den **Geleistetes und Eingeplantes zusammen** füllen (FR-198).
+ *
+ * `IonProgressBar` zeichnet mit `buffer` einen zweiten, blasseren Abschnitt –
+ * dafür ist diese Zahl da. Sie liegt nie unter `goalProgress()`: Ein Puffer
+ * hinter dem Balken sähe aus, als wäre etwas verloren gegangen.
+ *
+ * Getrennt gerundet wird hier nichts; die Karte zeigt die Zahlen daneben im
+ * Klartext, und zwei Wege zur selben Aussage widersprechen sich irgendwann.
+ */
+export function plannedProgress(
+  earned: number,
+  planned: number,
+  goal: number | null,
+): number {
+  if (!goal || goal <= 0) return 0;
+  return Math.min(Math.max((earned + Math.max(planned, 0)) / goal, 0), 1);
+}
+
+/**
  * Der Vorschlag beim Einschalten: vier Einsätze der Regel, die einen Einsatz
  * bucht.
  *
@@ -72,6 +91,8 @@ export interface ContributionRow {
   avatar_url: string | null;
   goal: number | null;
   earned: number;
+  /** Zugesagt und noch nicht gebucht (FR-198). */
+  planned: number;
   remaining: number | null;
   state: GoalState;
 }
@@ -86,6 +107,13 @@ export interface ContributionRow {
 export function contributionCsv(rows: ContributionRow[], header: string[]): string {
   return toCsv(
     header,
-    rows.map((row) => [row.name ?? '', row.earned, row.goal, row.remaining, row.state]),
+    rows.map((row) => [
+      row.name ?? '',
+      row.earned,
+      row.planned,
+      row.goal,
+      row.remaining,
+      row.state,
+    ]),
   );
 }

@@ -87,6 +87,42 @@ export function officePointsExtra(pointsLabel: string | null): string | null {
   return rest.length > 0 ? rest : null;
 }
 
+/**
+ * Sitze, für die eine Amtsgutschrift überhaupt entstehen kann (BR-264).
+ *
+ * Zwei Bedingungen, beide notwendig, beide leicht zu übersehen: Der Sitz
+ * braucht eine **verknüpfte Mitgliedschaft** (ein Name allein ist kein
+ * Buchungsziel, BR-184) und das Amt einen **Punktwert** (`null` heisst «noch
+ * nicht entschieden», und eine erfundene Zahl wäre schlechter als keine).
+ *
+ * Die Zahl steht am Knopf des Vorstands: Ohne sie sieht «0 gutgeschrieben»
+ * nach einem Fehler aus, obwohl es heisst, dass niemand buchbar ist.
+ * `interim` zählt mit – wer ad interim führt, leistet die Arbeit.
+ *
+ * Gegenstück zur Schleife in `office_terms_due()`; laufen die beiden
+ * auseinander, verspricht der Knopf etwas anderes, als der Server tut.
+ *
+ * **Eine Abweichung ist bekannt und in Kauf genommen:** Der Server überspringt
+ * zusätzlich Sitze, deren «seit»-Datum nach dem Saisonende liegt – ein Amt, das
+ * erst nächste Saison beginnt. Diese Zahl hier zählt sie mit, weil der Client
+ * das Saisonende nicht kennt und eine zweite Datumsrechnung im Frontend genau
+ * die Art von Doppelspurigkeit wäre, die dieser Kommentar verhindern soll. Die
+ * Folge ist harmlos: Der Knopf nennt im Grenzfall einen Sitz zu viel und bucht
+ * ihn nicht – nie umgekehrt.
+ */
+export function creditableSeats(
+  offices: readonly Pick<Office, 'seasonPoints' | 'holders'>[],
+): number {
+  return offices.reduce(
+    (sum, office) =>
+      sum +
+      ((office.seasonPoints ?? 0) > 0
+        ? office.holders.filter((holder) => holder.memberId !== null).length
+        : 0),
+    0,
+  );
+}
+
 /** Offene Sitze: Sitze minus Inhaber:innen ohne «ad interim» – wie `office_open_seats()`. */
 export function openSeats(office: Pick<Office, 'maxHolders' | 'holders'>): number {
   const taken = office.holders.filter((holder) => !holder.interim).length;

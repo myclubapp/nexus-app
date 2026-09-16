@@ -22,9 +22,9 @@
 2. System zeigt das Ziel in Punkten mit einem Vorschlag aus den aktiven Regeln der Säulen 3 und 7 und nennt den Vorschlag in Einsätzen («entspricht etwa vier halben Tagen»).
 3. Vorstand bestätigt oder ändert die Zahl und speichert.
 4. System hält das Ziel am Verein fest; es gilt ab sofort für die laufende Saison.
-5. Vorstand öffnet «Saisonziel je Mitglied» und sieht jedes aktive Mitglied mit Ist, Soll, Rest und einer Ampel: erreicht, auf dem Weg, offen.
+5. Vorstand öffnet «Saisonziel je Mitglied» und sieht jedes aktive Mitglied mit Ist, Eingeplantem, Soll, Rest und einer Ampel: erreicht, auf dem Weg, offen.
 6. Vorstand teilt die Liste als CSV – auf dem Gerät über das Teilen-Blatt, im Browser als Datei.
-7. Mitglied öffnet seinen Punktestand und sieht eine Fortschrittskarte: geleistete Beitragspunkte, Ziel, wie viel noch fehlt.
+7. Mitglied öffnet seinen Punktestand und sieht eine Fortschrittskarte: geleistete Beitragspunkte, bereits **eingeplante** Punkte aus Zusagen, Ziel und wie viel noch fehlt.
 8. System nennt unter der Karte die nächsten passenden Beiträge – offene Schichten, Aufgaben und vakante Ämter aus dem Marktplatz.
 9. Mitglied übernimmt einen Beitrag; nach der Bestätigung wächst der Fortschritt mit der Buchung im Ledger.
 
@@ -140,9 +140,22 @@ Bussen, Depot-Rückerstattungen und Sperren entstehen nicht in der App. Der Expo
 
 Ein übernommener Wert aus einer Vorgängerapp ist keine Punktzahl dieser Skala. Beim Übernehmen wird der Punktwert einer Schicht aus ihrer Dauer abgeleitet, so wie ihn das Formular vorschlägt; der fremde Wert wird nur als Reihenfolge-Hinweis gelesen, nicht als Punkte.
 
+### BR-265: Eingeplant ist zugesagt, nicht geleistet
+
+Eingeplant sind Punkte, für die eine Zusage vorliegt und noch keine Buchung: angemeldete Schichten, übernommene Aufgaben, die Quartale eines gehaltenen Amtes, die diese Saison noch fällig werden. Sie stehen **neben** dem Geleisteten und gehen nicht in Abzeichen, Rest oder Ampel ein – eine Zusage darf nicht grün färben.
+
+Gezählt wird allein, was auf das Ziel einzahlt: die Säulen 3 und 7 (BR-198). Ein angemeldetes Training bringt Punkte für die Rangliste und ist trotzdem nicht eingeplant im Sinne dieser Regel – sonst zeigte die Karte neben einem Ziel eine Zahl, die nie dorthin führt. Aus demselben Grund sind die Vorschläge unter der Karte auf dieselben Säulen eingeschränkt.
+
+Ein vergangener Termin ohne Buchung zählt nicht mehr mit: Das Zeitfenster für den Check-in ist zu (BR-054). Eine vergangene Schicht dagegen schon – ihre Bestätigung kennt kein Zeitfenster und kommt oft Tage später.
+
+### BR-266: Wer eingeplant ist, ist nicht säumig
+
+Das Signal aus A6 zählt nur Mitglieder ohne Buchung **und** ohne Zusage. Wer für März eingeteilt ist, fehlt im Januar nicht – ihn zu zählen, machte aus der Planung einen Vorwurf und aus dem Signal eine Zahl, auf die der Vorstand nicht handeln kann.
+
 ## Notes
 
 - Gezogen aus `MVP_Scope` §4 am 14.09.2026 auf Sandros Auftrag. Der MVP-Schnitt streicht Soll und Reporting ausdrücklich (§2.1, Zeile 106) und nennt das Saisonziel auf dem Ledger als Ausbaustufe – genau diese Ausbaustufe ist hier beschrieben, als Modul und nicht als Grundfunktion.
 - Die alte App führte zwei Konten: `helferPunkte` am Mitglied war das **Soll** (Vereinswert, pro Mitglied übersteuerbar), `totalPoints` das Ist, eine Schicht zählte meist 1, das Ziel 4, die Ampel stand bei 100 % und 50 %, der Zeitraum kam aus zwei Datumsfeldern am Verein. Daneben lief ein zweites Punktesystem. Dieser Use Case bildet dieselbe Information mit einem Konto und einer Skala ab; die Ampelschwellen sind übernommen.
 - Der Zeitraum ist die Saison des Vereins (`season_label()`), nicht ein eigenes Datumspaar. Zwei Zeiträume nebeneinander waren in der alten App eine der Quellen der Verwirrung.
-- Offen und bewusst nicht Teil dieses Use Cases: eine Gutschrift für Ämter am Saisonende (Konzept §4.3, siehe UC-041) und Team-Challenges (Konzept §8).
+- Die Gutschrift für Ämter ist seit dem 15.09.2026 Teil des Ledgers (UC-041 A9, BR-264): quartalsweise statt am Saisonende, damit niemand acht Monate auf null steht. Offen und bewusst nicht Teil dieses Use Cases bleiben Team-Challenges (Konzept §8).
+- **Nachtrag vom 15.09.2026 (FR-198, BR-265/BR-266).** Die Prüfung an der laufenden Datenbank zeigte einen Verein mit 177 zielpflichtigen Mitgliedern, die alle auf null standen – und eine Karte, die unter «zählt aufs Ziel» Trainings vorschlug, die gar nicht aufs Ziel zählen. Die dritte Zahl schliesst die Lücke zwischen dem Geleisteten und dem, was man noch tun könnte: dem, was schon zugesagt ist.

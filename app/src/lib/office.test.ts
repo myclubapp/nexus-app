@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   boardRoleIds,
   checkFactsheetFile,
+  creditableSeats,
   groupOffices,
   dutiesToText,
   factsheetPath,
@@ -86,6 +87,45 @@ describe('Sitzrechnung (BR-183)', () => {
 
   it('ist besetzt, sobald alle Sitze getragen werden', () => {
     expect(isVacant(office({ maxHolders: 1, holders: [holder()] }))).toBe(false);
+  });
+});
+
+describe('creditableSeats() (BR-264)', () => {
+  it('zählt nur Sitze mit Punktwert **und** verknüpftem Konto', () => {
+    const rows = [
+      // Zählt: Wert und Konto.
+      office({ id: 'a', seasonPoints: 350, holders: [holder({ memberId: 'm-1' })] }),
+      // Zählt nicht: Ein Name ohne Konto ist kein Buchungsziel (BR-184).
+      office({ id: 'b', seasonPoints: 200, holders: [holder({ memberId: null })] }),
+      // Zählt nicht: `null` heisst «noch nicht entschieden», nicht «null Punkte».
+      office({ id: 'c', seasonPoints: null, holders: [holder({ memberId: 'm-2' })] }),
+      // Zählt nicht: Ein Amt, für das der Vorstand ausdrücklich 0 gesetzt hat.
+      office({ id: 'd', seasonPoints: 0, holders: [holder({ memberId: 'm-3' })] }),
+    ];
+
+    expect(creditableSeats(rows)).toBe(1);
+  });
+
+  it('zählt jeden verknüpften Sitz eines Amtes, «ad interim» eingeschlossen', () => {
+    // Drei Schiedsrichter:innen an einem Amt sind drei Buchungen – und wer ad
+    // interim führt, leistet dieselbe Arbeit.
+    const rows = [
+      office({
+        seasonPoints: 150,
+        holders: [
+          holder({ id: 'h-1', memberId: 'm-1' }),
+          holder({ id: 'h-2', memberId: 'm-2' }),
+          holder({ id: 'h-3', memberId: 'm-3', interim: true }),
+          holder({ id: 'h-4', memberId: null }),
+        ],
+      }),
+    ];
+
+    expect(creditableSeats(rows)).toBe(3);
+  });
+
+  it('gibt ohne Ämter null', () => {
+    expect(creditableSeats([])).toBe(0);
   });
 });
 

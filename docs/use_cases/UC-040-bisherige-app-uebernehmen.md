@@ -182,6 +182,16 @@ Ein Team der bisherigen App mit Verbandskennung wird hier ein mit dem Verband ve
 
 Die bisherige App speichert je Training den Tag als Zeitpunkt (`date`) und die Uhrzeiten als Vorlagen der Serie von einem anderen Tag (`timeFrom`, `timeTo`). Übernommen wird der Zürcher Tag von `date` mit der Zürcher Uhrzeit der Vorlage – genau das, was die alte App anzeigt. Ein Training gehört seinem Team; ein Training, dessen Team hier fehlt, wird nicht übernommen.
 
+### BR-263: Ein übernommener Termin trägt die Punkteregel seines Typs
+
+Ein Termin ohne Punkteregel ist für das Punktesystem unsichtbar: Wer daran einscannt, bekommt nichts, und erfährt nicht, warum. Bis zum 15.09.2026 legten die Übernahme und der Verbandsabgleich genau solche Termine an – 330 von 336 im ersten Verein, darunter jedes der 124 Spiele.
+
+Beide setzen die Regel jetzt nach demselben Schlüssel, den das Formular vorschlägt (`RULE_BY_TYPE`): Training, Spiel, Versammlung und Anlass bekommen ihre Regel, sofern der Verein sie führt und eingeschaltet hat. Ein Verein, der eine Regel gelöscht hat, bekommt keine untergeschoben.
+
+Zwei Termintypen bleiben bewusst leer. Beim **Helferanlass** ist der Beitrag die Schicht: Die Regel am Termin und die Regel an der Schicht tragen verschiedene Quellen, der Dedupe-Index hält sie nicht auseinander, und wer scannt *und* eine bestätigte Schicht hat, bekäme den Einsatz zweimal. Die **Sitzung** ist Arbeit des Gremiums, kein Beitrag mit Punktwert.
+
+Beim wiederholten Abgleich gilt die Regel des Vereins vor der des Schlüssels: Was von Hand gesetzt wurde, bleibt stehen. Ein nächtlicher Abgleich ist keine Gelegenheit, eine Entscheidung zu überschreiben.
+
 ## Notes
 
 - **Gegenstück in der bisherigen App:** `club/<id>/events` (Modell `Veranstaltung`) und `club/<id>/helferEvents` mit der Untersammlung `schichten` (Modell `Schicht`), aus `app/src/app/models/event.ts` des Repos `myclubapp/app`. Die Grenze «aktuell» stammt aus `event.service.ts` (`getClubEventsRef`).

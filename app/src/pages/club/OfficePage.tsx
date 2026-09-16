@@ -21,10 +21,11 @@ import { EmptyState, ErrorState } from '../../components/StateViews';
 import { SkeletonList } from '../../components/Skeletons';
 import { useClub } from '../../hooks/useClub';
 import { useOfficeMarkdown } from '../../hooks/useOfficeMarkdown';
-import { useDeleteOffice, useOffices } from '../../hooks/useOffices';
+import { useConfirmOfficeDue, useDeleteOffice, useOffices } from '../../hooks/useOffices';
 import { useRefreshOnEnter } from '../../hooks/useRefreshOnEnter';
 import { useToast } from '../../hooks/useToast';
 import {
+  creditableSeats,
   groupOffices,
   holderNames,
   isVacant,
@@ -58,6 +59,7 @@ export function OfficePage({ backHref = '/tabs/profile' }: OfficePageProps) {
   const { isAdmin } = useClub();
   const offices = useOffices();
   const remove = useDeleteOffice();
+  const credit = useConfirmOfficeDue();
   const markdown = useOfficeMarkdown();
   useRefreshOnEnter([['offices']]);
 
@@ -76,6 +78,7 @@ export function OfficePage({ backHref = '/tabs/profile' }: OfficePageProps) {
   // Verein keine Vorstandsämter, bleibt es bei der einen Liste; eine leere
   // Gruppe wäre eine Überschrift ohne Inhalt.
   const { board, others } = groupOffices(rows);
+  const creditable = creditableSeats(rows);
   // Aus der Liste gelesen, nicht kopiert: Nach dem Sichern zeigt das Blatt
   // den neuen Stand.
   const openOffice = rows.find((office) => office.id === openId) ?? null;
@@ -87,6 +90,21 @@ export function OfficePage({ backHref = '/tabs/profile' }: OfficePageProps) {
     } catch {
       toast.failure(t('offices.markdown.fileError'));
     }
+  }
+
+  function creditOffices() {
+    credit.mutate(undefined, {
+      // Null ist die häufigste und völlig richtige Antwort: Der Cron war
+      // schneller. Deshalb zwei Meldungen statt einer Zahl, die nach einem
+      // Fehlschlag aussieht.
+      onSuccess: (count) =>
+        toast.success(
+          count > 0
+            ? t('offices.credit.done', { count })
+            : t('offices.credit.nothing'),
+        ),
+      onError: (error) => toast.failure((error as Error).message),
+    });
   }
 
   function startEdit(office: Office) {
@@ -185,6 +203,33 @@ export function OfficePage({ backHref = '/tabs/profile' }: OfficePageProps) {
             <IonNote>{t('offices.vacantHint')}</IonNote>
           </p>
         </TextSection>
+      )}
+
+      {/* BR-264: Die Ämter buchen quartalsweise – der Cron `office-credit`
+          holt das täglich nach. Der Knopf ist für den Augenblick danach: Wer
+          gerade einen Punktwert gesetzt oder eine Inhaberin verknüpft hat,
+          sieht die Gutschrift sofort statt morgen früh. */}
+      {isAdmin && rows.length > 0 && (
+        <ListSection
+          title={t('offices.credit.section')}
+          footnote={t('offices.credit.sectionHint')}
+        >
+          <IonItem
+            button
+            detail={false}
+            disabled={creditable === 0 || credit.isPending}
+            onClick={creditOffices}
+          >
+            <IonLabel className="ion-text-wrap">
+              <h2>{t('offices.credit.action')}</h2>
+              <IonNote>
+                {creditable === 0
+                  ? t('offices.credit.noneCreditable')
+                  : t('offices.credit.seats', { count: creditable })}
+              </IonNote>
+            </IonLabel>
+          </IonItem>
+        </ListSection>
       )}
 
       {/* UC-041 A7/A8: Die Ämterbeschreibungen liegen nicht nur hier, sondern

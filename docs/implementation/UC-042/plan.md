@@ -167,10 +167,63 @@ Binding aus `docs/guidelines.md`:
 
 ---
 
+## Nachtrag vom 2026-09-15: Damit die Punkte ankommen (Migration `0103`)
+
+Sandro fragte, warum er für sein Vorstandsamt keine Punkte sieht. Die Prüfung
+an der laufenden Datenbank fand drei Lücken, die zusammen dafür sorgten, dass
+ein Verein mit 177 aktiven Mitgliedern, 25 besetzten Ämtern und 211
+Schichtplätzen **sieben** Buchungen im Ledger hatte – alle sieben Absagen:
+
+1. **330 von 336 Terminen trugen keine Punkteregel.** Weder
+   `upsert_legacy_event()` noch `upsert_federation_game()` setzten
+   `point_rule_code`; `check_in()` fand nichts zu buchen.
+2. **Die Amtsgutschrift hatte keinen Auslöser.** `confirm_office_term()` steht
+   seit `0091` in der Datenbank und wurde von niemandem gerufen –
+   `functionary_terms` war leer, 21 buchbare Sitze mit 3 950 Punkten je Saison
+   lagen brach.
+3. **Das Zugesagte war unsichtbar.** Die Karte zeigte Gebuchtes und darunter
+   Vorschläge – also gerade das, was niemand zugesagt hatte. Dazwischen fehlte,
+   was bereits eingeplant ist.
+
+Dazu ein vierter Befund an der Karte selbst: Ihre Fussnote sagt «zählen aufs
+Ziel», während `next_contributions()` jeden Termin mit aktiver Regel liefert –
+seit Lücke 1 geschlossen ist, also auch Trainings (Säule 1) und Spiele
+(Säule 2), die nie aufs Ziel zählen.
+
+### Traceability
+
+| ID | Regel | Umsetzung |
+| --- | --- | --- |
+| FR-198 | Eingeplante Punkte sichtbar | `contribution_planned()`, dritte Zahl in `my_contribution_goal()` und `contribution_overview()`, `plannedProgress()` + `buffer` in `ContributionGoalCard` und `ContributionPage` |
+| BR-263 | Punkteregel folgt dem Termintyp (UC-040) | `event_rule_code()`, Nachzug am Bestand, beide Upsert-Funktionen fortgeschrieben |
+| BR-264 | Amtsgutschrift läuft von selbst (UC-041 A9) | `grant_office_term()` intern, `office_terms_due()`, Cron `office-credit`, `confirm_office_due()` + Knopf auf der Ämterseite |
+| BR-265 | Eingeplant ist zugesagt, nicht geleistet | nur Säulen 3+7, Ampel bleibt am Geleisteten, `next_contributions(…, p_contribution_only)` |
+| BR-266 | Wer eingeplant ist, ist nicht säumig | zweite Bedingung in `detect_contribution_gaps()` |
+
+### Aufgaben
+
+- [x] 1. **Migration `0103`** in vier Teilen, mit den Rümpfen der jüngsten Fassungen (`0091`, `0080`, `0097`, `0076`).
+- [x] 2. **Verhaltensprüfung** gegen die laufende Datenbank in einer zurückgerollten Transaktion: 34 Prüfungen, alle grün.
+- [x] 3. **App**: `planned` durch beide Sichten, dritte Zahl und zweiter Balkenabschnitt, Beitragsfilter der Vorschläge, Gutschrift-Knopf für den Vorstand.
+- [x] 4. **Vier Sprachen**, 12 neue Schlüssel (`seasonGoal.my.planned`, `seasonGoal.plannedShort`, `seasonGoal.csvPlanned`, `offices.credit.*`).
+- [x] 5. **Vitest**: `plannedProgress()` (zwei Fälle), `creditableSeats()` (drei), Karte (drei), CSV-Spalte.
+- [ ] 6. **`supabase db push`** – löst Sandro aus; bis dahin überbrückt ein Übergangsblock in `database.types.ts` die Typen.
+- [ ] 7. **Nach dem Push:** Übergangsblock löschen, `types:generate`, und einmal `confirm_office_due()` auslösen (oder den Cron abwarten).
+
+### Zwei Befunde, die dieser Nachtrag **nicht** behebt
+
+| # | Befund | Warum offen |
+| --- | --- | --- |
+| 10 | **`useHelperEvents.ts` setzt `shift_done` am Helferanlass selbst.** Zusammen mit der Schichtbestätigung kann derselbe Einsatz zweimal buchen: `check_in()` bucht mit dem Termin als Quelle, `confirm_shift()` mit der Schicht, und der Dedupe-Index über `(member_id, rule_code, source_id)` hält die beiden nicht auseinander. `0103` verschärft es nicht (Helferanlässe bekommen keine Regel nachgetragen), behebt es aber auch nicht. | Es ist eine Produktfrage: Soll ein Check-in am Helferanlass Punkte geben, wenn jemand keine Schicht hat? Sandros Entscheid. |
+| 11 | **`detect_contribution_gaps()` liest `health_signals` ohne `limit`.** Der Subselect für `notify_signal_owners()` liefert bei mehreren offenen Signalen desselben Typs mehr als eine Zeile und würde fehlschlagen. Aus `0080` unverändert übernommen. | Ausserhalb des Auftrags; ein Ein-Zeilen-Fix, der in einen eigenen Commit gehört, damit die Änderung sichtbar bleibt. |
+
+---
+
 ## Progress Log
 
 | Date       | Update |
 | ---------- | ------ |
+| 2026-09-15 | **Nachtrag `0103`** (siehe oben). Drei Lücken geschlossen: Punkteregel an 310 Termine nachgetragen und in beiden Upsert-Wegen gesetzt, Amtsgutschrift an einen nächtlichen Cron und einen Vorstandsknopf gehängt, eingeplante Punkte als dritte Zahl. Verhaltensprüfung 34/34 grün in einer zurückgerollten Transaktion – die Produktionsdatenbank blieb unverändert, `db push` steht aus. Typecheck grün, i18n 1 897 Schlüssel in vier Sprachen. |
 | 2026-09-14 | Alle Aufgaben erledigt. Migration `0080` angewendet, Rückrechnung geprüft (105 Schichten, keine gebucht, Werte jetzt 25/50/100 statt 96×1). Verhaltensprüfung in zwei Durchgängen grün: zweistufiges Soll, «befreit» gegen «kein Ziel», Reichweite (Vorstand 177 Zeilen, ohne Konto abgewiesen, Rechenhilfen nicht am REST-Endpunkt), Ampelstufe in beiden Sichten gleich, Detektor idempotent und namenlos. 1051 Tests, 1588 i18n-Schlüssel, Lint ohne Fehler. |
 | 2026-09-14 | **Review-Befunde behoben** (vier): (1) `contribution_gap` fehlte in `LIVE_SIGNAL_TYPES` und `CLUB_SIGNAL_TYPES` – das Signal wäre entstanden, aber der Vorstand hätte sein Routing nicht einstellen können («gebaut und unerreichbar»). (2) Die Ampelschwelle stand dreimal: zweimal in SQL, einmal als toter Code im Client. Jetzt einmal, als `contribution_state()`; `goalState()` und `goalRemaining()` sind entfernt. (3) `season_end()` stürzte bei einem Saisonbeginn am 29. Februar ab (`make_date`, «date field value out of range») und hätte den Detektor mitgerissen – gerechnet wird jetzt aus dem Startdatum plus ganzen Jahren. (4) Ein fehlgeschlagenes Teilen des Exports tat gar nichts; jetzt weicht es auf die Zwischenablage aus, mit Rückmeldung. |
 | 2026-09-14 | Plan erstellt. Codebasis gescannt, freie Nummern ermittelt (UC-042, FR-158–162, NFR-039, BR-197–204, Migration 0080). Antworten auf die zwei Fragen des Skills aus Sandros Auftrag übernommen: gebaut sind Rangliste nach Säule, Cockpit-Kennzahlen und Beitrags-Profil; es fehlen Soll, Ampel, Export, Fortschrittskarte und Signal, und der Import trägt die alte Punkteskala mit. |

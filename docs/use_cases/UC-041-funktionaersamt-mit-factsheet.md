@@ -121,6 +121,16 @@
 1. System sagt, dass keine Ämterbeschreibung darin steht, und nennt den Anfang einer solchen («# Bezeichnung des Amtes»).
 2. Es wird nichts gespeichert. Use case ends.
 
+### A9: Punkte fürs Amt gutschreiben
+
+**Trigger:** Ein Quartal der Saison ist angebrochen, oder der Vorstand hat gerade einen Punktwert gesetzt oder eine Inhaber:in verknüpft
+**Flow:**
+
+1. System schreibt jeder Inhaber:in mit verknüpftem Konto ein Viertel des Saisonwerts ihres Amtes gut – für jedes fällige Quartal der laufenden Saison, das noch offen ist.
+2. Die Buchung geht über die Regel «Amt ausgeübt» (Säule 7) und trägt die Amtszeit als Quelle; das Mitglied bekommt eine Meldung.
+3. Das geschieht jede Nacht von selbst. Der Vorstand kann es auf der Ämterseite sofort auslösen, ohne bis zum nächsten Lauf zu warten.
+4. Ein zweiter Lauf bucht nichts nach; die Antwort lautet dann «war schon gutgeschrieben».
+
 ## Postconditions
 
 ### Success Postconditions
@@ -173,6 +183,14 @@ er beschreibt, bleibt unverändert. Ein Amt, das die Datei nicht nennt, bleibt
 unberührt. Gelöscht wird nur in der App. Ohne diese Regel nähme ein Auszug aus
 der Vereinsablage – etwa nur das überarbeitete Pflichtenheft – die Besetzung
 mit, die gar nicht darin steht.
+
+### BR-264: Die Amtsgutschrift läuft von selbst, quartalsweise
+
+Eine Mechanik ohne Auslöser ist keine Mechanik: `0091` hat die Gutschrift gebaut, und bis zum 15.09.2026 stand keine einzige Buchung im Ledger, weil niemand sie rief. Sie hängt deshalb an einem nächtlichen Lauf und zusätzlich an einem Knopf für den Vorstand.
+
+Gebucht wird **quartalsweise**, nicht am Saisonende – sonst stünde eine Juniorentrainerin acht Monate lang auf null, die Ampel löge und das Säumnis-Signal zählte sie mit. Der Lauf zieht alle fälligen Quartale der laufenden Saison nach: Ein ausgefallener Cron darf keinen dauerhaften Verlust bedeuten, und der erste Lauf trifft eine Saison, die schon läuft. Ab wann gebucht wird, entscheidet das «seit»-Datum am Sitz; ohne Datum gilt die ganze Saison.
+
+Eine Gutschrift setzt beides voraus: einen Punktwert am Amt (BR-206) **und** ein verknüpftes Konto am Sitz (BR-184). Fehlt eines, passiert nichts – das ist kein Fehler, sondern der Normalfall für ein Amt, über das der Vorstand noch nicht entschieden hat. Der Knopf nennt darum die Zahl der buchbaren Sitze, damit «0 gutgeschrieben» nicht wie ein Fehlschlag aussieht.
 
 ## Notes
 

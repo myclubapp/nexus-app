@@ -56,8 +56,8 @@ synchron gehalten werden können.
 | [UC-020](UC-020-punktestand-einsehen.md) | Punktestand und «Nächste Punkte» einsehen | Mitglied | FR-041, FR-044, FR-045 | Implemented |
 | [UC-021](UC-021-punkte-manuell-buchen.md) | Punkte manuell buchen oder korrigieren | Vorstand | FR-042, FR-043 | Implemented |
 | [UC-022](UC-022-leaderboard-einsehen.md) | Leaderboard einsehen | Mitglied | FR-046, FR-047, FR-048, FR-049, FR-177 | Implemented |
-| [UC-041](UC-041-funktionaersamt-mit-factsheet.md) | Funktionärsamt mit Factsheet hinterlegen und im Marktplatz anbieten | Vorstand | FR-126, FR-127, FR-193, FR-194 | Implemented |
-| [UC-042](UC-042-saisonziel-beitrag.md) | Saisonziel für den Beitrag setzen und verfolgen | Vorstand, Mitglied | FR-158, FR-159, FR-160, FR-161, FR-162 | Implemented |
+| [UC-041](UC-041-funktionaersamt-mit-factsheet.md) | Funktionärsamt mit Factsheet hinterlegen und im Marktplatz anbieten | Vorstand | FR-126, FR-127, FR-193, FR-194 | Implemented (A9 wartet auf `0103`) |
+| [UC-042](UC-042-saisonziel-beitrag.md) | Saisonziel für den Beitrag setzen und verfolgen | Vorstand, Mitglied | FR-158, FR-159, FR-160, FR-161, FR-162, FR-198 | Implemented (FR-198 wartet auf `0103`) |
 | [UC-043](../implementation/UC-043/plan.md) | Mitgliederdaten strukturieren und exportieren | Vorstand, Trainer:in | FR-130, FR-163 | Implemented |
 | [UC-045](../implementation/UC-045/plan.md) | Bilder des Vereins pflegen (Logo, Teambild, Profilbild) | Vorstand, Trainer:in, Mitglied | FR-166, FR-167, FR-168 | Implemented |
 
