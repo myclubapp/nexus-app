@@ -8,6 +8,9 @@
 .idea/
 *.swp
 
+# Claude Code – lokale Arbeitsbäume und Sitzungsdaten
+.claude/
+
 # Node
 node_modules/
 dist/
